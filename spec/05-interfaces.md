@@ -2,8 +2,9 @@
 
 An interface declares instance methods — abstract (no body) or **default** (with body). Members
 carry no `static`: dispatch goes through a method table, and a static member has no receiver.
-An interface with no methods anywhere in its chain is an error at compilation: there is nothing
-to dispatch on.
+An interface empty through its whole chain works as a **marker** — a constraint types conform
+to (`std.core`'s attribute markers are exactly this) — but constructing a VALUE of it is
+refused: there is nothing to dispatch on.
 
 ## 5.1 Declaring conformance
 

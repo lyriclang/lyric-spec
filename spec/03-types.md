@@ -50,9 +50,9 @@ mode would be a new construct, never a change to these operators.*
 
 ## 3.3 Composite types
 
-- `?T` — an optional. `??T` does not exist: the optional of an optional collapses in the type
-  grammar, and `null` is the one empty value. `?T` is not `T`; using the value requires
-  narrowing (chapter 7), `!` (panic on empty), or `??` (fallback).
+- `?T` — an optional. `??T` is not a type: the grammar refuses the nesting, and no inference
+  produces it — `null` is the one empty value at every depth. `?T` is not `T`; using the value
+  requires narrowing (chapter 7), `!` (panic on empty), or `??` (fallback).
 - `T[]` and `T[N]` — arrays: reference values of fixed length; `T[N]`'s length is part of the
   type. Element access panics out of bounds. `string` is NOT indexable, by decision: code-point
   access is O(n), and an index operator would hide a quadratic loop.
