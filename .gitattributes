@@ -1,0 +1,3 @@
+# Markdown and future .lyr conformance cases compare byte-exactly in CI; LF everywhere,
+# the same contract the toolchain repo learned the hard way.
+* text=auto eol=lf
