@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | {n} is 7
+//! | json: {"k": 7}
+//! | }
+import std.io.console { println };
+
+fn main(): int {
+    // '{{' and '}}' fold to one literal brace; a lone '}' is text. Grammar promise
+    // since 1.0, honored by the toolchain since 1.16.0 — the JSON case is writable.
+    let n = 7;
+    println(f"{{n}} is {n}");
+    println(f"json: {{\"k\": {n}}}");
+    println(f"}");
+    return 0;
+}

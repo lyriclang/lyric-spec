@@ -1,0 +1,17 @@
+//! run
+//! exit: 9
+import std.core { Exception };
+
+fn risky(): int throws Exception {
+    throw Exception { text = "boom" };
+}
+
+fn main(): int {
+    try {
+        return risky();
+    } catch (e: Throwable) {
+        // 'catch (e: Throwable)' is the catch-all written out — the same clause as the
+        // typeless form. Until 1.16.0 it compiled and never caught; the suite pins the fix.
+        return 9;
+    }
+}
