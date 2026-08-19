@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 2
+//! | -2
+import std.io.console { println };
+import std.string { fromInt };
+
+fn main(): int {
+    println(fromInt(2.7 as int));
+    println(fromInt((0.0 - 2.7) as int));
+    return 0;
+}

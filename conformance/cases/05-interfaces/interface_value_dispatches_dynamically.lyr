@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | circle
+//! | square
+import std.io.console { println };
+
+interface Shape {
+    fn kind(): string;
+}
+
+struct Circle :: [Shape] {
+    fn kind(): string {
+        return "circle";
+    }
+}
+
+struct Square :: [Shape] {
+    fn kind(): string {
+        return "square";
+    }
+}
+
+fn show(s: Shape): void {
+    println(s.kind());
+}
+
+fn main(): int {
+    show(Circle { });
+    show(Square { });
+    return 0;
+}

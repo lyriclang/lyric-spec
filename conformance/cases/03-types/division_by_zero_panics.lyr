@@ -1,0 +1,5 @@
+//! run
+//! panic: LYR-VM0002
+fn main(args: string[]): int {
+    return 7 / args.length;
+}

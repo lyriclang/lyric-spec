@@ -1,0 +1,31 @@
+# The suite runs against a RELEASED toolchain, never a working tree: the spec describes
+# versions, and the pin below names the one this draft tracks. Raising it is a deliberate act.
+name: Conformance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  TOOLCHAIN_VERSION: "1.15.0"
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the pinned toolchain release
+        run: |
+          curl -sSfL -o toolchain.tar.gz \
+            "https://github.com/lyriclang/lyric/releases/download/v${TOOLCHAIN_VERSION}/lyric-${TOOLCHAIN_VERSION}-linux-x64.tar.gz"
+          # The archive is flat: binaries and stdlib/ at the root.
+          mkdir toolchain
+          tar -xzf toolchain.tar.gz -C toolchain
+
+      - name: Run the suite
+        run: |
+          python3 tools/run_conformance.py \
+            --toolchain toolchain \
+            --stdlib toolchain/stdlib

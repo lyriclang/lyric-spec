@@ -1,0 +1,11 @@
+//! run
+//! exit: 42
+fn main(): int {
+    let double = (x: int) => {
+        if (x > 100) {
+            return x;
+        }
+        return x * 2;
+    };
+    return double(21);
+}

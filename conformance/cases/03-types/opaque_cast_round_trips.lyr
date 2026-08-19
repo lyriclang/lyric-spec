@@ -1,0 +1,8 @@
+//! run
+//! exit: 42
+opaque type Entity = int;
+
+fn main(): int {
+    let e = 42 as Entity;
+    return e as int;
+}

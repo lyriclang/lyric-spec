@@ -1,0 +1,7 @@
+//! check
+type Meters = int;
+
+fn main(): int {
+    let m: Meters = 41;
+    return m + 1;
+}

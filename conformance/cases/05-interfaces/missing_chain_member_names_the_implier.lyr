@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0020
+interface Named {
+    fn name(): string;
+}
+
+interface Labeled :: [Named] {
+    fn label(): string;
+}
+
+struct Bad :: [Labeled] {
+    x: int,
+}
+
+fn main(): int {
+    return 0;
+}

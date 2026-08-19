@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0003
+import std.core { Add };
+
+struct Vec :: [Add<Vec>] {
+    x: int,
+
+    fn add(other: Vec): Vec {
+        return Vec { x = this.x + other.x };
+    }
+}
+
+class Holder {
+    v: Vec,
+}
+
+fn main(): int {
+    let h = Holder { v = Vec { x = 1 } };
+    h.v += Vec { x = 1 };
+    return 0;
+}

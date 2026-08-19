@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0059
+fn main(): int {
+    let a: ?int = 1;
+    let b: ?int = 1;
+    return if (a == b) 1 else 0;
+}

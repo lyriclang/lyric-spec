@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | -9223372036854775808
+//! | -128
+import std.io.console { println };
+import std.string { fromInt };
+
+fn main(): int {
+    // Spec 3.2: two's-complement wrapping, deterministic everywhere.
+    let max = 9223372036854775807;
+    println(fromInt(max + 1));
+    let narrow: int8 = 127 as int8;
+    println(fromInt((narrow + 1 as int8) as int));
+    return 0;
+}

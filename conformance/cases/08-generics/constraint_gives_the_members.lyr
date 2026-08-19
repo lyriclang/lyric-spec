@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0027
+fn shout<T>(x: T): string {
+    return x.name();
+}
+
+fn main(): int {
+    return 0;
+}

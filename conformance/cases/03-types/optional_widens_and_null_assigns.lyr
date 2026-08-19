@@ -1,0 +1,10 @@
+//! run
+//! exit: 5
+fn pick(v: ?int): int {
+    return v ?? 5;
+}
+
+fn main(): int {
+    let empty: ?int = null;
+    return pick(empty);
+}

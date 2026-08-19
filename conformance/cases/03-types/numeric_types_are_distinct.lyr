@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0001
+fn main(): int {
+    // Spec 3.1: int and int64 are distinct; nothing converts implicitly.
+    let a: int64 = 5;
+    let b: int = a;
+    return b;
+}

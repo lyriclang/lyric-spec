@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! error: LYR-SEM0003
+opaque type Entity = int;
+
+fn main(): int {
+    let e: Entity = 42;
+    let f = (1 as Entity) + 1;
+    return 0;
+}

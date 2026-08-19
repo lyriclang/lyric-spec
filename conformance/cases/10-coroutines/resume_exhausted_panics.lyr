@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-VM
+fn one(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): int {
+    let co = one();
+    let first = resume co;
+    return resume co;
+}

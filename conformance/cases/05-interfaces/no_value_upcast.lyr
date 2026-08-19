@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0001
+interface Named {
+    fn name(): string;
+}
+
+interface Labeled :: [Named] {
+    fn label(): string;
+}
+
+fn widen(l: Labeled): Named {
+    return l;
+}
+
+fn main(): int {
+    return 0;
+}

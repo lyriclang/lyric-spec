@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0079
+interface Named {
+    fn name(): string;
+}
+
+interface Renamed :: [Named] {
+    fn name(): string;
+}
+
+fn main(): int {
+    return 0;
+}

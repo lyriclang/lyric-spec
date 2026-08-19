@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0078
+interface A {
+    fn a(): int;
+}
+
+interface B {
+    fn b(): int;
+}
+
+interface C :: [A, B] {
+    fn c(): int;
+}
+
+fn main(): int {
+    return 0;
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0003
+fn main(): int {
+    let a = 1;
+    let b: int32 = 2 as int32;
+    let c = a + b;
+    return 0;
+}

@@ -1,0 +1,12 @@
+//! run
+//! exit: 6
+fn double(v: ?int): int {
+    if (v == null) {
+        return 0;
+    }
+    return v + v;
+}
+
+fn main(): int {
+    return double(3);
+}

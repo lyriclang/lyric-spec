@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0050
+enum Light {
+    Red,
+    Yellow,
+    Green,
+}
+
+fn main(): int {
+    let l = Light.Red;
+    return match (l) {
+        Light.Red => 1,
+        Light.Green => 2,
+    };
+}

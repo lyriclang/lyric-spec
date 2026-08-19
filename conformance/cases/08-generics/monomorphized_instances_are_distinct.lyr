@@ -1,0 +1,15 @@
+//! run
+//! exit: 3
+struct Box<T> {
+    value: T,
+
+    static fn of(v: T): Box<T> {
+        return Box<T> { value = v };
+    }
+}
+
+fn main(): int {
+    let a = Box<int>.of(3);
+    let b = Box<string>.of("x");
+    return a.value;
+}

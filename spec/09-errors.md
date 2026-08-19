@@ -9,10 +9,11 @@ Lyric separates three failure shapes, and the separation is the design:
 
 ## 9.1 Throwables
 
-Only class values whose type reaches `Throwable` (`std.core`) — directly, through an extend, or
-through an interface chain — may be thrown, caught, or named in `throws` (`LYR-SEM0030`).
-`Throwable` requires `fn message(): string`; `std.core.Exception` is the ready-made carrier.
-Structs do not throw: a catch binds a reference.
+Only class values whose type reaches `Throwable` — directly, through an extend, or through an
+interface chain — may be thrown, caught, or named in `throws` (`LYR-SEM0030`). `Throwable` is a
+**builtin interface**, visible without any import, requiring `fn message(): string`;
+`std.core.Exception` is the ready-made carrier class. Structs do not throw: a catch binds a
+reference.
 
 ## 9.2 `throws` clauses
 

@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | n=7!
+//! | 3.14
+import std.io.console { println };
+
+fn main(): int {
+    let n = 7;
+    println(f"n={n}!");
+    println(f"{3.14159:F2}");
+    return 0;
+}

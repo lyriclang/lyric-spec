@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | body
+//! | second
+//! | first
+import std.io.console { println };
+
+fn main(): int {
+    defer println("first");
+    defer println("second");
+    println("body");
+    return 0;
+}

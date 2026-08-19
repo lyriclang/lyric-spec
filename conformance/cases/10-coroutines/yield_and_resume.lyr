@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 10
+//! | 30
+import std.io.console { println };
+import std.string { fromInt };
+
+fn three(): Coroutine<int> {
+    yield 10;
+    yield 20;
+    yield 30;
+}
+
+fn main(): int {
+    let co = three();
+    println(fromInt(resume co));
+    let skipped = resume co;
+    println(fromInt(resume co));
+    return 0;
+}

@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | [tag]
+//! | tag
+import std.io.console { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Labeled :: [Named] {
+    fn label(): string {
+        return "[" + this.name() + "]";
+    }
+}
+
+struct Tag :: [Labeled] {
+    fn name(): string {
+        return "tag";
+    }
+}
+
+fn describe<T :: [Named]>(x: T): string {
+    return x.name();
+}
+
+fn main(): int {
+    let t = Tag { };
+    println(t.label());
+    println(describe(t));
+    return 0;
+}

@@ -1,0 +1,15 @@
+//! run
+//! exit: 9
+import std.core { Exception };
+
+fn risky(): int throws Exception {
+    throw Exception { text = "boom" };
+}
+
+fn main(): int {
+    try {
+        return risky();
+    } catch (e: Throwable) {
+        return 9;
+    }
+}

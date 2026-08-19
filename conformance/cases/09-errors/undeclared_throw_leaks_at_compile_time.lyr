@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0034
+import std.core { Exception };
+
+fn risky(): int {
+    throw Exception { text = "boom" };
+}
+
+fn main(): int {
+    return 0;
+}
