@@ -15,9 +15,20 @@ a divergence is a toolchain bug.
 
 | Path | Content |
 |---|---|
-| `spec/` | the specification, one numbered chapter per file |
-| `conformance/` | the conformance suite: `.lyr` cases with expected outcomes |
-| `conformance/README.md` | the manifest format and how to run the suite against a toolchain |
+| `spec/01-lexical.md` | tokens, literals, escapes, contextual words |
+| `spec/02-grammar.md` | the EBNF's home and the rules around it |
+| `spec/03-types.md` | the type system; wrapping arithmetic; `as`; opaque aliases |
+| `spec/04-modules.md` | modules, imports, visibility, capabilities |
+| `spec/05-interfaces.md` | conformance, inheritance, interface values, extends |
+| `spec/06-operators.md` | every operator as its interface method |
+| `spec/07-statements.md` | bindings, loops, narrowing, lambdas, match |
+| `spec/08-generics.md` | monomorphization and constraints |
+| `spec/09-errors.md` | return values vs. throwables vs. panics |
+| `spec/10-coroutines.md` | `Coroutine<T>`, `yield`, `resume` |
+| `spec/11-stdlib-contract.md` | what of the library is LANGUAGE |
+| `spec/12-diagnostics.md` | the code catalogue as contract |
+| `conformance/` | the suite: one `.lyr` per case, expectations in a `//!` header |
+| `tools/run_conformance.py` | the reference runner |
 
 ## Canonical sources during the draft phase
 
