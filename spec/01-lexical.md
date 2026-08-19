@@ -1,16 +1,19 @@
 # 1. Lexical structure
 
 A Lyric source file is UTF-8 text. The lexer turns it into a token stream; everything the parser
-sees is defined here, and nothing below this chapter re-interprets characters.
+sees is defined here, and nothing below this chapter re-interprets characters. The productions
+quoted here are §1 of the canonical grammar; this chapter adds the behavioral contract around
+them.
 
 Normative language: **must** binds the implementation; **is** states a fact an implementation
 reproduces; a diagnostic code in parentheses names the error a conforming implementation reports
-for the construct (the codes are contract; see chapter 12).
+(chapter 12).
 
 ## 1.1 Identifiers and keywords
 
-An identifier starts with a letter `a`–`z`, `A`–`Z` or `_`, and continues with letters, digits
-or `_`. Identifiers are case-sensitive.
+An identifier starts with `a`–`z`, `A`–`Z` or `_` and continues with those or digits — ASCII
+only, case-sensitive. `@` followed by an identifier is one token (an attribute name); a bare `@`
+is an error (`LYR-LEX0012`).
 
 The reserved words are:
 
@@ -25,83 +28,107 @@ true false null
 this
 ```
 
-A reserved word must not be used as an identifier. Two words that LOOK reserved are not:
-`type` and `opaque` are **contextual** — they introduce a type alias only in declaration
-position (`[pub] [opaque] type Name = Type;`) and remain ordinary identifiers everywhere else.
-`throws` and `testRoot`-style manifest keys are likewise not reserved words of the language.
+`type`, `opaque` and `throws` look reserved and are not: they are **contextual**, recognized
+only in their declaration positions, and remain ordinary identifiers everywhere else.
 
-## 1.2 Comments and documentation
+## 1.2 Whitespace, comments, documentation
 
-Two comment forms exist:
+Whitespace is space, tab, `\r`, `\n`. Statements end with `;`; line ends carry no semantics
+beyond terminating line comments.
+
+Comment forms:
 
 - `// …` to the end of the line;
-- `/* … */`, non-nesting, to the closing delimiter.
+- `/* … */`, **nesting** — `/* a /* b */ c */` is one comment; an unclosed one is an error
+  (`LYR-LEX0002`);
+- `/// …` is a **documentation comment** — lexically its own token, not trivia: it binds to the
+  declaration directly below it (a `module` header included). A blank line between the last
+  `///` and the declaration breaks the binding; an ordinary `//` between them does not.
 
-A line comment beginning `///` is a **documentation comment**. It binds to the declaration
-directly below it, including a `module` header; a blank line between the last `///` line and the
-declaration breaks the binding, while an ordinary `//` line between them does not. Documentation
-comments have no semantic effect; tooling reads them.
-
-Comments and whitespace are trivia: a conforming implementation must produce the same token
-stream and the same program with or without them.
+Comments and whitespace never change the token stream around them: a conforming implementation
+compiles the same program with or without them.
 
 ## 1.3 Integer literals
 
-An integer literal is one of:
+```
+IntLit = ( DecLit | HexLit | BinLit | OctLit ) [ IntSuffix ]
+```
 
-- decimal: `0`, `42`, `1_000_000`;
-- hexadecimal: `0x` or `0X` followed by hex digits, e.g. `0x2545F4914F6CDD1D`;
-- binary: `0b` or `0B` followed by `0`/`1` digits.
+Decimal `42`, hexadecimal `0x2A`/`0X2A`, binary `0b101010`, octal `0o52` — prefixes accept
+either case. `_` may separate digits anywhere after the first: it must not directly follow a
+prefix (`LYR-LEX0005`), and a prefix must be followed by at least one digit (`LYR-LEX0004`).
 
-`_` may separate digits for readability. It must not directly follow the `0x`/`0b` prefix, must
-not lead the literal, and carries no meaning.
-
-An integer literal may carry a width suffix: `i8 i16 i32 i64 u8 u16 u32 u64`. Without a suffix
-the literal has type `int` (64-bit signed). A literal whose value does not fit the suffixed
-width is an error.
+The width suffixes are `i8 i16 i32 i64 u8 u16 u32 u64`, legal on every integer form; a float
+suffix on a prefixed literal is an error (`LYR-LEX0003`). Without a suffix the literal's
+DEFAULT type is `int` — but see §3.1: an unsuffixed integer literal adapts to a checked
+context type when its value fits.
 
 ## 1.4 Floating-point literals
 
-A floating-point literal is decimal digits, a `.`, and decimal digits: `3.5`, `0.25`. `_`
-separators follow the integer rule. The suffixes `f32` and `f64` select the width; without a
-suffix the type is `float` (IEEE 754 binary64). There is no exponent form in the lexical
-grammar of this version.
+```
+FloatLit = DecLit ( '.' DecLit [ Exponent ] | Exponent ) [ FloatSuffix ]
+         | DecLit FloatSuffix
+Exponent = ( 'e' | 'E' ) [ '+' | '-' ] DecDigit { DecDigit | '_' }
+```
+
+`3.5`, `1e9`, `2.5E-3`, `1f32` — a float suffix alone makes an integer-shaped literal a float,
+and an exponent alone does too. The suffixes are `f32` and `f64`; an integer suffix on a float
+shape is an error (`LYR-LEX0003`). Without a suffix the type is `float` (IEEE 754 binary64).
+`1.` is not a float literal: `.` only begins a fraction when a digit follows, which is what
+keeps `0..9` a range.
 
 ## 1.5 Character literals
 
-A character literal is `'…'` holding exactly one **code point** — a Lyric `char` is a Unicode
-scalar value, never a UTF-16 unit. The escape sequences of §1.7 apply.
+`'…'` holds exactly one **code point** (`LYR-LEX0008` otherwise) — a Lyric `char` is a Unicode
+scalar value, never a UTF-16 unit. Unterminated is `LYR-LEX0010`.
 
 ## 1.6 String literals
 
-A string literal is `"…"`. Strings are immutable sequences of code points; the lexical form
-carries no length limit and no embedded-NUL restriction beyond `\0` being an ordinary escaped
-character.
+`"…"` is an immutable sequence of code points; it ends at the closing quote and must not span a
+line (`LYR-LEX0009`). There is no raw or multiline string form.
 
-An **interpolated string** is `f"…"`. Inside it, `{expr}` embeds an expression and
-`{expr:spec}` formats it through the specifier `spec` (chapter 6 defines the desugaring; the
-specifier language is the host's numeric format contract, applied invariantly). `{{` and `}}`
-denote literal braces.
+## 1.7 Interpolated strings
 
-## 1.7 Escape sequences
+`f"…"` interleaves text chunks with interpolations:
 
-Inside character and string literals the following escapes exist, and no others
-(`LYR-LEX0007` otherwise):
+- `{expr}` embeds an expression; `{expr:spec}` formats it — the `:` starts the specifier only
+  at the TOP level of the interpolation (braces, parentheses and brackets inside the expression
+  are tracked), and the specifier runs to the matching `}`;
+- `{{` and `}}` produce a literal brace; a lone `}` in the text stands for itself;
+- the escape sequences of §1.8 apply in the text chunks;
+- an f-string must not span a line.
+
+## 1.8 Escape sequences
+
+In string, character and f-string text, and nowhere else (`LYR-LEX0007` for anything unlisted):
 
 | Escape | Meaning |
 |---|---|
 | `\n` `\t` `\r` | line feed, tab, carriage return |
 | `\\` `\"` `\'` | the character itself |
 | `\0` | U+0000 |
-| `\xHH` | the code point of the two hex digits |
-| `\uXXXX` | the code point of the four hex digits |
+| `\xHH` | exactly two hex digits |
+| `\u{H…}` | one to eight hex digits naming a Unicode scalar value |
 
-## 1.8 Operators and punctuation
+## 1.9 Operators and punctuation
 
-The operator and punctuation tokens are exactly those the grammar (chapter 2) uses. Longest
-match wins: `..=` lexes as one token, not `..` `=`; `::` never lexes as two `:`.
+```
+(   )   {   }   [   ]
+,   .   ;   :   ::  ->  =>
+?   ?.  ??  !
++   -   *   /   %
+&   |   ^   ~
+<<  >>
+==  !=  <   <=  >   >=
+&&  ||
+++  --
+..  ..=
+=   +=  -=  *=  /=  %=
+&=  |=  ^=  <<= >>=
+&&= ||= ??=
+```
 
-## 1.9 Line endings
-
-`\n` and `\r\n` both end a line. The language attaches no semantics to line ends beyond
-terminating `//` comments; statements end with `;`.
+Longest match wins: `<<=` before `<<` before `<`; `..=` is one token. `::` introduces an
+interface list and never appears in a module path; `!` is postfix force-unwrap and prefix
+logical not. How a `<` after a name resolves between comparison and type-argument list is
+§6.3 of the grammar, restated in chapter 6.

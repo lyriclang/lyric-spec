@@ -26,6 +26,13 @@ representation and still do not assign to each other; the same holds for `float`
 literals without a suffix have them — and the width-named types exist for layouts and
 boundaries. Crossing between any two numeric types is `as` (§3.6).
 
+One deliberate accommodation: an **unsuffixed numeric literal adapts to its context type**
+when its value fits — in an annotated binding (`let n: int8 = 100;`), as an argument, and as
+the other operand of a binary expression (`x + 1` with `x: int8`). A value that does not fit
+is the ordinary assignment error (`let n: int8 = 200;`), a suffixed literal has exactly its
+suffix's type, and adaptation applies to LITERALS only, never to expressions or variables:
+`let a = 100; let b: int8 = a;` is an error.
+
 ## 3.2 Integer arithmetic overflows by wrapping
 
 **Integer arithmetic is unchecked two's-complement wrapping arithmetic.** `+`, `-`, `*` on a

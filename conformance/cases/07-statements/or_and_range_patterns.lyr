@@ -1,0 +1,16 @@
+//! run
+//! exit: 0
+fn classify(n: int): int {
+    return match (n) {
+        0 | 1 => 10,
+        2..=9 => 20,
+        _ => 30,
+    };
+}
+
+fn main(): int {
+    if (classify(1) == 10 && classify(5) == 20 && classify(99) == 30) {
+        return 0;
+    }
+    return 1;
+}

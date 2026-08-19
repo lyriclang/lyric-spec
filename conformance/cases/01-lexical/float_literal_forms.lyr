@@ -1,0 +1,13 @@
+//! run
+//! exit: 0
+fn main(): int {
+    // Spec 1.4: fraction, exponent, exponent-only, suffix-only float shapes.
+    let a = 3.5;
+    let b = 1e3;
+    let c = 2.5E-1;
+    let d = 1f32;
+    if (a > 3.0 && b == 1000.0 && c == 0.25 && d as float == 1.0) {
+        return 0;
+    }
+    return 1;
+}

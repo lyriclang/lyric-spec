@@ -5,8 +5,16 @@
 `let` binds immutably, `var` mutably; both infer the type from the initializer when no
 annotation stands. Immutability is per binding: a `let` of a class value still permits `mut`
 method calls through it — the REFERENCE is immutable, the object is the object's business.
-Destructuring `let (a, b) = pair;` binds tuple elements with the same machinery match patterns
-use. `_` names a deliberately unused binding and silences the unused warning.
+Destructuring `let (a, b) = pair;` binds tuple elements — names, `_`, and nested tuple
+patterns; no form that can fail, and an initializer is required. `_` names a deliberately
+unused binding and silences the unused warning.
+
+## 7.1a Parameters: defaults and `params`
+
+A parameter may carry a default (`fn f(n: int = 0)`), and the LAST parameter may be `params`
+with an array type, collecting surplus arguments. Both are **call-site** transformations
+resolved against the callee's declaration — which is why a function VALUE has neither: its
+type says arity and nothing more.
 
 ## 7.2 Loops and `for-in`
 
@@ -50,10 +58,11 @@ exit path including `throw`. `std.os.exit` runs no defers.
 
 ## 7.6 `match`
 
-`match` arms carry patterns: literals, enum variants (with payload bindings), `null`, field
-patterns on structs (shorthand `Point { x }` binds `x`; a shorthand field binding is exempt
-from the unused-binding warning by decision), and `_`. An arm may carry a guard:
-`Pattern if expr => …`.
+`match` arms carry patterns: `_`; literals (integer, float, string, char, bool, `null`);
+bindings; enum variants with nested payload patterns (`Some(x)`, `Point { x }` — a shorthand
+field pattern binds the field to its own name and is exempt from the unused-binding warning by
+decision); tuple patterns; **or-patterns** (`a | b`); and **range patterns**
+(`1..5`, `'a'..='z'`). An arm may carry a guard: `Pattern if expr => …`.
 
 Exhaustiveness is checked where the scrutinee is enumerable — enum variants, `bool`, and the
 two states of a `?T` — and a gap is an error naming what is missing (`LYR-SEM0050`). Open

@@ -1,0 +1,12 @@
+//! run
+//! exit: 0
+fn main(): int {
+    // Spec 3.1: an unsuffixed literal adapts where its value fits — bindings and operands.
+    let narrow: int8 = 100;
+    let sum = narrow + 27;
+    let wide: float32 = 1.5;
+    if (sum as int == 127 && wide as float == 1.5) {
+        return 0;
+    }
+    return 1;
+}

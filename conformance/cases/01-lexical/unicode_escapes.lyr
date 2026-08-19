@@ -1,0 +1,11 @@
+//! run
+//! exit: 0
+fn main(): int {
+    // Spec 1.8: \xHH is two hex digits, \u{...} is one to eight.
+    let a = '\x41';
+    let heart = '\u{2764}';
+    if (a == 'A' && heart as int == 10084) {
+        return 0;
+    }
+    return 1;
+}

@@ -25,10 +25,15 @@ language: an uncaught, undeclared throw is a compile error at the function that 
 
 ## 9.3 `try` / `catch`
 
-`try { … } catch (e: E) { … }` — the first matching clause wins. A clause matches when the
-thrown value's type IS the declared type or conforms to it; a clause may declare an interface
-(`Throwable` itself included) and then catches everything reaching it. Within the clause the
-binding has the declared type. `defer` blocks run while unwinding.
+`try { … } catch (e: E) { … }` — the first matching clause wins. Three binding forms exist:
+`catch (e: E)` with a class type matches exactly that class; `catch (e)` and `catch (_)` catch
+everything, the former binding `e` as `Throwable`; and `catch (e: Throwable)` is the catch-all
+written out. Within a clause the binding has the declared type. `defer` blocks run while
+unwinding.
+
+*Implementation limit (diagnosed, `LYR-IR0001`):* a clause naming an interface OTHER than
+`Throwable` is refused — matching it would need a conformance test during unwinding, which the
+reference runtime's handler table cannot express yet.
 
 ## 9.4 `panic`
 

@@ -1,0 +1,17 @@
+//! run
+//! exit: 16
+fn add(a: int, b: int = 10): int {
+    return a + b;
+}
+
+fn total(params xs: int[]): int {
+    var sum = 0;
+    for (x in xs) {
+        sum += x;
+    }
+    return sum;
+}
+
+fn main(): int {
+    return add(3) + total(1, 2);
+}

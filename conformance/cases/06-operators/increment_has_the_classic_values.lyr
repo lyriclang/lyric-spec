@@ -1,0 +1,11 @@
+//! run
+//! exit: 0
+fn main(): int {
+    var i = 5;
+    let post = i++;
+    let pre = ++i;
+    if (post == 5 && pre == 7 && i == 7) {
+        return 0;
+    }
+    return 1;
+}

@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0001
+fn main(): int {
+    let narrow: int8 = 200;
+    return 0;
+}

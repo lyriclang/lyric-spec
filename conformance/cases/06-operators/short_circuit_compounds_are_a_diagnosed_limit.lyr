@@ -1,0 +1,7 @@
+//! error: LYR-IR0001
+//! check
+fn main(): int {
+    var flag = true;
+    flag &&= false;
+    return 0;
+}
