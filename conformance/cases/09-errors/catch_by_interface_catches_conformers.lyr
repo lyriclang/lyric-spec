@@ -9,7 +9,10 @@ fn risky(): int throws Exception {
 fn main(): int {
     try {
         return risky();
-    } catch (e: Throwable) {
+    } catch (e) {
+        // The typeless catch binds 'e' as Throwable and catches everything reaching it.
+        // The explicitly written 'catch (e: Throwable)' joins this case when the CI pin
+        // reaches 1.16.0 — the release that fixed its runtime matching.
         return 9;
     }
 }
