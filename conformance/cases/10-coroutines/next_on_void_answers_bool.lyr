@@ -1,0 +1,17 @@
+//! run
+//! since: 2.2.0
+// §10: a Coroutine<void> has no value to wrap, so its 'next()' answers bool — did it advance?
+fn pulse(): Coroutine<void> {
+    yield;
+    yield;
+    yield;
+}
+
+fn main(): int {
+    let p = pulse();
+    var beats = 0;
+    while (p.next()) {
+        beats += 1;
+    }
+    return beats - 3;
+}

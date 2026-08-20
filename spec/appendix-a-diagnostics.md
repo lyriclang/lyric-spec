@@ -167,6 +167,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0074 | E² | The instance form of a static extension. A warning through 1.x with the message announcing this change; an error from 2.0. |
 | LYR-SEM0078 | E | A malformed interface parent list: more than one parent, a non-interface, or a cycle (§5.2). |
 | LYR-SEM0079 | E | An interface redeclaring a member of its parent — an inherited member keeps its declaring interface. |
+| LYR-SEM0080 | E | `next()` on a `Coroutine<?T>` (since 2.2.0): a `null` result would mean both "yielded null" and "done" (§10). |
 
 ### Warnings and hints
 

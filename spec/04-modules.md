@@ -35,12 +35,18 @@ and an initializer reading a later global is an error. There is no module-level 
 
 ## 4.4 The standard library's special edges
 
-A small set of functions is bound by the compiler without an import: `panic` and
-`coroutineEnded` from `std.core`; the f-string/operator helpers of `std.string` (`concat`
-behind `+` on strings, `repeat` behind `*`, the `fromXxx` converters behind interpolation);
-and the char-array native of `std.string` behind `for (c in s)` (the private `rawToChars`
-since 2.0). Everything else in the standard library is ordinary Lyric reached through
-ordinary imports. `std.core` imports nothing — it is the library's root.
+A small set of functions is bound by the compiler without an import: `panic`, `coroutineEnded`
+and — since 2.2.0, behind `co.next()` — `coroutineIsDone` from `std.core`; the
+f-string/operator helpers of `std.string` (`concat` behind `+` on strings, `repeat` behind
+`*`, the `fromXxx` converters behind interpolation); and the char-array native of `std.string`
+behind `for (c in s)` (the private `rawToChars` since 2.0). Everything else in the standard
+library is ordinary Lyric reached through ordinary imports. `std.core` imports nothing — it is
+the library's root.
+
+`coroutineIsDone` is declared per coroutine signature, so its name may stand in a module's
+import table with several signatures — the entries bind independently, and every consumer of
+the import table is positional. It takes the coroutine value and answers whether the body has
+run to its end.
 
 ## 4.5 Capabilities
 

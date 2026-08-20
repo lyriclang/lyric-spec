@@ -1,0 +1,33 @@
+//! run
+//! since: 2.2.0
+//! stdout:
+//! | 10
+//! | 20
+//! | done
+//! | still done
+// §10: 'next()' advances like 'resume' and answers ?T — the value, or null once the body ran
+// through. After the end, null STAYS the answer; exhaustion does not escalate through 'next'.
+import std.io.console { println };
+
+fn two(): Coroutine<int> {
+    yield 10;
+    yield 20;
+}
+
+fn main(): int {
+    let co = two();
+    var live = true;
+    while (live) {
+        let v = co.next();
+        if (v == null) {
+            println("done");
+            live = false;
+        } else {
+            println(f"{v}");
+        }
+    }
+    if (co.next() == null) {
+        println("still done");
+    }
+    return 0;
+}

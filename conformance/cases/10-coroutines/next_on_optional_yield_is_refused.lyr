@@ -1,0 +1,15 @@
+//! check
+//! since: 2.2.0
+//! error: LYR-SEM0080
+// §10: on a Coroutine<?T> a null from 'next()' would mean both "yielded null" and "done" —
+// the form is refused; such a coroutine is driven with 'resume' and a protocol of its own.
+fn maybe(): Coroutine<?int> {
+    yield null;
+    yield 1;
+}
+
+fn main(): int {
+    let co = maybe();
+    let v = co.next();
+    return 0;
+}

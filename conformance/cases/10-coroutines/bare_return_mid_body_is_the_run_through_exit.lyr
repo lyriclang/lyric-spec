@@ -1,0 +1,19 @@
+//! run
+//! since: 2.2.0
+//! panic: LYR-VM
+// §10: a bare 'return;' anywhere in the body ends the coroutine exactly like running through —
+// the value before it is delivered, the pull after it sees an exhausted coroutine, and 'resume'
+// keeps its promised panic there.
+fn cut(): Coroutine<int> {
+    yield 1;
+    if (true) {
+        return;
+    }
+    yield 99;
+}
+
+fn main(): int {
+    let co = cut();
+    let first = resume co;
+    return resume co;
+}

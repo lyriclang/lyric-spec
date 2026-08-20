@@ -5,10 +5,11 @@ specified by its own documentation and test suite (`stdlib-tests/` in the toolch
 repository), not duplicated here. What THIS document fixes is the boundary a second
 implementation must honor:
 
-1. **The compiler-bound edges** (§4.4): `std.core.panic`, `std.core.coroutineEnded`, the
-   `std.string` helpers behind `+`, `*` and interpolation, and the char-array native behind
-   `for (c in s)`. An implementation must provide these under these names — they are reachable
-   from programs that import nothing.
+1. **The compiler-bound edges** (§4.4): `std.core.panic`, `std.core.coroutineEnded`,
+   `std.core.coroutineIsDone` (since 2.2.0, behind `co.next()`; bound for every coroutine
+   signature it is declared with), the `std.string` helpers behind `+`, `*` and interpolation,
+   and the char-array native behind `for (c in s)`. An implementation must provide these under
+   these names — they are reachable from programs that import nothing.
 2. **The operator and constraint anchors of `std.core`**: `Display`, `Equatable<T>`,
    `Hashable<T>` (whose parent is `Equatable<T>` since 2.0 — a key constraint is
    `K :: [Hashable<K>]` alone), `Ordered<T>`, `Add/Sub/Mul/Div<T>`, `Into<T>`, the attribute
