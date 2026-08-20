@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0003
+// §7.4: a while body holds the condition's proof — a do-while body runs before the
+// first check, so it holds nothing.
+fn main(): int {
+    let o: ?int = 3;
+    var acc = 0;
+    do {
+        acc = acc + o;
+    } while (o != null && acc < 10);
+    return acc;
+}

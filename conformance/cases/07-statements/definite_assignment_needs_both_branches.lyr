@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0018
+// §7.7: after if/else only what BOTH branches assign counts — one branch is not enough.
+// Deferred initialization is a 'var' affair (§7.1); a 'let' assignment would be SEM0019.
+fn main(): int {
+    var n: int;
+    if (1 < 2) {
+        n = 1;
+    }
+    return n;
+}

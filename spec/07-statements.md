@@ -5,6 +5,9 @@
 `let` binds immutably, `var` mutably; both infer the type from the initializer when no
 annotation stands. Immutability is per binding: a `let` of a class value still permits `mut`
 method calls through it — the REFERENCE is immutable, the object is the object's business.
+Deferred initialization is a `var` affair: `var n: int;` may be assigned later (definite
+assignment guards the reads, §7.7), while ANY assignment to a `let` — first or otherwise — is
+`LYR-SEM0019`. A binding with neither a type nor an initializer is `LYR-SEM0010`.
 Destructuring `let (a, b) = pair;` binds tuple elements — names, `_`, and nested tuple
 patterns; no form that can fail, and an initializer is required. `_` names a deliberately
 unused binding and silences the unused warning.
@@ -35,21 +38,51 @@ expression body contributes its type outward. A **block** lambda without annotat
 infers its return type from its `return` statements, unified like match arms — `return null;`
 widens to the optional, disagreeing returns are one error at the lambda, and a non-void
 inferred lambda still needs coverage (`LYR-SEM0046`). A valueless block lambda is `void`.
-Closures capture variables by reference; a captured `var` mutates through the closure.
+
+Captures happen **at lambda creation**: a `let` is captured as its value, a `var` as the
+variable itself — the enclosing scope and the closure share one cell, and mutations are
+visible both ways. (For a `let` the two readings cannot be told apart; the cell is the
+observable part.) A lambda without captures allocates no environment.
 
 ## 7.4 Flow narrowing
 
-Inside a region where an optional is proven present, its type IS `T`, not `?T`:
+Inside a region where an optional is proven present, its type IS `T`, not `?T`.
 
-- `if (o != null) { … }` narrows `o` in the then-branch; `if (o == null) { return; }` narrows
-  after the guard;
-- a `match` with a `null` arm narrows the non-null arms;
-- narrowing follows the negation and early exits (`return`, `break`, `continue`, `throw`,
-  `panic` — `panic` returns `never` and ends the path).
-
-Narrowing keys on the comparison operators themselves. A function call cannot narrow — after
-`if (isSome(o))` the type is still `?T` — which is why the standard library deliberately has no
+**What proves a fact.** Exactly one form: a direct `==`/`!=` comparison between a local or
+parameter **identifier** of declared optional type and the `null` literal, in either operand
+order. Nothing else narrows — not a field, not an index, not a function call. After
+`if (isSome(o))` the type is still `?T`, which is why the standard library deliberately has no
 `isSome`.
+
+**Where the fact holds.**
+
+- The matching branch of an `if` statement and of an if-**expression**: `o != null` narrows
+  the then-branch, `o == null` the else-branch.
+- The body of a `while` — sound because the condition is re-checked before every iteration.
+  `do-while` gets nothing: its body runs before the first check.
+- The right operand of a short-circuit operator: in `o != null && o > 0` the right side sees
+  `o` as `T`; in `o == null || o > 0` likewise — `&&` propagates what the left side proves
+  when true, `||` what it proves when false.
+- After an `if` whose branch **always exits** — `return`, `throw`, `break`, `continue`, or a
+  call to `panic` all end the path — the opposite fact holds for the rest of the enclosing
+  block: `if (o == null) { return -1; }` narrows everything after it.
+
+**Composition.** For `a && b` the then-direction collects what BOTH sides prove (the branch
+runs only when both are true); the else-direction collects nothing (either side may have
+failed). For `||` it is exactly mirrored.
+
+**Invalidation.** An assignment to the variable ends its narrowing from that point on. A
+narrowing established by an early exit ends with the enclosing block.
+
+**`match` does not narrow the scrutinee.** A `match` on `?T` with a `null` arm types the
+BINDING pattern of the other arms at `T` — `n => n + 1` works; `_ => x + 1` on the original
+variable does not. The proof travels through the binding, never back into the matched name.
+
+**Lambdas and staleness.** A lambda body is checked under the narrowing in force at its
+creation. A read of a narrowed variable compiles to a **checked unwrap**: if the proof is
+stale by the time the body runs — a captured `var` set back to `null` after the lambda was
+made — the read panics as `LYR-VM0007`, exactly like `!` on an empty optional. The guarantee
+narrowing gives is memory safety, not proof persistence.
 
 ## 7.5 `defer`
 
@@ -68,3 +101,29 @@ Exhaustiveness is checked where the scrutinee is enumerable — enum variants, `
 two states of a `?T` — and a gap is an error naming what is missing (`LYR-SEM0050`). Open
 types (`int`, `string`, …) require a `_` or binding arm. A guarded arm does not count toward
 exhaustiveness.
+
+## 7.7 Definite assignment
+
+A local or parameter must be assigned on every path before every read; a possibly-unassigned
+read is `LYR-SEM0018`. The analysis is structural and deliberately conservative — a
+conforming implementation may be smarter, never laxer:
+
+- Parameters are assigned. A binding with an initializer is assigned; without one it is
+  declared and unassigned — necessarily a `var`, since a `let` cannot be assigned later
+  (§7.1). A destructuring binding assigns every bound name (its initializer is mandatory).
+- After `if`/`else`, what BOTH branches assign counts; a branch that always returns or throws
+  is excluded (the continuation follows the other). An `if` without `else` contributes
+  nothing.
+- A `while` or `for-in` body may not run: nothing it assigns counts afterwards. A `do-while`
+  body runs at least once: its assignments do count. The `for-in` loop variable is assigned
+  inside the body.
+- A `try` contributes nothing afterwards — the body may have thrown mid-way. The catch
+  binding is assigned inside its clause.
+- An **exhaustive** `match` statement runs exactly one arm: what ALL continuing arms assign
+  (arms that always leave excluded, pattern bindings included) is assigned afterwards. A
+  non-exhaustive match contributes nothing.
+- A compound assignment (`x += 1`) reads first: on an unassigned variable it is the same
+  error.
+- A lambda body is analyzed against the assignment state **at its creation site** — a capture
+  must be definitely assigned when the lambda is made, and assignments inside the body leak
+  nothing out.

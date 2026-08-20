@@ -68,3 +68,25 @@ vtable rows and attribute-bearing declarations — is not in the compiled module
 its `pub` declarations as reachability roots, so a library's surface decides its contents. It
 waits for 2.0 because it is observable: an embedding host calling an unexported function would
 find it missing.
+
+## 4.7 Attributes
+
+An attribute is a plain `struct` that declares one of the marker conformances of `std.core` —
+`OnModule`, `OnType`, `OnFunction` — and is written `@Name { field = literal }` before the
+declaration it applies to, or before the module header. Each marker permits the corresponding
+placement and nothing else; the grammar additionally limits placement to a function, a struct,
+a class, an enum, or the module header (`LYR-PAR0038`, `LYR-PAR0042`).
+
+An applied attribute becomes **one metadata row** in the compiled module, and everything about
+it follows from that:
+
+- Arguments are literals only — a number, a string, a char or a bool; every field of the
+  attribute struct must end with a value, written at the site or as a literal default
+  (`LYR-SEM0066`, `LYR-SEM0069`).
+- The same attribute may sit on a declaration once, and set each field once (`LYR-SEM0068`).
+- A generic type cannot be an attribute, and an attribute cannot sit on a generic
+  declaration — one row cannot stand for every instance (`LYR-SEM0065`, `LYR-SEM0067`). The
+  single row-less exception is the canonical `@Deprecated`, which emits no row and only
+  drives diagnostics (`LYR-SEM0076`), and may therefore sit on generics.
+- An attribute-bearing declaration is a reachability root (§4.6): the row is how an embedding
+  host discovers it (§11). `@Deprecated`, having no row, roots nothing.

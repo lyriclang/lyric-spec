@@ -1,0 +1,18 @@
+//! run
+//! exit: 42
+// §7.4: the right operand of '&&' sees the left side's proof, and an if whose branch
+// always exits narrows the rest of the enclosing block.
+fn half(o: ?int): int {
+    if (o == null) {
+        return -1;
+    }
+    return o / 2;
+}
+
+fn main(): int {
+    let o: ?int = 84;
+    if (o != null && o > 10) {
+        return half(o);
+    }
+    return -1;
+}

@@ -27,6 +27,7 @@ a divergence is a toolchain bug.
 | `spec/10-coroutines.md` | `Coroutine<T>`, `yield`, `resume` |
 | `spec/11-stdlib-contract.md` | what of the library is LANGUAGE |
 | `spec/12-diagnostics.md` | the code catalogue as contract |
+| `spec/appendix-a-diagnostics.md` | the catalogue itself: every code, severity, cause, and the retired numbers |
 | `conformance/` | the suite: one `.lyr` per case, expectations in a `//!` header |
 | `tools/run_conformance.py` | the reference runner |
 

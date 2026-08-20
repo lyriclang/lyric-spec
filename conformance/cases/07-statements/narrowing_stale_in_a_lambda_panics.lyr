@@ -1,0 +1,14 @@
+//! run
+//! panic: LYR-VM0007
+// §7.4: a lambda body is checked under the narrowing at its creation, and a captured
+// 'var' shares its cell. When the proof is stale at call time, the narrowed read is a
+// CHECKED unwrap — it panics like '!' on empty, it never corrupts memory.
+fn main(): int {
+    var x: ?int = 5;
+    if (x != null) {
+        let f = () => x + 1;
+        x = null;
+        return f();
+    }
+    return 0;
+}

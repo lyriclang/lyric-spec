@@ -1,0 +1,15 @@
+//! run
+//! exit: 7
+// §7.7: an exhaustive match runs exactly one arm, so what every continuing arm assigns
+// is definitely assigned afterwards; an arm that always returns is excluded.
+enum Coin { Heads, Tails }
+
+fn main(): int {
+    var n: int;
+    let c = Coin.Heads;
+    match (c) {
+        Coin.Heads => { n = 7; },
+        Coin.Tails => { return -1; },
+    }
+    return n;
+}
