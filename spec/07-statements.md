@@ -21,6 +21,13 @@ with an array type, collecting surplus arguments. Both are **call-site** transfo
 resolved against the callee's declaration — which is why a function VALUE has neither: its
 type says arity and nothing more.
 
+At the variadic position an argument's own type decides element versus whole array (there is
+no `T`/`T[]` conversion and no overloading, so the two never collide). One consequence of the
+context propagation of §3.1: an ARRAY LITERAL standing there receives no expectation — the
+propagated element type would force the element reading — while every other argument keeps
+the element type as its context (which is what names `Opt.Some(1)`'s instance in a
+`params Opt<int>[]`).
+
 ## 7.2 Loops and `for-in`
 
 `while`, `do-while`, and `for (x in e)` with `break`/`continue`. `for-in` accepts exactly:
