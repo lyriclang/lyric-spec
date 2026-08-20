@@ -1,7 +1,12 @@
 //! check
-//! error: LYR-SEM0001
+//! since: 2.0.1
+//! error: LYR-SEM0026
 // §8.1: every instantiation chain must be finite — a function reaching itself at a LARGER
-// type cannot be monomorphized and is refused at the call.
+// type cannot be monomorphized and is refused at the call. In the inferred form the
+// construction has no known instance (§8.2: field values never drive it) and reports
+// SEM0026; writing 'Box<T>' explicitly is refused by the lowering instead (LYR-IR0001,
+// an open instantiation). Before 2.0.1 the refusal surfaced as a noise follow-up
+// ("cannot assign 'T' to 'T'"), which the wave poisoned away.
 struct Box<T> {
     v: T,
 }
