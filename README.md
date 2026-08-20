@@ -16,7 +16,7 @@ a divergence is a toolchain bug.
 | Path | Content |
 |---|---|
 | `spec/01-lexical.md` | tokens, literals, escapes, contextual words |
-| `spec/02-grammar.md` | the EBNF's home and the rules around it |
+| `spec/02-grammar.md` | the canonical EBNF and the rules around it (mirrored in the toolchain) |
 | `spec/03-types.md` | the type system; wrapping arithmetic; `as`; opaque aliases |
 | `spec/04-modules.md` | modules, imports, visibility, capabilities |
 | `spec/05-interfaces.md` | conformance, inheritance, interface values, extends |
@@ -27,19 +27,18 @@ a divergence is a toolchain bug.
 | `spec/10-coroutines.md` | `Coroutine<T>`, `yield`, `resume` |
 | `spec/11-stdlib-contract.md` | what of the library is LANGUAGE |
 | `spec/12-diagnostics.md` | the code catalogue as contract |
+| `spec/13-bytecode.md` | the `.lyrbc` module format (canonical; mirrored in the toolchain) |
 | `spec/appendix-a-diagnostics.md` | the catalogue itself: every code, severity, cause, and the retired numbers |
 | `conformance/` | the suite: one `.lyr` per case, expectations in a `//!` header |
 | `tools/run_conformance.py` | the reference runner |
 
-## Canonical sources during the draft phase
+## The mirror model
 
-Two documents remain canonical in [`lyriclang/lyric`](https://github.com/lyriclang/lyric) until
-this specification subsumes them at 2.0, because they are pinned there by tests:
-
-- `docs/Grammar.md` — the EBNF grammar (pinned against the lexer and parser).
-- `docs/Bytecode.md` — the `.lyrbc` module format (already normative on its own).
-
-Chapters here reference them rather than duplicating them; duplication would drift.
+The grammar (chapter 02) and the bytecode format (chapter 13) are canonical **here**. The
+toolchain repository carries byte-identical mirrors as `docs/Grammar.md` and
+`docs/Bytecode.md` — its tests pin against them and its doc site publishes them — and its CI
+diffs everything below the `<!-- sync:body -->` marker against these chapters. Duplication
+would drift; a checked mirror cannot.
 
 ## Versioning
 
