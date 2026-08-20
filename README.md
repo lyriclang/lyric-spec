@@ -1,15 +1,15 @@
 # The Lyric Language Specification
 
-**Status: DRAFT — non-normative until Lyric 2.0.**
+**Status: NORMATIVE since Lyric 2.0.**
 
 This repository holds the specification of the Lyric programming language and its conformance
-suite. The goal is the same one `Bytecode.md` reached for the module format: a document from
-which a second, independent implementation can be built — and a suite that tells it whether it
-succeeded.
+suite: a document from which a second, independent implementation can be built — and a suite
+that tells it whether it succeeded.
 
-Until 2.0 the toolchain implementation is the authority and this document describes it. At 2.0
-the relationship inverts: the specification becomes normative, the toolchain implements it, and
-a divergence is a toolchain bug.
+Since 2.0 the relationship stands inverted from the draft phase: the specification defines the
+language, the toolchain implements it, and a divergence is a toolchain bug. A change to
+observable language behavior is a specification change FIRST — the chapter sentence and its
+conformance case land before or with the implementation, never after.
 
 ## Layout
 
@@ -42,6 +42,6 @@ would drift; a checked mirror cannot.
 
 ## Versioning
 
-The specification describes a **language version**, which is the toolchain's minor line: this
-draft tracks Lyric 1.16. The semantics it describes are FROZEN — from 1.16 on, a change to
-observable language behavior is a specification change first.
+The specification describes a **language version**: this document describes Lyric 2.0. A case
+in the suite may carry `//! since: X.Y.Z` and applies to that version and later, which is how
+one suite serves every release since the freeze (1.16) without a manual deferral dance.
