@@ -23,6 +23,10 @@ may throw less than it declares, never more — and conformance requires an impl
 clause to be a subset of the interface's (§5.1). The exception analysis is part of the
 language: an uncaught, undeclared throw is a compile error at the function that leaks it.
 
+The ENTRY POINT declares nothing: a `throws` clause on `main` is refused (`LYR-SEM0021`, the
+signature rule) — which is what makes an exception escaping the program (`LYR-VM0010`) a
+hand-built-module affair rather than something source can produce.
+
 ## 9.3 `try` / `catch`
 
 `try { … } catch (e: E) { … }` — the first matching clause wins. Three binding forms exist:

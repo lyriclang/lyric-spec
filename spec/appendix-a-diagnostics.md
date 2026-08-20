@@ -236,7 +236,7 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0001 | E | No Start section: the module is a library, not a program. |
 | LYR-VM0002 | panic | Integer division or remainder by zero. Floating point follows IEEE and is not an error. |
 | LYR-VM0003 | panic | An `unreachable` instruction executed — the compiler claimed this point could not be reached. |
-| LYR-VM0004 | panic | Call depth exceeded; how unbounded recursion surfaces. |
+| LYR-VM0004 | panic | Call depth exceeded; how unbounded recursion surfaces. The limit is quality of implementation (the reference allows 1024 frames); the code and the panic are the contract. |
 | LYR-VM0005 | E | The module requires imports the runtime does not bind. |
 | LYR-VM0006 | panic | Array index outside the bounds — a runtime value, uncheckable at load time. |
 | LYR-VM0007 | panic | Force-unwrap `!` of an optional holding no value. |

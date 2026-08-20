@@ -1,0 +1,10 @@
+//! check
+//! since: 2.0.1
+//! error: LYR-SEM0021
+// §9.2: the entry point declares nothing — a throws clause on main is refused by the
+// signature rule, which is what keeps LYR-VM0010 unreachable from source.
+import std.core { Exception };
+
+fn main(): int throws Exception {
+    return 0;
+}

@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-VM0004
+// §9.4/Appendix A: unbounded recursion surfaces as the call-depth panic. The LIMIT is
+// quality of implementation; the code and the abort are the contract.
+fn down(n: int): int {
+    return down(n + 1);
+}
+
+fn main(): int {
+    return down(0);
+}
