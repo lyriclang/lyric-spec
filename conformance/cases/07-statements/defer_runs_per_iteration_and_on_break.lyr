@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | body-0
+//! | defer-0
+//! | defer-1
+//! | body-2
+//! | defer-2
+//! | defer-3
+//! | after
+//! since: 2.0.1
+// §7.5: defer belongs to the BLOCK — a loop body's defer runs at every iteration's end,
+// 'continue' and 'break' included, before anything after the loop. Before 2.0.1 the earlier
+// iterations' defers were lost and the break-path defer fired after 'after'.
+import std.io.console { println };
+
+fn main(): int {
+    for (i in 0..4) {
+        defer println(f"defer-{i}");
+        if (i == 1) { continue; }
+        if (i == 3) { break; }
+        println(f"body-{i}");
+    }
+    println("after");
+    return 0;
+}

@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | 3
+//! | 3
+//! since: 2.0.1
+// §7.2: 'a..=hi' where hi is the bound type's maximum iterates to AND INCLUDING hi and
+// terminates — the loop runs hi-a+1 times however the implementation desugars. The classic
+// trap ('..=hi' as '..hi+1', which wraps) ran ZERO times before 2.0.1.
+import std.io.console { println };
+
+fn main(): int {
+    var n = 0;
+    let hi = 9223372036854775807;
+    for (_ in hi - 2..=hi) {
+        n = n + 1;
+        if (n > 5) {
+            return 1;
+        }
+    }
+    println(f"{n}");
+
+    var m = 0;
+    let lo: uint8 = 253;
+    let top: uint8 = 255;
+    for (_ in lo..=top) {
+        m = m + 1;
+        if (m > 5) {
+            return 1;
+        }
+    }
+    println(f"{m}");
+    return 0;
+}

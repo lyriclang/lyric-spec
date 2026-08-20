@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 0
+//! | 1
+//! | 0
+//! | 2
+// §7.2: lo > hi is empty, 'a..a' is empty, 'a..=a' is one element; exclusive stops short of
+// the bound even at the type's maximum.
+import std.io.console { println };
+
+fn main(): int {
+    var a = 0;
+    for (_ in 5..1) { a = a + 1; }
+    println(f"{a}");
+
+    var b = 0;
+    for (_ in 1..=1) { b = b + 1; }
+    println(f"{b}");
+
+    var c = 0;
+    for (_ in 3..3) { c = c + 1; }
+    println(f"{c}");
+
+    var d = 0;
+    let hi = 9223372036854775807;
+    for (_ in hi - 2..hi) { d = d + 1; }
+    println(f"{d}");
+    return 0;
+}

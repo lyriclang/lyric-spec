@@ -1,0 +1,15 @@
+//! run
+//! panic: LYR-VM0011
+//! stdout:
+//! | before
+// §7.5: a panic ABORTS — it does not unwind, and no defer runs. The only line on stdout is
+// the one printed before the panic.
+import std.io.console { println };
+import std.core { panic };
+
+fn main(): int {
+    defer println("never");
+    println("before");
+    panic("dies");
+    return 0;
+}

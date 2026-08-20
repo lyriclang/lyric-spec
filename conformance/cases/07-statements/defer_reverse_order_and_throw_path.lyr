@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | defer-throw-path
+//! | caught
+//! | end
+//! | defer-main-2
+//! | defer-main-1
+// §7.5: defers run in reverse scheduling order, and the throw path is an exit path like any
+// other — the throwing function's defer fires before the catch sees the exception.
+import std.io.console { println };
+import std.core { Exception };
+
+fn risky(): int throws Exception {
+    defer println("defer-throw-path");
+    throw Exception { text = "boom" };
+}
+
+fn main(): int {
+    defer println("defer-main-1");
+    defer println("defer-main-2");
+    try {
+        let _ = risky();
+    } catch (_) {
+        println("caught");
+    }
+    println("end");
+    return 0;
+}

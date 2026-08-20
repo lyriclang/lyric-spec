@@ -1,0 +1,20 @@
+//! run
+//! panic: LYR-VM0011
+//! stdout:
+//! | 1
+//! | gen-defer
+// §7.5/§10: a coroutine's defer fires when the body's scope exits — here the second resume,
+// which drives the body past its last statement BEFORE the exhaustion panic surfaces.
+import std.io.console { println };
+
+fn gen(): Coroutine<int> {
+    defer println("gen-defer");
+    yield 1;
+}
+
+fn main(): int {
+    let co = gen();
+    println(f"{resume co}");
+    let _ = resume co;
+    return 0;
+}

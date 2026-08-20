@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 10 20 30 40
+// §7.6: arms are tried in declaration order and the first match wins — a 1 hits '0 | 1'
+// before '1..5'; a guard runs only when its pattern matched.
+import std.io.console { println };
+
+fn classify(n: int): int {
+    return match (n) {
+        0 | 1 => 10,
+        1..5 => 20,
+        x if x > 100 => 30,
+        _ => 40,
+    };
+}
+
+fn main(): int {
+    println(f"{classify(1)} {classify(3)} {classify(200)} {classify(50)}");
+    return 0;
+}

@@ -27,6 +27,12 @@ points), a value satisfying `Iterable<T>` (a fresh cursor per loop), or an `Iter
 directly. Iterator conformance reached through an interface chain counts. Anything else is
 `LYR-SEM0007`.
 
+Range shapes, exactly: a range with `lo > hi` is empty, `a..a` is empty, `a..=a` is one
+element — and `a..=hi` where `hi` is the bound type's MAXIMUM iterates to and including `hi`
+and terminates. That last sentence is the contract against the classic desugaring trap
+(`..=hi` as `..hi+1`, which wraps): an implementation may desugar however it likes, but the
+loop runs `hi - a + 1` times.
+
 ## 7.3 `return`, coverage, and lambdas
 
 A non-void function must return or throw on every path (`LYR-SEM0017`); the coverage analysis
@@ -86,8 +92,16 @@ narrowing gives is memory safety, not proof persistence.
 
 ## 7.5 `defer`
 
-`defer stmt;` schedules the statement for scope exit, in reverse declaration order, on every
-exit path including `throw`. `std.os.exit` runs no defers.
+`defer stmt;` schedules the statement for **the enclosing block's exit**, on every exit path —
+falling off the end, `return`, `throw`, `break`, `continue`. Scheduled statements run in
+reverse scheduling order, and each EXECUTION of a `defer` statement schedules one run: a
+`defer` in a loop body runs once per iteration, at that iteration's end. Two things run no
+defers: `std.os.exit`, and a **panic** — a panic aborts, it does not unwind.
+
+In a coroutine the same rule holds against the body's own control flow: a `defer` fires when
+the body leaves its scope, which for the outermost scope is the `resume` that drives the body
+past its last statement (before the exhaustion panic of a further `resume`). A coroutine
+abandoned mid-flight never runs its defers — suspension is not an exit.
 
 ## 7.6 `match`
 
@@ -96,6 +110,10 @@ bindings; enum variants with nested payload patterns (`Some(x)`, `Point { x }` �
 field pattern binds the field to its own name and is exempt from the unused-binding warning by
 decision); tuple patterns; **or-patterns** (`a | b`); and **range patterns**
 (`1..5`, `'a'..='z'`). An arm may carry a guard: `Pattern if expr => …`.
+
+Arms are tried in declaration order and the FIRST match wins — `0 | 1` before `1..5` sends a
+`1` to the first arm; an arm made unreachable by an earlier one is not an error. A guard runs
+only when its pattern matched, with the pattern's bindings in scope.
 
 Exhaustiveness is checked where the scrutinee is enumerable — enum variants, `bool`, and the
 two states of a `?T` — and a gap is an error naming what is missing (`LYR-SEM0050`). Open
