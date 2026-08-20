@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | -9223372036854775808
+//! | -8
+// §3.1: a leading '-' folds into the literal. The most negative value is writable directly —
+// the classic trap where the magnitude alone would exceed the type — and a small type takes
+// its negative literals the same way.
+import std.io.console { println };
+
+fn main(): int {
+    let min = -9223372036854775808;
+    println(f"{min}");
+    let i8: int8 = -8;
+    println(f"{i8}");
+    return 0;
+}

@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1
+//! | 2
+//! | -9223372036854775808
+//! | -4
+//! | 9223372036854775804
+//! | 6
+// §6.1: the shift count masks to the left operand's width (count & (width-1)) — 1 << 64 is
+// 1, a negative count masks the same way; '>>' is arithmetic on signed, logical on unsigned;
+// a small type masks by ITS width (uint8: 9 & 7 = 1).
+import std.io.console { println };
+
+fn main(): int {
+    let one = 1;
+    println(f"{one << 64}");
+    println(f"{one << 65}");
+    println(f"{one << -1}");
+    let neg = -8;
+    println(f"{neg >> 1}");
+    let u: uint = 0;
+    let big = u - 8;
+    println(f"{big >> 1}");
+    let small: uint8 = 3;
+    println(f"{small << 9}");
+    return 0;
+}

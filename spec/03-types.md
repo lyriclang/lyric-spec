@@ -27,11 +27,22 @@ literals without a suffix have them — and the width-named types exist for layo
 boundaries. Crossing between any two numeric types is `as` (§3.6).
 
 One deliberate accommodation: an **unsuffixed numeric literal adapts to its context type**
-when its value fits — in an annotated binding (`let n: int8 = 100;`), as an argument, and as
-the other operand of a binary expression (`x + 1` with `x: int8`). A value that does not fit
-is the ordinary assignment error (`let n: int8 = 200;`), a suffixed literal has exactly its
-suffix's type, and adaptation applies to LITERALS only, never to expressions or variables:
-`let a = 100; let b: int8 = a;` is an error.
+when its value fits. The contexts, exhaustively: an annotated binding's initializer, a call
+argument, a struct or variant field initializer, a `return` value, a parameter default, and
+the other operand of a binary expression (`x + 1` with `x: int8`; `??` counts). NOT contexts:
+the elements of a non-empty array literal, and the arms of a `match` or if-expression — arms
+and elements unify among themselves first (§6.9), and the result meets the annotation as an
+ordinary expression. A leading `-` folds into the literal, so `let n: int8 = -8;` and
+`-9223372036854775808` are literals, not unary expressions.
+
+"Fits" is exact. For an integer target the value is in range; for a FLOAT target — an integer
+literal adapts to `float`/`float32` too — the value must be exactly representable at the
+target width: `let g: float = 9007199254740993;` (2⁵³+1) is the ordinary assignment error,
+never a silent rounding. A value that does not fit is that same error (`let n: int8 = 200;`),
+and an unannotated context types the literal `int`, so a magnitude beyond `int`'s range is an
+error there — not a bit reinterpretation. A suffixed literal has exactly its suffix's type,
+and adaptation applies to LITERALS only, never to expressions or variables:
+`let a = 100; let b: int8 = a;` and `takes64(1 + 1)` are errors.
 
 ## 3.2 Integer arithmetic overflows by wrapping
 
@@ -41,8 +52,10 @@ operand width; overflow is not an error, not undefined, and not configurable. Th
 value of a signed type has no positive twin: negation and `absInt` return it unchanged.
 
 Division and remainder truncate toward zero, and the remainder follows the sign of the
-dividend. Division by zero is a panic. (`divFloor`/`modFloor` in the standard library provide
-the flooring pair; they are library functions, not operators.)
+dividend. Division by zero is a panic. The one overflowing division, `min / -1`, WRAPS to
+`min` like every other overflow (`min % -1` is 0) — it is not a second panic case.
+(`divFloor`/`modFloor` in the standard library provide the flooring pair; they are library
+functions, not operators.)
 
 *This is a decision, frozen here (2026-08-19): wrapping is deterministic and identical on every
 platform, which is the property this language values above overflow detection. A future checked
@@ -91,8 +104,11 @@ never appears in a diagnostic where `T` serves. An alias must not expand through
 `as` is the only conversion construct, and it is total over exactly these cases:
 
 1. **numeric ↔ numeric** — between any two of the numeric primitives (and `char`, which
-   converts as its code point). Narrowing keeps the low bits (wrapping, §3.2); int → float
-   rounds to nearest; float → int truncates toward zero.
+   converts as its code point; a value outside the scalar range panics `LYR-VM0012` AT the
+   cast). Narrowing between integers keeps the low bits (wrapping, §3.2); int → float rounds
+   to nearest; float → int truncates toward zero and SATURATES at the target's bounds — an
+   infinite or out-of-range value yields the nearest bound, and NaN yields 0. Never undefined,
+   never a panic.
 2. **opaque ↔ its underlying** — identity at runtime (§3.5).
 3. **declared conversions** — `v as T` where the type of `v` conforms to `Into<T>`
    (`std.core`): the cast IS the call `v.into()`, resolved like any method (chapter 6's

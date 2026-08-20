@@ -17,6 +17,12 @@ operations. Precedence is the grammar's table and differs from C where C was wro
 TIGHTER than `==`, and the three bitwise levels (`&`, then `^`, then `|`) sit between the
 ranges and the comparisons. The ranges `..`/`..=` are non-associative.
 
+**Shift semantics, exactly:** the count is masked to the LEFT operand's width — `count &
+(width−1)`, so `1 << 64` is `1`, `x << 65` is `x << 1`, and a negative count masks the same
+way (`1 << -1` on an `int` is `1 << 63`). `>>` on a signed type is arithmetic
+(sign-extending), on an unsigned type logical (zero-filling). A shift never panics; masking
+is deterministic on every platform, which is the property §3.2 values, and frozen here.
+
 `++` and `--` exist prefix and postfix, on integer variables, as EXPRESSIONS with the classic
 values: `i++` yields the old value, `++i` the new one.
 

@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 0
+//! | 9223372036854775807
+//! | -9223372036854775808
+//! | 9223372036854775807
+// §3.6: float -> int truncates toward zero and SATURATES at the target's bounds; NaN yields
+// 0. Never undefined, never a panic.
+import std.io.console { println };
+
+fn main(): int {
+    let nan = 0.0 / 0.0;
+    let inf = 1.0 / 0.0;
+    let big = 1.0e300;
+    println(f"{nan as int}");
+    println(f"{inf as int}");
+    println(f"{(0.0 - inf) as int}");
+    println(f"{big as int}");
+    return 0;
+}

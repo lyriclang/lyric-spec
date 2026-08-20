@@ -1,0 +1,9 @@
+//! check
+//! since: 2.0.1
+//! error: LYR-SEM0001
+// §3.1: "fits" is exact — an integer literal adapts to a float type only when the value is
+// exactly representable at the target width. 2^53+1 is not; silent rounding is not an option.
+fn main(): int {
+    let g: float = 9007199254740993;
+    return 0;
+}

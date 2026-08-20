@@ -1,0 +1,10 @@
+//! check
+//! since: 2.0.1
+//! error: LYR-SEM0001
+// §3.1: an unannotated context types the literal 'int'. A magnitude beyond int's range in
+// that position is an error — never the bit reinterpretation that would read as
+// -9223372036854775808. (The SAME literal against a uint slot adapts and is legal.)
+fn main(): int {
+    let x = 9223372036854775808;
+    return 0;
+}

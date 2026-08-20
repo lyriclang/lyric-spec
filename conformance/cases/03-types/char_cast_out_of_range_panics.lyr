@@ -1,0 +1,9 @@
+//! run
+//! panic: LYR-VM0012
+// §3.6: 'as char' checks the scalar range AT the cast — beyond 0x10FFFF (or a surrogate)
+// panics where the value is produced, not where it is later used.
+fn main(): int {
+    let n = 0x110000;
+    let c = n as char;
+    return 0;
+}

@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | -9223372036854775808
+//! | 0
+// §3.2: the one overflowing division wraps like every other overflow — min / -1 is min,
+// min % -1 is 0. Not a second panic case beside division by zero.
+import std.io.console { println };
+
+fn main(): int {
+    let min = -9223372036854775808;
+    let neg = -1;
+    println(f"{min / neg}");
+    println(f"{min % neg}");
+    return 0;
+}
