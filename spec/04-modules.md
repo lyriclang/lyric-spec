@@ -35,10 +35,11 @@ and an initializer reading a later global is an error. There is no module-level 
 
 ## 4.4 The standard library's special edges
 
-Exactly three functions are bound by the compiler without an import: `panic` and
-`coroutineEnded` from `std.core`, and the f-string/operator helpers of `std.string`
-(`concat` behind `+` on strings, `repeat` behind `*`, the `fromXxx` converters behind
-interpolation). Everything else in the standard library is ordinary Lyric reached through
+A small set of functions is bound by the compiler without an import: `panic` and
+`coroutineEnded` from `std.core`; the f-string/operator helpers of `std.string` (`concat`
+behind `+` on strings, `repeat` behind `*`, the `fromXxx` converters behind interpolation);
+and the char-array native of `std.string` behind `for (c in s)` (the private `rawToChars`
+since 2.0). Everything else in the standard library is ordinary Lyric reached through
 ordinary imports. `std.core` imports nothing — it is the library's root.
 
 ## 4.5 Capabilities

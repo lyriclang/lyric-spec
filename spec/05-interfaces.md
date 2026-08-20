@@ -66,5 +66,5 @@ are unrestricted. `extend T :: [I] { … }` additionally declares conformance an
 (`LYR-SEM0041`). The rule looks at the interface, not its type arguments.
 
 Extension methods are visible where the declaring module is imported (§4.2). A static extension
-method belongs to the type; calling it through an instance warns as deprecated
-(`LYR-SEM0074`) and becomes an error at 2.0.
+method belongs to the type; calling it through an instance is an error since 2.0
+(`LYR-SEM0074` — a warning through 1.x, the one severity change of the major, §12.1).

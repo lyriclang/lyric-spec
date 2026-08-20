@@ -5,13 +5,15 @@ specified by its own documentation and test suite (`stdlib-tests/` in the toolch
 repository), not duplicated here. What THIS document fixes is the boundary a second
 implementation must honor:
 
-1. **The compiler-bound edges** (§4.4): `std.core.panic`, `std.core.coroutineEnded`, and the
-   `std.string` helpers behind `+`, `*` and interpolation. An implementation must provide
-   these under these names — they are reachable from programs that import nothing.
+1. **The compiler-bound edges** (§4.4): `std.core.panic`, `std.core.coroutineEnded`, the
+   `std.string` helpers behind `+`, `*` and interpolation, and the char-array native behind
+   `for (c in s)`. An implementation must provide these under these names — they are reachable
+   from programs that import nothing.
 2. **The operator and constraint anchors of `std.core`**: `Display`, `Equatable<T>`,
-   `Hashable<T>`, `Ordered<T>`, `Add/Sub/Mul/Div<T>`, `Into<T>`, the attribute markers
-   (`OnModule`, `OnType`, `OnFunction`) and `@Deprecated`. Chapter 6's operator rule and the
-   collection constraints name them; without them the language loses syntax.
+   `Hashable<T>` (whose parent is `Equatable<T>` since 2.0 — a key constraint is
+   `K :: [Hashable<K>]` alone), `Ordered<T>`, `Add/Sub/Mul/Div<T>`, `Into<T>`, the attribute
+   markers (`OnModule`, `OnType`, `OnFunction`) and `@Deprecated`. Chapter 6's operator rule
+   and the collection constraints name them; without them the language loses syntax.
 3. **The capability gates** (§4.5) and the native import names the bytecode of a compiled
    standard library carries: binding is symbolic by name (`std.io.file.readBytes`, …), and the
    set a runtime must implement is exactly the set the shipped `stdlib/` declares as bodiless
