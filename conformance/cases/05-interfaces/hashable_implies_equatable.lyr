@@ -1,0 +1,27 @@
+//! run
+//! exit: 1
+//! since: 2.0.0
+// §11: 'Hashable<T> :: [Equatable<T>]' since 2.0. Conforming to the child means implementing
+// the whole chain, and a '[Hashable<T>]' constraint alone provides 'equals' — the chain
+// carries it (§5.2).
+import std.core { Hashable };
+
+struct Tag :: [Hashable<Tag>] {
+    id: int,
+
+    fn hash(): int {
+        return this.id;
+    }
+
+    fn equals(other: Tag): bool {
+        return this.id == other.id;
+    }
+}
+
+fn same<T :: [Hashable<T>]>(a: T, b: T): bool {
+    return a.equals(b);
+}
+
+fn main(): int {
+    return if (same(Tag { id = 4 }, Tag { id = 4 })) 1 else 0;
+}

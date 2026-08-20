@@ -1,0 +1,11 @@
+//! check
+//! since: 2.0.0
+//! error: LYR-RES0004
+// §11: the deprecated free string forms went with 2.0 — the import no longer finds the name,
+// and the method API (s.trim(), §5.5 extensions) is the one form. The native NAMES stay bound
+// by every conforming runtime for bytecode compiled against 1.x.
+import std.string { trim };
+
+fn main(): int {
+    return trim("  x  ").length();
+}

@@ -9,7 +9,7 @@ import tempfile
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None,
-            "errors": [], "warnings": []}
+            "errors": [], "warnings": [], "since": None}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = []
     for line in lines:
@@ -32,6 +32,8 @@ def parse_header(path):
             spec["errors"].append(body[6:].strip())
         elif body.startswith("warning:"):
             spec["warnings"].append(body[8:].strip())
+        elif body.startswith("since:"):
+            spec["since"] = tuple(int(p) for p in body[6:].strip().split("."))
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -93,7 +95,12 @@ def main():
     ap.add_argument("--stdlib", type=pathlib.Path, default=None)
     ap.add_argument("--cases", type=pathlib.Path,
                     default=pathlib.Path(__file__).parent.parent / "conformance" / "cases")
+    ap.add_argument("--toolchain-version", default=None,
+                    help="the toolchain's version; cases with a newer 'since:' are skipped. "
+                         "Omitted means: run everything (a working tree is the newest state).")
     args = ap.parse_args()
+    version = (tuple(int(p) for p in args.toolchain_version.split("."))
+               if args.toolchain_version else None)
 
     exe = ".exe" if sys.platform == "win32" else ""
     lyrc = args.lyrc or (args.toolchain and args.toolchain / f"lyrc{exe}")
@@ -108,18 +115,25 @@ def main():
         return 2
 
     failed = 0
+    skipped = 0
     with tempfile.TemporaryDirectory() as tmp:
         for case in cases:
             spec = parse_header(case)
-            ok, reason = run_case(case, spec, lyrc, lyrvm, args.stdlib, pathlib.Path(tmp))
             label = case.relative_to(args.cases)
+            if spec["since"] and version and spec["since"] > version:
+                skipped += 1
+                print(f"SKIP {label} (since {'.'.join(map(str, spec['since']))})")
+                continue
+            ok, reason = run_case(case, spec, lyrc, lyrvm, args.stdlib, pathlib.Path(tmp))
             if ok:
                 print(f"PASS {label}")
             else:
                 failed += 1
                 print(f"FAIL {label}: {reason}")
 
-    print(f"\n{len(cases) - failed}/{len(cases)} passed")
+    ran = len(cases) - skipped
+    tail = f", {skipped} skipped" if skipped else ""
+    print(f"\n{ran - failed}/{ran} passed{tail}")
     return 1 if failed else 0
 
 if __name__ == "__main__":

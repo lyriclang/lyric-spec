@@ -18,6 +18,8 @@ The header is the leading block of lines starting `//!`. Directives:
 //! check                    compile only; expect acceptance in silence
 //! error: LYR-SEM0001       compile only; expect rejection with this code (repeatable)
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
+//! since: 2.0.0             the case pins behavior of this language version and later; a
+//!                          runner given an older --toolchain-version skips it
 ```
 
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1);
@@ -25,13 +27,17 @@ Exactly one of `run` / `check` leads the header. `error:` implies rejection (com
 
 ## What a case may use
 
-Cases test the LANGUAGE. They may rely on two library edges and nothing else of the standard
-library, both fixed by spec §4.4 and §6:
+Cases test the LANGUAGE. They may rely on two library edges and the §11 anchors, nothing else
+of the standard library:
 
 - `import std.io.console { println };` — the suite's one output channel;
-- f-strings and the operators, whose helpers the compiler binds itself.
+- f-strings and the operators, whose helpers the compiler binds itself;
+- the `std.core` names the stdlib contract fixes (§11): `Exception`, the operator and
+  constraint interfaces, `@Deprecated` and the attribute markers — including pinning the
+  ABSENCE of surface the contract removed.
 
-A case that needs more library than that belongs to the library's own tests, not here.
+A case that needs more library than that — container behavior, string methods — belongs to
+the library's own tests, not here.
 
 ## Running
 

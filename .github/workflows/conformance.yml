@@ -28,4 +28,5 @@ jobs:
         run: |
           python3 tools/run_conformance.py \
             --toolchain toolchain \
-            --stdlib toolchain/stdlib
+            --stdlib toolchain/stdlib \
+            --toolchain-version "$TOOLCHAIN_VERSION"

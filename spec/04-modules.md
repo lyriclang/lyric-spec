@@ -65,10 +65,11 @@ A program is pruned from its entry point: what `main` does not reach — directl
 vtable rows and attribute-bearing declarations — is not in the compiled module. The canonical
 `@Deprecated` attribute roots nothing.
 
-**From 2.0** (decided 2026-08-19): a module compiled WITHOUT an entry point — a library — takes
-its `pub` declarations as reachability roots, so a library's surface decides its contents. It
-waits for 2.0 because it is observable: an embedding host calling an unexported function would
-find it missing.
+**Since 2.0** (decided 2026-08-19): a module compiled WITHOUT an entry point — a library —
+takes the `pub` functions of its compiled modules as reachability roots, so a library's
+surface decides its contents. The standard library's own `pub` declarations do not root — they
+are content like everything else. It waited for 2.0 because it is observable: an embedding
+host calling a function the surface does not reach finds it missing.
 
 ## 4.7 Attributes
 

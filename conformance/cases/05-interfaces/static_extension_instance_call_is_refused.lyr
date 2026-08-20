@@ -1,0 +1,20 @@
+//! check
+//! since: 2.0.0
+//! error: LYR-SEM0074
+// §5.5: a static extension method belongs to the type. The instance form warned through 1.x
+// with a message announcing this error; since 2.0 it is one — the single 1.x->2.0 severity
+// change (§12.1).
+struct Point {
+    x: int,
+}
+
+extend Point {
+    static fn make(): int {
+        return 7;
+    }
+}
+
+fn main(): int {
+    let p = Point { x = 1 };
+    return p.make();
+}
