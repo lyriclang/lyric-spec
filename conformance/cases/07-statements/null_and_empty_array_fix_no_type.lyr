@@ -1,0 +1,11 @@
+//! check
+//! since: 2.0.1
+//! error: LYR-SEM0010
+//! error: LYR-SEM0010
+// §7.1: 'null' and '[]' carry no type of their own — a binding initialized with only them
+// needs an annotation. Before 2.0.1 both CRASHED the compiler instead of diagnosing.
+fn main(): int {
+    let x = null;
+    let xs = [];
+    return 0;
+}

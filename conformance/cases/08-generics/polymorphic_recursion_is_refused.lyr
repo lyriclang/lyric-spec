@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0001
+// §8.1: every instantiation chain must be finite — a function reaching itself at a LARGER
+// type cannot be monomorphized and is refused at the call.
+struct Box<T> {
+    v: T,
+}
+
+fn deeper<T>(x: T, n: int): int {
+    if (n == 0) { return 0; }
+    return deeper(Box { v = x }, n - 1);
+}
+
+fn main(): int {
+    return deeper(1, 3);
+}

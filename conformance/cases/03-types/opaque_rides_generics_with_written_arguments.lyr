@@ -1,0 +1,15 @@
+//! run
+//! exit: 5
+// §3.5/§8: an opaque alias is an ordinary type argument — 'Box<Meters>' holds the wall
+// (the field is Meters, not int) and the explicit 'as' is still the one crossing.
+opaque type Meters = int;
+
+struct Box<T> {
+    v: T,
+}
+
+fn main(): int {
+    let m = 5 as Meters;
+    let b = Box<Meters> { v = m };
+    return b.v as int;
+}

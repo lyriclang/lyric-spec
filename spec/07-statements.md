@@ -7,7 +7,9 @@ annotation stands. Immutability is per binding: a `let` of a class value still p
 method calls through it — the REFERENCE is immutable, the object is the object's business.
 Deferred initialization is a `var` affair: `var n: int;` may be assigned later (definite
 assignment guards the reads, §7.7), while ANY assignment to a `let` — first or otherwise — is
-`LYR-SEM0019`. A binding with neither a type nor an initializer is `LYR-SEM0010`.
+`LYR-SEM0019`. A binding with neither a type nor an initializer is `LYR-SEM0010` — and so is
+one whose initializer fixes no type: `null` and `[]` carry none of their own, so
+`let x = null;` and `let xs = [];` need an annotation (`let x: ?int = null;`).
 Destructuring `let (a, b) = pair;` binds tuple elements — names, `_`, and nested tuple
 patterns; no form that can fail, and an initializer is required. `_` names a deliberately
 unused binding and silences the unused warning.

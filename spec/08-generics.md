@@ -15,7 +15,10 @@ Consequences the language commits to:
   function is not a function value (`fn` values are monomorphic), and attributes sit on
   generic declarations only in the one row-less case (`@Deprecated`);
 - instantiation is demand-driven from the roots; unreachable instantiations do not exist in
-  the module.
+  the module;
+- every instantiation chain must be FINITE: polymorphic recursion — a function reaching itself
+  at a larger type, `deeper(Box { v = x })` inside `deeper<T>(x: T)` — is refused at the call,
+  because monomorphizing it would not terminate.
 
 ## 8.2 Constraints
 
@@ -27,7 +30,10 @@ resolves constraints against the FULL argument mapping, so `<K, V :: [Map<K, V>]
 
 Type arguments are inferred from value arguments in two phases — eagerly typed arguments bind
 first, lambda returns bind what remains — and can always be written explicitly
-(`total<int>(…)`).
+(`total<int>(…)`). A generic CONSTRUCTION infers differently, by decision: its type arguments
+come from written arguments (`Box<Meters> { v = m }`) or from the expected type of the
+position, never from the field values — a contextless `Box { v = 5 }` is `LYR-SEM0026`, not
+an inference.
 
 ## 8.3 Generic statics and instances
 

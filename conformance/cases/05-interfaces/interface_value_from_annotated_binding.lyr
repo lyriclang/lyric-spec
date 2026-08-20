@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | P1
+// §5.3: a concrete value meets an interface-typed slot and lifts implicitly — the annotated
+// binding is such a slot, and the call through the value dispatches to the conformance.
+import std.core { Display };
+import std.io.console { println };
+
+struct P :: [Display] {
+    x: int,
+
+    fn show(): string {
+        return f"P{this.x}";
+    }
+}
+
+fn main(): int {
+    let d: Display = P { x = 1 };
+    println(d.show());
+    return 0;
+}

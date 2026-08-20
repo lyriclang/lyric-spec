@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0026
+// §8.2: a generic construction takes its type arguments from written arguments or the
+// expected type — never from field values. Contextless 'Box { v = 5 }' is refused.
+struct Box<T> {
+    v: T,
+}
+
+fn main(): int {
+    let b = Box { v = 5 };
+    return 0;
+}
