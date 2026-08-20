@@ -1,0 +1,25 @@
+//! check
+//! since: 2.1.0
+//! warning: LYR-SEM0076
+// §4.7: '@Deprecated' — and only it — sits on a member since 2.1. The use warns at the use
+// site; the member itself is exempt, like every deprecated declaration.
+import std.core { Deprecated };
+
+class Counter {
+    n: int,
+
+    @Deprecated { message = "use tick()" }
+    pub mut fn bump(): void {
+        this.n = this.n + 1;
+    }
+
+    pub mut fn tick(): void {
+        this.n = this.n + 1;
+    }
+}
+
+fn main(): int {
+    var c = Counter { n = 0 };
+    c.bump();
+    return c.n - 1;
+}

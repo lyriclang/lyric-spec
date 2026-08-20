@@ -1,0 +1,21 @@
+//! check
+//! since: 2.1.0
+//! error: LYR-SEM0065
+// §4.7: the module format has no member rows — an attribute that would need one has no slot,
+// so a member admits only the row-less '@Deprecated'.
+import std.core { OnFunction };
+
+struct Marker :: [OnFunction] { }
+
+struct P {
+    x: int,
+
+    @Marker { }
+    pub fn f(): int {
+        return 1;
+    }
+}
+
+fn main(): int {
+    return 0;
+}

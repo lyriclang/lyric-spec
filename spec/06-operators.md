@@ -98,3 +98,7 @@ with a struct initializer: in statement position `Name { … }` is a name follow
 `null` widening the result to the optional. Disagreeing arms are one error (`LYR-SEM0016`).
 Block lambdas infer their return type from their `return` statements under the same
 unification (chapter 7).
+
+Since 2.1 a CONTEXT changes the question: standing in an adaptation context (§3.1), the arms
+check against the context type — an unsuffixed literal arm adapts to it — and the expression
+has that type. Unification among the arms is the contextless rule.

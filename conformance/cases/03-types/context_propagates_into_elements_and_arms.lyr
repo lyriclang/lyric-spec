@@ -1,0 +1,22 @@
+//! run
+//! exit: 0
+//! since: 2.1.0
+// §3.1: the adaptation context propagates structurally since 2.1 — into array-literal
+// elements and into the arms of a match or if-expression standing in a context position.
+// Each position below holds unsuffixed literals meeting an int64 (or int64[]) slot; before
+// 2.1 every one was "cannot assign 'int' to 'int64'".
+fn takes(xs: int64[]): int64 {
+    return xs[0];
+}
+
+fn main(): int {
+    let xs: int64[] = [1, 2, 3];
+    let c = 1 < 2;
+    let i: int64 = if (c) 4 else 5;
+    let m: int64 = match (2) {
+        1 => 6,
+        _ => 7,
+    };
+    let total = xs[2] + i + m + takes([9, 10]);
+    return if (total == 23) 0 else 1;
+}

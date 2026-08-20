@@ -76,7 +76,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-PAR0038 | E | An attribute on a parameter — only a function, a struct, a class, an enum or the module header carries one. |
 | LYR-PAR0040 | E | `static let` outside a struct or class body. |
 | LYR-PAR0041 | E | A `static` interface member — interface members dispatch on a receiver. |
-| LYR-PAR0042 | E | An attribute not followed by a declaration it may apply to, or sitting on a declaration kind that carries none. |
+| LYR-PAR0042 | E | An attribute not followed by a declaration it may apply to, or sitting on a declaration kind that carries none (since 2.1 members carry one; interface members still do not). |
 
 ## A.3 RES — module and name resolution
 
@@ -158,7 +158,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0062 | E | `?.` calling a function-typed field — a call through `?.` works on methods; read the value first. |
 | LYR-SEM0063 | E | A static member on a generic type without its type arguments written. |
 | LYR-SEM0064 | E | A type alias that expands to itself. |
-| LYR-SEM0065 | E | Not an attribute: the type does not declare the marker for the target kind, is generic, or the name is no struct at all (§4.7). |
+| LYR-SEM0065 | E | Not an attribute here: the type does not declare the marker for the target kind, is generic, is no struct at all — or sits on a MEMBER while not being `@Deprecated`, the one member attribute (§4.7). |
 | LYR-SEM0066 | E | An attribute argument that is not a literal. |
 | LYR-SEM0067 | E | An attribute on a generic declaration — one metadata row cannot stand for every instance. |
 | LYR-SEM0068 | E | The same attribute twice on a declaration, or the same field set twice. |

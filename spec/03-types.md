@@ -29,11 +29,13 @@ boundaries. Crossing between any two numeric types is `as` (§3.6).
 One deliberate accommodation: an **unsuffixed numeric literal adapts to its context type**
 when its value fits. The contexts, exhaustively: an annotated binding's initializer, a call
 argument, a struct or variant field initializer, a `return` value, a parameter default, and
-the other operand of a binary expression (`x + 1` with `x: int8`; `??` counts). NOT contexts:
-the elements of a non-empty array literal, and the arms of a `match` or if-expression — arms
-and elements unify among themselves first (§6.9), and the result meets the annotation as an
-ordinary expression. A leading `-` folds into the literal, so `let n: int8 = -8;` and
-`-9223372036854775808` are literals, not unary expressions.
+the other operand of a binary expression (`x + 1` with `x: int8`; `??` counts). **Since 2.1
+the context PROPAGATES structurally**: into the elements of an array literal
+(`let xs: int64[] = [1, 2, 3];`) and into the arms of a `match` or if-expression standing in
+a context position (`let m: int64 = if (c) 1 else 2;`) — with a context the arms and elements
+check against it; without one they unify among themselves as before (§6.9). A leading `-`
+folds into the literal, so `let n: int8 = -8;` and `-9223372036854775808` are literals, not
+unary expressions.
 
 "Fits" is exact. For an integer target the value is in range; for a FLOAT target — an integer
 literal adapts to `float`/`float32` too — the value must be exactly representable at the

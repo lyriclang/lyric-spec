@@ -90,5 +90,10 @@ it follows from that:
   declaration — one row cannot stand for every instance (`LYR-SEM0065`, `LYR-SEM0067`). The
   single row-less exception is the canonical `@Deprecated`, which emits no row and only
   drives diagnostics (`LYR-SEM0076`), and may therefore sit on generics.
+- **Since 2.1** the same row-less exception extends to MEMBERS: `@Deprecated` — and only it —
+  may sit on a method, a field or a `static let` of a struct, class or enum, and on an extend
+  method; every other attribute there is `LYR-SEM0065`, because the module format has no
+  member rows. Interface members carry no attributes at all (`LYR-PAR0042`): deprecating an
+  abstract member would raise conformance questions nobody has answered.
 - An attribute-bearing declaration is a reachability root (§4.6): the row is how an embedding
   host discovers it (§11). `@Deprecated`, having no row, roots nothing.

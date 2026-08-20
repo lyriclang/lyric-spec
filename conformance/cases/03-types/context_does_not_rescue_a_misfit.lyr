@@ -1,0 +1,9 @@
+//! check
+//! since: 2.1.0
+//! error: LYR-SEM0001
+// §3.1: propagation carries the CONTEXT, not forgiveness — an element that does not fit the
+// target is still the ordinary assignment error, and expressions still never adapt.
+fn main(): int {
+    let xs: int8[] = [1, 200, 3];
+    return 0;
+}
