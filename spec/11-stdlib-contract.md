@@ -17,7 +17,8 @@ implementation must honor:
 3. **The capability gates** (§4.5) and the native import names the bytecode of a compiled
    standard library carries: binding is symbolic by name (`std.io.file.readBytes`, …), and the
    set a runtime must implement is exactly the set the shipped `stdlib/` declares as bodiless
-   functions.
+   functions — with ONE exception: `std.build`'s natives are bound by the build runner, its
+   host, the same way an embedding host registers an SDK surface.
 4. **The builtin `Throwable`** (§9.1), which is not part of the library at all.
 
 Everything else — which methods `List` has, what `iso()` renders — is library surface: it
