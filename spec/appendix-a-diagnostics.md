@@ -159,7 +159,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0063 | E | A static member on a generic type without its type arguments written. |
 | LYR-SEM0064 | E | A type alias that expands to itself. |
 | LYR-SEM0065 | E | Not an attribute here: the type does not declare the marker for the target kind, is generic, is no struct at all — or sits on a MEMBER while not being `@Deprecated`, the one member attribute (§4.7). |
-| LYR-SEM0066 | E | An attribute argument that is not a literal. |
+| LYR-SEM0066 | E | An attribute argument that is not a value at compile time — not a literal, and not a name denoting a `let` bound to one (§4.7). |
 | LYR-SEM0067 | E | An attribute on a generic declaration — one metadata row cannot stand for every instance. |
 | LYR-SEM0068 | E | The same attribute twice on a declaration, or the same field set twice. |
 | LYR-SEM0069 | E | An attribute leaving a field without a compile-time value. |
@@ -226,6 +226,7 @@ error.
 | Code | S | Cause |
 |---|---|---|
 | LYR-CAP0001 | E | The module requires a capability this host does not grant. Its own area rather than a VM error: it describes host policy, not a broken file — the same module runs elsewhere (§4.5). |
+| LYR-CAP0002 | panic | *(since 2.4)* The execution ran out of the instruction budget the host granted it. Host policy for the same reason as `LYR-CAP0001`: the program broke no contract of its own and finishes elsewhere. A panic all the same — a stop the program could catch, or run a `defer` behind, would be one it could sit out. An implementation without the embedding API never emits it. |
 
 ## A.9 VM — runtime
 

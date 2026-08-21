@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0066
+//! since: 2.4.0
+// §4.7: a name is RESOLVED, not computed. The value has to stand in the source — this language
+// folds nothing anywhere, so an initializer that needs arithmetic is no compile-time value.
+import std.core { OnFunction };
+
+pub struct System :: [OnFunction] { order: int }
+
+let ORDER = 5 + 5;
+
+@System { order = ORDER }
+pub fn tick(): void { }
+
+fn main(): int {
+    return 0;
+}
