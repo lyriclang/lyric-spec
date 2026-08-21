@@ -88,9 +88,12 @@ a class, an enum, or the module header (`LYR-PAR0038`, `LYR-PAR0042`).
 An applied attribute becomes **one metadata row** in the compiled module, and everything about
 it follows from that:
 
-- Arguments are literals only — a number, a string, a char or a bool; every field of the
-  attribute struct must end with a value, written at the site or as a literal default
-  (`LYR-SEM0066`, `LYR-SEM0069`).
+- Arguments are values at compile time — a number, a string, a char or a bool, and **since
+  2.4** a name bound to one: an identifier or a module-qualified path denoting a `let` (module
+  level or `static`, in any module) whose initializer is itself such a value, transitively.
+  Nothing is COMPUTED on the way — `let n = 1 + 2;` is not one, because the language folds
+  nothing anywhere — and every field of the attribute struct must end with a value, written at
+  the site or as a default of the same kind (`LYR-SEM0066`, `LYR-SEM0069`).
 - The same attribute may sit on a declaration once, and set each field once (`LYR-SEM0068`).
 - A generic type cannot be an attribute, and an attribute cannot sit on a generic
   declaration — one row cannot stand for every instance (`LYR-SEM0065`, `LYR-SEM0067`). The

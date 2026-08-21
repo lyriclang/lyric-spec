@@ -1,0 +1,33 @@
+//! run
+//! since: 2.4.0
+//! stdout:
+//! | tetris.cleared
+//! | 10
+//! | 3
+// §4.7: an attribute argument is a value at compile time — a literal, or a name bound to one.
+// The row it produces is not readable from inside the program, so the case proves the shapes
+// COMPILE and that the names mean what they say where a program can see them.
+import std.io.console { println };
+import std.core { OnFunction };
+
+pub struct On :: [OnFunction] { event: string, priority: int }
+
+pub struct Retry :: [OnFunction] { limit: int = DEFAULT_LIMIT }
+
+let CLEARED = "tetris.cleared";
+let BASE = 10;
+let LATE = BASE;
+let DEFAULT_LIMIT = 3;
+
+@On { event = CLEARED, priority = LATE }
+pub fn onCleared(): void { }
+
+@Retry
+pub fn fetch(): void { }
+
+fn main(): int {
+    println(CLEARED);
+    println(f"{LATE}");
+    println(f"{DEFAULT_LIMIT}");
+    return 0;
+}
