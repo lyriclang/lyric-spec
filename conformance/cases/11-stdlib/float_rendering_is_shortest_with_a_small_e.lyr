@@ -1,0 +1,35 @@
+//! run
+//! since: 2.3.1
+//! stdout:
+//! | 1
+//! | 1.5
+//! | -0
+//! | 0.30000000000000004
+//! | 0.0001
+//! | 1e-05
+//! | 10000000000000000
+//! | 1e+17
+//! | 1e+21
+//! | Infinity
+//! | -Infinity
+//! | NaN
+// §11: interpolation makes 'fromFloat' observable, so its shape is contract. Shortest
+// round-trip, plain decimal while the decimal exponent lies in -4 .. 16 and scientific
+// outside it, with a lowercase marker, a sign and two exponent digits.
+import std.io.console { println };
+
+fn main(): int {
+    println(f"{1.0}");
+    println(f"{1.5}");
+    println(f"{-0.0}");
+    println(f"{0.1 + 0.2}");
+    println(f"{0.0001}");
+    println(f"{0.00001}");
+    println(f"{1.0e16}");
+    println(f"{1.0e17}");
+    println(f"{1.0e21}");
+    println(f"{1.0 / 0.0}");
+    println(f"{-1.0 / 0.0}");
+    println(f"{0.0 / 0.0}");
+    return 0;
+}

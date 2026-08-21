@@ -10,6 +10,15 @@ implementation must honor:
    signature it is declared with), the `std.string` helpers behind `+`, `*` and interpolation,
    and the char-array native behind `for (c in s)`. An implementation must provide these under
    these names — they are reachable from programs that import nothing.
+
+   Interpolation makes the CONVERSION helpers observable: what `fromFloat` writes is program
+   output, so its shape is fixed here rather than left to a library's habits. The result is the
+   shortest decimal string that reads back as the same value — plain decimal while the value's
+   decimal exponent lies in `-4 .. 16`, scientific outside it, written with a LOWERCASE marker,
+   a sign and at least two exponent digits (`1e+21`, `1e-05`). `Infinity`, `-Infinity` and `NaN`
+   name the non-finite values, negative zero renders `-0`, and an integral value carries no
+   fractional part (`1.0` renders `1`). `fromInt` is plain decimal, `fromBool` is `true` or
+   `false`, and none of them has a locale.
 2. **The operator and constraint anchors of `std.core`**: `Display`, `Equatable<T>`,
    `Hashable<T>` (whose parent is `Equatable<T>` since 2.0 — a key constraint is
    `K :: [Hashable<K>]` alone), `Ordered<T>`, `Add/Sub/Mul/Div<T>`, `Into<T>`, the attribute
