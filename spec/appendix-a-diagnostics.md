@@ -243,7 +243,7 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0007 | panic | Force-unwrap `!` of an optional holding no value. |
 | LYR-VM0008 | panic | `enumas` to a variant the value is not. The compiler proves this through `match`; the check remains because a `.lyrbc` may come from elsewhere. |
 | LYR-VM0009 | panic | No vtable entry for (concrete type, interface, slot). Reachable only for a module assembled without the loader's checks. |
-| LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable only for a hand-built module — sema requires handling. |
+| LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable from source through the coroutine gap of §10 — a pull whose origin the checker cannot follow demands no handling — and otherwise only for a hand-built module. |
 | LYR-VM0011 | panic | `panic(msg)` from the program. Not catchable; the message is the caller's. |
 | LYR-VM0012 | panic | A `char` result outside the Unicode range or in the surrogate range — checked where the value is produced. |
 
