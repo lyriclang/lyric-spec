@@ -1,0 +1,54 @@
+//! run
+//! since: 2.3.1
+//! stdout:
+//! | 14
+//! | 15
+//! | 20
+// §3.5: a value of interface type reaches the members of its whole chain — including a DEFAULT
+// declared on the parent, whose own receiver is the parent's interface type. The three routes
+// that reach it: a child-typed value, a constraint naming the child, and an element position
+// that lifts a concrete value into the child's interface.
+import std.io.console { println };
+
+interface Score {
+    fn points(): int;
+
+    fn doubled(): int {
+        return this.points() * 2;
+    }
+}
+
+interface Ranked :: [Score] {
+    fn rank(): int;
+}
+
+struct Player :: [Ranked] {
+    base: int,
+
+    fn points(): int {
+        return this.base;
+    }
+
+    fn rank(): int {
+        return 1;
+    }
+}
+
+fn scored<T :: [Ranked]>(x: T): int {
+    return x.doubled() + x.rank();
+}
+
+fn main(): int {
+    let r: Ranked = Player { base = 7 };
+    println(f"{r.doubled()}");
+
+    println(f"{scored(Player { base = 7 })}");
+
+    let xs: Ranked[] = [Player { base = 3 }, Player { base = 7 }];
+    var sum = 0;
+    for (x in xs) {
+        sum = sum + x.doubled();
+    }
+    println(f"{sum}");
+    return 0;
+}
