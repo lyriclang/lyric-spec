@@ -25,9 +25,31 @@ Rules:
 - there is deliberately NO query that answers "done" without pulling: whether another value
   comes is decided by the body running, so such a query cannot be answered without advancing —
   the reason no generator API (Python, JavaScript, C#) has one;
+- **a coroutine body may `throw`**, and the exception leaves the `resume` or `next()` that was
+  running it, in the frame that drove the pull — an enclosing `try` there catches it like any
+  other. `next()` is lenient about EXHAUSTION, not about throwing;
 - send values (`resume co, v`) do not exist;
 - a lambda is never a coroutine;
 - at runtime a `Coroutine<T>` IS a function value that remembers where it left off — which is
   why `resume` behaves as a call. Since 2.2.0 it carries one parameter, the lenient flag
   distinguishing the two pull forms; exhaustion is read back through the compiler-bound
   `std.core.coroutineIsDone` (§4.4, §11).
+
+## Throwability of a pull *(a recorded gap)*
+
+What the checker demands for a throwing coroutine is attached to the CALL that creates it, not
+to the pull that runs it — and a call creates nothing but a suspended computation, so the one
+place that cannot throw is the one place that is checked. Two consequences:
+
+- a `throws` coroutine function requires handling where it is **called**, which is why the
+  common shape looks correct: the `try` that has to cover the call usually covers the pulls
+  standing beside it;
+- a pull reached through a value whose origin the checker cannot follow — a field, an optional,
+  anything crossing a function boundary — demands nothing at all. An exception thrown by the
+  body then leaves the entry point and aborts with `LYR-VM0010`.
+
+This is recorded as a gap rather than specified as intent. Closing it means the throwability
+belongs to the coroutine's TYPE, which no version of this language has; the alternatives —
+treating every pull as throwing, or refusing to let a throwing coroutine reach a field — cost
+more than the gap. Until a version carries it, a driver that pulls a coroutine whose body may
+throw wraps the pull itself.
