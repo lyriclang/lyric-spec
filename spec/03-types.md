@@ -101,6 +101,12 @@ never appears in a diagnostic where `T` serves. An alias must not expand through
 - at runtime the value IS its underlying: the cast is free, and in a native signature the
   alias resolves to the underlying — a host sees the plain value, a script cannot forge one.
 
+The last point is the reason the name has to be carried separately where it matters: a consumer
+reading the shape of a compiled type sees the underlying and could not refuse a handle it must
+refuse. A module therefore records the alias's NAME for the fields declared with it
+(§13 OpaqueFields, format 3.5); this changes nothing about the type, and a consumer that ignores
+it sees what it saw before.
+
 ## 3.6 Conversions: `as`
 
 `as` is the only conversion construct, and it is total over exactly these cases:
