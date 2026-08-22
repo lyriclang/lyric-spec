@@ -1,0 +1,12 @@
+//! check
+//! since: 2.17.0
+//! error: LYR-SEM0082
+interface Source {
+    fn get(): int;
+
+    fn mapped<U>(f: fn(int) -> U): U;
+}
+
+fn main(): int {
+    return 0;
+}
