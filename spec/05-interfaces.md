@@ -48,6 +48,29 @@ own slot indexes to remain valid behind a child-typed receiver. It does not: a v
 the pair (concrete type, interface), so every ancestor keeps its own numbering and nothing is
 remapped. The rule was lifted after the reasoning was tested rather than repeated.)*
 
+## 5.2a Members with type parameters of their own
+
+Since 2.17 an interface member may declare type parameters: `fn map<U>(f: fn(T) -> U):
+Iterator<U>`. Such a member is not dispatched — it is MONOMORPHIZED, like a generic function —
+and three rules follow from that, all of them the same fact seen from different sides:
+
+- **It must have a body.** A method table holds one function per slot, and a member with its own
+  type parameters is one function per instantiation, so it gets no slot. An abstract one would
+  promise a dispatch nothing can perform (`LYR-SEM0082`).
+- **It may not be overridden.** Without a slot the target is chosen by the receiver's STATIC
+  type, so an override would be reached through the concrete type and the default through the
+  interface — one name, two functions (`LYR-SEM0082`).
+- **It is reachable everywhere the ordinary members are**: through a constraint, and through an
+  interface VALUE. The second is what a chain needs, and it is sound precisely because the first
+  two rules make the default the only implementation.
+
+**A caution that belongs to monomorphization rather than to interfaces.** A member without type
+parameters whose result type is built from the interface's own — `fn chunks(): Iterator<T[]>` —
+demands an instance for the next element type, and that one for the one after: the set of
+instantiations is infinite and the compilation does not terminate. An implementation must report
+this rather than run out of memory. A GENERIC member has no such problem, because it is
+instantiated per use rather than per instance.
+
 ## 5.3 Interface values
 
 A value whose static type is an interface is a **fat pointer**: a reference plus its method

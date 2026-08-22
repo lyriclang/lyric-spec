@@ -1,0 +1,24 @@
+//! check
+//! since: 2.17.0
+//! error: LYR-SEM0082
+interface Source {
+    fn get(): int;
+
+    fn mapped<U>(f: fn(int) -> U): U {
+        return f(this.get());
+    }
+}
+
+class Num :: [Source] {
+    fn get(): int {
+        return 1;
+    }
+
+    fn mapped<U>(f: fn(int) -> U): U {
+        return f(2);
+    }
+}
+
+fn main(): int {
+    return 0;
+}
