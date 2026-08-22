@@ -150,7 +150,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0054 | E | `static` combined with `mut` — a static member has no receiver. |
 | LYR-SEM0055 | E | Static/instance confusion: an instance method or field read from the type, or a static member called on an instance (the deliberate exception: LYR-SEM0074). |
 | LYR-SEM0056 | E | A struct containing itself — infinite size; the recursive part needs a `class`. |
-| LYR-SEM0057 | E | A global constant reading a constant declared after it — initialization is declaration order (§4.3). |
+| LYR-SEM0057 | E | A global constant reading one that is initialized later — dependency order across modules, source order within one (§4.3). |
 | LYR-SEM0058 | E | Destructuring something that is not a tuple, or with the wrong arity. |
 | LYR-SEM0059 | E | `==`/`!=` not defined: an optional compared against a non-`null` value, or a type without `Equatable`. |
 | LYR-SEM0060 | E | A type argument no call argument determines — write it explicitly. |

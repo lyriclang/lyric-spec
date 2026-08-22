@@ -30,8 +30,18 @@ methods.
 ## 4.3 Declaration order and globals
 
 Declarations within a module are order-independent (two-pass resolution), with one exception:
-module-level `let` initializers run in declaration order, first by module then by source order,
-and an initializer reading a later global is an error. There is no module-level `var`.
+module-level `let` initializers run in a fixed order, and an initializer reading a global that
+comes later is an error (`LYR-SEM0057`). There is no module-level `var`.
+
+The order is the DEPENDENCY order across modules and the source order within one: a module's
+globals are initialized after those of every module it imports, transitively, and then top to
+bottom. An initializer may therefore read what its own module declared above it, and anything from
+a module it imports. **Since 2.8** — before it the order across modules was the one the entry file
+happened to discover them in, which made a third module decide whether a second one compiled.
+
+An import cycle has no such order and is refused for its own reasons (`LYR-RES0005`), so the
+question does not arise. Which module is compiled as the entry does not enter into it: a file that
+compiles as part of a program compiles on its own.
 
 ## 4.4 The standard library's special edges
 
