@@ -1,0 +1,38 @@
+//! run
+//! since: 2.10.0
+//! stdout:
+//! | Separate
+//! | Packed
+// §4.7: an attribute argument may be a unit variant of an enum. The row it produces is not
+// readable from inside the program, so the case proves the form COMPILES and that the variants
+// mean what they say where a program can see them.
+import std.io.console { println };
+import std.core { OnFunction };
+
+enum Layout {
+    Packed,
+    Separate,
+}
+
+struct Saved :: [OnFunction] { layout: Layout = DEFAULT_LAYOUT }
+
+let DEFAULT_LAYOUT = Layout.Packed;
+
+@Saved { layout = Layout.Separate }
+pub fn store(): void { }
+
+@Saved
+pub fn restore(): void { }
+
+fn name(layout: Layout): string {
+    return match (layout) {
+        Packed => "Packed",
+        Separate => "Separate",
+    };
+}
+
+fn main(): int {
+    println(name(Layout.Separate));
+    println(name(DEFAULT_LAYOUT));
+    return 0;
+}
