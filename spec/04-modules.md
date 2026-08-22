@@ -98,12 +98,15 @@ a class, an enum, or the module header (`LYR-PAR0038`, `LYR-PAR0042`).
 An applied attribute becomes **one metadata row** in the compiled module, and everything about
 it follows from that:
 
-- Arguments are values at compile time — a number, a string, a char or a bool, and **since
-  2.4** a name bound to one: an identifier or a module-qualified path denoting a `let` (module
-  level or `static`, in any module) whose initializer is itself such a value, transitively.
-  Nothing is COMPUTED on the way — `let n = 1 + 2;` is not one, because the language folds
-  nothing anywhere — and every field of the attribute struct must end with a value, written at
-  the site or as a default of the same kind (`LYR-SEM0066`, `LYR-SEM0069`).
+- Arguments are values at compile time — a number, a string, a char or a bool; **since 2.4** a
+  name bound to one: an identifier or a module-qualified path denoting a `let` (module level or
+  `static`, in any module) whose initializer is itself such a value, transitively; and **since
+  2.10** a unit variant of an enum (`Stage.Physics`), which is what lets a vocabulary be checked
+  by the type system rather than spelled as a string. A variant WITH a payload is not one: a row
+  holds one value per field, and a payload is values of its own. Nothing is COMPUTED on the way —
+  `let n = 1 + 2;` is not a value, because the language folds nothing anywhere — and every field
+  of the attribute struct must end with a value, written at the site or as a default of the same
+  kind (`LYR-SEM0066`, `LYR-SEM0069`).
 - The same attribute may sit on a declaration once, and set each field once (`LYR-SEM0068`).
 - A generic type cannot be an attribute, and an attribute cannot sit on a generic
   declaration — one row cannot stand for every instance (`LYR-SEM0065`, `LYR-SEM0067`). The

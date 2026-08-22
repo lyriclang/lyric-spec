@@ -159,7 +159,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0063 | E | A static member on a generic type without its type arguments written. |
 | LYR-SEM0064 | E | A type alias that expands to itself. |
 | LYR-SEM0065 | E | Not an attribute here: the type does not declare the marker for the target kind, is generic, is no struct at all — or sits on a MEMBER while not being `@Deprecated`, the one member attribute (§4.7). |
-| LYR-SEM0066 | E | An attribute argument that is not a value at compile time — not a literal, and not a name denoting a `let` bound to one (§4.7). |
+| LYR-SEM0066 | E | An attribute argument that is not a value at compile time — not a literal, not a unit enum variant, and not a name denoting a `let` bound to one (§4.7). |
 | LYR-SEM0067 | E | An attribute on a generic declaration — one metadata row cannot stand for every instance. |
 | LYR-SEM0068 | E | The same attribute twice on a declaration, or the same field set twice. |
 | LYR-SEM0069 | E | An attribute leaving a field without a compile-time value. |
