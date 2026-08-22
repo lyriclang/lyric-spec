@@ -25,15 +25,28 @@ does not exist (chapter 6).*
 
 ## 5.2 Interface inheritance
 
-An interface may declare **one parent**: `interface Labeled :: [Named]`. Conforming to the
-child implies conforming to the whole transitive chain — abstract members of the chain must be
-implemented, default methods of the chain are inherited, a parent constraint is satisfied by
-the child, and throwability (`Throwable` in the chain) carries through.
+An interface may declare **parents**: `interface Labeled :: [Named]`, and since 2.16 more than
+one. Conforming to the child implies conforming to every ancestor — abstract members of the
+whole graph must be implemented, default methods of it are inherited, an ancestor constraint is
+satisfied by the child, and throwability (`Throwable` anywhere above) carries through.
 
-The chain rules (`LYR-SEM0078`): at most one parent — several requirements side by side are
-what constraints are for (`<T :: [A, B]>`); only interfaces in the list; no cycles. A member
-name may occur once per chain (`LYR-SEM0079`): redeclaring an inherited member is refused
-rather than given override semantics, so the same call can never dispatch two ways.
+The list rules (`LYR-SEM0078`): only interfaces, and no cycles.
+
+**Names must stay unambiguous** (`LYR-SEM0079`). Two rules, and they are the same rule seen from
+two sides:
+
+- a child may not redeclare a member it inherits — without override semantics the same call
+  would dispatch differently through the child and through the ancestor;
+- two parents may not contribute the same member name from DIFFERENT declarations — one slot
+  cannot hold two methods, and no rule picks correctly between them.
+
+A name reached twice through a **diamond** is not ambiguous and not refused: both paths lead to
+one declaration, so there is nothing to pick. An implementation supplies it once.
+
+*(Before 2.16 the list held one entry, on the reasoning that a parent's default method needs its
+own slot indexes to remain valid behind a child-typed receiver. It does not: a vtable is keyed by
+the pair (concrete type, interface), so every ancestor keeps its own numbering and nothing is
+remapped. The rule was lifted after the reasoning was tested rather than repeated.)*
 
 ## 5.3 Interface values
 

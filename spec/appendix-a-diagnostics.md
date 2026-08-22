@@ -165,8 +165,8 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0069 | E | An attribute leaving a field without a compile-time value. |
 | LYR-SEM0070 | E | A duplicate field in a struct or variant initializer. |
 | LYR-SEM0074 | E² | The instance form of a static extension. A warning through 1.x with the message announcing this change; an error from 2.0. |
-| LYR-SEM0078 | E | An interface list that cannot mean what it says: an entry that is not an interface — in a parent list, or (since 2.15) in the conformance list of a type or an `extend` — more than one parent, or a circular parent chain. |
-| LYR-SEM0079 | E | An interface redeclaring a member of its parent — an inherited member keeps its declaring interface. |
+| LYR-SEM0078 | E | An interface list that cannot mean what it says: an entry that is not an interface — in a parent list, or (since 2.15) in the conformance list of a type or an `extend` — or a circular parent chain. |
+| LYR-SEM0079 | E | An inherited member name that is ambiguous: an interface redeclaring a member of an ancestor, or (since 2.16) two parents contributing one name from different declarations. A diamond is not ambiguous. |
 | LYR-SEM0080 | E | `next()` on a `Coroutine<?T>` (since 2.2.0): a `null` result would mean both "yielded null" and "done" (§10). |
 | LYR-SEM0081 | E | A `@Deprecated` whose `until` names a version the toolchain has reached, or one it cannot read (since 2.13.0). The promise is checked at the DECLARATION, so it fires whether or not anything uses it. |
 

@@ -1,15 +1,15 @@
 //! check
-//! error: LYR-SEM0078
+//! since: 2.16.0
+//! error: LYR-SEM0079
 interface A {
-    fn a(): int;
+    fn go(): int;
 }
 
 interface B {
-    fn b(): int;
+    fn go(): int;
 }
 
 interface C :: [A, B] {
-    fn c(): int;
 }
 
 fn main(): int {
