@@ -119,3 +119,10 @@ it follows from that:
   abstract member would raise conformance questions nobody has answered.
 - An attribute-bearing declaration is a reachability root (§4.6): the row is how an embedding
   host discovers it (§11). `@Deprecated`, having no row, roots nothing.
+- **Since 2.13** `@Deprecated` carries a second field, `until`, naming the version that REMOVES
+  the declaration — and the compiler enforces it: building with a toolchain that has reached that
+  version is `LYR-SEM0081`, as is a version it cannot read. `until = "3.5"` fails at 3.5, not one
+  release later; the named version is the one doing the removing. The check sits at the
+  DECLARATION rather than at a use, so a form kept past its date is refused whether or not
+  anything still calls it. An empty `until` is the ordinary policy: warn now, remove at the next
+  major.
