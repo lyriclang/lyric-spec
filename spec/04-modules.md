@@ -115,8 +115,12 @@ it follows from that:
 - **Since 2.1** the same row-less exception extends to MEMBERS: `@Deprecated` — and only it —
   may sit on a method, a field or a `static let` of a struct, class or enum, and on an extend
   method; every other attribute there is `LYR-SEM0065`, because the module format has no
-  member rows. Interface members carry no attributes at all (`LYR-PAR0042`): deprecating an
-  abstract member would raise conformance questions nobody has answered.
+  member rows. **Since 2.15 an INTERFACE member carries it too**, under the same restriction,
+  and with the conformance question answered: a use that resolves to the interface's member
+  warns, and an IMPLEMENTATION does not. An implementation is not a use, and a conforming type
+  must implement what the interface requires — a warning there could not be acted on without
+  breaking conformance. (An attribute on the interface DECLARATION itself is still
+  `LYR-PAR0042`.)
 - An attribute-bearing declaration is a reachability root (§4.6): the row is how an embedding
   host discovers it (§11). `@Deprecated`, having no row, roots nothing.
 - **Since 2.13** `@Deprecated` carries a second field, `until`, naming the version that REMOVES
