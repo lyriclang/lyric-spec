@@ -1,0 +1,36 @@
+//! run
+//! since: 2.16.0
+//! stdout:
+//! | 33
+import std.io.console { println };
+
+interface Base {
+    fn id(): int;
+}
+
+interface Left :: [Base] {
+    fn left(): int {
+        return this.id() + 1;
+    }
+}
+
+interface Right :: [Base] {
+    fn right(): int {
+        return this.id() + 2;
+    }
+}
+
+interface Both :: [Left, Right] {
+}
+
+class Impl :: [Both] {
+    fn id(): int {
+        return 10;
+    }
+}
+
+fn main(): int {
+    let b: Both = Impl { };
+    println(b.id() + b.left() + b.right());
+    return 0;
+}
