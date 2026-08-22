@@ -1,0 +1,25 @@
+//! run
+//! since: 3.0.0
+//! exit: 13
+// §6.1: two conformances to one arithmetic interface, and the RIGHT OPERAND decides which. Both
+// implementations are called 'mul', so nothing but the operand type distinguishes them.
+import std.core { Mul };
+
+struct Vec :: [Mul<Vec, Vec>] {
+    x: int,
+
+    fn mul(other: Vec): Vec {
+        return Vec { x = this.x * other.x };
+    }
+}
+
+extend Vec :: [Mul<int, Vec>] {
+    fn mul(other: int): Vec {
+        return Vec { x = this.x * other + 1 };
+    }
+}
+
+fn main(): int {
+    let v = Vec { x = 3 };
+    return (v * v).x + (v * 1).x;  // 9 + (3 + 1)
+}

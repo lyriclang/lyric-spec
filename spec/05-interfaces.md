@@ -18,10 +18,20 @@ chain) — with an **exact** signature match: arity, parameter types, return typ
 `throws` clause that is a subset of the interface's (`LYR-SEM0042`). Default methods may be
 left unimplemented; an own member overrides a default.
 
-A type conforms to a generic interface at specific arguments (`S :: [Eq<S>]`) and can conform
-to one interface only once: a second conformance at different arguments fails the signature
-match — one method cannot have two signatures. *This is why heterogeneous operator arithmetic
-does not exist (chapter 6).*
+A type conforms to a generic interface at specific arguments (`S :: [Eq<S>]`) and, as a rule,
+to one interface only once.
+
+**The exception, since 3.0: the four arithmetic interfaces** `Add`, `Sub`, `Mul` and `Div` of
+`std.core`. A type may name one of them SEVERAL times with different arguments — `Vec2 ::
+[Mul<Vec2, Vec2>]` beside `extend Vec2 :: [Mul<float, Vec2>]` — and each conformance is
+satisfied by its own implementation. Conformance checking then asks whether ANY visible method
+of the name matches the signature the conformance demands, rather than the first one it finds;
+two conformances are two demands and need two methods.
+
+The exception exists because these interfaces have a selector no other interface has: the
+operator's right operand (§6.1). Everywhere else the member NAME is all a call site offers, and
+a second conformance would put two methods of one name where nothing can choose between them —
+which is why a written `v.mul(2.0)` remains ambiguous even where `v * 2.0` resolves.
 
 ## 5.2 Interface inheritance
 

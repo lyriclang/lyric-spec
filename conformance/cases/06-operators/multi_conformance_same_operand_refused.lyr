@@ -1,0 +1,27 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0083
+// §6.1: two conformances taking the same operand leave the operator nothing to select by. The
+// error belongs to the USE — another module's extend block first meets the first conformance
+// where both are visible.
+import std.core { Mul };
+
+struct Vec :: [Mul<int, Vec>] {
+    x: int,
+
+    fn mul(other: int): Vec {
+        return Vec { x = this.x * other };
+    }
+}
+
+extend Vec :: [Mul<int, int>] {
+    fn mul(other: int): int {
+        return this.x * other;
+    }
+}
+
+fn main(): int {
+    let v = Vec { x = 2 };
+    let doubled = v * 2;
+    return 0;
+}

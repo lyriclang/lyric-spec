@@ -1,0 +1,28 @@
+//! run
+//! since: 3.0.0
+//! exit: 12
+// §6.1: with several conformances in reach, the CONSTRAINT says which one the body means.
+// 'Mul<int, T>' promises scaling; the same-typed conformance is not what this function may use.
+import std.core { Mul };
+
+struct Vec :: [Mul<Vec, Vec>] {
+    x: int,
+
+    fn mul(other: Vec): Vec {
+        return Vec { x = this.x * other.x };
+    }
+}
+
+extend Vec :: [Mul<int, Vec>] {
+    fn mul(other: int): Vec {
+        return Vec { x = this.x * other };
+    }
+}
+
+fn twice<T :: [Mul<int, T>]>(value: T): T {
+    return value * 2;
+}
+
+fn main(): int {
+    return twice(Vec { x = 6 }).x;
+}

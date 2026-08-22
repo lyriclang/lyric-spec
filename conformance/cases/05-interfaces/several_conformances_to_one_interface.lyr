@@ -1,0 +1,34 @@
+//! run
+//! since: 3.0.0
+//! exit: 18
+// §5.1: the arithmetic interfaces are the one exception to "one conformance per interface", and
+// each conformance is satisfied by its own implementation. Through an interface VALUE the two
+// stay apart as well: the dispatch table is keyed by the instance, not by the interface name.
+import std.core { Mul };
+
+struct Vec :: [Mul<Vec, Vec>] {
+    x: int,
+
+    fn mul(other: Vec): Vec {
+        return Vec { x = this.x * other.x };
+    }
+}
+
+extend Vec :: [Mul<int, Vec>] {
+    fn mul(other: int): Vec {
+        return Vec { x = this.x * other };
+    }
+}
+
+fn scaled(m: Mul<int, Vec>): Vec {
+    return m.mul(3);
+}
+
+fn squared(m: Mul<Vec, Vec>, by: Vec): Vec {
+    return m.mul(by);
+}
+
+fn main(): int {
+    let v = Vec { x = 3 };
+    return scaled(v).x + squared(v, v).x;  // 9 + 9
+}

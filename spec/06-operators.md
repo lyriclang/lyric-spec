@@ -26,11 +26,25 @@ is deterministic on every platform, which is the property §3.2 values, and froz
 `++` and `--` exist prefix and postfix, on integer variables, as EXPRESSIONS with the classic
 values: `i++` yields the old value, `++i` the new one.
 
-On a non-primitive type, `a + b` is `a.add(b)` through `Add<T>` of `std.core`; likewise
-`Sub<T>`, `Mul<T>`, `Div<T>`. The interfaces are **homogeneous** — operand and result are the
-declaring type — by decision: a type conforms to `Mul` once (§5.1), and without overloading a
-second `mul` cannot exist, so a two-parameter form would buy one fixed partner type and
-nothing more. Mixed forms (`Vec2 * float`) are named methods.
+On a non-primitive type, `a + b` is `a.add(b)` through `Add<T, R>` of `std.core`; likewise
+`Sub<T, R>`, `Mul<T, R>`, `Div<T, R>`. Since 3.0 these interfaces take TWO type arguments: what
+stands on the right of the operator, and what the operation yields. `Mul<Vec2, Vec2>` is
+multiplication by one's own kind, `Mul<float, Vec2>` is scaling — the result cannot be read off
+the operand, or `Vec2 * 2.0` would have to give a `float`.
+
+**The operator selects the conformance by the type of its right operand.** A type may conform
+several times (§5.1), each conformance with its own implementation; the method name is the same
+for all of them and never decides. When no conformance takes the operand's type, an untyped
+integer literal may still adapt to one that takes a float, under the ordinary literal rule
+(§3.1); an exact conformance always wins over an adapted one. Two conformances taking the same
+operand and disagreeing on what to call are refused at the USE (`LYR-SEM0083`), not at the
+declaration — a conformance added by another module's `extend` block first meets the others
+where both are visible.
+
+A constraint names the conformance it wants: `T :: [Mul<float, T>]` promises scaling and
+nothing else, and a body multiplying by a `T` under that constraint is an error. Selection in a
+generic function is therefore decided by the constraint, and monomorphization only fills in
+which implementation that conformance resolved to.
 
 Two string operators ride the same rule with library backing: `s1 + s2` is
 `std.string.concat`, `s * n` is `std.string.repeat`.
