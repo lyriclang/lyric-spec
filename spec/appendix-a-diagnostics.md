@@ -168,6 +168,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0078 | E | A malformed interface parent list: more than one parent, a non-interface, or a cycle (§5.2). |
 | LYR-SEM0079 | E | An interface redeclaring a member of its parent — an inherited member keeps its declaring interface. |
 | LYR-SEM0080 | E | `next()` on a `Coroutine<?T>` (since 2.2.0): a `null` result would mean both "yielded null" and "done" (§10). |
+| LYR-SEM0081 | E | A `@Deprecated` whose `until` names a version the toolchain has reached, or one it cannot read (since 2.13.0). The promise is checked at the DECLARATION, so it fires whether or not anything uses it. |
 
 ### Warnings and hints
 
