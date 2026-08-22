@@ -9,7 +9,9 @@ refused: there is nothing to dispatch on.
 ## 5.1 Declaring conformance
 
 A struct, class or enum declares conformance in its interface list (`struct S :: [I, J]`), or a
-module adds it through an extend block (`extend T :: [I] { … }`). Conformance requires one
+module adds it through an extend block (`extend T :: [I] { … }`). **Every entry must be an
+interface** (`LYR-SEM0078` since 2.15; before that a non-interface entry was skipped without a
+word, so a declaration could claim a conformance nothing checked). Conformance requires one
 matching implementation per abstract method of the interface — an own member or a visible
 extension method (`LYR-SEM0020` otherwise, naming the implying interface when it came through a
 chain) — with an **exact** signature match: arity, parameter types, return type, `mut`, and a
