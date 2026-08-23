@@ -9,7 +9,7 @@ import tempfile
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None,
-            "errors": [], "warnings": [], "since": None}
+            "errors": [], "warnings": [], "since": None, "until": None}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = []
     for line in lines:
@@ -34,6 +34,8 @@ def parse_header(path):
             spec["warnings"].append(body[8:].strip())
         elif body.startswith("since:"):
             spec["since"] = tuple(int(p) for p in body[6:].strip().split("."))
+        elif body.startswith("until:"):
+            spec["until"] = tuple(int(p) for p in body[6:].strip().split("."))
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -96,7 +98,8 @@ def main():
     ap.add_argument("--cases", type=pathlib.Path,
                     default=pathlib.Path(__file__).parent.parent / "conformance" / "cases")
     ap.add_argument("--toolchain-version", default=None,
-                    help="the toolchain's version; cases with a newer 'since:' are skipped. "
+                    help="the toolchain's version; cases with a newer 'since:' are skipped, "
+                         "and cases whose 'until:' it has reached are retired. "
                          "Omitted means: run everything (a working tree is the newest state).")
     args = ap.parse_args()
     version = (tuple(int(p) for p in args.toolchain_version.split("."))
@@ -123,6 +126,16 @@ def main():
             if spec["since"] and version and spec["since"] > version:
                 skipped += 1
                 print(f"SKIP {label} (since {'.'.join(map(str, spec['since']))})")
+                continue
+
+            # A case the language has left behind. The mirror of 'since', and the reason it
+            # exists: a MAJOR may change a form the suite pinned, and the case then describes a
+            # version range rather than the language. Retiring it here keeps both lanes honest —
+            # against a released 2.x toolchain it still runs, against the tree that broke it it
+            # does not, and the replacement carries the matching 'since'.
+            if spec["until"] and version and version >= spec["until"]:
+                skipped += 1
+                print(f"SKIP {label} (until {'.'.join(map(str, spec['until']))})")
                 continue
             ok, reason = run_case(case, spec, lyrc, lyrvm, args.stdlib, pathlib.Path(tmp))
             if ok:

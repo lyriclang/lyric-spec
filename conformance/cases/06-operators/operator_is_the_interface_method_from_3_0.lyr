@@ -1,0 +1,21 @@
+//! run
+//! since: 3.0.0
+//! exit: 33
+// §6.1: the operator IS the interface method, in the two-parameter form — what stands on the
+// right, and what comes back. Compound assignment reaches through the same conformance.
+import std.core { Add };
+
+struct Vec :: [Add<Vec, Vec>] {
+    x: int,
+
+    fn add(other: Vec): Vec {
+        return Vec { x = this.x + other.x };
+    }
+}
+
+fn main(): int {
+    var v = Vec { x = 1 };
+    v += Vec { x = 10 };
+    let w = v + Vec { x = 22 };
+    return w.x;
+}
