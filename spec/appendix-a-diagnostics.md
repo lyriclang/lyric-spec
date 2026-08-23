@@ -171,6 +171,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0081 | E | A `@Deprecated` whose `until` names a version the toolchain has reached, or one it cannot read (since 2.13.0). The promise is checked at the DECLARATION, so it fires whether or not anything uses it. |
 | LYR-SEM0082 | E | A generic interface member that cannot work: one without a body, or a type overriding one (since 2.17). Such a member has no slot — it is monomorphized — so it must bring its own implementation and must be the only one. |
 | LYR-SEM0083 | E | An arithmetic operator whose receiver conforms twice with the same right-hand type, disagreeing on what to call (since 3.0). Several conformances are allowed and are selected by the operand; two that take the same operand leave nothing to select by. Reported where the operator is used. |
+| LYR-SEM0084 | E | A `throws` suffix on a type that is not a coroutine (since 3.0). Every other value runs at its call, and the callee's own clause says there what it throws. |
 
 ### Warnings and hints
 
@@ -247,7 +248,7 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0007 | panic | Force-unwrap `!` of an optional holding no value. |
 | LYR-VM0008 | panic | `enumas` to a variant the value is not. The compiler proves this through `match`; the check remains because a `.lyrbc` may come from elsewhere. |
 | LYR-VM0009 | panic | No vtable entry for (concrete type, interface, slot). Reachable only for a module assembled without the loader's checks. |
-| LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable from source through the coroutine gap of §10 — a pull whose origin the checker cannot follow demands no handling — and otherwise only for a hand-built module. |
+| LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable from source until 3.0 through the coroutine gap of §10 — a pull whose origin the checker could not follow demanded no handling — and since the throwability moved into the type only for a hand-built module. |
 | LYR-VM0011 | panic | `panic(msg)` from the program. Not catchable; the message is the caller's. |
 | LYR-VM0012 | panic | A `char` result outside the Unicode range or in the surrogate range — checked where the value is produced. |
 
