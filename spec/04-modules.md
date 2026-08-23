@@ -43,6 +43,57 @@ An import cycle has no such order and is refused for its own reasons (`LYR-RES00
 question does not arise. Which module is compiled as the entry does not enter into it: a file that
 compiles as part of a program compiles on its own.
 
+## 4.3a Overloading
+
+**Since 3.0**, several functions may share one name, and are told apart by their PARAMETERS. This
+is the language's second answer to "one name, several types" — generics with constraints being the
+first — and it was admitted deliberately, which is why its rules are written out here rather than
+left to the implementation.
+
+**What may overload.** Free functions, methods of a struct, class or enum, and extension methods.
+Not interface members: a method table holds one function per slot and finds it by name, so two of a
+name would need two slots and every implementing type would owe both (`LYR-SEM0088`). Only
+functions share names at all — a function beside a type of the same name is the ordinary collision
+(`LYR-RES0001`).
+
+**What separates them.** The parameter list, and nothing else. Two with the same list are a
+redeclaration however their results differ (`LYR-SEM0085`): a call site cannot choose by what it
+gets back. Overloading is per SCOPE — an inner declaration hides an outer one whole, as every
+declaration does — and a selective import brings the whole set, because importing a name imports
+what it means.
+
+**How a call chooses.** By its arguments alone. A candidate takes part when it can accept the
+argument COUNT, counting defaults and a `params` tail; it is then rejected unless every argument
+either has the parameter's type exactly or is assignable to it. Among those that remain, the one
+that needs least wins, in this order:
+
+1. fewest arguments that had to convert (an exact type beats a literal that adapts);
+2. fewest parameters that are TYPE PARAMETERS (a function written for this type beats one written
+   for every type);
+3. the one that needs no default arguments;
+4. the one that is not variadic;
+5. the type's own member, over an extension — the rule that predates overloading, and last, so it
+   decides nothing a parameter could decide.
+
+Nothing left is `LYR-SEM0087`; two that tie on all five are `LYR-SEM0086`. Both name every
+candidate: the reader has to be able to see what the compiler saw.
+
+A **lambda argument takes no part** in the choice. It has no type until a parameter gives it one,
+so letting it choose would be circular; the other arguments separate the candidates, or the call is
+ambiguous.
+
+**As a value.** A name that means several functions, standing where a value is wanted rather than
+in callee position, is chosen by the type it is wanted AS: a parameter of type `fn(int) -> string`
+picks the overload of that shape. With no such type, or none of that shape, the reference is
+refused (`LYR-SEM0089`).
+
+**In the compiled module.** Function names are unique in a `.lyrbc` — the verifier refuses
+duplicates — so overloads carry their parameters in the name: `main.show(int)` beside
+`main.show(string)`. A name declared once is unchanged, so a program without overloads compiles to
+the bytes it always did. A host calling by name (§11) matches on the argument COUNT, since it has
+values rather than declared types; two of one count are an ambiguity it settles by passing the full
+name.
+
 ## 4.4 The standard library's special edges
 
 A small set of functions is bound by the compiler without an import: `panic`, `coroutineEnded`

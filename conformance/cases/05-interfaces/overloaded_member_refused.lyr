@@ -1,0 +1,14 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0088
+// §4.3a: an interface member may not be overloaded. A method table holds one function per slot
+// and finds it by name; two of a name would need two slots, and every implementing type would
+// owe both.
+interface Shape {
+    fn area(): int;
+    fn area(scale: int): int;
+}
+
+fn main(): int {
+    return 0;
+}
