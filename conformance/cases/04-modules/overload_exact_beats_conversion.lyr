@@ -1,0 +1,17 @@
+//! run
+//! since: 3.0.0
+//! exit: 1
+// §4.3a: the ordering of the rules, at the one place a reader has to be able to predict it. '2'
+// is an int and an int overload exists, so the float one does not get it; the literal adapts only
+// where nothing takes it as written.
+fn kind(n: int): int {
+    return 1;
+}
+
+fn kind(f: float): int {
+    return 2;
+}
+
+fn main(): int {
+    return kind(2);
+}

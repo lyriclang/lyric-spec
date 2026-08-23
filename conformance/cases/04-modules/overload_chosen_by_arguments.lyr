@@ -1,0 +1,16 @@
+//! run
+//! since: 3.0.0
+//! exit: 21
+// §4.3a: several functions of one name, and the ARGUMENTS choose. Nothing about the call site
+// distinguishes them otherwise — the name is the same.
+fn code(n: int): int {
+    return 1;
+}
+
+fn code(s: string): int {
+    return 20;
+}
+
+fn main(): int {
+    return code(7) + code("seven");
+}

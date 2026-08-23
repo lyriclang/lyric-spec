@@ -20,6 +20,12 @@ Consequences the language commits to:
   at a larger type, `deeper(Box { v = x })` inside `deeper<T>(x: T)` — is refused at the call,
   because monomorphizing it would not terminate.
 
+**Generics and overloading are two answers to one question**, and since 3.0 the language has
+both. They are not interchangeable: a generic function is ONE function that serves every type
+satisfying its constraints, and an overload set is SEVERAL functions that happen to share a name.
+Where both could apply, the concrete parameter wins (§4.3a) — a function written for this type
+says more about a call than one written for every type.
+
 ## 8.2 Constraints
 
 `<T :: [I, J<T>]>` — a type parameter carries interface constraints. Inside the declaration,

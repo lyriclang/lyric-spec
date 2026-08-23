@@ -171,6 +171,11 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0081 | E | A `@Deprecated` whose `until` names a version the toolchain has reached, or one it cannot read (since 2.13.0). The promise is checked at the DECLARATION, so it fires whether or not anything uses it. |
 | LYR-SEM0082 | E | A generic interface member that cannot work: one without a body, or a type overriding one (since 2.17). Such a member has no slot — it is monomorphized — so it must bring its own implementation and must be the only one. |
 | LYR-SEM0083 | E | An arithmetic operator whose receiver conforms twice with the same right-hand type, disagreeing on what to call (since 3.0). Several conformances are allowed and are selected by the operand; two that take the same operand leave nothing to select by. Reported where the operator is used. |
+| LYR-SEM0085 | E | Two functions of one name with the SAME parameter list (since 3.0). Overloads are told apart by what they take; a call site cannot choose by what it gets back. |
+| LYR-SEM0086 | E | A call whose overloads tie on every rule of §4.3a (since 3.0). Names every candidate that tied. |
+| LYR-SEM0087 | E | A call no overload of the name accepts (since 3.0). Names every candidate and what it takes. |
+| LYR-SEM0088 | E | An overloaded INTERFACE member (since 3.0). A method table holds one function per slot and finds it by name. |
+| LYR-SEM0089 | E | A name meaning several functions used as a VALUE, with no type to pick by or none of that shape (since 3.0). |
 | LYR-SEM0084 | E | A `throws` suffix on a type that is not a coroutine (since 3.0). Every other value runs at its call, and the callee's own clause says there what it throws. |
 
 ### Warnings and hints

@@ -1,0 +1,16 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0085
+// §4.3a: overloads are told apart by what they TAKE. Two with one parameter list are a
+// redeclaration however their results differ — a call cannot choose by what it gets back.
+fn same(n: int): int {
+    return n;
+}
+
+fn same(n: int): string {
+    return "x";
+}
+
+fn main(): int {
+    return 0;
+}
