@@ -1,0 +1,34 @@
+//! run
+//! since: 3.0.0
+//! exit: 43
+// §10: throwability belongs to the coroutine's TYPE, so it survives a field. The exception leaves
+// the body at the second pull and the try AROUND THE PULL catches it — before 3.0 the demand was
+// checked at the call and this program aborted with LYR-VM0010.
+import std.core { Exception };
+
+fn gen(): Coroutine<int> throws Exception {
+    yield 42;
+    throw Exception { text = "mid" };
+}
+
+class Driver {
+    co: ?Coroutine<int> throws Exception = null,
+
+    fn start() {
+        this.co = gen();
+    }
+}
+
+fn main(): int {
+    let d = Driver { };
+    d.start();
+    let c = d.co!;
+    var total = 0;
+    try {
+        total = resume c;
+        resume c;
+    } catch (e: Exception) {
+        total = total + 1;
+    }
+    return total;
+}

@@ -1,0 +1,16 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0034
+// §10: the PULL is the throw site, not the call. The call below is fine — it builds a suspended
+// frame and runs nothing — and the resume is what needs a handler.
+import std.core { Exception };
+
+fn gen(): Coroutine<int> throws Exception {
+    yield 1;
+    throw Exception { text = "mid" };
+}
+
+fn main(): int {
+    let c = gen();
+    return resume c;
+}

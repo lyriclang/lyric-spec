@@ -1,0 +1,17 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0001
+// §10: the plain type promises its readers that no pull throws. A coroutine that may throw cannot
+// keep that promise, and assigning it there is exactly how the demand used to disappear.
+import std.core { Exception };
+
+fn gen(): Coroutine<int> throws Exception {
+    yield 1;
+    throw Exception { text = "mid" };
+}
+
+fn main(): int {
+    var co: ?Coroutine<int> = null;
+    co = gen();
+    return 0;
+}

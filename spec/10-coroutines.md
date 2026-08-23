@@ -35,21 +35,27 @@ Rules:
   distinguishing the two pull forms; exhaustion is read back through the compiler-bound
   `std.core.coroutineIsDone` (§4.4, §11).
 
-## Throwability of a pull *(a recorded gap)*
+## Throwability of a pull
 
-What the checker demands for a throwing coroutine is attached to the CALL that creates it, not
-to the pull that runs it — and a call creates nothing but a suspended computation, so the one
-place that cannot throw is the one place that is checked. Two consequences:
+Since 3.0 it belongs to the **type**: `Coroutine<int> throws Exception` is a different type from
+`Coroutine<int>`, and it stays one through a field, an optional, a parameter and a return.
 
-- a `throws` coroutine function requires handling where it is **called**, which is why the
-  common shape looks correct: the `try` that has to cover the call usually covers the pulls
-  standing beside it;
-- a pull reached through a value whose origin the checker cannot follow — a field, an optional,
-  anything crossing a function boundary — demands nothing at all. An exception thrown by the
-  body then leaves the entry point and aborts with `LYR-VM0010`.
+- A coroutine function's `throws` clause describes the coroutine it returns, not its call:
+  `fn gen(): Coroutine<int> throws Exception` produces a `Coroutine<int> throws Exception`. The
+  call itself demands nothing, because it runs no body — it builds a suspended frame.
+- A **pull** — `resume` or `next()` — of a coroutine whose type throws is a throw site like any
+  call to a `throws` function: an enclosing `try` handles it, or the enclosing function declares
+  it (`LYR-SEM0034` otherwise). `next()` is lenient about exhaustion, never about throwing.
+- Written elsewhere, the throwability is a type suffix (§2): `co: ?Coroutine<int> throws Exception`
+  as a field, a parameter, a binding. `throws` without a type means any `Throwable`. The suffix is
+  valid on a coroutine type and nowhere else (`LYR-SEM0084`).
+- Assignment is one-directional: a coroutine that cannot throw fits where one that may is
+  expected, and not the other way round. The refused direction is the one that used to drop the
+  demand silently.
 
-This is recorded as a gap rather than specified as intent. Closing it means the throwability
-belongs to the coroutine's TYPE, which no version of this language has; the alternatives —
-treating every pull as throwing, or refusing to let a throwing coroutine reach a field — cost
-more than the gap. Until a version carries it, a driver that pulls a coroutine whose body may
-throw wraps the pull itself.
+*(Before 3.0 the demand was attached to the CALL — the one event that cannot throw — so it
+appeared to follow the local variable and vanished at the first indirection, and the exception
+left the entry point as `LYR-VM0010`. The three alternatives weighed then and refused: treating
+every pull as throwing taxes every ordinary coroutine; refusing a throwing coroutine a field
+punishes programs that are already correct; tracking the origin at the pull closes the optional
+and not the field. Only the type carries it everywhere.)*
