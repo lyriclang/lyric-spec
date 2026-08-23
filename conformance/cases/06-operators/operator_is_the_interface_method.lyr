@@ -1,5 +1,9 @@
 //! run
+//! until: 3.0.0
 //! exit: 33
+// The 2.x form of the arithmetic interfaces: ONE type argument, operand and result alike. It was
+// retired by the two-parameter form, which `multi_conformance_picks_by_operand.lyr` covers from
+// 3.0 on — the same operator, through the interface it now names.
 import std.core { Add };
 
 struct Vec :: [Add<Vec>] {
