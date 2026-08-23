@@ -58,7 +58,9 @@ functions share names at all — a function beside a type of the same name is th
 
 **What separates them.** The parameter list, and nothing else. Two with the same list are a
 redeclaration however their results differ (`LYR-SEM0085`): a call site cannot choose by what it
-gets back. Overloading is per SCOPE — an inner declaration hides an outer one whole, as every
+gets back. The list means the TYPES — a default and a `params` tail are call-site transformations
+(§7.1) and separate nothing, so `f(xs: int[])` beside `f(params xs: int[])` is that same
+redeclaration. Overloading is per SCOPE — an inner declaration hides an outer one whole, as every
 declaration does — and a selective import brings the whole set, because importing a name imports
 what it means.
 

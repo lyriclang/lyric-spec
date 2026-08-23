@@ -1,0 +1,28 @@
+//! run
+//! since: 3.0.0
+//! exit: 9
+// §5.1: the operator is not the only way to a second conformance. The two implementations are
+// overloads of one name (§4.3a), so a written member call chooses between them by its argument
+// exactly where 'v * 5' chooses by its right operand.
+import std.core { Mul };
+
+struct Vec :: [Mul<Vec, Vec>] {
+    x: int,
+
+    fn mul(other: Vec): Vec {
+        return Vec { x = this.x * other.x };
+    }
+}
+
+extend Vec :: [Mul<int, Vec>] {
+    fn mul(other: int): Vec {
+        return Vec { x = this.x * other };
+    }
+}
+
+fn main(): int {
+    let v = Vec { x = 1 };
+    let scaled = v.mul(3);
+    let squared = v.mul(v);
+    return scaled.x + squared.x + (v * 5).x;
+}

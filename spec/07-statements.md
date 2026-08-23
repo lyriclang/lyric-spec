@@ -22,7 +22,9 @@ resolved against the callee's declaration — which is why a function VALUE has 
 type says arity and nothing more.
 
 At the variadic position an argument's own type decides element versus whole array (there is
-no `T`/`T[]` conversion and no overloading, so the two never collide). One consequence of the
+no `T`/`T[]` conversion, so the two never collide). Since 3.0 a name may carry a variadic and a
+non-variadic form at once; the non-variadic one wins wherever both fit, which is rule 4 of
+§4.3a. One consequence of the
 context propagation of §3.1: an ARRAY LITERAL standing there receives no expectation — the
 propagated element type would force the element reading — while every other argument keeps
 the element type as its context (which is what names `Opt.Some(1)`'s instance in a
