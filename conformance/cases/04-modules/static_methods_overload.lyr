@@ -1,0 +1,22 @@
+//! run
+//! since: 3.0.1
+//! exit: 7
+// §4.3a: a static call names the TYPE rather than standing on a value of it, and overloading
+// reaches it all the same — the members are one table, only the way in differs.
+struct Id {
+    v: int,
+
+    static fn of(n: int): Id {
+        return Id { v = n };
+    }
+
+    static fn of(s: string): Id {
+        return Id { v = 0 };
+    }
+}
+
+fn main(): int {
+    let a = Id.of(7);
+    let b = Id.of("seven");
+    return a.v + b.v;
+}

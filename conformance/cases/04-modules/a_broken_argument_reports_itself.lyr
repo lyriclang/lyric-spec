@@ -1,0 +1,18 @@
+//! check
+//! since: 3.0.1
+//! error: LYR-SEM0002
+// §4.3a: choosing an overload types the arguments before a candidate is known, and mismatches
+// against the candidates that lose stay silent. An argument that does not type at ALL is not
+// such a mismatch: it is the cause, and reporting only "no overload takes (<error>)" would hide
+// it behind its own consequence.
+fn show(n: int): int {
+    return 1;
+}
+
+fn show(s: string): int {
+    return 2;
+}
+
+fn main(): int {
+    return show(nosuchname);
+}

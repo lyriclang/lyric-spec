@@ -43,6 +43,12 @@ An import cycle has no such order and is refused for its own reasons (`LYR-RES00
 question does not arise. Which module is compiled as the entry does not enter into it: a file that
 compiles as part of a program compiles on its own.
 
+**A global is immutable to the PROGRAM, not to a host.** An implementation offering the embedding
+API may let its host read and write the slots of a loaded module from outside — since 3.2 the
+reference implementation does, and a debugger's Globals scope is what it is for. Nothing checks
+the type on the way in: a slot is a bit pattern, the program reads it as whatever its instructions
+expect, and the module's own table says what stands where (§13, Globals).
+
 ## 4.3a Overloading
 
 **Since 3.0**, several functions may share one name, and are told apart by their PARAMETERS. This
@@ -50,15 +56,18 @@ is the language's second answer to "one name, several types" — generics with c
 first — and it was admitted deliberately, which is why its rules are written out here rather than
 left to the implementation.
 
-**What may overload.** Free functions, methods of a struct, class or enum, and extension methods.
-Not interface members: a method table holds one function per slot and finds it by name, so two of a
-name would need two slots and every implementing type would owe both (`LYR-SEM0088`). Only
-functions share names at all — a function beside a type of the same name is the ordinary collision
-(`LYR-RES0001`).
+**What may overload.** Free functions, methods of a struct, class or enum — `static` ones
+included, where the call names the TYPE rather than standing on a value of it (`Id.of(7)` beside
+`Id.of("seven")`) — and extension methods. Not interface members: a method table holds one
+function per slot and finds it by name, so two of a name would need two slots and every
+implementing type would owe both (`LYR-SEM0088`). Only functions share names at all — a function
+beside a type of the same name is the ordinary collision (`LYR-RES0001`).
 
 **What separates them.** The parameter list, and nothing else. Two with the same list are a
 redeclaration however their results differ (`LYR-SEM0085`): a call site cannot choose by what it
-gets back. Overloading is per SCOPE — an inner declaration hides an outer one whole, as every
+gets back. The list means the TYPES — a default and a `params` tail are call-site transformations
+(§7.1) and separate nothing, so `f(xs: int[])` beside `f(params xs: int[])` is that same
+redeclaration. Overloading is per SCOPE — an inner declaration hides an outer one whole, as every
 declaration does — and a selective import brings the whole set, because importing a name imports
 what it means.
 
@@ -77,6 +86,18 @@ that needs least wins, in this order:
 
 Nothing left is `LYR-SEM0087`; two that tie on all five are `LYR-SEM0086`. Both name every
 candidate: the reader has to be able to see what the compiler saw.
+
+**An argument that does not type at all is reported for itself**, and the call reports nothing
+on top of it. Choosing means typing the arguments before a candidate is known, so a mismatch
+against a candidate that loses is not reported — but a broken argument is not a mismatch, and
+`LYR-SEM0087` naming `<error>` states a consequence while hiding its cause. Since 3.0.1 — the
+poison rule the rest of the checker follows, arrived at the one place that had escaped it.
+
+**Extensions of one name are one set.** Several visible extension methods offering one member of
+a type are candidates together, chosen by the arguments like any others. What remains ambiguous
+is two of them offering that member with the SAME parameters (`LYR-SEM0044`) — nothing at a call
+site could tell those apart. *(Until 3.0.1 the shared NAME was the ambiguity, which was right
+before overloading and refused an overloaded extension after it.)*
 
 A **lambda argument takes no part** in the choice. It has no type until a parameter gives it one,
 so letting it choose would be circular; the other arguments separate the candidates, or the call is

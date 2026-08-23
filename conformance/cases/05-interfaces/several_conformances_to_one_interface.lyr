@@ -1,9 +1,9 @@
 //! run
 //! since: 3.0.0
 //! exit: 18
-// §5.1: the arithmetic interfaces are the one exception to "one conformance per interface", and
-// each conformance is satisfied by its own implementation. Through an interface VALUE the two
-// stay apart as well: the dispatch table is keyed by the instance, not by the interface name.
+// §5.1: one interface, conformed to twice, each conformance satisfied by its own
+// implementation. Through an interface VALUE the two stay apart as well: the dispatch table is
+// keyed by the instance, not by the interface name.
 import std.core { Mul };
 
 struct Vec :: [Mul<Vec, Vec>] {

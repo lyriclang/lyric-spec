@@ -1,0 +1,16 @@
+//! check
+//! since: 3.0.0
+//! error: LYR-SEM0085
+// §4.3a: the parameter list means the TYPES. A 'params' tail is a call-site transformation
+// (§7.1) and separates nothing, so these two are one declaration written twice.
+fn g(xs: int[]): int {
+    return 1;
+}
+
+fn g(params xs: int[]): int {
+    return 2;
+}
+
+fn main(): int {
+    return 0;
+}

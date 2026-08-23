@@ -1,0 +1,16 @@
+//! run
+//! since: 3.0.0
+//! exit: 21
+// §4.3a, rule 4: a name may carry a variadic and a non-variadic form at once. Where both fit the
+// one that is not variadic wins; the variadic one takes the calls it alone can take.
+fn f(x: int): int {
+    return 1;
+}
+
+fn f(params xs: int[]): int {
+    return 2;
+}
+
+fn main(): int {
+    return f(1) + f(1, 2) * 10;
+}

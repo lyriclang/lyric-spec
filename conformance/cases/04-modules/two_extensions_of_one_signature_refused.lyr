@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0044
+// §4.3a: the boundary of the rule above. Two visible extensions offering one member with the
+// same parameters are what nothing at a call site can tell apart.
+struct Box {
+    v: int,
+}
+
+extend Box {
+    fn tell(n: int): int {
+        return 1;
+    }
+}
+
+extend Box {
+    fn tell(n: int): int {
+        return 2;
+    }
+}
+
+fn main(): int {
+    let b = Box { v = 1 };
+    return b.tell(2);
+}

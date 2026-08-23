@@ -1,0 +1,33 @@
+//! run
+//! since: 3.0.1
+//! exit: 15
+// §5.4: a vtable row holds the implementation that satisfied ITS conformance, found by the
+// signature the conformance demanded. Both overloads are declared on the type here, so a lookup
+// by name would give the two rows the same function — a wrong call through an interface value.
+import std.core { Equatable };
+
+struct Tag :: [Equatable<Tag>, Equatable<int>] {
+    v: int,
+
+    fn equals(other: Tag): bool {
+        return this.v == other.v;
+    }
+
+    fn equals(other: int): bool {
+        return this.v == other;
+    }
+}
+
+fn viaTag(e: Equatable<Tag>, other: Tag): int {
+    return if (e.equals(other)) 10 else 0;
+}
+
+fn viaInt(e: Equatable<int>, other: int): int {
+    return if (e.equals(other)) 5 else 0;
+}
+
+fn main(): int {
+    let a = Tag { v = 1 };
+    let b = Tag { v = 1 };
+    return viaTag(a, b) + viaInt(a, 1);
+}

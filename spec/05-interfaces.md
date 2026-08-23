@@ -18,20 +18,32 @@ chain) — with an **exact** signature match: arity, parameter types, return typ
 `throws` clause that is a subset of the interface's (`LYR-SEM0042`). Default methods may be
 left unimplemented; an own member overrides a default.
 
-A type conforms to a generic interface at specific arguments (`S :: [Eq<S>]`) and, as a rule,
-to one interface only once.
+A type conforms to a generic interface at specific arguments (`S :: [Eq<S>]`), and **since 3.0 it
+may conform to one interface SEVERAL times** at different arguments: `Vec2 :: [Mul<Vec2, Vec2>]`
+beside `extend Vec2 :: [Mul<float, Vec2>]`, or `Tag :: [Equatable<Tag>, Equatable<int>]`. Each
+conformance is its own demand — conformance checking asks whether ANY visible method of the name
+matches the signature THAT conformance wants, rather than the first one it finds — so two
+conformances need two implementations, and one cannot answer both. Naming one conformance twice at
+the SAME arguments is one conformance, as it is when a chain reaches it twice (§5.4).
 
-**The exception, since 3.0: the four arithmetic interfaces** `Add`, `Sub`, `Mul` and `Div` of
-`std.core`. A type may name one of them SEVERAL times with different arguments — `Vec2 ::
-[Mul<Vec2, Vec2>]` beside `extend Vec2 :: [Mul<float, Vec2>]` — and each conformance is
-satisfied by its own implementation. Conformance checking then asks whether ANY visible method
-of the name matches the signature the conformance demands, rather than the first one it finds;
-two conformances are two demands and need two methods.
+What made several conformances possible is **overloading** (§4.3a), which arrived in the same
+release: before it, two of them wanted two methods of one name on one type, and `LYR-SEM0042`
+refused the second.
 
-The exception exists because these interfaces have a selector no other interface has: the
-operator's right operand (§6.1). Everywhere else the member NAME is all a call site offers, and
-a second conformance would put two methods of one name where nothing can choose between them —
-which is why a written `v.mul(2.0)` remains ambiguous even where `v * 2.0` resolves.
+**Which implementation a call reaches** depends on what does the selecting, and every route has
+something to select by: an operator picks the conformance by the type of its right operand (§6.1);
+an ordinary member call picks by its arguments, as any overloaded call does (§4.3a), so a written
+`v.mul(2.0)` resolves exactly where `v * 2.0` does; and an interface VALUE carries the instance it
+was built for, so a value of `Equatable<int>` reaches the implementation that satisfied
+`Equatable<int>` (§5.3, §5.4).
+
+*(Through 3.0 this section named the four arithmetic interfaces of `std.core` as the single
+exception to "one interface, once", on the reasoning that the operator's right operand is a
+selector no other interface has and a member call therefore has only the NAME to go on. The
+premise stopped holding in the release that wrote it — overloading gives a member call its own
+selector — and the sentence describing `v.mul(2.0)` as ambiguous was wrong the day it shipped.
+What is still true of `Add`, `Sub`, `Mul` and `Div` is that theirs is the only selection an
+OPERATOR performs.)*
 
 ## 5.2 Interface inheritance
 
@@ -105,6 +117,12 @@ for one name from UNRELATED interfaces are an ambiguity error (`LYR-SEM0043`) as
 explicit override; the same interface reached twice through a chain is one conformance, not
 two. The chosen target stands in the compiled module — a vtable row holds function indices, and
 the runtime searches nothing.
+
+A row is built per interface INSTANCE (§5.1) and holds the implementation that satisfied THAT
+conformance: the one whose signature matched, not the first member of the name. Since 3.0.1, and
+the difference is visible only where one type satisfies two conformances with two overloads of a
+name declared on the type ITSELF — where the two live apart, one an own member and one in an
+extend block, a lookup by name lands on the right one by accident.
 
 ## 5.5 Extend blocks and the orphan rule
 

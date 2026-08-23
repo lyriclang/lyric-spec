@@ -139,7 +139,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0041 | E | Orphan extension: neither the target type nor any implemented interface is declared in this module (§5.5). |
 | LYR-SEM0042 | E | An implementation whose signature does not match the interface's declaration. |
 | LYR-SEM0043 | E | A default method provided by more than one conformed interface — override it explicitly. |
-| LYR-SEM0044 | E | A member provided by more than one visible extension. |
+| LYR-SEM0044 | E | A member provided by more than one visible extension with the SAME parameters (since 3.0.1). Several of a name are an overload set since 3.0, and the call site chooses; two of one signature leave nothing to choose by. Before 3.0.1 the shared name alone was the cause. |
 | LYR-SEM0045 | E | A lambda parameter without a type annotation where no context type supplies one. |
 | LYR-SEM0046 | E | A non-void block lambda that can fall out without returning or throwing. |
 | LYR-SEM0047 | E | An extend target that is not a plain named type (no generic, array, tuple or function targets). |
@@ -205,7 +205,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-CLI0004 | E | A file of the wrong kind for the command (`lyrvm run` on a `.lyr`). |
 | LYR-CLI0005 | E | The runtime named by `--vm` or `LYRIC_VM` does not exist. |
 | LYR-CLI0006 | E | The external runtime could not be started. |
-| LYR-CLI0008 | E | The output file could not be written. |
+| LYR-CLI0008 | E | The output file could not be written — or would not be: a pack the implementation declines to produce because the result could not start. A stub it cannot edit, or (since 3.1) a macOS program on a host that carries no signer, an unsigned Mach-O being killed at launch. |
 | LYR-CLI0009 | E | A function named by `--function` is not in the module. |
 | LYR-CLI0010 | E | A `lyric.json` was found and could not be understood — carrying on would compile against a module root the file was trying to change. |
 | LYR-CLI0011 | E | No `build.lyr` in the directory a build was pointed at. |
