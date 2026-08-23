@@ -43,6 +43,12 @@ An import cycle has no such order and is refused for its own reasons (`LYR-RES00
 question does not arise. Which module is compiled as the entry does not enter into it: a file that
 compiles as part of a program compiles on its own.
 
+**A global is immutable to the PROGRAM, not to a host.** An implementation offering the embedding
+API may let its host read and write the slots of a loaded module from outside — since 3.2 the
+reference implementation does, and a debugger's Globals scope is what it is for. Nothing checks
+the type on the way in: a slot is a bit pattern, the program reads it as whatever its instructions
+expect, and the module's own table says what stands where (§13, Globals).
+
 ## 4.3a Overloading
 
 **Since 3.0**, several functions may share one name, and are told apart by their PARAMETERS. This
