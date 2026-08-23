@@ -118,6 +118,12 @@ explicit override; the same interface reached twice through a chain is one confo
 two. The chosen target stands in the compiled module — a vtable row holds function indices, and
 the runtime searches nothing.
 
+A row is built per interface INSTANCE (§5.1) and holds the implementation that satisfied THAT
+conformance: the one whose signature matched, not the first member of the name. Since 3.0.1, and
+the difference is visible only where one type satisfies two conformances with two overloads of a
+name declared on the type ITSELF — where the two live apart, one an own member and one in an
+extend block, a lookup by name lands on the right one by accident.
+
 ## 5.5 Extend blocks and the orphan rule
 
 `extend T { … }` adds methods to any visible type, builtins included; such method-only blocks

@@ -139,7 +139,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0041 | E | Orphan extension: neither the target type nor any implemented interface is declared in this module (§5.5). |
 | LYR-SEM0042 | E | An implementation whose signature does not match the interface's declaration. |
 | LYR-SEM0043 | E | A default method provided by more than one conformed interface — override it explicitly. |
-| LYR-SEM0044 | E | A member provided by more than one visible extension. |
+| LYR-SEM0044 | E | A member provided by more than one visible extension with the SAME parameters (since 3.0.1). Several of a name are an overload set since 3.0, and the call site chooses; two of one signature leave nothing to choose by. Before 3.0.1 the shared name alone was the cause. |
 | LYR-SEM0045 | E | A lambda parameter without a type annotation where no context type supplies one. |
 | LYR-SEM0046 | E | A non-void block lambda that can fall out without returning or throwing. |
 | LYR-SEM0047 | E | An extend target that is not a plain named type (no generic, array, tuple or function targets). |

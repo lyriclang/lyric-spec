@@ -1,0 +1,25 @@
+//! run
+//! since: 3.0.1
+//! exit: 4
+// §4.3a: several visible extensions offering one member are one overload set, not an ambiguity.
+// The arguments choose between them as they do anywhere else.
+struct Box {
+    v: int,
+}
+
+extend Box {
+    fn tell(n: int): int {
+        return this.v + n;
+    }
+}
+
+extend Box {
+    fn tell(s: string): int {
+        return this.v;
+    }
+}
+
+fn main(): int {
+    let b = Box { v = 1 };
+    return b.tell(2) + b.tell("x");
+}
