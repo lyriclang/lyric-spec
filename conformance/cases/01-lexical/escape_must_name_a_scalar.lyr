@@ -1,0 +1,10 @@
+//! check
+//! since: 3.4.1
+//! error: LYR-LEX0007
+// §1: '\u{H…}' names a Unicode scalar — a value beyond 0x10FFFF and a surrogate are both
+// malformed escapes, refused where they are written rather than wrapped or dropped.
+fn main(): int {
+    let past = "\u{80000000}";
+    let half = "\u{D800}";
+    return if (past == half) 1 else 0;
+}

@@ -1,0 +1,9 @@
+//! check
+//! since: 3.4.1
+//! error: LYR-PAR0043
+// §2: ArrayType is 'Type "[" "]"' — no length. A type nothing could produce is refused at the
+// parse, with the value-building form ('[x] * n') named in the message.
+fn main(): int {
+    let xs: int[3] = [1, 2, 3];
+    return xs.length;
+}

@@ -23,7 +23,7 @@ All lexical diagnostics are errors: a token that cannot be formed poisons everyt
 | LYR-LEX0004 | E | Empty integer literal after a base prefix (`0x` with no digits). |
 | LYR-LEX0005 | E | The separator `_` directly after a base prefix (`0x_1`). |
 | LYR-LEX0006 | E | Exponent part is not a decimal number (`1e`, `1e+`). |
-| LYR-LEX0007 | E | Malformed escape sequence: unknown escape, `\x` without exactly two hex digits, `\u` without braces, empty `\u{}`, unterminated `\u{`, or a value beyond `0x10FFFF`. |
+| LYR-LEX0007 | E | Malformed escape sequence: unknown escape, `\x` without exactly two hex digits, `\u` without braces, empty `\u{}`, unterminated `\u{`, a value beyond `0x10FFFF`, or one in the surrogate range `0xD800..0xDFFF` — the escape names a Unicode scalar (§1). |
 | LYR-LEX0008 | E | A character literal holding more or fewer than one character. |
 | LYR-LEX0009 | E | Unterminated string literal — strings do not span lines (§1.6). |
 | LYR-LEX0010 | E | Unterminated character literal. |
@@ -77,6 +77,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-PAR0040 | E | `static let` outside a struct or class body. |
 | LYR-PAR0041 | E | A `static` interface member — interface members dispatch on a receiver. |
 | LYR-PAR0042 | E | An attribute not followed by a declaration it may apply to, or sitting on a declaration kind that carries none (since 2.1 members carry one; interface members still do not). |
+| LYR-PAR0043 | E | An array type written with a length (`int[3]`, since 3.4.1). Array types carry none; the value is built with `[x] * n`. |
 
 ## A.3 RES — module and name resolution
 
@@ -236,7 +237,7 @@ error.
 
 | Code | S | Cause |
 |---|---|---|
-| LYR-CAP0001 | E | The module requires a capability this host does not grant. Its own area rather than a VM error: it describes host policy, not a broken file — the same module runs elsewhere (§4.5). |
+| LYR-CAP0001 | E | The module requires a capability this host does not grant. Its own area rather than a VM error: it describes host policy, not a broken file — the same module runs elsewhere (§4.5). Also the reverse (since 3.4.1): a module binding a gated native its own bitset does not cover — reachable only from hand-built bytes, and that file IS broken. |
 | LYR-CAP0002 | panic | *(since 2.4)* The execution ran out of the instruction budget the host granted it. Host policy for the same reason as `LYR-CAP0001`: the program broke no contract of its own and finishes elsewhere. A panic all the same — a stop the program could catch, or run a `defer` behind, would be one it could sit out. An implementation without the embedding API never emits it. |
 
 ## A.9 VM — runtime
@@ -251,7 +252,7 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0003 | panic | An `unreachable` instruction executed — the compiler claimed this point could not be reached. |
 | LYR-VM0004 | panic | Call depth exceeded; how unbounded recursion surfaces. The limit is quality of implementation (the reference allows 1024 frames); the code and the panic are the contract. |
 | LYR-VM0005 | E | The module requires imports the runtime does not bind. |
-| LYR-VM0006 | panic | Array index outside the bounds — a runtime value, uncheckable at load time. |
+| LYR-VM0006 | panic | Array index outside the bounds, or an array length the implementation cannot allocate (since 3.4.1 — it aborted the process before) — runtime values, uncheckable at load time. |
 | LYR-VM0007 | panic | Force-unwrap `!` of an optional holding no value. |
 | LYR-VM0008 | panic | `enumas` to a variant the value is not. The compiler proves this through `match`; the check remains because a `.lyrbc` may come from elsewhere. |
 | LYR-VM0009 | panic | No vtable entry for (concrete type, interface, slot). Reachable only for a module assembled without the loader's checks. |

@@ -147,6 +147,11 @@ Standalone execution grants everything; an embedding host decides. Console I/O a
 computational require nothing. `std.time` deliberately rides `osAccess`: reading the clock is a
 question to the environment, and a new bit would be a contract change for every older runtime.
 
+The recorded bits are a verified BOUND, not a request: a runtime refuses a module whose bits the
+host does not grant, and refuses to bind a gated native inside a module whose bits do not cover
+it (`LYR-CAP0001` either way; §13). A compiler records the bits its imports imply, so the second
+refusal is reachable only from hand-built bytes — the case the capability model exists for.
+
 ## 4.6 Reachability *(informative)*
 
 A program is pruned from its entry point: what `main` does not reach — directly or through
