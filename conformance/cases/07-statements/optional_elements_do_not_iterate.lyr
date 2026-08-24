@@ -1,0 +1,13 @@
+//! check
+//! since: 3.3.0
+//! error: LYR-SEM0091
+// §7.2: an array of optionals is an accepted SHAPE that is nevertheless refused — next()
+// answers ?T and spends null on "the end", so an optional element would need ??T, and ? does
+// not nest (§3).
+fn main(): int {
+    let slots: (?int)[] = [1, null, 3];
+    for (x in slots) {
+        return x ?? 0;
+    }
+    return 0;
+}

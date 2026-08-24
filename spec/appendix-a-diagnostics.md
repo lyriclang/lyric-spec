@@ -176,6 +176,8 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0087 | E | A call no overload of the name accepts (since 3.0). Names every candidate and what it takes. |
 | LYR-SEM0088 | E | An overloaded INTERFACE member (since 3.0). A method table holds one function per slot and finds it by name. |
 | LYR-SEM0089 | E | A name meaning several functions used as a VALUE, with no type to pick by or none of that shape (since 3.0). |
+| LYR-SEM0090 | E | A range outside a loop head (since 3.3). `a..b` is a loop head, not a value: there is no range type, so binding, storing or passing one is refused where it is written (§2, §7.2). |
+| LYR-SEM0091 | E | `for-in` over an array of optionals, or over an iterator of optionals (since 3.3). `next()` answers `?T` and spends `null` on the end, so an optional element would need `??T`, and `?` does not nest (§3, §7.2). |
 | LYR-SEM0084 | E | A `throws` suffix on a type that is not a coroutine (since 3.0). Every other value runs at its call, and the callee's own clause says there what it throws. |
 
 ### Warnings and hints

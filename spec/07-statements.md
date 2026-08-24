@@ -38,6 +38,12 @@ points), a value satisfying `Iterable<T>` (a fresh cursor per loop), or an `Iter
 directly. Iterator conformance reached through an interface chain counts. Anything else is
 `LYR-SEM0007`.
 
+One accepted shape is nevertheless refused: an array of optionals — and an iterator of
+optionals — is `LYR-SEM0091`, not a working loop. The protocol is the reason, not the
+container: `next()` answers `?T` and spends `null` on "the end", so an optional element would
+need `??T` to be told apart from it, and `?` does not nest (§3). An index loop over the array
+remains ordinary.
+
 Range shapes, exactly: a range with `lo > hi` is empty, `a..a` is empty, `a..=a` is one
 element — and `a..=hi` where `hi` is the bound type's MAXIMUM iterates to and including `hi`
 and terminates. That last sentence is the contract against the classic desugaring trap

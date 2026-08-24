@@ -1,0 +1,9 @@
+//! check
+//! since: 3.3.0
+//! error: LYR-SEM0090
+// §7.2: 'a..b' is a loop head, not a value — there is no range type, so binding one is refused
+// where it is written, in inferred positions as in annotated ones.
+fn main(): int {
+    let r = 1..5;
+    return 0;
+}
