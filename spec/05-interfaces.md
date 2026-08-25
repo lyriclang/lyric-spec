@@ -23,8 +23,18 @@ may conform to one interface SEVERAL times** at different arguments: `Vec2 :: [M
 beside `extend Vec2 :: [Mul<float, Vec2>]`, or `Tag :: [Equatable<Tag>, Equatable<int>]`. Each
 conformance is its own demand — conformance checking asks whether ANY visible method of the name
 matches the signature THAT conformance wants, rather than the first one it finds — so two
-conformances need two implementations, and one cannot answer both. Naming one conformance twice at
-the SAME arguments is one conformance, as it is when a chain reaches it twice (§5.4).
+conformances need two implementations, and one cannot answer both.
+
+**A list may not repeat itself** (since 3.6.0): an entry naming what an earlier entry of the SAME
+list already names, interface and arguments alike, is refused (`LYR-SEM0078`) — the list claims
+two conformances where one exists, and there is nothing else it could mean. The rule reads the
+ENTRIES, not their closures, and it holds for a parent list the same way. Everything reached twice
+by other routes stays ONE conformance, deliberately: a parent written out beside its child
+(`S :: [Hashable<S>, Equatable<S>]`, where the first entry's chain implies the second), a chain
+arriving twice (§5.4), or an `extend` block declaring a conformance the type also declares itself.
+The last one may stand in ANOTHER module — the orphan rule (§5.5) admits the interface's module —
+and a library adopting a conformance that a downstream module had added by `extend` must not break
+that module's build: a duplicate across declarations is redundant, never wrong.
 
 What made several conformances possible is **overloading** (§4.3a), which arrived in the same
 release: before it, two of them wanted two methods of one name on one type, and `LYR-SEM0042`
@@ -105,9 +115,11 @@ another interface type — the parent included: implication holds for the implem
 for fat pointers. Take the concrete value through the parent where a parent-typed value is
 needed.
 
-*Implementation limit (diagnosed, `LYR-IR0001`):* instances of generic interfaces whose method
-signatures carry non-primitive or function-typed slots cannot yet be interned as values, and
-generic default methods have no lowering; both are compile-time refusals, never silent.
+*(Through 2.16 this section carried an implementation limit: instances whose slot signatures hold
+non-primitive or function-typed values could not be interned, and generic interface defaults had
+no lowering. Both fell with 2.17 and 3.0 — the conformance suite runs interface values over
+struct-typed, function-typed and default-method slots — and the limit is recorded here only so a
+reader of old modules knows it existed.)*
 
 ## 5.4 Resolution order
 

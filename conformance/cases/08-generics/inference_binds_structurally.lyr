@@ -1,0 +1,28 @@
+//! run
+//! since: 3.5.0
+//! exit: 9
+// §8.3 rule 3: binding is structural — a parameter type descends into its argument's
+// shape. 'T[]' binds the element, a tuple binds by position, 'fn(T) -> U' binds from the
+// function type. No conformance, no annotation: the shapes carry everything.
+fn first<T>(xs: T[], fallback: T): T {
+    if (xs.length == 0) { return fallback; }
+    return xs[0];
+}
+
+fn left<A, B>(pair: (A, B)): A {
+    let (a, _) = pair;
+    return a;
+}
+
+fn applyOnce<T, U>(f: fn(T) -> U, v: T): U {
+    return f(v);
+}
+
+fn double(n: int): int { return n * 2; }
+
+fn main(): int {
+    let a = first([2, 3], 0);
+    let b = left((3, "x"));
+    let c = applyOnce(double, 2);
+    return a + b + c;
+}

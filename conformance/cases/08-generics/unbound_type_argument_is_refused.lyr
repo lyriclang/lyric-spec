@@ -1,0 +1,16 @@
+//! check
+//! since: 3.5.0
+//! error: LYR-SEM0060
+// §8.3 rule 6: a type argument no value argument determines is refused, and the expected
+// type of the call's position binds nothing for a FUNCTION — the annotation on the
+// binding does not rescue the bare factory. Construction is the exception (§8.2); a call
+// is not.
+fn empty<T>(): T[] {
+    let none: T[] = [];
+    return none;
+}
+
+fn main(): int {
+    let xs: int[] = empty();
+    return xs.length;
+}

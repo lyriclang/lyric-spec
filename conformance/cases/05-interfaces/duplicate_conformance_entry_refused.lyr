@@ -1,0 +1,14 @@
+//! check
+//! since: 3.6.0
+//! error: LYR-SEM0078
+// §5.1: a list may not repeat itself — an entry naming what an earlier entry of the same
+// list already names, interface and arguments alike, claims two conformances where one
+// exists. (Through 3.5 the duplicate was deduplicated in silence.)
+import std.core { Equatable };
+
+struct S :: [Equatable<S>, Equatable<S>] {
+    x: int,
+    fn equals(other: S): bool { return this.x == other.x; }
+}
+
+fn main(): int { return 0; }

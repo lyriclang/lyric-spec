@@ -1,0 +1,22 @@
+//! run
+//! since: 3.5.0
+//! exit: 5
+// §8.3 rule 4: at a parameter whose type is a generic interface instance, an argument
+// with no structural similarity binds through its declared conformance — the connection
+// stands in the argument's declaration, not in its shape.
+interface Holder<T> {
+    fn held(): T;
+}
+
+class Five :: [Holder<int>] {
+    pad: int,
+    fn held(): int { return 5; }
+}
+
+fn unwrap<T>(h: Holder<T>): T {
+    return h.held();
+}
+
+fn main(): int {
+    return unwrap(Five { pad = 0 });
+}
