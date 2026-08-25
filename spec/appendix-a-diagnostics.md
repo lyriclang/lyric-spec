@@ -193,7 +193,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0072 | W | An unused import. An import whose extensions are used counts as used (§4.2). |
 | LYR-SEM0073 | W | An unreachable statement. |
 | LYR-SEM0075 | H | A `var` never reassigned — `let` would do. Conservative: any by-reference touch counts as a mutation. |
-| LYR-SEM0093 | W | The inward opaque cast (`value as Name`) outside the module declaring `Name` (since 3.8; §3.5). A handle is issued by its module, not assembled elsewhere; the message names the way out — a constructor function the declaring module offers. Announced to become an error at 4.0, the LYR-SEM0074 path. Cross-module by nature, so no conformance case can express it; the reference toolchain's own tests pin it, as they pin the native-root rules. |
+| LYR-SEM0093 | E | The inward opaque cast (`value as Name`) outside the module declaring `Name` (§3.5). A handle is issued by its module, not assembled elsewhere; the message names the way out — a constructor function the declaring module offers. A WARNING from 3.8 through 3.x — the LYR-SEM0074 announcement path — and an error since 4.0, the clock kept. Cross-module by nature, so no conformance case can express it; the reference toolchain's own tests pin it. |
 | LYR-SEM0076 | W | Use of a declaration or module marked `@Deprecated`. |
 | LYR-SEM0077 | W | An import shadowing a builtin type name. |
 
@@ -264,6 +264,9 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable from source until 3.0 through the coroutine gap of §10 — a pull whose origin the checker could not follow demanded no handling — and since the throwability moved into the type only for a hand-built module. |
 | LYR-VM0011 | panic | `panic(msg)` from the program. Not catchable; the message is the caller's. |
 | LYR-VM0012 | panic | A `char` result outside the Unicode range or in the surrogate range — checked where the value is produced. |
+| LYR-VM0013 | panic | A `yield` with no resume running it (since 4.0; §10a rule 1) — including one beneath a native or JIT-compiled frame, which runs in an execution loop of its own: the C-boundary rule falls out of the machine's shape. |
+| LYR-VM0014 | panic | A `resume` of a coroutine that is suspended mid-resume (since 4.0; §10a rule 5): one chain, one driver. |
+| LYR-VM0015 | panic | A yield whose value's type is not the running chain's element type (since 4.0; §10a rule 3). The site's type is what the expression statically is; admitted, the value would corrupt the puller, whose result type is static. |
 
 ## A.10 EMB — the embedding boundary
 
