@@ -134,7 +134,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0035 | E | A catch-all clause that is not the last catch. |
 | LYR-SEM0036 | E | `try` without a `catch` — `finally` does not exist, `defer` is the mechanism. |
 | LYR-SEM0037 | E | A `throws` function used as a value — function types carry no throws information (§9.2). |
-| LYR-SEM0038 | E | `yield` outside a coroutine, or a bare `yield;` where the coroutine yields a value (§10). |
+| LYR-SEM0038 | E | Through 3.x: `yield` outside a coroutine body. Since 4.0 that half is RETIRED — `yield` is legal in every function and its failures are runtime panics (§10a) — and the code keeps only its body half: a bare `yield;` where the coroutine yields a value (§10). A narrowed code, not a reissued one. |
 | LYR-SEM0039 | E | A coroutine returning a value — it ends with a bare `return;`. |
 | LYR-SEM0040 | E | `resume` on something that is not a `Coroutine<T>`. |
 | LYR-SEM0041 | E | Orphan extension: neither the target type nor any implemented interface is declared in this module (§5.5). |

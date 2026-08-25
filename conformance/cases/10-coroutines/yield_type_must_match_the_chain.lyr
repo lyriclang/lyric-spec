@@ -1,0 +1,20 @@
+//! run
+//! since: 4.0.0
+//! panic: LYR-VM
+// §10a rule 3: the yielded value's type must BE the chain's element type. There is no context
+// to adapt against — which chain a helper's yield meets is a runtime fact — so the meeting is
+// checked where it happens, and a string arriving at a Coroutine<int> panics.
+fn helper(): void {
+    yield "not an int";
+}
+
+fn gen(): Coroutine<int> {
+    yield 1;
+    helper();
+}
+
+fn main(): int {
+    let co = gen();
+    let first = resume co;
+    return resume co;
+}

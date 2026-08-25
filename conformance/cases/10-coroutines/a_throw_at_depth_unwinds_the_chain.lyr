@@ -1,0 +1,33 @@
+//! run
+//! since: 4.0.0
+//! stdout:
+//! | 1
+//! | deep defer
+//! | caught: boom
+// §10a: an exception thrown at depth unwinds the CHAIN — running the defers of every chain
+// frame it leaves — and exits the pull that was driving it, where an ordinary try catches it.
+import std.core { Exception };
+import std.io.console { println };
+import std.string as strings;
+
+fn deep(): void throws Exception {
+    defer println("deep defer");
+    yield 1;
+    throw Exception { text = "boom" };
+}
+
+fn gen(): Coroutine<int> throws Exception {
+    deep();
+    yield 99;
+}
+
+fn main(): int {
+    let co = gen();
+    try {
+        println(strings.fromInt(resume co));
+        let second = resume co;
+    } catch (e: Exception) {
+        println("caught: " + e.message());
+    }
+    return 0;
+}
