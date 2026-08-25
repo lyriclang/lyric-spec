@@ -1,0 +1,24 @@
+//! run
+//! since: 3.9.0
+//! stdout:
+//! | ok
+// §4.7: a group declares the same attribute list the stacked spelling declares — row for row,
+// in written order, under the same rules. Entries inside the group carry no '@' of their own.
+import std.io.console { println };
+import std.core { OnFunction, WithArg };
+
+pub struct Tag :: [OnFunction] { }
+
+pub struct Retry :: [OnFunction, WithArg<int>] { limit: int }
+
+@[Tag, Retry(3)]
+pub fn grouped(): void { }
+
+@Tag
+@Retry { limit = 3 }
+pub fn stacked(): void { }
+
+fn main(): int {
+    println("ok");
+    return 0;
+}

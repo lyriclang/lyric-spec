@@ -22,8 +22,9 @@ implementation must honor:
 2. **The operator and constraint anchors of `std.core`**: `Display`, `Equatable<T>`,
    `Hashable<T>` (whose parent is `Equatable<T>` since 2.0 — a key constraint is
    `K :: [Hashable<K>]` alone), `Ordered<T>`, `Add/Sub/Mul/Div<T>`, `Into<T>`, the attribute
-   markers (`OnModule`, `OnType`, `OnFunction`) and `@Deprecated`. Chapter 6's operator rule
-   and the collection constraints name them; without them the language loses syntax.
+   markers (`OnModule`, `OnType`, `OnFunction`), the positional-argument conformance
+   `WithArg<T>` (since 3.9) and `@Deprecated`. Chapter 6's operator rule and the collection
+   constraints name them; without them the language loses syntax.
 3. **The capability gates** (§4.5) and the native import names the bytecode of a compiled
    standard library carries: binding is symbolic by name (`std.io.file.readBytes`, …), and the
    set a runtime must implement is exactly the set the shipped `stdlib/` declares as bodiless

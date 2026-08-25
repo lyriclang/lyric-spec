@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0094
+//! since: 3.9.0
+// §4.7: the positional form is a conformance, not a courtesy — an attribute that does not
+// declare WithArg<T> does not take it, however single its field list is.
+import std.core { OnFunction };
+
+pub struct Retry :: [OnFunction] { limit: int }
+
+@Retry(3)
+pub fn fetch(): void { }
+
+fn main(): int {
+    return 0;
+}

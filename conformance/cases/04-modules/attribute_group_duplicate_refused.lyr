@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0068
+//! since: 3.9.0
+// §4.7: the one-per-attribute rule counts across spellings — a group IS the stacked list, so
+// the same attribute twice in one group is the same attribute twice on one target.
+import std.core { OnFunction };
+
+pub struct Tag :: [OnFunction] { }
+
+@[Tag, Tag]
+pub fn twice(): void { }
+
+fn main(): int {
+    return 0;
+}

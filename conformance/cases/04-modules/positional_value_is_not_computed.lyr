@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0066
+//! since: 3.9.0
+// §4.7: the positional value stands under the same rules as a written field — a value at
+// compile time, computed by nobody. The same sentence, the same code, one more spelling.
+import std.core { OnFunction, WithArg };
+
+pub struct Retry :: [OnFunction, WithArg<int>] { limit: int }
+
+@Retry(1 + 2)
+pub fn fetch(): void { }
+
+fn main(): int {
+    return 0;
+}

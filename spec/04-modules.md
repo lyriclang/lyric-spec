@@ -184,6 +184,21 @@ it follows from that:
   `let n = 1 + 2;` is not a value, because the language folds nothing anywhere — and every field
   of the attribute struct must end with a value, written at the site or as a default of the same
   kind (`LYR-SEM0066`, `LYR-SEM0069`).
+- **Since 3.9** an attribute may take its one value POSITIONALLY: `@On(Event.Damage)`. The
+  parenthesized form carries exactly one value, under the same value rules as a written field,
+  and it fills the attribute's FIRST field; every other field must end with a value through its
+  default, as if unwritten. The form is a conformance, not a courtesy: it is admitted only for
+  an attribute struct that declares `std.core.WithArg<T>` (`LYR-SEM0094` otherwise), and `T`
+  must be exactly the first field's type, checked where the attribute is DECLARED
+  (`LYR-SEM0095`) — a mismatch lands with the SDK author, not at use sites. The braces form
+  stays available to every attribute; one use writes one form or the other, and the grammar
+  admits no mix. The row a positional use produces is indistinguishable from the row of its
+  braces twin.
+- **Since 3.9** several attributes may stand as one GROUP:
+  `@[Component, System { order = 10 }, On(Event.Damage)]` — the same list the stacked spelling
+  declares, row for row in written order and under the same rules; the one-per-attribute rule
+  counts across both spellings. A group holds at least one entry, and the entries carry no `@`
+  of their own.
 - The same attribute may sit on a declaration once, and set each field once (`LYR-SEM0068`).
 - A generic type cannot be an attribute, and an attribute cannot sit on a generic
   declaration — one row cannot stand for every instance (`LYR-SEM0065`, `LYR-SEM0067`). The
