@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0096
+//! since: 3.9.1
+// §4.7: a row holds a number, a string, a char, a bool or a variant tag. A field of any other
+// type has no encoding — '?int' here — however writable its literal looks after adaptation.
+// The refusal sits at the USE: the struct alone is an ordinary struct.
+import std.core { OnFunction };
+
+pub struct Odd :: [OnFunction] { n: ?int }
+
+@Odd { n = 3 }
+pub fn f(): void { }
+
+fn main(): int {
+    return 0;
+}

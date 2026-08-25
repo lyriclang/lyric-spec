@@ -182,7 +182,8 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0091 | E | `for-in` over an array of optionals, or over an iterator of optionals (since 3.3). `next()` answers `?T` and spends `null` on the end, so an optional element would need `??T`, and `?` does not nest (§3, §7.2). |
 | LYR-SEM0092 | E | A call whose type-argument inference must bind through a conformance while the argument type conforms to that interface more than once (since 3.6.0). No conformance is chosen — the order of a `::` list must never decide a call — and writing the type argument settles it (§8.3). |
 | LYR-SEM0094 | E | The positional attribute form (`@Name(value)`) on an attribute that does not declare `std.core.WithArg<T>` (since 3.9; §4.7). The parenthesized value is a contract an attribute opts into, not a spelling every struct carries; the braces form stays open to all. |
-| LYR-SEM0095 | E | An attribute struct declaring `WithArg<T>` whose first field is not of type `T`, or that has no field at all (since 3.9; §4.7). Checked at the declaration: the conformance states what `@Name(value)` fills, so a mismatch belongs to the declaring module, not to a use. |
+| LYR-SEM0095 | E | An attribute struct declaring `WithArg<T>` whose first field is not of type `T`, or that has no field at all (since 3.9; §4.7). Checked where the conformance is written — the type's own list, an extend block, or the entry whose interface parent reaches `WithArg` (since 3.9.1): the conformance states what `@Name(value)` fills, so a mismatch belongs to the declaring module, not to a use. |
+| LYR-SEM0096 | E | An attribute use whose struct has a field no row can hold (since 3.9.1; §4.7). A row's values are numbers, strings, chars, bools and variant tags; a field of any other type — an optional, an array, a struct — has no encoding, however writable its literal looks after adaptation. Reported at the use: the struct alone is an ordinary struct. |
 
 ### Warnings and hints
 

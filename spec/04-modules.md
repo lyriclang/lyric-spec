@@ -183,13 +183,18 @@ it follows from that:
   holds one value per field, and a payload is values of its own. Nothing is COMPUTED on the way —
   `let n = 1 + 2;` is not a value, because the language folds nothing anywhere — and every field
   of the attribute struct must end with a value, written at the site or as a default of the same
-  kind (`LYR-SEM0066`, `LYR-SEM0069`).
+  kind (`LYR-SEM0066`, `LYR-SEM0069`). **Since 3.9.1** the FIELDS themselves are held to the
+  same standard, at the use: a row holds a number, a string, a char, a bool or a variant tag,
+  so a field of any other type — an optional, an array, a struct — refuses the use
+  (`LYR-SEM0096`). Before that rule the sema accepted `n: ?int` with `n = 3` — the literal
+  adapts — and the bytecode writer, which has no encoding for it, took the compiler down.
 - **Since 3.9** an attribute may take its one value POSITIONALLY: `@On(Event.Damage)`. The
   parenthesized form carries exactly one value, under the same value rules as a written field,
   and it fills the attribute's FIRST field; every other field must end with a value through its
   default, as if unwritten. The form is a conformance, not a courtesy: it is admitted only for
-  an attribute struct that declares `std.core.WithArg<T>` (`LYR-SEM0094` otherwise), and `T`
-  must be exactly the first field's type, checked where the attribute is DECLARED
+  an attribute struct that declares `std.core.WithArg<T>` — directly or through an interface
+  parent, as any conformance may be reached (`LYR-SEM0094` otherwise) — and `T` must be exactly
+  the first field's type, checked where the conformance is written, the entry that reaches it
   (`LYR-SEM0095`) — a mismatch lands with the SDK author, not at use sites. The braces form
   stays available to every attribute; one use writes one form or the other, and the grammar
   admits no mix. The row a positional use produces is indistinguishable from the row of its

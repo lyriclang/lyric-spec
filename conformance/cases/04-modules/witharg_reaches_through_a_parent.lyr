@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0095
+//! since: 3.9.1
+// §4.7: a conformance may be reached through an interface parent, and the WithArg promise
+// travels with it — the first-field check runs at the entry that reaches it, so the mismatch
+// still lands with whoever ships the attribute, not at every use site.
+import std.core { OnFunction, WithArg };
+
+pub interface Carries :: [WithArg<int>] { }
+
+pub struct Retry :: [OnFunction, Carries] { limit: string }
+
+fn main(): int {
+    return 0;
+}
