@@ -8,7 +8,7 @@ on:
   pull_request:
 
 env:
-  TOOLCHAIN_VERSION: "3.6.0"
+  TOOLCHAIN_VERSION: "3.6.1"
 
 jobs:
   conformance:
