@@ -166,7 +166,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0069 | E | An attribute leaving a field without a compile-time value. |
 | LYR-SEM0070 | E | A duplicate field in a struct or variant initializer. |
 | LYR-SEM0074 | E² | The instance form of a static extension. A warning through 1.x with the message announcing this change; an error from 2.0. |
-| LYR-SEM0078 | E | An interface list that cannot mean what it says: an entry that is not an interface — in a parent list, or (since 2.15) in the conformance list of a type or an `extend` — or a circular parent chain. |
+| LYR-SEM0078 | E | An interface list that cannot mean what it says: an entry that is not an interface — in a parent list, or (since 2.15) in the conformance list of a type or an `extend` — a circular parent chain, or (since 3.6.0) an entry repeating an earlier entry of the same list at the same arguments (§5.1; reached twice through a chain or across declarations stays one conformance and is not refused). |
 | LYR-SEM0079 | E | An inherited member name that is ambiguous: an interface redeclaring a member of an ancestor, or (since 2.16) two parents contributing one name from different declarations. A diamond is not ambiguous. |
 | LYR-SEM0080 | E | `next()` on a `Coroutine<?T>` (since 2.2.0): a `null` result would mean both "yielded null" and "done" (§10). |
 | LYR-SEM0081 | E | A `@Deprecated` whose `until` names a version the toolchain has reached, or one it cannot read (since 2.13.0). The promise is checked at the DECLARATION, so it fires whether or not anything uses it. |
@@ -177,9 +177,10 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0087 | E | A call no overload of the name accepts (since 3.0). Names every candidate and what it takes. |
 | LYR-SEM0088 | E | An overloaded INTERFACE member (since 3.0). A method table holds one function per slot and finds it by name. |
 | LYR-SEM0089 | E | A name meaning several functions used as a VALUE, with no type to pick by or none of that shape (since 3.0). |
+| LYR-SEM0084 | E | A `throws` suffix on a type that is not a coroutine (since 3.0). Every other value runs at its call, and the callee's own clause says there what it throws. |
 | LYR-SEM0090 | E | A range outside a loop head (since 3.3). `a..b` is a loop head, not a value: there is no range type, so binding, storing or passing one is refused where it is written (§2, §7.2). |
 | LYR-SEM0091 | E | `for-in` over an array of optionals, or over an iterator of optionals (since 3.3). `next()` answers `?T` and spends `null` on the end, so an optional element would need `??T`, and `?` does not nest (§3, §7.2). |
-| LYR-SEM0084 | E | A `throws` suffix on a type that is not a coroutine (since 3.0). Every other value runs at its call, and the callee's own clause says there what it throws. |
+| LYR-SEM0092 | E | A call whose type-argument inference must bind through a conformance while the argument type conforms to that interface more than once (since 3.6.0). No conformance is chosen — the order of a `::` list must never decide a call — and writing the type argument settles it (§8.3). |
 
 ### Warnings and hints
 
@@ -196,7 +197,7 @@ may surface several codes; conformance cases pin the first.
 
 | Code | S | Cause |
 |---|---|---|
-| LYR-IR0001 | E | Valid Lyric this implementation cannot lower. Deliberately the ONE code of the area: the set of constructs behind it may shrink release by release without retiring numbers. In the reference toolchain it currently covers `&&=`/`||=`, a `catch` naming a specific interface, generic functions as values, and generic interface defaults (the documented limits of §5, §6, §9). |
+| LYR-IR0001 | E | Valid Lyric this implementation cannot lower. Deliberately the ONE code of the area: the set of constructs behind it may shrink release by release without retiring numbers. In the reference toolchain it currently covers `&&=`/`||=` and a `catch` naming a specific interface (the documented limits of §6, §9), and it is where the refusal every implementation must make surfaces there: a monomorphization that cannot terminate, in both shapes (§8.1 polymorphic recursion written with an open instance; §5.2a a member demanding an unbounded instance chain). Two former entries left the list: generic interface defaults lower since 2.17, and a generic function used as a value is refused by the type checker (§8.1), not here. |
 
 ## A.6 CLI — driver and project handling
 
