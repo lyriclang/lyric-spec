@@ -1,0 +1,13 @@
+//! run
+//! since: 4.0.0
+//! panic: LYR-VM
+// §10a rule 1: a yield needs a running resume. Executed while none is running — here straight
+// from main — it panics: a value was produced and nobody is suspended waiting for one.
+fn free(): int {
+    yield 1;
+    return 2;
+}
+
+fn main(): int {
+    return free();
+}

@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0038
+// §10: inside a coroutine BODY the yield still checks statically — a bare 'yield;' where the
+// coroutine yields a value is refused where it stands. This is the half of LYR-SEM0038 that
+// SURVIVES 4.0; the outside-a-body half retires into §10a's panics.
+fn gen(): Coroutine<int> {
+    yield;
+}
+
+fn main(): int {
+    let co = gen();
+    return resume co;
+}

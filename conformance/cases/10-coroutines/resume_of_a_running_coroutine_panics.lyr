@@ -1,0 +1,20 @@
+//! run
+//! since: 4.0.0
+//! panic: LYR-VM
+// §10a rule 5: one chain, one driver. A coroutine that is suspended mid-resume cannot be
+// resumed again — here its own body reaches back through a box and tries.
+class Box {
+    co: ?Coroutine<int>,
+}
+
+let box = Box { co = null };
+
+fn gen(): Coroutine<int> {
+    resume box.co!;
+    yield 1;
+}
+
+fn main(): int {
+    box.co = gen();
+    return resume box.co!;
+}

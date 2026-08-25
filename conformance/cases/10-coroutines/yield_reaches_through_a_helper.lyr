@@ -1,0 +1,36 @@
+//! run
+//! since: 4.0.0
+//! stdout:
+//! | 1
+//! | 2
+//! | 3
+//! | done
+// §10a: a coroutine is stackful — a yield at any call depth beneath the running resume
+// suspends the whole chain, helpers and lambdas alike, and the pull sees each value in order.
+import std.io.console { println };
+import std.string as strings;
+
+fn low(n: int): void {
+    yield n;
+}
+
+fn mid(n: int): void {
+    low(n);
+    let f = (m: int) => { yield m; };
+    f(n + 1);
+}
+
+fn gen(): Coroutine<int> {
+    mid(1);
+    yield 3;
+}
+
+fn main(): int {
+    let co = gen();
+    println(strings.fromInt(resume co));
+    println(strings.fromInt(resume co));
+    var third = co.next();
+    println(strings.fromInt(third!));
+    println("done");
+    return 0;
+}
