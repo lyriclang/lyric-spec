@@ -3,9 +3,32 @@
 Lyric separates three failure shapes, and the separation is the design:
 
 1. **A state of the world** — a missing file, an unparsable string — is a RETURN VALUE (`?T` or
-   `bool`). The standard library holds this line everywhere.
+   `bool`).
 2. **A recoverable exception** travels through `throw`/`try`/`catch`.
 3. **A programming error** is a `panic`: not catchable, ends the program with a backtrace.
+
+## 9.0 The library doctrine: a value answers WHETHER, a throw answers WHY
+
+The two recoverable shapes divide by the question, not by the operation (since 3.7):
+
+- **`?T` and `bool` answer "is it there? did it happen?"** — absence and non-occurrence as
+  values. Where that answer is the WHOLE truth — an unset environment variable has no further
+  story — the silent form stands alone.
+- **A throw answers "why not?"** Where a failure carries a REASON a caller could act on or
+  report — which file operation failed and how, where in a document the syntax broke — the
+  library offers a throwing form beside the silent one, named with the suffix **`OrThrow`**,
+  declaring a module-specific error type (`throws IoError`, `throws JsonError`) whose fields
+  carry the reason.
+
+**Both forms answer from ONE implementation**: the silent form is `null`/`false` exactly where
+the throwing one throws, derived from it in source — never a second implementation that could
+drift. Which form a program calls states what it will do with a failure: fall back, or handle
+the reason.
+
+The error types themselves are library surface (§11): their fields evolve under the
+deprecation policy, and a reason ENUM behind a carrier class may gain variants without
+breaking a `match` — the carrier-plus-kind shape exists exactly so that adding a reason is
+not a break. What this section fixes is the doctrine, not the types.
 
 ## 9.1 Throwables
 
