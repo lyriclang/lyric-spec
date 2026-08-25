@@ -181,6 +181,8 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0090 | E | A range outside a loop head (since 3.3). `a..b` is a loop head, not a value: there is no range type, so binding, storing or passing one is refused where it is written (§2, §7.2). |
 | LYR-SEM0091 | E | `for-in` over an array of optionals, or over an iterator of optionals (since 3.3). `next()` answers `?T` and spends `null` on the end, so an optional element would need `??T`, and `?` does not nest (§3, §7.2). |
 | LYR-SEM0092 | E | A call whose type-argument inference must bind through a conformance while the argument type conforms to that interface more than once (since 3.6.0). No conformance is chosen — the order of a `::` list must never decide a call — and writing the type argument settles it (§8.3). |
+| LYR-SEM0094 | E | The positional attribute form (`@Name(value)`) on an attribute that does not declare `std.core.WithArg<T>` (since 3.9; §4.7). The parenthesized value is a contract an attribute opts into, not a spelling every struct carries; the braces form stays open to all. |
+| LYR-SEM0095 | E | An attribute struct declaring `WithArg<T>` whose first field is not of type `T`, or that has no field at all (since 3.9; §4.7). Checked at the declaration: the conformance states what `@Name(value)` fills, so a mismatch belongs to the declaring module, not to a use. |
 
 ### Warnings and hints
 

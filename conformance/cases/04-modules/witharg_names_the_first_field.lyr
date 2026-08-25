@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0095
+//! since: 3.9.0
+// §4.7: WithArg<T> states what the parenthesized value fills — the FIRST field. A first field
+// of another type is refused at the DECLARATION, where the mismatch belongs, whether or not
+// anything uses the attribute.
+import std.core { OnFunction, WithArg };
+
+pub struct Named :: [OnFunction, WithArg<string>] { order: int, label: string = "" }
+
+fn main(): int {
+    return 0;
+}

@@ -12,8 +12,9 @@ reproduces; a diagnostic code in parentheses names the error a conforming implem
 ## 1.1 Identifiers and keywords
 
 An identifier starts with `a`–`z`, `A`–`Z` or `_` and continues with those or digits — ASCII
-only, case-sensitive. `@` followed by an identifier is one token (an attribute name); a bare `@`
-is an error (`LYR-LEX0012`).
+only, case-sensitive. `@` followed by an identifier is one token (an attribute name), and `@`
+immediately followed by `[` is the token `@[` (an attribute group opener, since 3.9); a bare
+`@` is an error (`LYR-LEX0012`).
 
 The reserved words are:
 

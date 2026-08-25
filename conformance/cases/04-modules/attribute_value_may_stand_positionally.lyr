@@ -1,0 +1,32 @@
+//! run
+//! since: 3.9.0
+//! stdout:
+//! | ok
+// §4.7: an attribute declaring WithArg<T> takes its one value positionally, and the value
+// fills the FIRST field. The row is not readable from inside the program, so the case proves
+// the form COMPILES beside its braces twin and that defaults still fill the rest.
+import std.io.console { println };
+import std.core { OnFunction, WithArg };
+
+pub enum Event {
+    Damage,
+    Heal,
+}
+
+pub struct On :: [OnFunction, WithArg<Event>] { event: Event, order: int = 0 }
+
+pub struct Retry :: [OnFunction, WithArg<int>] { limit: int }
+
+@On(Event.Damage)
+pub fn onDamage(): void { }
+
+@On { event = Event.Heal, order = 2 }
+pub fn onHeal(): void { }
+
+@Retry(3)
+pub fn fetch(): void { }
+
+fn main(): int {
+    println("ok");
+    return 0;
+}
