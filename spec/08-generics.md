@@ -12,9 +12,9 @@ Consequences the language commits to:
 - constrained calls are DIRECT calls after monomorphization — a `T :: [Display]` costs nothing
   at the call site;
 - a generic function or type cannot cross a runtime boundary un-instantiated: a generic
-  function is not a function value (`fn` values are monomorphic — using one as a value is a
-  type error, since its unsubstituted signature fits no function type), and attributes sit on
-  generic declarations only in the one row-less case (`@Deprecated`);
+  function is not a function value (`fn` values are monomorphic — using one as a value is
+  refused, `LYR-SEM0052` since 3.6.0, as its unsubstituted signature fits no function type),
+  and attributes sit on generic declarations only in the one row-less case (`@Deprecated`);
 - instantiation is demand-driven from the roots; unreachable instantiations do not exist in
   the module;
 - every instantiation chain must be FINITE. Polymorphic recursion — a function reaching itself

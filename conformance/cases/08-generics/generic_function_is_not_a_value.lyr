@@ -1,0 +1,13 @@
+//! check
+//! since: 3.6.0
+//! error: LYR-SEM0052
+// §8.1: a generic function is not a function value — fn values are monomorphic, and an
+// unsubstituted 'fn(T) -> T' fits no function type. Refused at the expression, in one
+// sentence; through 3.5 it flowed and exploded at the use with a cascade about a 'T'
+// nobody wrote.
+fn ident<T>(x: T): T { return x; }
+
+fn main(): int {
+    let f = ident;
+    return 0;
+}

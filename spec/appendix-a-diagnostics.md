@@ -146,7 +146,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0047 | E | An extend target that is not a plain named type (no generic, array, tuple or function targets). |
 | LYR-SEM0050 | E | A non-exhaustive match. Guarded arms do not count toward exhaustiveness (§7.6). |
 | LYR-SEM0051 | E | A bodyless function outside the standard library — only stdlib modules declare natives. |
-| LYR-SEM0052 | E | A non-value symbol (type, module, interface) used as a value. |
+| LYR-SEM0052 | E | A non-value symbol (type, module, interface) used as a value — or (since 3.6.0) a GENERIC function: fn values are monomorphic (§8.1), so an unsubstituted signature fits no function type. Callee position is not a value use. |
 | LYR-SEM0053 | E | An attribute name used as an expression. |
 | LYR-SEM0054 | E | `static` combined with `mut` — a static member has no receiver. |
 | LYR-SEM0055 | E | Static/instance confusion: an instance method or field read from the type, or a static member called on an instance (the deliberate exception: LYR-SEM0074). |
