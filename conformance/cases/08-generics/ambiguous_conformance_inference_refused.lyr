@@ -1,0 +1,23 @@
+//! check
+//! since: 3.6.0
+//! error: LYR-SEM0092
+// §8.3 rule 4: an argument that conforms to the wanted interface several times does not
+// choose — through 3.5 the FIRST conformance in declaration order won, and the same call
+// compiled or failed depending on the order of a '::' list. The order of a list must
+// never decide a call.
+interface Sink<T> {
+    fn accept(v: T): bool;
+}
+
+class Tag :: [Sink<int>, Sink<string>] {
+    id: int,
+    fn accept(v: int): bool { return true; }
+    fn accept(v: string): bool { return false; }
+}
+
+fn pick<T>(s: Sink<T>, probe: T): int { return 1; }
+
+fn main(): int {
+    let t = Tag { id = 1 };
+    return pick(t, 42);
+}

@@ -1,0 +1,22 @@
+//! run
+//! since: 3.6.0
+//! exit: 1
+// §8.3 rules 1 and 4: several conformances stop inference, and the written type argument
+// is the designed way past it — what is written wins, and inference has nothing left to
+// choose.
+interface Sink<T> {
+    fn accept(v: T): bool;
+}
+
+class Tag :: [Sink<int>, Sink<string>] {
+    id: int,
+    fn accept(v: int): bool { return true; }
+    fn accept(v: string): bool { return false; }
+}
+
+fn pick<T>(s: Sink<T>, probe: T): int { return 1; }
+
+fn main(): int {
+    let t = Tag { id = 1 };
+    return pick<int>(t, 42);
+}

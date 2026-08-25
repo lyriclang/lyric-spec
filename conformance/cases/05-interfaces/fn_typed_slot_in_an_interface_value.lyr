@@ -1,0 +1,23 @@
+//! run
+//! since: 3.5.0
+//! exit: 7
+// §5.3: an interface value carries the full width of its signatures — a function-typed
+// slot dispatches like any other. (Interning refused this shape once; this pins the
+// wall's absence.)
+interface Applier<T> {
+    fn apply(f: fn(T) -> T, v: T): T;
+}
+
+class Twice :: [Applier<int>] {
+    pad: int,
+    fn apply(f: fn(int) -> int, v: int): int { return f(f(v)); }
+}
+
+fn drive(a: Applier<int>, v: int): int {
+    return a.apply((n: int) => n + 1, v);
+}
+
+fn main(): int {
+    let t = Twice { pad = 0 };
+    return drive(t, 5);
+}

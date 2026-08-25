@@ -1,0 +1,11 @@
+//! check
+//! since: 3.5.0
+//! error: LYR-SEM0001
+// §8.3 rule 1: what is written wins, and inference fills only what writing left open.
+// 'id<int>' fixes T before any argument is looked at, so the string is the ordinary
+// assignment error at the argument — never a silent 'id<string>'.
+fn id<T>(x: T): T { return x; }
+
+fn main(): int {
+    return id<int>("seven");
+}

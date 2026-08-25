@@ -1,0 +1,14 @@
+//! check
+//! since: 3.6.0
+//! error: LYR-SEM0078
+// §5.1 / §5.2: the repetition rule reads a parent list the same way — 'interface I ::
+// [P, P]' names one parent twice, and there is nothing else it could mean.
+interface P {
+    fn ping(): int;
+}
+
+interface I :: [P, P] {
+    fn pong(): int;
+}
+
+fn main(): int { return 0; }

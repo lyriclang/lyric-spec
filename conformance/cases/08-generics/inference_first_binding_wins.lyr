@@ -1,0 +1,11 @@
+//! check
+//! since: 3.5.0
+//! error: LYR-SEM0001
+// §8.3 rule 3: the first binding of a parameter stands, and a later argument that
+// contradicts it fails AT that argument — the report points at the value that does not
+// fit, not at a sentence about inference.
+fn pair<T>(a: T, b: T): T { return a; }
+
+fn main(): int {
+    return pair(1, "x");
+}

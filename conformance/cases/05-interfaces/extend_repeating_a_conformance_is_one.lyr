@@ -1,0 +1,17 @@
+//! check
+//! since: 3.5.0
+// §5.1: a conformance reached twice ACROSS declarations is one conformance — an extend
+// block may add what the type also declares itself, possibly from another module, and a
+// library adopting a conformance a downstream module had added by hand must not break
+// that module's build. Only an entry repeating an entry of the SAME list is refused
+// (3.6.0).
+import std.core { Equatable };
+
+struct S :: [Equatable<S>] {
+    x: int,
+    fn equals(other: S): bool { return this.x == other.x; }
+}
+
+extend S :: [Equatable<S>] { }
+
+fn main(): int { return 0; }

@@ -1,0 +1,14 @@
+//! run
+//! since: 3.5.0
+//! exit: 6
+// §8.3 rule 5: lambdas are typed last, with the substituted parameter type as context —
+// which is what lets their parameters go unannotated — and what they produce binds the
+// type arguments still open: U comes from the lambda's return.
+fn mapOne<T, U>(v: T, f: fn(T) -> U): U {
+    return f(v);
+}
+
+fn main(): int {
+    let doubled = mapOne(3, (n) => n * 2);
+    return doubled;
+}
