@@ -1,0 +1,17 @@
+//! check
+//! since: 3.8.0
+// §3.5: making an opaque value is the declaring module's privilege — INSIDE the declaring
+// module, the inward cast is the ordinary door and stays silent, and the outward cast is
+// free. The cross-module half (LYR-SEM0093, a warning through 3.x) cannot stand here: a
+// conformance case is one file and the warning needs a second module — the reference
+// toolchain's own tests pin it, as they pin the native-root rules.
+opaque type Ticket = int;
+
+fn issue(n: int): Ticket {
+    return n as Ticket;
+}
+
+fn main(): int {
+    let t = issue(7);
+    return (t as int) - 7;
+}

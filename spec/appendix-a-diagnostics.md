@@ -190,6 +190,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0072 | W | An unused import. An import whose extensions are used counts as used (§4.2). |
 | LYR-SEM0073 | W | An unreachable statement. |
 | LYR-SEM0075 | H | A `var` never reassigned — `let` would do. Conservative: any by-reference touch counts as a mutation. |
+| LYR-SEM0093 | W | The inward opaque cast (`value as Name`) outside the module declaring `Name` (since 3.8; §3.5). A handle is issued by its module, not assembled elsewhere; the message names the way out — a constructor function the declaring module offers. Announced to become an error at 4.0, the LYR-SEM0074 path. Cross-module by nature, so no conformance case can express it; the reference toolchain's own tests pin it, as they pin the native-root rules. |
 | LYR-SEM0076 | W | Use of a declaration or module marked `@Deprecated`. |
 | LYR-SEM0077 | W | An import shadowing a builtin type name. |
 

@@ -96,12 +96,21 @@ never appears in a diagnostic where `T` serves. An alias must not expand through
 - nothing converts implicitly in either direction (`LYR-SEM0001` names the types);
 - the explicit `as` to exactly `T` and back is the only crossing (§3.6); two opaque aliases of
   the same underlying do not cast sideways;
+- **making one is the declaring module's privilege** (since 3.8): the INWARD cast,
+  `value as Name`, warns outside the module that declares `Name` (`LYR-SEM0093`), and 4.0
+  refuses it — a handle is issued, not assembled, and a value that must be rebuilt from a
+  stored number takes a constructor function the declaring module offers. The OUTWARD cast
+  stays free everywhere: reading the number breaks no promise the alias makes;
 - `==`/`!=` compare two values of the SAME opaque alias by their underlying; every other
   operator, ordering included, is refused (`LYR-SEM0003`);
 - an opaque alias satisfies no constraint, not even one its underlying satisfies;
 - an f-string does not render it (`LYR-SEM0006`);
 - at runtime the value IS its underlying: the cast is free, and in a native signature the
-  alias resolves to the underlying — a host sees the plain value, a script cannot forge one.
+  alias resolves to the underlying — a host sees the plain value. *(Through 3.7 any module
+  that could see the alias could also forge a value with the inward cast, so the "a script
+  cannot forge one" this bullet used to claim was only true of scripts that import nothing.
+  The privilege rule above is the clock that closes it: a warning through 3.x, refused at
+  4.0.)*
 
 The last point is the reason the name has to be carried separately where it matters: a consumer
 reading the shape of a compiled type sees the underlying and could not refuse a handle it must
@@ -119,7 +128,8 @@ it sees what it saw before.
    to nearest; float → int truncates toward zero and SATURATES at the target's bounds — an
    infinite or out-of-range value yields the nearest bound, and NaN yields 0. Never undefined,
    never a panic.
-2. **opaque ↔ its underlying** — identity at runtime (§3.5).
+2. **opaque ↔ its underlying** — identity at runtime; the inward direction is the declaring
+   module's privilege (§3.5: `LYR-SEM0093` outside it since 3.8, refused at 4.0).
 3. **declared conversions** — `v as T` where the type of `v` conforms to `Into<T>`
    (`std.core`): the cast IS the call `v.into()`, resolved like any method (chapter 6's
    operator rule).
