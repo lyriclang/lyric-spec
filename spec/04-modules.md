@@ -139,13 +139,18 @@ and their values are part of the bytecode contract and never change meaning:
 | Bit | Gate | Modules |
 |---|---|---|
 | 0 | `fileAccess` | `std.io.file` |
-| 1 | `networkAccess` | `std.io.net` (reserved) |
-| 2 | `osAccess` | `std.os`, `std.time` |
+| 1 | `networkAccess` | `std.io.net` |
+| 2 | `osAccess` | `std.os`, `std.time`, `std.task` |
 | 3 | `hostAccess` | `std.dotnet` |
+| 4 | `processAccess` | `std.process` (4.0) |
 
 Standalone execution grants everything; an embedding host decides. Console I/O and everything
-computational require nothing. `std.time` deliberately rides `osAccess`: reading the clock is a
-question to the environment, and a new bit would be a contract change for every older runtime.
+computational require nothing. `std.time` and `std.task` deliberately ride `osAccess`: reading
+the clock — or blocking a thread on it — is a question to the environment, and a new bit would
+be a contract change for every older runtime. Child processes are a NEW power rather than a
+refinement of an old one, which is why `std.process` (4.0) carries its own bit: a host that
+grants the environment questions of `osAccess` has not thereby agreed to arbitrary programs
+being started.
 
 The recorded bits are a verified BOUND, not a request: a runtime refuses a module whose bits the
 host does not grant, and refuses to bind a gated native inside a module whose bits do not cover
