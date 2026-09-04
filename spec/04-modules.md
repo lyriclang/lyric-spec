@@ -117,18 +117,22 @@ name.
 
 ## 4.4 The standard library's special edges
 
-A small set of functions is bound by the compiler without an import: `panic`, `coroutineEnded`
-and — since 2.2.0, behind `co.next()` — `coroutineIsDone` from `std.core`; the
-f-string/operator helpers of `std.string` (`concat` behind `+` on strings, `repeat` behind
+A small set of functions is bound by the compiler without an import: `panic` from `std.core`;
+the f-string/operator helpers of `std.string` (`concat` behind `+` on strings, `repeat` behind
 `*`, the `fromXxx` converters behind interpolation); and the char-array native of `std.string`
 behind `for (c in s)` (the private `rawToChars` since 2.0). Everything else in the standard
 library is ordinary Lyric reached through ordinary imports. `std.core` imports nothing — it is
 the library's root.
 
-`coroutineIsDone` is declared per coroutine signature, so its name may stand in a module's
-import table with several signatures — the entries bind independently, and every consumer of
-the import table is positional. It takes the coroutine value and answers whether the body has
-run to its end.
+**Two edges are retired.** `coroutineEnded`, and `coroutineIsDone` since 2.2.0 behind
+`co.next()`, were how the state-machine coroutine reported that its body had run out. Format
+4.0 makes both pulls single instructions (§10, §13), so a 4.0 module emits neither; they stay
+bound only so that modules compiled before 4.0 keep running.
+
+*In those modules* `coroutineIsDone` is declared per coroutine signature, so its name may stand
+in a module's import table with several signatures — the entries bind independently, and every
+consumer of the import table is positional. It takes the coroutine value and answers whether
+the body has run to its end.
 
 ## 4.5 Capabilities
 

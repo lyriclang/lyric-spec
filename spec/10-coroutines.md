@@ -39,10 +39,15 @@ Rules:
 - send values (`resume co, v`) do not exist;
 - a lambda is never a coroutine — its type is a function type, and calling it runs it. (Since
   4.0 its body may still `yield` while a resume runs, like any function's: §10a);
-- at runtime a `Coroutine<T>` IS a function value that remembers where it left off — which is
-  why `resume` behaves as a call. Since 2.2.0 it carries one parameter, the lenient flag
-  distinguishing the two pull forms; exhaustion is read back through the compiler-bound
-  `std.core.coroutineIsDone` (§4.4, §11).
+- at runtime a `Coroutine<T>` is a chain of captured frames, which is why `resume` still behaves
+  as a call: it re-enters those frames where they stopped. Both pulls are single instructions —
+  the machine answers `resume`'s value, and `next()`'s `?T` or its advanced-`bool`, directly — so
+  exhaustion is read off the chain rather than through a library call.
+  - *Through 3.x a coroutine was a function VALUE that remembered where it left off, carrying one
+    parameter since 2.2.0 — the lenient flag distinguishing the two pull forms — with exhaustion
+    read back through the compiler-bound `std.core.coroutineIsDone`. Format 4.0 retired all of
+    it. A module compiled before then still runs, which is the only reason that edge still
+    exists (§4.4, §11).*
 
 ## 10a. The dynamic yield (since 4.0)
 
