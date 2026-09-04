@@ -1,0 +1,20 @@
+//! run
+//! since: 4.4.0
+//! stdout:
+//! | 4
+// §7.6: a field the pattern leaves out is not read, and '_' in a field's place reads it and
+// binds nothing.
+import std.io.console { println };
+
+struct Three { a: int, b: int, c: int }
+
+fn ends(t: Three): int {
+    return match (t) {
+        Three { a, b = _ } => a,
+    };
+}
+
+fn main(): int {
+    println(ends(Three { a = 4, b = 5, c = 6 }));
+    return 0;
+}

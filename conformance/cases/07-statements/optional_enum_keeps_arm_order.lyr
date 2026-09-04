@@ -1,0 +1,31 @@
+//! run
+//! since: 4.4.0
+//! stdout:
+//! | 0 99 -1
+// §7.6: settling presence before reading a tag is not a reordering — the earlier arm still
+// wins. 'kindOf' answers 7 for a Dot, so an implementation that let the binding arm take the
+// present value ahead of the variant arm written above it would print 7 here instead of 0.
+import std.io.console { println };
+
+enum Shape { Dot, Rect { w: int, h: int } }
+
+fn kindOf(s: Shape): int {
+    return match (s) {
+        Shape.Dot => 7,
+        Shape.Rect { w, h } => w * h,
+    };
+}
+
+fn pick(s: ?Shape): int {
+    return match (s) {
+        Shape.Dot => 0,
+        null => -1,
+        x => kindOf(x),
+    };
+}
+
+fn main(): int {
+    let missing: ?Shape = null;
+    println(f"{pick(Shape.Dot)} {pick(Shape.Rect { w = 9, h = 11 })} {pick(missing)}");
+    return 0;
+}
