@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-IR0001
+// §7.6: a field pattern whose sub-pattern can FAIL is a test inside a pattern that otherwise
+// performs none. The reference lowering binds fields without testing them, and says so.
+struct Point { x: int, y: int }
+
+fn main(): int {
+    let p = Point { x = 3, y = 4 };
+    return match (p) {
+        Point { x = 3, y } => y,
+        _ => 0,
+    };
+}

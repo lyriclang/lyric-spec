@@ -1,0 +1,20 @@
+//! run
+//! since: 4.4.0
+//! stdout:
+//! | 7
+// §7.6: a field pattern over a struct tests nothing, so one arm carrying it covers the match.
+// The shorthand binds each named field to its own name.
+import std.io.console { println };
+
+struct Point { x: int, y: int }
+
+fn sum(p: Point): int {
+    return match (p) {
+        Point { x, y } => x + y,
+    };
+}
+
+fn main(): int {
+    println(sum(Point { x = 3, y = 4 }));
+    return 0;
+}

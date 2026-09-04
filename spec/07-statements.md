@@ -125,12 +125,30 @@ abandoned mid-flight never runs its defers — suspension is not an exit.
 `match` arms carry patterns: `_`; literals (integer, float, string, char, bool, `null`);
 bindings; enum variants with nested payload patterns (`Some(x)`, `Point { x }` — a shorthand
 field pattern binds the field to its own name and is exempt from the unused-binding warning by
-decision); tuple patterns; **or-patterns** (`a | b`); and **range patterns**
-(`1..5`, `'a'..='z'`). An arm may carry a guard: `Pattern if expr => …`.
+decision); **field patterns over a struct or class** (`Point { x, y }`, since 4.4); tuple
+patterns; **or-patterns** (`a | b`); and **range patterns** (`1..5`, `'a'..='z'`). An arm may
+carry a guard: `Pattern if expr => …`.
 
 Arms are tried in declaration order and the FIRST match wins — `0 | 1` before `1..5` sends a
 `1` to the first arm; an arm made unreachable by an earlier one is not an error. A guard runs
 only when its pattern matched, with the pattern's bindings in scope.
+
+A field pattern over a **struct or class** tests nothing. The scrutinee's type is already the
+pattern's type, so the pattern always matches and one arm carrying it covers the `match` by
+itself. It reads the fields it names and no others: a field left out is not read, and `_` in a
+field's place reads it and binds nothing. Naming a field the type does not have is an error
+(`LYR-SEM0015`), as is naming a type other than the scrutinee's (`LYR-SEM0029`) or using the
+tuple form where the type is not an enum variant (`LYR-SEM0031`).
+
+*Implementation limit (diagnosed, `LYR-IR0001`):* a field pattern whose sub-pattern can FAIL —
+`Point { x = 3 }` — is refused. It is a test inside a pattern that otherwise performs none, and
+the reference lowering binds fields without testing them.
+
+A scrutinee of type **`?E`** admits both of its states: the `null` pattern for the absent one,
+and `E`'s variants for the present one (since 4.4). Presence is established before any variant
+is examined — the tag lives inside the optional, and reading it from an absent value has no
+meaning — while the arms are still tried in declaration order: settling presence first is not a
+reordering, and the earlier arm still wins.
 
 Exhaustiveness is checked where the scrutinee is enumerable — enum variants, `bool`, and the
 two states of a `?T` — and a gap is an error naming what is missing (`LYR-SEM0050`). Open

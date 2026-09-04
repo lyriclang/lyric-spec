@@ -1,0 +1,20 @@
+//! run
+//! since: 4.4.0
+//! stdout:
+//! | 5
+// §7.6: the form is about FIELDS, not about where the value lives — a class destructures like
+// a struct.
+import std.io.console { println };
+
+class Counter { n: int }
+
+fn read(c: Counter): int {
+    return match (c) {
+        Counter { n } => n,
+    };
+}
+
+fn main(): int {
+    println(read(Counter { n = 5 }));
+    return 0;
+}

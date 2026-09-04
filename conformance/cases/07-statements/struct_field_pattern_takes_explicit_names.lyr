@@ -1,0 +1,20 @@
+//! run
+//! since: 4.4.0
+//! stdout:
+//! | 12
+// §7.6: the long form 'field = name' binds under a name of its own; the short form is sugar
+// for the case where the two coincide.
+import std.io.console { println };
+
+struct Point { x: int, y: int }
+
+fn product(p: Point): int {
+    return match (p) {
+        Point { x = a, y = b } => a * b,
+    };
+}
+
+fn main(): int {
+    println(product(Point { x = 3, y = 4 }));
+    return 0;
+}
