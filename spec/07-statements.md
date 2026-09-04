@@ -140,9 +140,21 @@ field's place reads it and binds nothing. Naming a field the type does not have 
 (`LYR-SEM0015`), as is naming a type other than the scrutinee's (`LYR-SEM0029`) or using the
 tuple form where the type is not an enum variant (`LYR-SEM0031`).
 
+**A name binds once in a pattern** (`LYR-SEM0097`). `P { n, n }`, `P { n = x, m = x }` and
+`E.B(x, x)` all name one binding twice, and a second binding of a name can only replace the first
+or be dropped — so the pattern is refused rather than quietly meaning half of what it says. The
+mirror image has always been refused: `LYR-SEM0070` for a duplicate field in an initializer.
+Shadowing a name from an enclosing scope is untouched, and so is an or-pattern, whose alternatives
+are REQUIRED to repeat the same names.
+
 *Implementation limit (diagnosed, `LYR-IR0001`):* a field pattern whose sub-pattern can FAIL —
 `Point { x = 3 }` — is refused. It is a test inside a pattern that otherwise performs none, and
 the reference lowering binds fields without testing them.
+
+*Implementation limit (diagnosed, `LYR-IR0001`):* an or-pattern that BINDS — `A(x) | B(x)` — is
+refused. Every alternative is a branch of its own and would have to bind on its own path; the
+reference lowering binds once for the whole pattern. An or-pattern that binds nothing, which is
+what the form is usually for, is unaffected.
 
 A scrutinee of type **`?E`** admits both of its states: the `null` pattern for the absent one,
 and `E`'s variants for the present one (since 4.4). Presence is established before any variant
