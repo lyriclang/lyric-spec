@@ -262,7 +262,7 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0008 | panic | `enumas` to a variant the value is not. The compiler proves this through `match`; the check remains because a `.lyrbc` may come from elsewhere. |
 | LYR-VM0009 | panic | No vtable entry for (concrete type, interface, slot). Reachable only for a module assembled without the loader's checks. |
 | LYR-VM0010 | panic | An exception left the entry point uncaught. Reachable from source until 3.0 through the coroutine gap of §10 — a pull whose origin the checker could not follow demanded no handling — and since the throwability moved into the type only for a hand-built module. |
-| LYR-VM0011 | panic | `panic(msg)` from the program. Not catchable; the message is the caller's. |
+| LYR-VM0011 | panic | `panic(msg)` from the program — and the code a standard-library NATIVE raises when it must stop the program itself, `std.task.poll` on a wait nothing can ever answer being the one that reaches an ordinary program. Not catchable; the message belongs to whoever raised it, which is why an implementation owes the sentence as much as the code. |
 | LYR-VM0012 | panic | A `char` result outside the Unicode range or in the surrogate range — checked where the value is produced. |
 | LYR-VM0013 | panic | A `yield` with no resume running it (since 4.0; §10a rule 1) — including one beneath a native or JIT-compiled frame, which runs in an execution loop of its own: the C-boundary rule falls out of the machine's shape. |
 | LYR-VM0014 | panic | A `resume` of a coroutine that is suspended mid-resume (since 4.0; §10a rule 5): one chain, one driver. |
