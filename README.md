@@ -42,6 +42,6 @@ would drift; a checked mirror cannot.
 
 ## Versioning
 
-The specification describes a **language version**: this document describes Lyric 4.0. A case
+The specification describes a **language version**: this document describes Lyric 4.4. A case
 in the suite may carry `//! since: X.Y.Z` and applies to that version and later, which is how
 one suite serves every release since the freeze (1.16) without a manual deferral dance.
