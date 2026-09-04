@@ -1,0 +1,19 @@
+//! run
+//! since: 4.4.1
+//! stdout:
+//! | 5 9
+// §7.6: the one-name-once rule is about ONE pattern. A pattern binding a name an enclosing scope
+// already uses shadows it, as any inner binding does.
+import std.io.console { println };
+
+struct P { n: int }
+
+fn main(): int {
+    let n = 5;
+    let p = P { n = 9 };
+    let inner = match (p) {
+        P { n } => n,
+    };
+    println(f"{n} {inner}");
+    return 0;
+}

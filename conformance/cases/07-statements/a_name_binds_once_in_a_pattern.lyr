@@ -1,0 +1,14 @@
+//! check
+//! since: 4.4.1
+//! error: LYR-SEM0097
+// §7.6: a second binding of a name could only replace the first or be dropped — before 4.4.1 it
+// was dropped in silence, and 'P { n = 7, m = 9 }' answered 7 through this pattern. The mirror
+// image has always been refused: LYR-SEM0070 for a duplicate field in an initializer.
+struct P { n: int, m: int }
+
+fn main(): int {
+    let p = P { n = 7, m = 9 };
+    return match (p) {
+        P { n = x, m = x } => x,
+    };
+}
