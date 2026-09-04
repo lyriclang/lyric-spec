@@ -5,11 +5,15 @@ specified by its own documentation and test suite (`stdlib-tests/` in the toolch
 repository), not duplicated here. What THIS document fixes is the boundary a second
 implementation must honor:
 
-1. **The compiler-bound edges** (§4.4): `std.core.panic`, `std.core.coroutineEnded`,
-   `std.core.coroutineIsDone` (since 2.2.0, behind `co.next()`; bound for every coroutine
-   signature it is declared with), the `std.string` helpers behind `+`, `*` and interpolation,
-   and the char-array native behind `for (c in s)`. An implementation must provide these under
-   these names — they are reachable from programs that import nothing.
+1. **The compiler-bound edges** (§4.4): `std.core.panic`, the `std.string` helpers behind `+`,
+   `*` and interpolation, and the char-array native behind `for (c in s)`. An implementation
+   must provide these under these names — they are reachable from programs that import nothing.
+
+   Two more belong to the format's PAST: `std.core.coroutineEnded` and
+   `std.core.coroutineIsDone` (the latter since 2.2.0, behind `co.next()`, bound for every
+   coroutine signature it was declared with). Format 4.0 made both pulls single instructions,
+   so a 4.0 module emits neither. An implementation that runs pre-4.0 modules must provide
+   them; one that does not, need not.
 
    Interpolation makes the CONVERSION helpers observable: what `fromFloat` writes is program
    output, so its shape is fixed here rather than left to a library's habits. The result is the
