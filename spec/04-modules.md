@@ -8,8 +8,13 @@ path, and a header disagreeing with it is an error. Two modules claiming the sam
 error with a note at the first claim (`LYR-RES0007`).
 
 Module resolution maps a dotted path to a file below a **root**: the project root
-(`lyric.json`), the standard-library root, or a host-declared native root. A cycle in the import
-graph is an error (`LYR-RES0005`).
+(`lyric.json`), the standard-library root, a host-declared native root, or (since 4.5) a
+**dependency root** — another project, named in `lyric.json` by the module path segment it
+owns, whose own source root answers every path under that segment. A segment belongs to
+exactly one root: `std` to the standard library, a native segment to its host, a dependency
+segment to that project, and everything else to the project's own root. Two roots claiming
+one segment is an error before anything is compiled. A cycle in the import graph is an error
+(`LYR-RES0005`).
 
 ## 4.2 Imports and visibility
 
