@@ -202,7 +202,7 @@ may surface several codes; conformance cases pin the first.
 
 | Code | S | Cause |
 |---|---|---|
-| LYR-IR0001 | E | Valid Lyric this implementation cannot lower. Deliberately the ONE code of the area: the set of constructs behind it may shrink release by release without retiring numbers. In the reference toolchain it currently covers `&&=`/`||=` and a `catch` naming a specific interface (the documented limits of §6, §9), and it is where the refusal every implementation must make surfaces there: a monomorphization that cannot terminate, in both shapes (§8.1 polymorphic recursion written with an open instance; §5.2a a member demanding an unbounded instance chain). Two former entries left the list: generic interface defaults lower since 2.17, and a generic function used as a value is refused by the type checker (§8.1), not here. |
+| LYR-IR0001 | E | Valid Lyric this implementation cannot lower. Deliberately the ONE code of the area: the set of constructs behind it may shrink release by release without retiring numbers. In the reference toolchain it currently covers `&&=`/`||=` and a `catch` naming a specific interface (the documented limits of §6, §9), and it is where the refusal every implementation must make surfaces there: a monomorphization that cannot terminate, in both shapes (§8.1 polymorphic recursion written with an open instance; §5.2a a member demanding an unbounded instance chain). Four former entries left the list: generic interface defaults lower since 2.17; a generic function used as a value is refused by the type checker (§8.1), not here; and since 4.5 a field pattern whose sub-pattern can fail and an or-pattern that binds are ordinary patterns (§7.6). |
 
 ## A.6 CLI — driver and project handling
 

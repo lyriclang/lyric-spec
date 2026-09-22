@@ -133,12 +133,13 @@ Arms are tried in declaration order and the FIRST match wins — `0 | 1` before 
 `1` to the first arm; an arm made unreachable by an earlier one is not an error. A guard runs
 only when its pattern matched, with the pattern's bindings in scope.
 
-A field pattern over a **struct or class** tests nothing. The scrutinee's type is already the
-pattern's type, so the pattern always matches and one arm carrying it covers the `match` by
-itself. It reads the fields it names and no others: a field left out is not read, and `_` in a
-field's place reads it and binds nothing. Naming a field the type does not have is an error
-(`LYR-SEM0015`), as is naming a type other than the scrutinee's (`LYR-SEM0029`) or using the
-tuple form where the type is not an enum variant (`LYR-SEM0031`).
+A field pattern over a **struct or class** names the type the scrutinee already has, so the
+pattern ITSELF never fails — but a sub-pattern may. `Point { x, y }` tests nothing and one arm
+carrying it covers the `match` by itself; `Point { x = 3, y }` tests `x`, covers nothing, and
+leaves the `match` needing another arm. It reads the fields it names and no others: a field left
+out is not read, and `_` in a field's place reads it and binds nothing. Naming a field the type
+does not have is an error (`LYR-SEM0015`), as is naming a type other than the scrutinee's
+(`LYR-SEM0029`) or using the tuple form where the type is not an enum variant (`LYR-SEM0031`).
 
 **A name binds once in a pattern** (`LYR-SEM0097`). `P { n, n }`, `P { n = x, m = x }` and
 `E.B(x, x)` all name one binding twice, and a second binding of a name can only replace the first
@@ -147,14 +148,12 @@ mirror image has always been refused: `LYR-SEM0070` for a duplicate field in an 
 Shadowing a name from an enclosing scope is untouched, and so is an or-pattern, whose alternatives
 are REQUIRED to repeat the same names.
 
-*Implementation limit (diagnosed, `LYR-IR0001`):* a field pattern whose sub-pattern can FAIL —
-`Point { x = 3 }` — is refused. It is a test inside a pattern that otherwise performs none, and
-the reference lowering binds fields without testing them.
-
-*Implementation limit (diagnosed, `LYR-IR0001`):* an or-pattern that BINDS — `A(x) | B(x)` — is
-refused. Every alternative is a branch of its own and would have to bind on its own path; the
-reference lowering binds once for the whole pattern. An or-pattern that binds nothing, which is
-what the form is usually for, is unaffected.
+**Since 4.5 a pattern tests and binds at every depth.** Two forms were diagnosed implementation
+limits (`LYR-IR0001`) until then and are ordinary patterns now: a field pattern whose sub-pattern
+can FAIL (`Point { x = 3 }`), and an or-pattern that BINDS (`A(x) | B(x)`). Both had the same
+cause — a lowering that tested the top level and bound names in a separate pass — and neither was
+a rule about the language. An or-pattern's alternatives bind on their own paths and must bind the
+same names at the same types, which `LYR-SEM0032` has always required.
 
 A scrutinee of type **`?E`** admits both of its states: the `null` pattern for the absent one,
 and `E`'s variants for the present one (since 4.4). Presence is established before any variant

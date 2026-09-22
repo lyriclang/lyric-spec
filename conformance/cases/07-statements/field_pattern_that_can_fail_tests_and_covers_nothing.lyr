@@ -1,0 +1,23 @@
+//! run
+//! since: 4.5.0
+//! stdout:
+//! | 4
+//! | 0
+// §7.6: a field pattern names the type the scrutinee already has, so the pattern itself never
+// fails — but a sub-pattern may. One that tests covers nothing, so the match needs another arm.
+import std.io.console { println };
+
+struct Point { x: int, y: int }
+
+fn classify(p: Point): int {
+    return match (p) {
+        Point { x = 3, y } => y,
+        _ => 0,
+    };
+}
+
+fn main(): int {
+    println(f"{classify(Point { x = 3, y = 4 })}");
+    println(f"{classify(Point { x = 9, y = 4 })}");
+    return 0;
+}
