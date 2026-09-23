@@ -1,0 +1,22 @@
+//! run
+//! since: 4.5.0
+//! stdout:
+//! | 7
+//! | 4
+// §7.6: an or-pattern that BINDS is an ordinary pattern. Every alternative binds on its own
+// path, and all of them must bind the same names at the same types (LYR-SEM0032).
+import std.io.console { println };
+
+enum E { A(int), B(int) }
+
+fn value(e: E): int {
+    return match (e) {
+        E.A(x) | E.B(x) => x,
+    };
+}
+
+fn main(): int {
+    println(f"{value(E.A(7))}");
+    println(f"{value(E.B(4))}");
+    return 0;
+}
