@@ -1,0 +1,17 @@
+//! run
+//! since: 4.6.0
+//! panic: LYR-VM0017
+// §4.3: LYR-SEM0057 catches the read an initializer NAMES. This one travels through a call, so
+// the initializer names nothing later — and no order of declarations makes it legal, because
+// 'readB' needs 'b' and 'b' comes after 'a'. Before 4.6 it answered the slot's unwritten
+// contents, which is a zero of the right type: a wrong answer with no diagnostic.
+let a = readB();
+let b = 7;
+
+fn readB(): int {
+    return b;
+}
+
+fn main(): int {
+    return a;
+}

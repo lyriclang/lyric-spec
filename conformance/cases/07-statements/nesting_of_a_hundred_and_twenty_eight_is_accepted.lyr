@@ -1,0 +1,11 @@
+//! run
+//! since: 4.6.0
+//! exit: 1
+// §12.4: an implementation may bound nesting and reports reaching the bound
+// (LYR-PAR0045, LYR-SEM0105) -- but it accepts at least 128 levels. The DEPTH is
+// deliberately not specified, so this case pins the floor rather than the ceiling: a
+// number for the ceiling would pass or fail by platform, which is what makes it useless
+// as a contract.
+fn main(): int {
+    return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+}

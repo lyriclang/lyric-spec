@@ -46,3 +46,27 @@ Panics carry codes too (`LYR-VM0002` division by zero, `LYR-VM0007` `!` on empty
 `LYR-VM0010` uncaught exception, …); a conforming runtime reports the code and exits with
 **101**. Compilation rejection exits with **1**, success with the program's `main` return
 value.
+
+## 12.4 Implementation limits, and the implementation's own failures
+
+Two things can stop a compile that are not the program's fault, and both owe a diagnostic rather
+than a dead process.
+
+**Nesting has a limit, and reaching it is a diagnostic.** A conforming implementation may bound how
+deeply expressions and types nest — a recursive descent over an unbounded nesting exhausts a real
+stack, whatever the language says — and reports reaching it as `LYR-PAR0045` at the parse and
+`LYR-SEM0105` at the check, with the position of the construct that went too deep. **The depth is
+not specified and is not part of the contract**: it belongs to a thread's stack, not to Lyric, and
+a number here would make a conformance case pass or fail by platform. What IS required is that the
+limit be reported and not crashed into. A conforming implementation accepts nesting of at least
+**128**, which is far past what a person writes and far below what any stack refuses.
+
+**An implementation that fails internally says so with a code.** `LYR-CLI0020` reports that the
+compiler itself is at fault: a state it believes impossible, not a program it cannot accept. It
+carries whatever position it has, it asks for a report rather than an edit, and under a
+machine-readable output mode it is a diagnostic like any other — an implementation that lets an
+internal failure escape as a stack trace destroys that output for the tool reading it.
+
+The distinction from `LYR-IR0001` is the whole point and runs the other way: `IR0001` is valid
+Lyric this implementation cannot lower — the program is right and the compiler is limited.
+`CLI0018` is the compiler being wrong. Neither may wear the other's code.

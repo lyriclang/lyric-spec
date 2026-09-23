@@ -44,6 +44,18 @@ bottom. An initializer may therefore read what its own module declared above it,
 a module it imports. **Since 2.8** — before it the order across modules was the one the entry file
 happened to discover them in, which made a third module decide whether a second one compiled.
 
+**The static rule sees what an initializer NAMES.** `LYR-SEM0057` reads the initializer
+expression, so `let a = b;` above `let b = 1;` is refused where it is written. A read that
+travels through a CALL is not named there — `let a = readB();` where `readB` returns a global
+declared further down — and no order of declarations makes that read legal. A conforming
+implementation refuses it at run time instead: reading a global whose initializer has not run is
+`LYR-VM0017`. Before 4.6 the read answered the slot's unwritten contents, which is a zero of the
+right type and nothing else: a program with a wrong answer and no diagnostic.
+
+Following calls statically is deliberately NOT required. It would have to be conservative about
+an indirect call, a lambda and an interface dispatch, and would then refuse programs that are
+fine; the runtime check costs one test per global read and is exact.
+
 An import cycle has no such order and is refused for its own reasons (`LYR-RES0005`), so the
 question does not arise. Which module is compiled as the entry does not enter into it: a file that
 compiles as part of a program compiles on its own.
