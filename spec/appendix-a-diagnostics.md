@@ -78,6 +78,9 @@ may surface several codes; conformance cases pin the first.
 | LYR-PAR0041 | E | A `static` interface member — interface members dispatch on a receiver. |
 | LYR-PAR0042 | E | An attribute not followed by a declaration it may apply to, or sitting on a declaration kind that carries none (since 2.1 members carry one; interface members still do not). |
 | LYR-PAR0043 | E | An array type written with a length (`int[3]`, since 3.4.1). Array types carry none; the value is built with `[x] * n`. |
+| LYR-PAR0044 | E | An `extern` declaration whose symbol is not a string literal (since 4.5). The symbol names something outside Lyric, so it is written the way the host spells it. |
+| LYR-PAR0045 | E | Nesting deeper than this implementation's parse carries (since 4.6). The depth is implementation-defined (§12.4); what is fixed is that reaching it is reported here and not crashed into. |
+| LYR-PAR0046 | E | A label on something that is not a loop (since 4.5): `break`/`continue` name loops, so `name:` must be followed by `while`, `do` or `for`. |
 
 ## A.3 RES — module and name resolution
 
@@ -185,6 +188,14 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0095 | E | An attribute struct declaring `WithArg<T>` whose first field is not of type `T`, or that has no field at all (since 3.9; §4.7). Checked where the conformance is written — the type's own list, an extend block, or the entry whose interface parent reaches `WithArg` (since 3.9.1): the conformance states what `@Name(value)` fills, so a mismatch belongs to the declaring module, not to a use. |
 | LYR-SEM0096 | E | An attribute use whose struct has a field no row can hold (since 3.9.1; §4.7). A row's values are numbers, strings, chars, bools and variant tags; a field of any other type — an optional, an array, a struct — has no encoding, however writable its literal looks after adaptation. Reported at the use: the struct alone is an ordinary struct. |
 | LYR-SEM0097 | E | A pattern binds one name twice (`P { n, n }`, `P { n = x, m = x }`, `E.B(x, x)`): the second binding could only replace the first or be dropped. Shadowing an enclosing name is untouched, and so is an or-pattern, whose alternatives must repeat the same names. |
+| LYR-SEM0098 | E | A refutable pattern where nothing handles a miss (since 4.5): a `let` pattern that can fail without an `else`, or a `let … else` whose `else` does not leave on every path. |
+| LYR-SEM0099 | E | An `extern` declaration this ABI cannot bind (since 4.5): an unknown ABI, a symbol that is not `Type::Method`, type parameters, a `throws` clause, or a parameter or result type that does not cross the boundary. |
+| LYR-SEM0100 | E | A `comptime` expression reaching for something the compile has not got (since 4.5): a result that is no scalar, bool, char or string, or a use of `this`, an enclosing local, a lambda or an assignment. |
+| LYR-SEM0101 | E | `break`/`continue` naming a label no enclosing loop carries (since 4.5). |
+| LYR-SEM0102 | E | A loop label that already names an enclosing loop (since 4.5) — a jump to it would be ambiguous. |
+| LYR-SEM0103 | W | A loop label nothing names (since 4.5). A warning, not an error: the label is harmless, and saying so costs nothing. |
+| LYR-SEM0104 | W | A pattern that cannot fail where a failing one was expected (since 4.5): the `else` of a `let … else`, or the condition of an `if let`/`while let`, never runs its other path. |
+| LYR-SEM0105 | E | A type or expression nested deeper than this implementation's check walks (since 4.6). The parse may well have accepted it — a left-leaning chain of a hundred thousand `+` is shallow to read and deep to walk. Implementation-defined, §12.4. |
 
 ### Warnings and hints
 
@@ -224,6 +235,9 @@ may surface several codes; conformance cases pin the first.
 | LYR-CLI0015 | E | No stub to pack into — the resolution ladder ended empty-handed. |
 | LYR-CLI0016 | E | Warnings under `--deny-warnings`. The warnings keep their severity; this error carries the policy into the exit code. |
 | LYR-CLI0017 | W | A tolerable but suspect `lyric.json`, such as an unknown key — tolerated so a newer file still loads, warned so a typo is not silent. |
+| LYR-CLI0018 | E | A `lyric.json` naming a minimum toolchain this one does not reach (since 4.5). Its own code rather than a broken project file: nothing in the file is wrong, the toolchain is too old. |
+| LYR-CLI0019 | E | `--only <name>` naming an artifact the build script does not declare (since 4.5). An error rather than an empty build, which would report success having written nothing. |
+| LYR-CLI0020 | E | The implementation failed internally (since 4.6): a state it believes impossible, not a program it cannot accept. The opposite end of `LYR-IR0001`, which is valid Lyric the implementation cannot lower — there the program is right and the compiler is limited, here the compiler is wrong. Asks for a report rather than an edit. |
 
 ## A.7 BC — bytecode loading
 
@@ -268,6 +282,8 @@ with the code on stderr and exit code **101** (§9.4).
 | LYR-VM0013 | panic | A `yield` with no resume running it (since 4.0; §10a rule 1) — including one beneath a native or JIT-compiled frame, which runs in an execution loop of its own: the C-boundary rule falls out of the machine's shape. |
 | LYR-VM0014 | panic | A `resume` of a coroutine that is suspended mid-resume (since 4.0; §10a rule 5): one chain, one driver. |
 | LYR-VM0015 | panic | A yield whose value's type is not the running chain's element type (since 4.0; §10a rule 3). The site's type is what the expression statically is; admitted, the value would corrupt the puller, whose result type is static. |
+| LYR-VM0016 | panic | An `extern "dotnet"` call that threw on the host side, or an argument that could not cross the boundary (since 4.5). A panic rather than a Lyric exception in stage 1 of the ABI: the mapping onto `throws` is not decided, and until it is the failure is not silently turned into a value. |
+| LYR-VM0017 | panic | A global read before its initializer ran (since 4.6; §4.3). `LYR-SEM0057` catches the read an initializer NAMES; one that travels through a call is not named there, and before this it answered the slot's unwritten contents — a zero of the right type, and no diagnostic. |
 
 ## A.10 EMB — the embedding boundary
 
