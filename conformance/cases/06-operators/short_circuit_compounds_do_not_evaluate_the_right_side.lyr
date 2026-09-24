@@ -1,0 +1,45 @@
+//! run
+//! since: 4.6.0
+//! exit: 2
+// §6.5: '&&=', '||=' and '??=' short-circuit, which is why they are a form of their own and not
+// 'x = x op e'. The counter is the test: a value alone cannot tell "assigned the right answer"
+// from "assigned the right answer AND called something it should not have".
+//
+// Replaces short_circuit_compounds_are_a_diagnosed_limit, which pinned the reference lowering's
+// refusal of '&&='/'||=' until 4.6.
+class Counter {
+    n: int,
+
+    mut fn hit(): bool {
+        this.n = this.n + 1;
+        return true;
+    }
+
+    mut fn hitInt(): int {
+        this.n = this.n + 1;
+        return 9;
+    }
+}
+
+fn main(): int {
+    let c = Counter { n = 0 };
+
+    var no = false;
+    no &&= c.hit();          // false && _ : the right side must not run
+
+    var yes = true;
+    yes ||= c.hit();         // true || _ : likewise
+
+    var full: ?int = 1;
+    full ??= c.hitInt();     // already a value: likewise
+
+    // Each of the three the other way round, which a lowering that never evaluates the right
+    // side would fail.
+    var runs = true;
+    runs &&= c.hit();
+
+    var empty: ?int = null;
+    empty ??= c.hitInt();
+
+    return c.n;
+}

@@ -76,9 +76,17 @@ compile time like every operator.
 ## 6.5 Assignment and its compounds
 
 Assignment is an expression, right-associative: `a = b = 3` assigns both. The compound family
-covers every binary operator: `+= -= *= /= %= &= |= ^= <<= >>= ??=`, and `&&=`/`||=` — the
-last two are grammar-legal and refused by the reference lowering (`LYR-IR0001`, an
-implementation limit: their short-circuit form is not built yet).
+covers every binary operator: `+= -= *= /= %= &= |= ^= <<= >>= &&= ||= ??=`.
+
+**Three of them short-circuit, and that is what makes them their own form rather than
+`x = x op e`.** `b &&= e` evaluates `e` only when `b` is true, `b ||= e` only when it is false,
+and `o ??= e` only when `o` is empty — so an `e` that calls something calls it exactly on those
+paths. A conforming implementation may not evaluate the right side otherwise. **Since 4.6**:
+before it, `&&=` and `||=` were grammar-legal and refused by the reference lowering as an
+implementation limit, and `??=` was carried on a variable but not on a field or an element.
+
+The target is evaluated ONCE however often the form reads it: `xs[next()] ??= v` calls `next`
+once, the same promise `xs[i] += 1` makes.
 
 `x op= e` on a variable target — a local or a captured variable — is the operator applied and
 stored: for interface-backed operators the synthesized call lowers whole. On a **field or
