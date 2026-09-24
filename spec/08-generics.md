@@ -99,3 +99,15 @@ A static member of a generic type is called with the type's arguments written
 (`List<int>.empty()`; `LYR-SEM0063` otherwise) and substitutes the caller's own type parameters
 where they appear. Methods of a generic type belong to the INSTANCE: `Box<int>.get` and
 `Box<string>.get` are two functions.
+
+A method of a generic type may declare type parameters OF ITS OWN, and the instance is then keyed
+by BOTH sides: `Box<int>.map<string>` takes its `T` from the receiver and its `U` from the call,
+and `Box<string>.map<string>` is a different function. Both halves are in scope in the signature
+and in the body, so `fn map<U>(f: fn(T) -> U): Box<U>` names one of each; where the two collide by
+name the method's parameter wins, which is the scoping the source already has. A static member
+with its own parameters follows the same rule, without a receiver (`Box<int>.of<string>(s)`).
+
+> Until 4.6.0 the reference implementation could not lower this form and answered `LYR-IR0001` —
+> an implementation limit (§12.1), never a rule. `Result<T, E>.map<U>` is the shape that made it
+> visible, and the reason the standard library writes several of its combinators as free
+> functions.

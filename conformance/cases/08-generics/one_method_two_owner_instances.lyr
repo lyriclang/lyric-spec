@@ -1,0 +1,20 @@
+//! run
+//! since: 4.6.0
+//! exit: 14
+// §8.4: one method, the same method type argument, two RECEIVER instances -- two functions.
+// A table keyed by the method's arguments alone would hand both calls the same body; the
+// differing result types are what would show it.
+class Box<T> {
+    v: T,
+
+    fn tell<U>(u: U): T { return this.v; }
+}
+
+fn main(): int {
+    let a = Box<int> { v = 4 };
+    let b = Box<bool> { v = true };
+
+    var n = a.tell<int>(0);
+    if (b.tell<int>(0)) { n = n + 10; }
+    return n;
+}

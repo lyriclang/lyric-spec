@@ -1,0 +1,21 @@
+//! run
+//! since: 4.6.0
+//! exit: 21
+// §8.4: a method of a generic type may carry type parameters of its own, and the instance is
+// keyed by both sides. 'map' names the receiver's T in its parameter and its own U in its
+// result, which is the shape 'Result<T, E>.map<U>' has -- until 4.6.0 the reference lowering
+// answered LYR-IR0001 to it, an implementation limit and never a rule.
+class Box<T> {
+    v: T,
+
+    fn map<U>(f: fn(T) -> U): Box<U> {
+        return Box<U> { v = f(this.v) };
+    }
+
+    fn get(): T { return this.v; }
+}
+
+fn main(): int {
+    let b = Box<int> { v = 20 };
+    return b.map<int>((n: int): int => n + 1).get();
+}
