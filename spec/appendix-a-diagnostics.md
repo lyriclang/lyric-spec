@@ -86,7 +86,7 @@ may surface several codes; conformance cases pin the first.
 
 | Code | S | Cause |
 |---|---|---|
-| LYR-RES0001 | E | A name declared twice in the same scope: module, type body or extend block. Carries a note pointing at the previous declaration. |
+| LYR-RES0001 | E | A name declared twice in the same scope: module, type body, extend block, or parameter list (the last since 4.6.0). Carries a note pointing at the previous declaration. |
 | LYR-RES0002 | E | A type name that resolves to nothing. |
 | LYR-RES0003 | E | An imported module that cannot be found. |
 | LYR-RES0004 | E | An imported name the target module does not export — missing entirely, or present but not `pub`. |
@@ -156,7 +156,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0056 | E | A struct containing itself — infinite size; the recursive part needs a `class`. |
 | LYR-SEM0057 | E | A global constant reading one that is initialized later — dependency order across modules, source order within one (§4.3). |
 | LYR-SEM0058 | E | Destructuring something that is not a tuple, or with the wrong arity. |
-| LYR-SEM0059 | E | `==`/`!=` not defined: an optional compared against a non-`null` value, or a type without `Equatable`. |
+| LYR-SEM0059 | E | `==`/`!=` not defined: an optional compared against a non-`null` value, a non-optional compared against `null` (since 4.6.0; an unsubstituted type parameter is exempt), or a type without `Equatable`. |
 | LYR-SEM0060 | E | A type argument no call argument determines — write it explicitly. |
 | LYR-SEM0061 | E | Constructing a host type from a script — only the host creates one (§11). |
 | LYR-SEM0062 | E | `?.` calling a function-typed field — a call through `?.` works on methods; read the value first. |
@@ -196,6 +196,7 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0103 | W | A loop label nothing names (since 4.5). A warning, not an error: the label is harmless, and saying so costs nothing. |
 | LYR-SEM0104 | W | A pattern that cannot fail where a failing one was expected (since 4.5): the `else` of a `let … else`, or the condition of an `if let`/`while let`, never runs its other path. |
 | LYR-SEM0105 | E | A type or expression nested deeper than this implementation's check walks (since 4.6). The parse may well have accepted it — a left-leaning chain of a hundred thousand `+` is shallow to read and deep to walk. Implementation-defined, §12.4. |
+| LYR-SEM0106 | E | A struct, class or variant initializer that omits a field with no default (since 4.6.0). Names every missing field at once. |
 
 ### Warnings and hints
 

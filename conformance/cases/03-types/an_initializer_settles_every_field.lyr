@@ -1,0 +1,16 @@
+//! check
+//! since: 4.6.0
+//! error: LYR-SEM0106
+// §3.4: a field without a default must be given a value. Until 4.6.0 the reference
+// implementation answered LYR-IR0001 to this -- "this compiler version cannot lower it yet",
+// about a program no version will ever run -- and 'lyrc check', which never lowers, answered
+// "ok". Both fields are named in one message rather than one per compile.
+class Point {
+    x: int,
+    y: int,
+}
+
+fn main(): int {
+    let p = Point { x = 1 };
+    return p.x;
+}

@@ -1,0 +1,13 @@
+//! check
+//! since: 4.6.0
+//! error: LYR-RES0001
+// §7.1a: a parameter list is a scope like a module or a type body. Until 4.6.0 this compiled and
+// the second parameter was unreachable -- the first won every lookup, so 'f(1, 2)' returning 'x'
+// answered 1, and the argument written for the second went nowhere.
+fn f(x: int, x: int): int {
+    return x;
+}
+
+fn main(): int {
+    return f(1, 2);
+}

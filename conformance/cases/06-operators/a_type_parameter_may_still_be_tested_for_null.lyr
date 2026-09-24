@@ -1,0 +1,15 @@
+//! run
+//! since: 4.6.0
+//! exit: 3
+// §6.2's exemption, and the control for the case beside it: inside a generic body the question
+// is answered by the instantiation, not by the declaration. With T bound to '?int' this is an
+// ordinary optional test, and a rule that refused it here would refuse a body that works.
+fn present<T>(x: T): int {
+    if (x == null) { return 0; }
+    return 3;
+}
+
+fn main(): int {
+    let some: ?int = 5;
+    return present<?int>(some);
+}
