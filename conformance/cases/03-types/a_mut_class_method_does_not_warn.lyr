@@ -1,0 +1,17 @@
+//! check
+//! since: 4.6.0
+// §3.4a's control: a method that DECLARES 'mut' writes its receiver under every candidate
+// answer, so it is not a place 5.0 moves.
+class Counter {
+    value: int,
+
+    mut fn advance(): void {
+        this.value = this.value + 1;
+    }
+}
+
+fn main(): int {
+    let c = Counter { value = 0 };
+    c.advance();
+    return c.value;
+}

@@ -94,6 +94,32 @@ mentions each of its type's fields at most once, and every field without a defau
 once. A value with an unset field does not exist at any point, which is why there is no
 partially built object to observe and no zero value to fall back on.
 
+## 3.4a `mut` methods, and what an immutable binding protects
+
+`mut fn` declares that a method may write its receiver. On a **struct** it is enforced: a
+non-`mut` method assigning to `this.f` is `LYR-SEM0019`. On a **class** the effect is unspecified,
+and the reference implementation enforces nothing — a non-`mut` method may write its receiver's
+fields freely.
+
+The keyword is part of the contract on BOTH regardless: §5.1's conformance test compares
+signatures exactly, `mut` included, so an interface method declared `mut` is satisfied only by a
+`mut` implementation. On a class that is a promise nothing else checks. `LYR-SEM0108` marks a
+non-`mut` class method that writes `this` (since 4.6.0; §12.5); **5.0 settles what `mut` means on
+a class.**
+
+**The binding side is the same question from the other end.** `let` is immutability of the
+BINDING and not of the value (§7.1): a `let` of a class value permits `mut` calls and field
+writes through it. For a STRUCT the same rule has a consequence with no obvious reading —
+`let p = P { … }; p.x = 5;` compiles, although `p` itself can never be reassigned and the struct
+is a value. A parameter is an immutable binding by the same rule and behaves the same way.
+`LYR-SEM0109` marks a field written through either (since 4.6.0; §12.5).
+
+**5.0 settles what a struct is**, and one answer settles all of it. The candidate on the table is
+`mut struct` — a struct is immutable unless declared otherwise — under which an immutable
+binding's fields are not writable, a parameter raises no separate question, and "shared" becomes
+indistinguishable from "copied", so `?Struct` stops being a third question. Nothing here commits
+to that answer; what the warnings commit to is that the places exist and can be found.
+
 ## 3.5 Type aliases, transparent and opaque
 
 `type Name = T;` names a type: `Name` and `T` are interchangeable everywhere, and the alias

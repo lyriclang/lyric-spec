@@ -69,4 +69,38 @@ internal failure escape as a stack trace destroys that output for the tool readi
 
 The distinction from `LYR-IR0001` is the whole point and runs the other way: `IR0001` is valid
 Lyric this implementation cannot lower — the program is right and the compiler is limited.
-`CLI0018` is the compiler being wrong. Neither may wear the other's code.
+`CLI0020` is the compiler being wrong. Neither may wear the other's code.
+
+## 12.5 Migration warnings
+
+A **migration warning** reports a program that compiles today and will mean something else, or
+stop compiling, in a named later version. It is a warning and not an error by decision: the
+program is legal under the rules in force, and refusing it would make this document describe a
+language nobody has released.
+
+Four questions about the language are open rather than settled, and all four are settled together
+with **5.0** rather than one release at a time (maintainer, 2026-09-24). Until then each carries a
+warning and NOTHING ELSE CHANGES — the behaviour a program has today is the behaviour it keeps
+until the major:
+
+| Code | What it marks | Where |
+|---|---|---|
+| `LYR-SEM0107` | a second binding of one name in one scope | §7.1 |
+| `LYR-SEM0108` | a non-`mut` method writing `this` on a class | §3.4a |
+| `LYR-SEM0109` | a field written through an immutable struct binding | §3.4a |
+| `LYR-SEM0110` | a `defer` body that can throw | §7.5 |
+
+Three properties distinguish a migration warning from an ordinary one:
+
+- **It does not presume the answer.** Each of the four reports a program whose meaning changes
+  WHICHEVER way its question is settled. A warning that fired only under one candidate answer
+  would be that answer, taken quietly.
+- **It names the version.** "This changes in 5.0" is the content. A warning that merely says
+  something is unusual belongs to the ordinary catalogue.
+- **It retires WITH its rule.** When 5.0 settles a question, its code is retired (§12.1 rule 2)
+  rather than repurposed as the error the new rule reports — the old code meant "this will
+  change", and that sentence stops being true.
+
+The four questions are stated where they belong, not here, and each says what is unspecified
+rather than describing what one implementation happens to do. A conformance case for a migration
+warning pins the WARNING; it cannot pin the outcome, because there is none to pin.

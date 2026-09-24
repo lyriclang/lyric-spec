@@ -1,0 +1,16 @@
+//! check
+//! since: 4.6.0
+//! warning: LYR-SEM0109
+// §3.4a, §12.5: 'let' is immutability of the BINDING and not of the value, which for a struct
+// means its fields stay writable although the name can never be reassigned. A parameter is an
+// immutable binding by the same rule. 5.0 settles what a struct is.
+struct Point {
+    x: int,
+    y: int,
+}
+
+fn main(): int {
+    let p = Point { x = 1, y = 2 };
+    p.x = 5;
+    return p.x;
+}

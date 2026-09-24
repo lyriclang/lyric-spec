@@ -1,0 +1,11 @@
+//! check
+//! since: 4.6.0
+//! warning: LYR-SEM0107
+// §7.1, §12.5: what a second binding of one name in ONE scope means is unspecified, and both
+// answers a language can give -- refusing it, or Rust-style shadowing -- change what this program
+// does. 5.0 settles it; until then the place is marked and nothing else changes.
+fn main(): int {
+    let x = 1;
+    let x = 2;
+    return x;
+}

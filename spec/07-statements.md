@@ -14,6 +14,16 @@ Destructuring `let (a, b) = pair;` binds tuple elements — names, `_`, and nest
 patterns; no form that can fail, and an initializer is required. `_` names a deliberately
 unused binding and silences the unused warning.
 
+**A second binding of one name in ONE scope is unspecified, and carries a migration warning**
+(`LYR-SEM0107`, since 4.6.0; §12.5). `let x = 1; let x = 2;` is neither refused nor defined here,
+and it never has been. Both of the answers a language can give — refusing it, or shadowing in
+Rust's sense, where the second binding is the one a later `x` names — change what such a program
+means, which is why the warning does not wait for the choice. **5.0 settles it.**
+
+Shadowing a name from an ENCLOSING scope is a different thing and is untouched: an inner block
+may bind a name the outer one already has, and that stays legal whatever 5.0 decides. So does a
+name bound by a pattern, whose own rule is §7.6's.
+
 ## 7.1a Parameters: defaults and `params`
 
 A parameter may carry a default (`fn f(n: int = 0)`), and the LAST parameter may be `params`
@@ -121,6 +131,14 @@ falling off the end, `return`, `throw`, `break`, `continue`. Scheduled statement
 reverse scheduling order, and each EXECUTION of a `defer` statement schedules one run: a
 `defer` in a loop body runs once per iteration, at that iteration's end. Two things run no
 defers: `std.os.exit`, and a **panic** — a panic aborts, it does not unwind.
+
+**What a throwing `defer` does to the rest of the chain is unspecified**, and carries a
+migration warning (`LYR-SEM0110`, since 4.6.0; §12.5). The paragraph above orders the chain and
+says nothing about a body that throws in the middle of it: whether the stages scheduled BEFORE the
+thrower still run, and what the exception does to the exit path it interrupted, are not settled
+here and never were. Go, whose `defer` this construct is shaped after, runs the rest of the chain.
+**5.0 settles it**; until then an implementation reports the warning wherever a `defer` body can
+throw, because every candidate answer changes what such a program does.
 
 In a coroutine the same rule holds against the body's own control flow: a `defer` fires when
 the body leaves its scope, which for the outermost scope is the `resume` that drives the body
