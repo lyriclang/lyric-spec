@@ -195,6 +195,10 @@ may surface several codes; conformance cases pin the first.
 | LYR-SEM0102 | E | A loop label that already names an enclosing loop (since 4.5) — a jump to it would be ambiguous. |
 | LYR-SEM0103 | W | A loop label nothing names (since 4.5). A warning, not an error: the label is harmless, and saying so costs nothing. |
 | LYR-SEM0104 | W | A pattern that cannot fail where a failing one was expected (since 4.5): the `else` of a `let … else`, or the condition of an `if let`/`while let`, never runs its other path. |
+| LYR-SEM0107 | W | **Migration (§12.5)**: a second binding of one name in one scope (since 4.6.0). Unspecified today, settled with 5.0; shadowing an enclosing scope is untouched. |
+| LYR-SEM0108 | W | **Migration (§12.5)**: a non-`mut` method writing `this` on a CLASS (since 4.6.0). Unspecified today and enforced on structs, settled with 5.0. |
+| LYR-SEM0109 | W | **Migration (§12.5)**: a field written through an immutable struct binding — a `let` or a parameter (since 4.6.0). Settled with 5.0, together with §3.4a's other two. |
+| LYR-SEM0110 | W | **Migration (§12.5)**: a `defer` body that can throw (since 4.6.0). What that does to the rest of the chain is unspecified; settled with 5.0. |
 | LYR-SEM0105 | E | A type or expression nested deeper than this implementation's check walks (since 4.6). The parse may well have accepted it — a left-leaning chain of a hundred thousand `+` is shallow to read and deep to walk. Implementation-defined, §12.4. |
 | LYR-SEM0106 | E | A struct, class or variant initializer that omits a field with no default (since 4.6.0). Names every missing field at once. |
 

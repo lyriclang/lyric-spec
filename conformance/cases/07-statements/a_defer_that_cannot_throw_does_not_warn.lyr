@@ -1,0 +1,19 @@
+//! check
+//! since: 4.6.0
+// §7.5's control: an ordinary defer is untouched. The question is only about a body that can
+// throw, and most cannot.
+class Counter {
+    n: int,
+
+    mut fn bump(): void { this.n = this.n + 1; }
+}
+
+fn work(c: Counter): void {
+    defer c.bump();
+}
+
+fn main(): int {
+    let c = Counter { n = 0 };
+    work(c);
+    return c.n;
+}

@@ -1,0 +1,13 @@
+//! check
+//! since: 4.6.0
+// §3.4a's control: a 'var' binding is writable under every candidate answer.
+struct Point {
+    x: int,
+    y: int,
+}
+
+fn main(): int {
+    var p = Point { x = 1, y = 2 };
+    p.x = 5;
+    return p.x;
+}

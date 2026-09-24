@@ -1,0 +1,19 @@
+//! check
+//! since: 4.6.0
+//! warning: LYR-SEM0108
+// §3.4a, §12.5: on a struct this line is LYR-SEM0019; on a class nothing checks it, although
+// §5.1 takes 'mut' into the signature an interface conformance must match exactly. 5.0 settles
+// what 'mut' means on a class.
+class Counter {
+    value: int,
+
+    fn advance(): void {
+        this.value = this.value + 1;
+    }
+}
+
+fn main(): int {
+    let c = Counter { value = 0 };
+    c.advance();
+    return c.value;
+}

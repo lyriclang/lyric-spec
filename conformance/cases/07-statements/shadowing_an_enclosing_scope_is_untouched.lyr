@@ -1,0 +1,13 @@
+//! check
+//! since: 4.6.0
+// §7.1's control: an inner block binding a name the outer one already has is ordinary shadowing
+// and stays legal whatever 5.0 decides. No warning -- a 'check' case with no expectation fails on
+// ANY diagnostic, which is what makes this a control and not a decoration.
+fn main(): int {
+    let x = 1;
+    if (x > 0) {
+        let x = 2;
+        return x;
+    }
+    return x;
+}

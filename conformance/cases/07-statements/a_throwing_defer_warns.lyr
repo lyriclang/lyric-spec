@@ -1,0 +1,25 @@
+//! check
+//! since: 4.6.0
+//! warning: LYR-SEM0110
+// §7.5, §12.5: the chapter orders the chain and says nothing about a body that throws in the
+// middle of it -- whether the stages scheduled before the thrower still run, and what the
+// exception does to the exit path it interrupted. 5.0 settles it.
+class Boom :: [Throwable] {
+    n: int,
+
+    fn message(): string { return "boom"; }
+}
+
+fn close(): void throws Boom {
+    throw Boom { n = 1 };
+}
+
+fn work(): void throws Boom {
+    defer close();
+}
+
+fn main(): int {
+    try { work(); }
+    catch (_: Boom) { return 0; }
+    return 1;
+}
