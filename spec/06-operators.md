@@ -60,6 +60,19 @@ declared as `Equatable` does not become an operator.
 `?T` compares only against `null`; comparing two optionals is an error (`LYR-SEM0059`) —
 narrow first. Two values of one opaque alias compare by their underlying (§3.5).
 
+**`null` on one side requires an optional on the other** (`LYR-SEM0059`, since 4.6.0). A
+non-optional is never `null` (§3.3), so `x == null` on an `int` asks a question whose answer the
+type already gave; it is refused rather than folded to `false`, because a test written on purpose
+is a mistake worth naming and a test written by accident is one worth finding. This is the
+expression twin of `LYR-SEM0029`, which refuses the `null` PATTERN against a non-optional
+scrutinee.
+
+An unsubstituted TYPE PARAMETER is exempt: in `fn f<T>(x: T)` the question `x == null` is
+answered by the instantiation and not by the declaration, and a `T` bound to `?int` makes it an
+ordinary optional test. That exemption is deliberate and it is narrow — `!` and the `null`
+pattern refuse a `T` today, so the four ways of asking do not yet agree, and which way they
+should agree is an open question rather than a rule this sentence settles.
+
 ## 6.3 Optionals: `??`, `!`, `?.`
 
 - `a ?? b` — `a` if present, else `b`; `b` evaluates only then. The result is `T` when `b : T`,

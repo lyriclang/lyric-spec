@@ -21,6 +21,13 @@ with an array type, collecting surplus arguments. Both are **call-site** transfo
 resolved against the callee's declaration — which is why a function VALUE has neither: its
 type says arity and nothing more.
 
+**A parameter name binds once** (`LYR-RES0001`, since 4.6.0). A parameter list is a scope like
+a module body or a type body, so `fn f(x: int, x: int)` is the ordinary collision, with the note
+pointing at the first. A second parameter of one name can only replace the first or be
+unreachable, and both readings silently discard an argument the caller wrote out. It is the same
+rule §7.6 states for a pattern (`LYR-SEM0097`) and §3.4 for an initializer (`LYR-SEM0070`),
+arriving last at the one list that had been left out.
+
 At the variadic position an argument's own type decides element versus whole array (there is
 no `T`/`T[]` conversion, so the two never collide). Since 3.0 a name may carry a variadic and a
 non-variadic form at once; the non-variadic one wins wherever both fit, which is rule 4 of

@@ -1,0 +1,15 @@
+//! run
+//! since: 4.6.0
+//! exit: 7
+// §3.4, the other half: the rule is about fields with NO default. The control for
+// an_initializer_settles_every_field, which would pass just as well against a compiler that
+// refused every omission.
+class Counted {
+    n: int,
+    step: int = 7,
+}
+
+fn main(): int {
+    let c = Counted { n = 1 };
+    return c.step;
+}

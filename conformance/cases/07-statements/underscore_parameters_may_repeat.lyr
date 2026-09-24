@@ -1,0 +1,13 @@
+//! run
+//! since: 4.6.0
+//! exit: 5
+// §7.1a's control: '_' is the deliberate non-name (§7.1) and may repeat, here as in a pattern.
+// A rule written as "no two parameters share a name" without this exception would refuse the
+// ordinary way of saying "I ignore these two arguments".
+fn only(_: int, _: string, n: int): int {
+    return n;
+}
+
+fn main(): int {
+    return only(1, "x", 5);
+}

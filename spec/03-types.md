@@ -85,6 +85,15 @@ without payloads), `interface` (chapter 5). Generic declarations are monomorphiz
 distinct type-argument tuple is its own type with its own layout (chapter 8), which is what
 lets values stay untagged.
 
+**An initializer settles every field.** A field declared with a default (`Field` in §2 takes an
+optional `= Expr`) may be left out and takes it; a field without one must be given a value, and
+an initializer that leaves any out is refused (`LYR-SEM0106`, since 4.6.0), naming all of them
+at once rather than one per attempt. With `LYR-SEM0015` for a field the type does not have and
+`LYR-SEM0070` for one given twice, that is a single rule read from three sides: an initializer
+mentions each of its type's fields at most once, and every field without a default at least
+once. A value with an unset field does not exist at any point, which is why there is no
+partially built object to observe and no zero value to fall back on.
+
 ## 3.5 Type aliases, transparent and opaque
 
 `type Name = T;` names a type: `Name` and `T` are interchangeable everywhere, and the alias
