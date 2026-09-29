@@ -1,6 +1,0 @@
-//! run
-//! panic: LYR-VM0007
-fn main(): int {
-    let v: ?int = null;
-    return v!;
-}

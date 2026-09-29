@@ -11,14 +11,14 @@ The header is the leading block of lines starting `//!`. Directives:
 ```
 //! run                      compile and execute; expect exit 0 unless stated
 //! exit: 7                  expected process exit code (main's return value)
-//! panic: LYR-VM0002        expect a panic carrying this code; exit code is 101
+//! panic: LYR-RT0001        expect a panic carrying this code; exit code is 101
 //! stdout:                  expected standard output, byte-exact, LF line ends:
 //! | first line
 //! | second line
 //! check                    compile only; expect acceptance in silence
 //! error: LYR-SEM0001       compile only; expect rejection with this code (repeatable)
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
-//! since: 2.0.0             the case pins behavior of this language version and later; a
+//! since: 5.0.0             the case pins behavior of this language version and later; a
 //!                          runner given an older --toolchain-version skips it
 ```
 
@@ -30,7 +30,7 @@ Exactly one of `run` / `check` leads the header. `error:` implies rejection (com
 Cases test the LANGUAGE. They may rely on two library edges and the §11 anchors, nothing else
 of the standard library:
 
-- `import std.io.console { println };` — the suite's one output channel;
+- `import std.io { println };` — the suite's one output channel;
 - f-strings and the operators, whose helpers the compiler binds itself;
 - the `std.core` names the stdlib contract fixes (§11): `Exception`, the operator and
   constraint interfaces, `@Deprecated` and the attribute markers — including pinning the

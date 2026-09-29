@@ -1,32 +1,15 @@
-# The suite runs against a RELEASED toolchain, never a working tree: the spec describes
-# versions, and the pin below names the one this draft tracks. Raising it is a deliberate act.
+# The suite runs against a RELEASED toolchain, never a working tree. There is no Lyric 5 release
+# yet, so there is nothing to pin: until 5.0.0 the toolchain repository's CI runs the suite
+# against its own tree. The 4.x workflow, pinned to its release, lives on the 'script' branch.
 name: Conformance
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-
-env:
-  TOOLCHAIN_VERSION: "3.9.1"
+  workflow_dispatch:
 
 jobs:
   conformance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Fetch the pinned toolchain release
-        run: |
-          curl -sSfL -o toolchain.tar.gz \
-            "https://github.com/lyriclang/lyric/releases/download/v${TOOLCHAIN_VERSION}/lyric-${TOOLCHAIN_VERSION}-linux-x64.tar.gz"
-          # The archive is flat: binaries and stdlib/ at the root.
-          mkdir toolchain
-          tar -xzf toolchain.tar.gz -C toolchain
-
-      - name: Run the suite
-        run: |
-          python3 tools/run_conformance.py \
-            --toolchain toolchain \
-            --stdlib toolchain/stdlib \
-            --toolchain-version "$TOOLCHAIN_VERSION"
+      - name: Nothing to pin before 5.0.0
+        run: echo "no Lyric 5 release exists; see the comment at the top of this workflow"
