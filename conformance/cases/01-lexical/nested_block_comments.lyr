@@ -1,6 +1,0 @@
-//! run
-//! exit: 0
-/* outer /* inner */ still a comment */
-fn main(): int {
-    return 0;
-}
