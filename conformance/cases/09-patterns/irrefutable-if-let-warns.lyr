@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0104
+//! since: 5.0.0
+// 09 §1.5: an 'if (let P = e)' whose pattern cannot fail is a warning.
+fn main(): int {
+    var n = 0;
+    if (let value = 5) { n = value; }
+    return n - 5;
+}

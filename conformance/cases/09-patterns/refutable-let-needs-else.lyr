@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0098
+//! since: 5.0.0
+// 09 §1.5: without 'else' the pattern of a binding is irrefutable, or the statement is refused.
+enum Shape { Num(int), Empty }
+
+fn number(s: Shape): int {
+    let .Num(n) = s;
+    return n;
+}
+
+fn main(): int { return number(Shape.Empty); }

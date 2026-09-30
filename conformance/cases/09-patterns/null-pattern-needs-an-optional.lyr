@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0029
+//! since: 5.0.0
+// 09 §2.3: 'null' stands against an optional only.
+enum Signal { Red, Green }
+
+fn code(s: Signal): int {
+    return match (s) { null => 0, _ => 1 };
+}
+
+fn main(): int { return code(Signal.Red); }

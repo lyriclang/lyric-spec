@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0032
+//! since: 5.0.0
+// 09 §2.7: an alternative that binds a name the others do not is refused.
+enum Pair { A(int), B(int) }
+
+fn value(p: Pair): int {
+    return match (p) { .A(x) | .B(y) => 1 };
+}
+
+fn main(): int { return value(Pair.A(1)); }

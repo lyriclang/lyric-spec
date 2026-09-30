@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 9 1
+//! since: 5.0.0
+// 09 §1.4: 'var' before the pattern makes its bindings writable, and a binding copies the part
+// it names — the scrutinee is untouched.
+import std.io { println };
+
+struct Point { var x: int, y: int }
+enum Shape { At(Point), Empty }
+
+fn main(): int {
+    let s: Shape = .At(Point { x = 1, y = 2 });
+    var .At(p) = s else { return 1; };
+    p.x = 9;
+    let kept = match (s) { .At(q) => q.x, .Empty => 0 };
+    println(f"{p.x} {kept}");
+    return 0;
+}

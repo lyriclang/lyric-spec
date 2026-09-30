@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3.4: a match on '?E' admits null and the variants of E; leaving null out is a gap, and the
+// witness is 'null'.
+enum Signal { Red, Green }
+
+fn code(m: ?Signal): int {
+    return match (m) { .Red => 1, .Green => 2 };
+}
+
+fn main(): int { return code(null); }

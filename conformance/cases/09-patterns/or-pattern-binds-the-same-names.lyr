@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 1 2 stop go
+//! since: 5.0.0
+// 09 §2.7: 'P | Q' matches when either alternative does, and every alternative binds the same
+// names at the same types.
+import std.io { println };
+
+enum Pair { A(int), B(int), C(string) }
+enum Signal { Red, Yellow, Green }
+
+fn value(p: Pair): int {
+    return match (p) { .A(x) | .B(x) => x, .C(_) => 0 };
+}
+
+fn action(s: Signal): string {
+    return match (s) { .Red | .Yellow => "stop", .Green => "go" };
+}
+
+fn main(): int {
+    println(f"{value(.A(1))} {value(.B(2))} " + action(.Yellow) + " " + action(.Green));
+    return 0;
+}

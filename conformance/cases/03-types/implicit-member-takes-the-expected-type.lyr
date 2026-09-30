@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | red green yellow
+//! | 3 6 red
+//! | green
+//! since: 5.0.0
+// 03 §4.2: '.Red' is the member of the enum the position expects — an initializer with a written
+// type, an argument, a return, an assignment, an arm under a context type, a field of an
+// initializer, a field default, an expected '?E'.
+import std.io { println };
+
+enum Signal { Red, Yellow, Green }
+enum Shape { Num(int), Rect { w: int, h: int }, Empty }
+
+struct Scene { light: Signal = .Red, var shape: Shape = .Empty }
+
+fn name(s: Signal): string {
+    return match (s) { .Red => "red", .Yellow => "yellow", .Green => "green" };
+}
+
+fn size(s: Shape): int {
+    return match (s) { .Num(n) => n, .Rect { w, h } => w * h, .Empty => 0 };
+}
+
+fn pick(flag: bool): Signal { return if (flag) .Green else .Yellow; }
+
+fn main(): int {
+    let a: Signal = .Red;
+    var b = pick(true);
+    let second = name(b);
+    b = .Yellow;
+    println(name(a) + " " + second + " " + name(b));
+
+    let scene = Scene { shape = .Num(3) };
+    let rect: Shape = .Rect { w = 2, h = 3 };
+    println(f"{size(scene.shape)} {size(rect)} " + name(scene.light));
+
+    let maybe: ?Signal = .Green;
+    println(if (maybe == null) "none" else name(maybe));
+    return 0;
+}

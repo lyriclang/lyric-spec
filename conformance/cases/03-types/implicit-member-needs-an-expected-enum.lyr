@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0113
+//! error: LYR-SEM0113
+//! since: 5.0.0
+// 03 §4.2: where the position expects no particular type, or one that is no enum, '.Red' is
+// refused and the diagnostic says to name the enum.
+enum Signal { Red, Green }
+
+fn main(): int {
+    let a = .Red;
+    let n: int = .Green;
+    return n;
+}

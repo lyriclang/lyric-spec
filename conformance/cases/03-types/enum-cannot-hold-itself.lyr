@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0056
+//! since: 5.0.0
+// 03 §4.1: a value type cannot hold itself; an enum whose payload holds the enum by value has no
+// finite size and is refused. The way out is a reference: 'Box<T>' of std.core, or a class.
+enum Tree {
+    Leaf(int),
+    Node(Tree, Tree),
+}
+
+fn main(): int { return 0; }

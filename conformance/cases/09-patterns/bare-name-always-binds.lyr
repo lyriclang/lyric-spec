@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | green 3
+//! since: 5.0.0
+// 09 §2.2: a bare name binds the whole value it stands against, whatever it spells; the arm
+// is irrefutable.
+import std.io { println };
+
+enum Signal { Red, Yellow, Green }
+
+fn name(s: Signal): string {
+    return match (s) { .Red => "red", .Yellow => "yellow", .Green => "green" };
+}
+
+fn main(): int {
+    let s = Signal.Green;
+    let whole = match (s) { anything => name(anything) };
+    let n = match (3) { value => value };
+    println(f"{whole} {n}");
+    return 0;
+}
