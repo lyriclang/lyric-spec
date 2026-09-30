@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §7: a range is its own type.
+fn eat(n: int): int { return n; }
+
+fn main(): int { return eat(1..5); }

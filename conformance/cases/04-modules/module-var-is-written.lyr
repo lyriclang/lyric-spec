@@ -1,0 +1,15 @@
+//! run
+//! exit: 4
+//! since: 5.0.0
+// 04 §1: a module-level 'var' is written from any function.
+var counter = 0;
+
+fn bump(): void { counter += 1; }
+
+fn main(): int {
+    bump();
+    bump();
+    bump();
+    counter = counter + 1;
+    return counter;
+}

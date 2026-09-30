@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1 4 3 5 9
+//! since: 5.0.0
+// 03 §7: 'a..b' is a Range holding its bounds, 'a..=b' a RangeInclusive; a range is stored,
+// passed and read like any value.
+import std.core { Range, RangeInclusive };
+import std.io { println };
+
+struct Window { span: Range<int> }
+
+fn width(r: Range<int>): int { return r.end - r.start; }
+
+fn main(): int {
+    let w = Window { span = 1..4 };
+    let inc: RangeInclusive<int> = 5..=9;
+    println(f"{w.span.start} {w.span.end} {width(w.span)} {inc.start} {inc.end}");
+    return 0;
+}

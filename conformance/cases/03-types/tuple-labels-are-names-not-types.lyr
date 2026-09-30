@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 4 3 25
+//! since: 5.0.0
+// 03 §6: a labelled type reads by label and by position; '(int, int)' stands where the
+// labelled type is expected and the other way round.
+import std.io { println };
+
+fn norm(p: (x: int, y: int)): int { return p.x * p.x + p.y * p.y; }
+
+fn main(): int {
+    let p: (x: int, y: int) = (3, 4);
+    let plain: (int, int) = p;
+    println(f"{p.x} {p.y} {p.0} {norm(plain)}");
+    return 0;
+}

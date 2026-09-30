@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 3,4 1,2
+//! | 4,3
+//! since: 5.0.0
+// 03 §2.5: 'p with { … }' is a copy with the named fields replaced, 'p' unchanged; the values
+// see the old 'p'.
+import std.io { println };
+
+struct Point { x: int, y: int }
+
+fn main(): int {
+    let p = Point { x = 1, y = 2 };
+    let q = p with { x = 3, y = 4 };
+    println(f"{q.x},{q.y} {p.x},{p.y}");
+    let s = q with { x = q.y, y = q.x };
+    println(f"{s.x},{s.y}");
+    return 0;
+}

@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 3 6 hello! 0,0
+//! since: 5.0.0
+// 04 §1: module-level bindings are filled before the entry, in declaration order; a later one
+// reads an earlier one; a 'static let' the same way.
+import std.io { println };
+
+struct Point {
+    x: int,
+    y: int,
+
+    static let ORIGIN: Point = Point { x = 0, y = 0 };
+}
+
+let base = 3;
+let twice = base * 2;
+let greeting = "hello" + "!";
+
+fn main(): int {
+    println(f"{base} {twice} {greeting} {Point.ORIGIN.x},{Point.ORIGIN.y}");
+    return 0;
+}

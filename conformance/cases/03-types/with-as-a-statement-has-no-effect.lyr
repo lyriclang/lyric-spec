@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0022
+//! since: 5.0.0
+// 03 §2.5: a 'with' builds a value; as a statement it changes nothing and is refused.
+struct Point { x: int, y: int }
+
+fn main(): int {
+    let p = Point { x = 1, y = 2 };
+    p with { x = 3 };
+    return p.x;
+}

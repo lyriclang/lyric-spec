@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 1 two 5
+//! since: 5.0.0
+// 03 §6: '.0', '.1' read the elements; '.0.0' reaches into a nested tuple.
+import std.io { println };
+
+fn main(): int {
+    let pair = (1, "two");
+    let nested = ((2, 3), "x");
+    println(f"{pair.0} {pair.1} {nested.0.0 + nested.0.1}");
+    return 0;
+}

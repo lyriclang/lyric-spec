@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §6: no element of a tuple is written; the tuple is replaced whole.
+fn main(): int {
+    var t = (1, 2);
+    t.0 = 5;
+    return t.0;
+}

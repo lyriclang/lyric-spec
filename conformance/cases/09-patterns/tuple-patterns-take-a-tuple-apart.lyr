@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 2 9 3hi two-first
+//! since: 5.0.0
+// 09 §2.11: '(a, b)' binds the elements, nested in place; 'let (a, b) = t;' too; a literal
+// inside tests an element.
+import std.io { println };
+
+fn minmax(a: int, b: int): (int, int) { return if (a < b) (a, b) else (b, a); }
+
+fn main(): int {
+    let (lo, hi) = minmax(9, 2);
+    let nested = ((1, 2), "hi");
+    let text = match (nested) { ((a, b), s) => f"{a + b}{s}" };
+    let kind = match ((lo, hi)) { (2, _) => "two-first", _ => "other" };
+    println(f"{lo} {hi} {text} {kind}");
+    return 0;
+}

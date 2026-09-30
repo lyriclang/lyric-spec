@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 04 §1: a module-level 'let' is not written; what it references may be, where that is a place.
+class Log { var lines: int }
+
+let limit = 3;
+let log = Log { lines = 0 };
+
+fn main(): int {
+    log.lines = 1;
+    limit = 4;
+    return limit;
+}
