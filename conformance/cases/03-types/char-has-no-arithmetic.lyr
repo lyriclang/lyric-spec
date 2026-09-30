@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §1.5: a char is not a number.
+fn main(): int {
+    let c = 'a';
+    let _ = c + 1;
+    return 0;
+}

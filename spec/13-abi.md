@@ -88,13 +88,14 @@ The first element sits at offset 16, aligned to 16 bytes.
    | Code | Cause |
    |---|---|
    | `LYR-RT0001` | integer division by zero |
-   | `LYR-RT0002` | integer overflow, including `MIN / -1` and `MIN % -1` ([03 T2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)) |
+   | `LYR-RT0002` | integer overflow, including `MIN / -1`, `MIN % -1` and a shift by a count the type cannot take ([03 §1.6](03-types.md)) |
    | `LYR-RT0003` | an index outside its sequence |
    | `LYR-RT0004` | unwrapping a null value |
    | `LYR-RT0005` | no memory left, or the heap limit reached |
    | `LYR-RT0006` | stack overflow |
    | `LYR-RT0007` | a precondition of a runtime operation stated by the program text (a negative length) |
    | `LYR-RT0008` | `panic(message)`: the program's own message, as written |
+   | `LYR-RT0009` | `as char` of a value that is no Unicode scalar value ([03 §1.4](03-types.md)) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It

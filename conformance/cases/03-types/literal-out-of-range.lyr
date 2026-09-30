@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §1.2: a literal that does not fit its type is an error, never a wrapped value.
+fn main(): int {
+    let x: uint8 = 300;
+    return 0;
+}

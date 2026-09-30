@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0001
+//! since: 5.0.0
+// 03 §1.6: integer division by zero is a panic.
+fn div(a: int, b: int): int { return a / b; }
+fn main(): int { return div(1, 0); }

@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 44 255 -128
+//! | 127 -128 0 255
+//! | -3 3
+//! since: 5.0.0
+// 03 §1.4: as between numbers always succeeds: a narrowing reduces modulo the width, a float
+// to an integer saturates and NaN gives 0, truncation is toward zero.
+import std.io { println };
+
+fn toI8(x: float): int8 { return x as int8; }
+fn toU8(x: float): uint8 { return x as uint8; }
+fn toInt(x: float): int { return x as int; }
+fn div(a: float, b: float): float { return a / b; }
+
+fn main(): int {
+    let n: int = 300;
+    println(f"{n as uint8} {-1 as uint8} {128 as int8}");
+    println(f"{toI8(1000.0)} {toI8(-1000.0)} {toInt(div(0.0, 0.0))} {toU8(300.0)}");
+    println(f"{toInt(-3.9)} {toInt(3.9)}");
+    return 0;
+}

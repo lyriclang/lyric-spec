@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 0.10000000149011612 0.30000001192092896
+//! since: 5.0.0
+// 03 §1.7: a float32 has 24 bits of significand; its text shows the value it holds.
+import std.io { println };
+
+fn add(a: float32, b: float32): float32 { return a + b; }
+
+fn main(): int {
+    let tenth: float32 = 0.1;
+    println(f"{tenth} {add(tenth, 0.2)}");
+    return 0;
+}

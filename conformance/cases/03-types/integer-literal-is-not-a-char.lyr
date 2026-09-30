@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §1.2: an integer literal never takes char.
+fn main(): int {
+    let c: char = 65;
+    return 0;
+}

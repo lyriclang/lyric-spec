@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 03 §1.6: an unsigned result below zero is an overflow.
+fn sub(a: uint8, b: uint8): uint8 { return a - b; }
+fn main(): int { return sub(0, 1); }

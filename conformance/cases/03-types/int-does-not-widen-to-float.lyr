@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §1.3: an integer stays an integer, even where a float would hold it.
+fn main(): int {
+    let n: int8 = 1;
+    let f: float = n;
+    return 0;
+}

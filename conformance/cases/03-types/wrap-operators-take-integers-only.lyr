@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §1.6: a float knows no wrap.
+fn main(): int {
+    let f = 1.5;
+    let _ = f +% 1.0;
+    return 0;
+}

@@ -1,0 +1,12 @@
+//! run
+//! exit: 3
+//! since: 5.0.0
+// 03 §1.5: two chars compare with ==, != and the orderings.
+fn main(): int {
+    let c = 'b';
+    var n = 0;
+    if (c > 'a') { n = n + 1; }
+    if (c <= 'b') { n = n + 1; }
+    if (c != 'c' && c == 'b') { n = n + 1; }
+    return n;
+}

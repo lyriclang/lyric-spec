@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0006
+//! since: 5.0.0
+// 03 §1.4: a char meets no number type but uint32.
+fn main(): int {
+    let c = 'A';
+    let _ = c as int;
+    return 0;
+}
