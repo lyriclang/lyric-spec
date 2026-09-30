@@ -1,0 +1,16 @@
+//! run
+//! exit: 3
+//! since: 5.0.0
+// 03 §2.3: what a mut fn writes through this, the caller sees.
+struct Counter {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+}
+
+fn main(): int {
+    var c = Counter { n = 0 };
+    c.bump();
+    c.bump();
+    c.bump();
+    return c.n;
+}

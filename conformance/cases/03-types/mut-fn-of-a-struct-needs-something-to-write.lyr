@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0023
+//! since: 5.0.0
+// 03 §2.3: a mut fn on a struct without a var field, that does not replace this, is refused.
+struct V {
+    x: int,
+    mut fn poke(): void { }
+}
+
+fn main(): int { return 0; }

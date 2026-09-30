@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2: a parameter is a let.
+struct V { var x: int }
+
+fn f(v: V): int {
+    v.x = 9;
+    return v.x;
+}
+
+fn main(): int { return f(V { x = 1 }); }

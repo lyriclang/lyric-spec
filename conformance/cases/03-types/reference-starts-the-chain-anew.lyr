@@ -1,0 +1,16 @@
+//! run
+//! exit: 16
+//! since: 5.0.0
+// 03 §2.2: behind a class value the object is the place — through a let, through a fixed
+// field of a frozen struct, through a parameter.
+class C { var n: int }
+struct S { c: C }
+
+fn touch(c: C): void { c.n += 7; }
+
+fn main(): int {
+    let s = S { c = C { n = 0 } };
+    s.c.n = 9;
+    touch(s.c);
+    return s.c.n;
+}

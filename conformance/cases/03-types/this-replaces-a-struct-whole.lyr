@@ -1,0 +1,14 @@
+//! run
+//! exit: 7
+//! since: 5.0.0
+// 03 §2.3: this = value in a mut fn replaces the caller's value.
+struct V {
+    x: int,
+    mut fn become(n: int): void { this = V { x = n }; }
+}
+
+fn main(): int {
+    var v = V { x = 1 };
+    v.become(7);
+    return v.x;
+}

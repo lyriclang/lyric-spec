@@ -1,0 +1,17 @@
+//! run
+//! exit: 5
+//! since: 5.0.0
+// 03 §2.1, §2.3: a struct lies inline in its object; a mut fn on the field writes the object.
+struct Counter {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+}
+
+class Holder { var hits: Counter }
+
+fn main(): int {
+    let h = Holder { hits = Counter { n = 3 } };
+    h.hits.bump();
+    h.hits.n += 1;
+    return h.hits.n;
+}

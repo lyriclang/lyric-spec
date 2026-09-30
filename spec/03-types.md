@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S1); the rest
-> follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 and §2 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> and S2); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -118,3 +118,80 @@ What an f-string hole and the converters of `std.string` write ([12 §1](12-stdl
    `inf`, `-inf` and `NaN` for the values that are no number. A `float32` is written as the
    `float` it widens to: `0.1` as a `float32` prints `0.10000000149011612`.
 3. `bool` is `true` or `false`; `char` is the character itself, UTF-8 encoded.
+
+## 2. Structs and classes
+
+Two forms of a composite type, chosen once at the type
+([02 M1–M5, M9, M10, M14](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 2.1 Values and references
+
+1. A `struct` is a **value**: it is stored where it is declared — in a local, inline in the
+   object or the struct that holds it — and a binding, an assignment, an argument and a return
+   **copy** it. A copy is shallow: a reference held in a field is copied as a reference.
+2. A `class` is an **object** reached through a **reference**: a binding, an assignment, an
+   argument and a return pass the reference, and every holder sees the one object.
+3. A struct has no identity. A class has: two references are the same object or they are not
+   (§2.5).
+
+### 2.2 Fields and places
+
+1. A field is **fixed** once the value holding it is built, unless it is declared `var`:
+   `var balance: int`. The rule is one for structs and classes.
+2. An assignment, a compound assignment, `++` and `--` write a **place**. A field `a.f` is a
+   place that may be written when `f` is declared `var` **and** `a` may be changed in place:
+   - a local is a place when it is bound with `var`; a `let` freezes a struct to the bottom —
+     no field of it, and no field of a struct it holds, is written through it;
+   - a **parameter is a `let`**;
+   - a **reference starts the chain anew**: when `a` is of a class type, the object is the
+     place, whatever the binding or the field that holds the reference says — `let c: C` does
+     not keep `c.count = 1` from writing the object, and neither does a fixed field of class
+     type on the way;
+   - an element of an array is a place in the array, whatever holds the array;
+   - `this` is a place inside a `mut fn` and nowhere else (§2.3).
+3. A **temporary** is not a place: the result of a call that answers a struct cannot be
+   written into, and no `mut fn` can be called on it. The program is refused; the value is
+   never copied in silence so that the write has somewhere to go. A call that answers a class
+   answers a reference, and that is a place.
+4. Writing what is not a place is `LYR-SEM0019`; the diagnostic says which part of the chain
+   refuses: the field without `var`, the `let` or the parameter at the root, the method
+   without `mut`, the temporary.
+
+### 2.3 Methods and `mut fn`
+
+1. In a method of a struct, `this` **is the caller's value**, not a copy of it: what a method
+   writes through `this`, the caller sees, and a write that happened before a panic stays.
+2. A method that writes `this` — a field of it, `this` as a whole, or by calling a `mut fn`
+   on it — is declared **`mut fn`**, on a class as on a struct. A method without the word that
+   does so is refused (`LYR-SEM0019`).
+3. A `mut fn` is called on a place (§2.2): on a struct bound with `let`, on a parameter of a
+   struct type and on a temporary the call is refused. On a class it is called through any
+   reference.
+4. `this = value` in a `mut fn` of a struct replaces the caller's value as a whole. The
+   `this` of a class method is the reference the caller holds and is never replaced.
+5. A `mut fn` of a struct has something to write: the struct has a `var` field, or the method
+   replaces `this`, or it calls a `mut fn` on `this`, or an interface of the struct declares
+   the method `mut`. Otherwise the declaration is refused (`LYR-SEM0023`).
+
+### 2.4 Construction
+
+1. The **initializer** `T { field = value, … }` builds a value of a struct or a class. Every
+   field without a default is given; one diagnostic names all that are missing
+   (`LYR-SEM0106`). The written values are evaluated in the order they are written, then the
+   defaults of the omitted fields in the order of their declaration. A default does not see
+   `this`.
+2. A field of an optional type `?T` has the default `null` without saying so.
+3. There are **no constructors**. A type name in call position, `T(args)`, is the call
+   `T.new(args)` of the type's `static fn new` — an ordinary static function, which may
+   validate, answer any type, and hand out an object that exists already. A type that declares
+   no `static fn new` is not callable (`LYR-SEM0013`).
+
+### 2.5 Identity and equality
+
+1. `same(a, b)` answers whether two references are one object. Both arguments are references
+   — class values, arrays, coroutines — of one type. On a value it is an error
+   (`LYR-SEM0003`), not `false`: a struct has no identity to ask about.
+2. `==` and `!=` mean value equality and nothing else ([05](05-interfaces.md)): a class
+   without it has no `==`, and never falls back to identity.

@@ -1,0 +1,14 @@
+//! run
+//! exit: 3
+//! since: 5.0.0
+// 03 §2.4: T(args) is T.new(args).
+struct Point {
+    x: int,
+    y: int,
+    static fn new(x: int, y: int): Point { return Point { x = x, y = y }; }
+}
+
+fn main(): int {
+    let p = Point(1, 2);
+    return p.x + p.y;
+}

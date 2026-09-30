@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §2.5: same on a struct is an error, not false.
+struct V { x: int }
+
+fn main(): int {
+    let a = V { x = 1 };
+    return if (same(a, a)) 0 else 1;
+}

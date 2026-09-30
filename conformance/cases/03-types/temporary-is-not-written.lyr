@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2: the result of a call that answers a struct is not a place.
+struct V { var x: int }
+
+fn make(): V { return V { x = 1 }; }
+
+fn main(): int {
+    make().x = 9;
+    return 0;
+}

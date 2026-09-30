@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0013
+//! since: 5.0.0
+// 03 §2.4: there are no constructors; a type without static fn new is built by its initializer.
+class P { hp: int }
+
+fn main(): int {
+    let p = P(1);
+    return p.hp;
+}

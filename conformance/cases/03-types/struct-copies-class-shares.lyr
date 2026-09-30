@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 1 9
+//! | 9 9
+//! since: 5.0.0
+// 03 §2.1: a binding copies a struct and shares an object.
+import std.io { println };
+
+struct V { var x: int }
+class C { var x: int }
+
+fn main(): int {
+    var a = V { x = 1 };
+    var b = a;
+    b.x = 9;
+    println(f"{a.x} {b.x}");
+    let c = C { x = 1 };
+    let d = c;
+    d.x = 9;
+    println(f"{c.x} {d.x}");
+    return 0;
+}
