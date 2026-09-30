@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §9.2: a written argument binds before any argument; the argument that does not fit is the error.
+fn ident<T>(x: T): T { return x; }
+
+fn main(): int {
+    let s = ident<int>("x");
+    return 0;
+}

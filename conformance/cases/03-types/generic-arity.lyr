@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0026
+//! since: 5.0.0
+// 03 §9.1, §9.4: the number of arguments is the number of parameters — for a function that is not generic, none.
+fn plain(x: int): int { return x; }
+
+fn main(): int {
+    let f = plain<int>;
+    return 0;
+}

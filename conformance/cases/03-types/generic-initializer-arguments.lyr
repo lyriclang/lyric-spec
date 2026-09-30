@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 1 x 2 y 3 z 4 true
+//! since: 5.0.0
+// 03 §9.3: an initializer's arguments — written, from the context, a placeholder from the field values, from the context.
+import std.io { println };
+
+struct Pair<A, B> { first: A, second: B }
+
+fn main(): int {
+    let a = Pair<int, string> { first = 1, second = "x" };
+    let b: Pair<int, string> = Pair { first = 2, second = "y" };
+    let c = Pair<_, string> { first = 3, second = "z" };
+    let d: Pair<int, bool> = Pair<_, _> { first = 4, second = true };
+    println(f"{a.first} {a.second} {b.first} {b.second} {c.first} {c.second} {d.first} {d.second}");
+    return 0;
+}

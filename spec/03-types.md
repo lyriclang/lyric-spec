@@ -491,10 +491,85 @@ Functions as values, and the lambdas that make them
 
 1. A **free function** named without a call is a value of its type; a **static function**
    named through its type, `Point.new`, likewise (F10). A generic function is not a value
-   until instantiated.
+   until instantiated ([§9.4](#94-instantiated-functions-as-values)).
 2. `obj.method` without a call is a closure **bound** to `obj` (F10): it holds the object — a
    class shared, a struct copied at the binding — and calls the method on it; its type is the
    method's without the receiver. It is called like any function value, and a call through it
    on a struct's copy changes the copy.
 3. `arrayOf(n, f)` of `std.core` builds an array of `n` elements, the element at `i` the value
    of `f(i)` — fresh elements each, where `[x] * n` copies one ([§5.1](#51-t)).
+
+## 9. Generics
+
+Type parameters, their inference, and what an instance is
+([03 T5–T8, T17, T18](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
+[01 C3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 9.1 Type parameters and instances
+
+1. A function, a struct, a class, an enum and an interface may declare **type parameters**,
+   `fn ident<T>(x: T): T`, `struct Pair<A, B> { … }`; a parameter may carry **constraints**,
+   `<T :: [Show, Eq<T>]>`, the interfaces an argument must satisfy ([05](05-interfaces.md)).
+   Inside the declaration a value of type `T` has the members its constraints give it and no
+   others (T18): the body is checked once, at the declaration, not per instance.
+2. An **instance** names the arguments: `Pair<int, string>`, `ident<int>`. Two argument lists
+   that differ are two types with no relation between them (T3): nothing coerces
+   `Pair<int, string>` to `Pair<int8, string>`, and a `T[]` at `T = int8` is an `int8[]`, laid
+   out as one.
+3. The number of arguments is the number of parameters (`LYR-SEM0026`); an argument that does
+   not satisfy its parameter's constraints is refused (`LYR-SEM0028`), written or inferred
+   alike.
+4. *(Informative.)* Every instance is compiled as code of its own — **monomorphization** —
+   with `T` replaced throughout: an `int8` field takes one byte, a call on a `T` is a direct
+   call. The compiler collects the instances of a program and compiles each once (C3).
+
+### 9.2 Inference at a call
+
+1. A call of a generic function may **omit** the type arguments: `ident(3)` is `ident<int>(3)`.
+   Each argument's type binds the parameters that occur in the parameter type it is passed
+   to, at any depth — `firstOf([1, 2])` binds `T = int` through `T[]` — and a lambda's type
+   binds through `fn(T) -> U` once its own parameters are known from the position.
+2. What the arguments leave open, the **expected type** of the call's position binds (T8):
+   `let xs: int[] = empty();`, `return empty();`, `count(empty())`. The arguments bind first
+   and the position never overrides them: `let xs: int[] = ident("x");` is the assignment's
+   error, not a different instance.
+3. A parameter that occurs in no argument and not in the expected type is not inferred:
+   `let xs = empty();` is refused (`LYR-SEM0060`), with the instruction to write it.
+4. Type arguments may be **written**, `empty<int>()`; written ones bind before any argument,
+   and an argument that does not fit them is the argument's error, `ident<int>("x")`. A
+   **placeholder** `_` stands for one argument the inference fills (T8): `collect<_, string>(1, f)`
+   writes `U` and infers `T`. A placeholder nothing determines is refused as in rule 3.
+5. `_` stands only in a list of type arguments — of a call, of an initializer ([§9.3](#93-generic-types-in-an-initializer)),
+   of an instantiated function ([§9.4](#94-instantiated-functions-as-values)). Anywhere else,
+   `let p: Pair<_, int> = …` included, it is refused (`LYR-SEM0117`).
+
+### 9.3 Generic types in an initializer
+
+1. An initializer of a generic type takes its arguments from what is **written**,
+   `Pair<int, string> { first = 1, second = "x" }`, else from the **context** — a binding with
+   a type, an argument, a return, a field — `let p: Pair<int, string> = Pair { first = 1, second = "x" };`.
+   Without either it is refused (`LYR-SEM0026`): the field values alone do not choose an
+   instance.
+2. A written list may hold placeholders: `Pair<_, string> { first = 3, second = "x" }`. A
+   placeholder is filled from the context when the position names an instance, else from the
+   **field values**, each checked with as much of its field's type as is known; a value that
+   fixes no type of its own (`[]`, `null`) fills nothing (`LYR-SEM0060`).
+
+### 9.4 Instantiated functions as values
+
+1. A generic function with its arguments written, `ident<int>`, is a **value** of the
+   instance's type, `fn(int) -> int` (T17): held, passed and called like any function value
+   ([§8](#8-function-values)). A static method through its type likewise, `Counter.make<bool>`;
+   an instance method through its type is no value (`LYR-SEM0055`) — it becomes one through
+   its object, `obj.method` ([§8.4](#84-functions-and-methods-as-values)).
+2. A placeholder in the list is filled from the **function type the position expects**:
+   `let s: fn(string) -> string = ident<_>;`, `apply(ident<_>, 4)` with `apply(f: fn(int) -> int, …)`.
+   Where the position expects no function type, or one still holding an open parameter of
+   its own, the argument is written.
+3. The bare name of a generic function is no value (`LYR-SEM0052`): a function value is
+   monomorphic.
+4. The arguments of the value form follow [§9.1](#91-type-parameters-and-instances) rule 3 —
+   their number, also for a function that is not generic (`plain<int>`), and their
+   constraints.

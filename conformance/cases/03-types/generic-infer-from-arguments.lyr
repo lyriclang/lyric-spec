@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 3 1 ok
+//! since: 5.0.0
+// 03 §9.2: the arguments bind the type parameters, through an array and through a lambda's type.
+import std.io { println };
+
+fn ident<T>(x: T): T { return x; }
+fn firstOf<T>(xs: T[]): T { return xs[0]; }
+fn mapOne<T, U>(x: T, f: fn(T) -> U): U { return f(x); }
+
+fn main(): int {
+    let a = ident(3);
+    let b = firstOf([1, 2]);
+    let c = mapOne(2, (n: int): string => if (n == 2) "ok" else "no");
+    println(f"{a} {b} {c}");
+    return 0;
+}

@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 4 hi 5 2
+//! since: 5.0.0
+// 03 §9.4: an instantiated function is a value; a placeholder in it is filled from the expected function type; a static method too.
+import std.io { println };
+
+struct Counter { n: int, static fn make<T>(seed: T, n: int): Counter { return Counter { n = n }; } }
+
+fn ident<T>(x: T): T { return x; }
+fn apply(f: fn(int) -> int, x: int): int { return f(x); }
+
+fn main(): int {
+    let s: fn(string) -> string = ident<_>;
+    let h = s("hi");
+    let m = Counter.make<bool>;
+    println(f"{apply(ident<int>, 4)} {h} {apply(ident<_>, 5)} {m(true, 2).n}");
+    return 0;
+}

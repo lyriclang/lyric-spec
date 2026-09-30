@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 0 0 0
+//! since: 5.0.0
+// 03 §9.2: what the arguments leave open, the position's expected type binds — a binding, a return, an argument.
+import std.io { println };
+
+fn empty<T>(): T[] { return []; }
+fn back(): string[] { return empty(); }
+fn count(xs: bool[]): int { return xs.length(); }
+
+fn main(): int {
+    let xs: int[] = empty();
+    println(f"{xs.length()} {back().length()} {count(empty())}");
+    return 0;
+}

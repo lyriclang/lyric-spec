@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.2: a placeholder nothing determines is refused like an omitted argument.
+fn empty<T>(): T[] { return []; }
+
+fn main(): int {
+    let xs = empty<_>();
+    return 0;
+}
