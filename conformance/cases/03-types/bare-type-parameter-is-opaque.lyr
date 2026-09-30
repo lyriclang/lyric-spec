@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 03 §3.2: no null operation on a bare T, whatever the instantiation binds it to.
+fn probe<T>(x: T): int {
+    if (x == null) { return 1; }
+    return 0;
+}
+
+fn main(): int { return 0; }

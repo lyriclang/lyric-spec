@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 and §2 were written with milestone **M3** of the Lyric 5 plan (slices S1
-> and S2); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 to §3 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> to S3); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -195,3 +195,62 @@ Two forms of a composite type, chosen once at the type
    (`LYR-SEM0003`), not `false`: a struct has no identity to ask about.
 2. `==` and `!=` mean value equality and nothing else ([05](05-interfaces.md)): a class
    without it has no `==`, and never falls back to identity.
+
+## 3. Optionals
+
+A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
+[01 V5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 3.1 The type
+
+1. `?T` holds a value of `T` or nothing, written `null`. `T` is any type, an optional included:
+   `??T` is a type, and its three states are distinct — nothing, a `?T` that is `null`, a `?T`
+   that holds a value. Levels do not collapse: a generic `?T` at `T = ?int` is `??int`.
+2. At a coercion site ([§1.3](#13-widening)) a value stands where an optional of its type is
+   expected, and is wrapped once for every level the expected type has more: an `int` where
+   `??int` is expected is a present `?int` that holds the value; a `?int` there is a present
+   `??int` whatever it holds. `null` is the absence at the **outermost** level of the type
+   expected.
+3. There is no implicit way down: a `?T` does not stand where a `T` is expected, nor a `??T`
+   where a `?T` is. The ways down are a test (§3.2), `??` and `!` (§3.3).
+4. *(Informative.)* An optional of a class value or of a string occupies the one word of the
+   reference, null when there is no value. Any other optional holds its value and a flag.
+
+### 3.2 Tests and narrowing
+
+1. `x == null` and `x != null` ask whether the outermost level of `x` holds a value. They are
+   asked of an optional only: on a type that is never `null` the test is refused
+   (`LYR-SEM0059`).
+2. A **bare type parameter is opaque**: on an expression of type `T` there is no `== null`,
+   no `??`, no `??=`, no `!` and no `null` pattern, whatever an instantiation binds `T` to. The
+   body of a generic is checked at its declaration; it asks these of a `?T`.
+3. Where a test has proven a name present, the name has the type **one level down**: inside
+   the `then` of `if (x != null)`, in the body of `while (x != null)`, on the right of
+   `x != null &&`, after `if (x == null) { return …; }` and the other forms that leave. A
+   second test narrows again: a `??int` proven present is a `?int`, and proven present once
+   more an `int`.
+4. Narrowing belongs to the binding. An assignment to a `var` ends it: from there on the name
+   has its declared type again.
+5. `if (let v = e)` and `while (let v = e)` bind `v` to the value of the optional `e` when
+   there is one, one level down, and take the branch only then.
+6. A narrowed name is the value where it lies, not a copy of it: through a narrowed `var` of
+   type `?S`, with `S` a struct, a `var` field of the struct is written in place
+   ([§2.2](#22-fields-and-places)).
+
+### 3.3 `??`, `!` and `?.`
+
+1. `a ?? b` is the value of `a` when it holds one, **one level down**, and `b` otherwise. `b`
+   is evaluated only when `a` holds nothing. The operator is right-associative. On a left side
+   that is never `null` it is refused (`LYR-SEM0005`).
+2. `a ??= b` assigns `b` to `a` when `a` holds nothing, and evaluates `b` only then.
+3. `x!` is the value of `x`, one level down, and **panics** with `LYR-RT0004` when `x` holds
+   nothing ([13 §1.4](13-abi.md)). On a type that is never `null` it is refused
+   (`LYR-SEM0005`).
+4. `a?.m` reads the member `m` of the value of `a` when there is one, and is `null` otherwise.
+   Chains **flatten**: the result is an optional of the member's type, and when the member's
+   type is itself an optional, it is that type — `a?.b?.c` can be absent in one way only and
+   is a `?C`, not a `??C`. `a?.f(args)` calls the method under the same rule and evaluates the
+   arguments only when `a` holds a value.
+5. Nothing is assigned through `?.`: `a?.f = v` is refused (`LYR-SEM0019`). Narrow first.

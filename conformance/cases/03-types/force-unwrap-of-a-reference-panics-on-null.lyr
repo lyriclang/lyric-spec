@@ -1,0 +1,8 @@
+//! run
+//! panic: LYR-RT0004
+//! since: 5.0.0
+// 03 §3.3: the same for an optional reference.
+class C { n: int }
+
+fn must(c: ?C): int { return c!.n; }
+fn main(): int { return must(null); }

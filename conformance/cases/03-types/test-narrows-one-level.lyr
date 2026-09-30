@@ -1,0 +1,15 @@
+//! run
+//! exit: 12
+//! since: 5.0.0
+// 03 §3.2: inside the branch the name is one level down; an early return narrows what follows.
+fn orZero(v: ?int): int {
+    if (v == null) { return 0; }
+    return v;
+}
+
+fn twice(v: ?int): int {
+    if (v != null) { return v * 2; }
+    return 0;
+}
+
+fn main(): int { return orZero(null) + orZero(2) + twice(5); }

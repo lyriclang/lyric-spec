@@ -5,7 +5,7 @@ carries `//! since: 5.0.0` or later; the 4.x suite lives on the `script` branch.
 
 | Directory | Chapter | Written with |
 |---|---|---|
-| `03-types/` | [03 Types and values](../../spec/03-types.md) §1, the scalars; §2, structs and classes | M3 S1, S2 |
+| `03-types/` | [03 Types and values](../../spec/03-types.md) §1, the scalars; §2, structs and classes; §3, optionals | M3 S1–S3 |
 
 Until the reference runner drives `lyric5` (a slice of M3), the cases are run by hand with
 `lyric5 build` and the binary: a `check` case with `error:` must be refused (exit 1) naming

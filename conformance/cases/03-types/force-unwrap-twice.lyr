@@ -1,0 +1,8 @@
+//! run
+//! exit: 5
+//! since: 5.0.0
+// 03 §3.3: a!! peels two levels.
+fn main(): int {
+    let a: ??int = 5;
+    return a!!;
+}

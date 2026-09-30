@@ -1,0 +1,14 @@
+//! run
+//! exit: 42
+//! since: 5.0.0
+// 03 §3.2: if (let v = e) binds the value when there is one.
+fn find(n: int): ?int {
+    if (n > 0) { return n * 2; }
+    return null;
+}
+
+fn main(): int {
+    if (let none = find(0)) { return none; }
+    if (let v = find(21)) { return v; }
+    return 0;
+}

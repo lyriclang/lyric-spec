@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.1: there is no implicit way down a level.
+fn main(): int {
+    let a: ??int = 5;
+    let b: ?int = a;
+    return 0;
+}

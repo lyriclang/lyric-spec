@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0005
+//! since: 5.0.0
+// 03 §3.3: ?? on a value that is never null is refused.
+fn main(): int {
+    let x: int = 5;
+    return x ?? 0;
+}

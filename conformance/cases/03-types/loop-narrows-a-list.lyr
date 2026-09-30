@@ -1,0 +1,22 @@
+//! run
+//! exit: 3
+//! since: 5.0.0
+// 03 §3.2: while (x != null) narrows in the body; the assignment widens for the next test.
+class Node { value: int, var next: ?Node }
+
+fn length(head: ?Node): int {
+    var n = 0;
+    var at = head;
+    while (at != null) {
+        n += 1;
+        at = at.next;
+    }
+    return n;
+}
+
+fn main(): int {
+    let tail = Node { value = 3 };
+    let mid = Node { value = 2, next = tail };
+    let head = Node { value = 1, next = mid };
+    return length(head) + length(null);
+}

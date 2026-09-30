@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 3 -1
+//! since: 5.0.0
+// 03 §3.3: a chain can be absent in one way only and is one optional.
+import std.io { println };
+
+class Node { value: int, var next: ?Node }
+
+fn main(): int {
+    let tail = Node { value = 3 };
+    let mid = Node { value = 2, next = tail };
+    let head = Node { value = 1, next = mid };
+    let far: ?int = head.next?.next?.value;
+    let none: ?int = tail.next?.next?.value;
+    println(f"{far ?? -1} {none ?? -1}");
+    return 0;
+}
