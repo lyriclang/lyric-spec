@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | anon
+//! since: 5.0.0
+// 03 §3.3: ??= assigns only when there is no value.
+import std.io { println };
+
+fn main(): int {
+    var name: ?string = null;
+    name ??= "anon";
+    name ??= "other";
+    println(name ?? "none");
+    return 0;
+}

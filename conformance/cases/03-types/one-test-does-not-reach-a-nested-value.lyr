@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.2: a ??int proven present is a ?int, not an int.
+fn f(v: ??int): int {
+    if (v != null) { return v; }
+    return 0;
+}
+
+fn main(): int { return f(5); }

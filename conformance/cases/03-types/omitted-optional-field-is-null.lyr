@@ -1,0 +1,12 @@
+//! run
+//! exit: 5
+//! since: 5.0.0
+// 03 §2.4: a ?T field has the default null; §3: an optional field outside the niche is written.
+class Box { var count: ?int, label: ?string }
+
+fn main(): int {
+    let box = Box { };
+    let before = box.count ?? 0;
+    box.count = 5;
+    return before + (box.count ?? 0) + (if (box.label == null) 0 else 100);
+}

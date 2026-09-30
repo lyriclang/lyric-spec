@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0004
+//! since: 5.0.0
+// 03 §3.3: x! panics when x holds nothing.
+fn must(v: ?int): int { return v!; }
+fn main(): int { return must(null); }

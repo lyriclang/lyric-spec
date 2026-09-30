@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.1: a ?T is not a T.
+fn main(): int {
+    let a: ?int = 5;
+    let b: int = a;
+    return b;
+}

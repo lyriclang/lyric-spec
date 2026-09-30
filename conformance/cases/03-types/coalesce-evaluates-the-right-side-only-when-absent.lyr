@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | asked
+//! | 5 7
+//! since: 5.0.0
+// 03 §3.3: the right side of ?? is evaluated only when the left holds nothing.
+import std.io { println };
+
+fn fallback(): int {
+    println("asked");
+    return 7;
+}
+
+fn main(): int {
+    let present: ?int = 5;
+    let absent: ?int = null;
+    let a = present ?? fallback();
+    let b = absent ?? fallback();
+    println(f"{a} {b}");
+    return 0;
+}

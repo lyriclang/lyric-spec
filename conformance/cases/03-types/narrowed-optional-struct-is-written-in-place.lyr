@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 9,5 9,2
+//! since: 5.0.0
+// 03 §3.2: a narrowed ?S is the struct where it lies; a binding copies the optional.
+import std.io { println };
+
+struct Point { var x: int, var y: int }
+
+fn main(): int {
+    var p: ?Point = Point { x = 1, y = 2 };
+    if (p != null) { p.x = 9; }
+    let q = p;
+    if (p != null) { p.y = 5; }
+    println(f"{p!.x},{p!.y} {q!.x},{q!.y}");
+    return 0;
+}

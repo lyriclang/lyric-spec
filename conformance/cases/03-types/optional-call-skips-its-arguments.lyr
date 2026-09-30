@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | asked
+//! | 2 -1
+//! since: 5.0.0
+// 03 §3.3: a?.f(args) evaluates the arguments only when a holds a value.
+import std.io { println };
+
+class C {
+    n: int,
+    fn add(k: int): int { return this.n + k; }
+}
+
+fn loud(): int {
+    println("asked");
+    return 1;
+}
+
+fn main(): int {
+    let some: ?C = C { n = 1 };
+    let none: ?C = null;
+    let a = some?.add(loud()) ?? -1;
+    let b = none?.add(loud()) ?? -1;
+    println(f"{a} {b}");
+    return 0;
+}

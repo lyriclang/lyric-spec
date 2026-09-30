@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §3.3: nothing is assigned through ?. .
+class C { var n: int }
+
+fn main(): int {
+    let c: ?C = C { n = 1 };
+    c?.n = 2;
+    return 0;
+}

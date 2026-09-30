@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.2: after an assignment the var has its declared type again.
+fn f(start: ?int): int {
+    var v = start;
+    if (v != null) {
+        v = null;
+        return v;
+    }
+    return 0;
+}
+
+fn main(): int { return f(5); }

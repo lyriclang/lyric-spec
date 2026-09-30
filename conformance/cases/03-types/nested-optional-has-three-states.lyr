@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | absent null 7
+//! since: 5.0.0
+// 03 §3.1: ??T is a type; nothing, a null ?T and a ?T with a value are three states.
+import std.io { println };
+
+fn lookup(key: int): ??int {
+    if (key == 0) { return null; }
+    let stored: ?int = if (key == 1) null else key;
+    return stored;
+}
+
+fn describe(v: ??int): string {
+    if (v == null) { return "absent"; }
+    if (v == null) { return "null"; }
+    return f"{v}";
+}
+
+fn main(): int {
+    println(describe(lookup(0)) + " " + describe(lookup(1)) + " " + describe(lookup(7)));
+    return 0;
+}
