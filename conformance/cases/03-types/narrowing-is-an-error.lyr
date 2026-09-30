@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §1.3: no implicit narrowing.
+fn main(): int {
+    let wide: int = 1;
+    let narrow: int8 = wide;
+    return 0;
+}

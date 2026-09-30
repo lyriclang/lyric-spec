@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 300
+//! | 4294967295
+//! | 0.5
+//! since: 5.0.0
+// 03 §1.3: an integer widens losslessly at an initializer, an assignment, an argument, a
+// return and a context-typed arm; an unsigned type widens into the next wider signed one;
+// float32 widens into float.
+import std.io { println };
+
+fn asInt(x: int16): int { return x; }
+fn fromByte(x: uint8): int16 { return x; }
+fn pick(c: bool, a: int8, b: int16): int { return if (c) a else b; }
+
+fn main(): int {
+    let small: int8 = 100;
+    let bigger: int16 = small;
+    var slot: int = 0;
+    slot = bigger;
+    let byte: uint8 = 200;
+    println(f"{asInt(bigger) + asInt(fromByte(byte))}");
+    let top: uint32 = 4294967295;
+    let wide: int = top;
+    println(f"{wide}");
+    let narrow: float32 = 0.5;
+    let f: float = narrow;
+    println(f"{f}");
+    return pick(true, 1, 2) - 1 + slot - 100;
+}

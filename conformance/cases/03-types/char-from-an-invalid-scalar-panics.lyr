@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0009
+//! since: 5.0.0
+// 03 §1.4: uint32 as char checks the scalar value.
+fn toChar(x: uint32): char { return x as char; }
+fn main(): int { return if (toChar(0xD800) == 'a') 1 else 0; }

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §1.3: the operands of an operator have one type; widening is a coercion-site rule.
+fn main(): int {
+    let a: int8 = 1;
+    let b: int = 2;
+    let _ = a + b;
+    return 0;
+}

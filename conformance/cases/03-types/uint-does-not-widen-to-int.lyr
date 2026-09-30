@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §1.3: a uint has a bit no int holds.
+fn main(): int {
+    let u: uint = 1;
+    let i: int = u;
+    return 0;
+}

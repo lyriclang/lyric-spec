@@ -1,0 +1,14 @@
+//! check
+//! since: 5.0.0
+// 03 §1.1: int64, uint64 and float64 are aliases; a value flows between the names freely.
+fn takes(x: int64, y: uint64, z: float64): int { return x; }
+
+fn main(): int {
+    let a: int = 1;
+    let b: int64 = a;
+    let u: uint = 2;
+    let v: uint64 = u;
+    let f: float = 1.5;
+    let g: float64 = f;
+    return takes(a, u, f) + takes(b, v, g) - 2;
+}

@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 03 §1.6: a shift by the width or more is a panic, not a silent mask.
+fn shl(a: int, b: int): int { return a << b; }
+fn main(): int { return shl(1, 64); }

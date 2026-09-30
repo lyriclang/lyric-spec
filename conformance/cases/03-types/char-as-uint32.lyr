@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 65 B
+//! since: 5.0.0
+// 03 §1.4: a char converts to uint32 and back; through uint32 it reaches int.
+import std.io { println };
+
+fn main(): int {
+    let c = 'A';
+    let code: uint32 = c as uint32;
+    let next: char = (code + 1) as char;
+    let wide: int = c as uint32 as int;
+    println(f"{code} {next}");
+    return wide - 65;
+}

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §1.5: a char compares with a char only.
+fn main(): int {
+    let c = 'a';
+    let _ = c < 98;
+    return 0;
+}

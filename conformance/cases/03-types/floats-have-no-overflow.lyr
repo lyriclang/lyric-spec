@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | inf -inf NaN
+//! | 0.5 0.30000000000000004 0.09999999999999998
+//! | 1 -0 1e+21
+//! since: 5.0.0
+// 03 §1.6, §1.7: IEEE arithmetic without a fault, and the shortest text that reads back.
+import std.io { println };
+
+fn div(a: float, b: float): float { return a / b; }
+fn rem(a: float, b: float): float { return a % b; }
+fn add(a: float, b: float): float { return a + b; }
+fn sub(a: float, b: float): float { return a - b; }
+
+fn main(): int {
+    println(f"{div(1.0, 0.0)} {div(-1.0, 0.0)} {div(0.0, 0.0)}");
+    println(f"{rem(3.0, 2.5)} {add(0.1, 0.2)} {sub(0.3, 0.2)}");
+    let one: float = 1.0;
+    println(f"{one} {-0.0} {1e21}");
+    return 0;
+}

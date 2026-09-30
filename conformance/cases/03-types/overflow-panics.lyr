@@ -1,0 +1,6 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 03 §1.6: integer overflow is a panic, in every profile.
+fn add(a: int, b: int): int { return a + b; }
+fn main(): int { return add(9223372036854775807, 1); }
