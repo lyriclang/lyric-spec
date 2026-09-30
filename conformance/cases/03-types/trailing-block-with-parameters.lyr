@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 6 14 6
+//! since: 5.0.0
+// 03 §8.2: a trailing block names its parameters before '=>', a pattern among them; its body
+// is the rest of the block.
+import std.io { println };
+
+fn fold(xs: int[], seed: int, f: fn(int, int) -> int): int {
+    var acc = seed;
+    for (i in 0..xs.length()) { acc = f(acc, xs[i]); }
+    return acc;
+}
+fn eachPair(ps: (int, int)[], f: fn((int, int)) -> void): void { for (i in 0..ps.length()) { f(ps[i]); } }
+
+fn main(): int {
+    let sum = fold([1, 2, 3], 0) { acc, x => acc + x };
+    var dot = 0;
+    eachPair([(1, 2), (3, 4)]) { (a, b) => dot += a * b; }
+    let stepped = fold([5], 1) { acc, x =>
+        let y = acc * x;
+        y + 1
+    };
+    println(f"{sum} {dot} {stepped}");
+    return 0;
+}

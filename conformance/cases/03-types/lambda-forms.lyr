@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 2 6 6 14 3 5
+//! since: 5.0.0
+// 03 §8.2: the parenthesized, the bare and the trailing form; a free function as a value; a
+// block body with a tail; the implicit 'it'; two parameters from the context.
+import std.io { println };
+
+fn apply(f: fn(int) -> int, x: int): int { return f(x); }
+fn twice(x: int): int { return x * 2; }
+fn fold(xs: int[], seed: int, f: fn(int, int) -> int): int {
+    var acc = seed;
+    for (i in 0..xs.length()) { acc = f(acc, xs[i]); }
+    return acc;
+}
+fn each(xs: int[], f: fn(int) -> void): void { for (i in 0..xs.length()) { f(xs[i]); } }
+
+fn main(): int {
+    let a = apply((n: int): int => n + 1, 1);
+    let b = apply(x => x * 3, 2);
+    let c = apply(twice, 3);
+    let d = fold([2, 3, 4], 5, (acc, x) => acc + x);
+    var seen = 0;
+    each([1, 2]) { seen += it; }
+    let e = apply((x: int): int => { let y = x + 1; y }, 4);
+    println(f"{a} {b} {c} {d} {seen} {e}");
+    return 0;
+}

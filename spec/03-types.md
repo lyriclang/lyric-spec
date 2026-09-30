@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 to §7 were written with milestone **M3** of the Lyric 5 plan (slices S1
-> to S6); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 to §8 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> to S7); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -437,3 +437,64 @@ The values `a..b` and `a..=b`
    a binding is walked as an `Iterator` ([05](05-interfaces.md)).
 3. A range is an ordinary value everywhere else: bound, stored in a field or an array, passed
    and returned. A range is not an integer (`LYR-SEM0001`).
+
+## 8. Function values
+
+Functions as values, and the lambdas that make them
+([03 T17](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
+[01 V8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
+[02 M8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md),
+[08 Y11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 8.1 The type
+
+1. `fn(A, B) -> R` is the type of a function value taking `A` and `B` and answering `R`;
+   `fn() -> void` takes nothing and answers nothing. A free function, a lambda and a method
+   bound to its object are values of it alike (V8): what a value of the type is made of is not
+   observable. The type has no variance: `fn(int) -> int` and `fn(int8) -> int` are two types.
+2. A value of a function type is **called** with `f(a, b)`; it is copied by a binding, held in
+   a field, an array or an optional, passed and returned. Two function values are not compared.
+3. *(Informative.)* A function value is a pointer to the code and the environment it runs in,
+   two words; a function without an environment costs no allocation.
+
+### 8.2 Lambdas
+
+1. A lambda is written in **three forms** (Y11 F1): parenthesized, `(n: int): int => n + 1`,
+   with the types and the return type as written or, when the position expects a function
+   type, taken from it (F11); bare, `x => x * 3`, one parameter, its type from the position;
+   trailing, `xs.map { it * 2 }` — a block after a call's parentheses, or after the callee
+   alone, is the call's **last argument**, its one parameter the implicit `it`, or none when
+   the position expects a function of none.
+2. A trailing block may name its parameters before `=>`: `fold(xs, 0) { acc, x => acc + x }`,
+   `{ (k, v) => v }` with a pattern (F2). The body is then the rest of the block.
+3. The body is an expression or a block; a block's last expression without `;` is its value
+   (F3). `return` leaves the lambda, never the enclosing function; `break` and `continue`
+   belong to loops inside the lambda (F5).
+4. Without a position that expects a function type, the parameters of a bare or trailing
+   lambda have no type and are refused (`LYR-SEM0045`); the parenthesized form writes them.
+
+### 8.3 Captures
+
+1. A lambda uses the bindings of the scopes around it. A captured **`let`** — a parameter
+   included — lies in the closure as a **copy** taken when the lambda is made, which nothing
+   can tell from the original since it cannot change; a captured **`var`** lies in a **box**
+   the closure and the enclosing scope share, from its declaration on: what either side writes,
+   the other reads (M8).
+2. A loop binding is fresh per pass: the closures of `for (i in 0..3) { fs = fs + [() => i]; }`
+   answer 0, 1 and 2 (M8 C1).
+3. `this` of a class is captured as the shared reference; `this` of a struct as a copy of the
+   value (M8 C2).
+
+### 8.4 Functions and methods as values
+
+1. A **free function** named without a call is a value of its type; a **static function**
+   named through its type, `Point.new`, likewise (F10). A generic function is not a value
+   until instantiated.
+2. `obj.method` without a call is a closure **bound** to `obj` (F10): it holds the object — a
+   class shared, a struct copied at the binding — and calls the method on it; its type is the
+   method's without the receiver. It is called like any function value, and a call through it
+   on a struct's copy changes the copy.
+3. `arrayOf(n, f)` of `std.core` builds an array of `n` elements, the element at `i` the value
+   of `f(i)` — fresh elements each, where `[x] * n` copies one ([§5.1](#51-t)).

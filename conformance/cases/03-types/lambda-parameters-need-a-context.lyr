@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0045
+//! since: 5.0.0
+// 03 §8.2: without a position that expects a function type, a bare lambda's parameter has no
+// type.
+fn main(): int {
+    let f = x => x + 1;
+    return f(1);
+}

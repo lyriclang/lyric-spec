@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 0 1 2
+//! since: 5.0.0
+// 03 §8.3: the closures of a loop each hold their own pass's binding.
+import std.io { println };
+
+fn main(): int {
+    var fs: (fn() -> int)[] = [];
+    for (i in 0..3) { fs = fs + [(): int => i]; }
+    println(f"{fs[0]()} {fs[1]()} {fs[2]()}");
+    return 0;
+}
