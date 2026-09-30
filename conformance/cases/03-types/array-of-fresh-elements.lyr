@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 0 10 20 0
+//! since: 5.0.0
+// 03 §8.4: 'arrayOf(n, f)' builds fresh elements from a function; an empty one for n = 0.
+import std.core { arrayOf };
+import std.io { println };
+
+fn main(): int {
+    let made = arrayOf(3, (i: int): int => i * 10);
+    let none = arrayOf(0, (i: int): int => i);
+    println(f"{made[0]} {made[1]} {made[2]} {none.length()}");
+    return 0;
+}

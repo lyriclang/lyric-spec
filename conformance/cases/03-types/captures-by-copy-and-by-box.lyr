@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 3 30 20 1 2 3
+//! since: 5.0.0
+// 03 §8.3: a captured 'let' is a copy, a captured 'var' a box both sides share — the maker
+// sees what the closure writes; a closure returned from a function keeps its box.
+import std.io { println };
+
+fn counter(): fn() -> int {
+    var n = 0;
+    return (): int => { n += 1; return n; };
+}
+
+fn main(): int {
+    let base = 3;
+    var shared = 10;
+    let addBase = (n: int): int => n + base;
+    let bump = (): int => { shared += 10; return shared; };
+    shared += 10;
+    let seen = bump();
+    let count = counter();
+    let first = count();
+    let second = count();
+    println(f"{addBase(0)} {seen} {shared - 10} {first} {second} {count()}");
+    return 0;
+}
