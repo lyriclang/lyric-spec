@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 03 §5.1: 'length()' has its parentheses; the bare name is refused.
+fn f(xs: int[]): int { return xs.length; }
+
+fn main(): int { return f([1]); }

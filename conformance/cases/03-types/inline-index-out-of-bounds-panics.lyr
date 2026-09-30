@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0003
+//! since: 5.0.0
+// 03 §5.3: an inline array is indexed with the same check.
+fn at(xs: int[3], i: int): int { return xs[i]; }
+
+fn main(): int { return at([1, 2, 3], 3); }

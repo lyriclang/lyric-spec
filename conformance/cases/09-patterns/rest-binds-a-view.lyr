@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 3 20 99
+//! since: 5.0.0
+// 09 §2.10: '..rest' binds a view of the elements it covers, sharing them with the array.
+import std.io { println };
+
+fn main(): int {
+    let xs = [10, 20, 30, 40];
+    let [first, ..rest] = xs else { return 1; };
+    rest[2] = 99;
+    println(f"{rest.length()} {rest[0]} {xs[3]}");
+    return if (first == 10) 0 else 1;
+}

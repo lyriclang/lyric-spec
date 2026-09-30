@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0007
+//! since: 5.0.0
+// 03 §5.1: '[x] * n' with a negative count panics.
+fn make(n: int): int[] { return [0] * n; }
+
+fn main(): int { return make(-1).length(); }

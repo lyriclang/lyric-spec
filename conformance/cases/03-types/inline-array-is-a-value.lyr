@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 10 1 3 3
+//! | 100 1 40
+//! since: 5.0.0
+// 03 §5.3: 'T[N]' is a value of N elements: a binding copies it, a struct carries it by value,
+// its length is the type's.
+import std.io { println };
+
+struct Mat { var m: int[4] }
+
+fn main(): int {
+    var a: int[3] = [1, 2, 3];
+    let b = a;
+    a[0] = 10;
+    println(f"{a[0]} {b[0]} {a.length()} {a[^1]}");
+    var m = Mat { m = [1, 2, 3, 4] };
+    m.m[3] = 40;
+    let mc = m;
+    m.m[0] = 100;
+    println(f"{m.m[0]} {mc.m[0]} {mc.m[3]}");
+    return 0;
+}

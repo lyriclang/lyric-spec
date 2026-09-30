@@ -1,0 +1,12 @@
+//! run
+//! exit: 6
+//! since: 5.0.0
+// 03 §5.1: a narrower integer widens to the index as at any coercion site; a 'uint' arrives
+// through 'as'.
+fn main(): int {
+    let xs = [1, 2, 3];
+    let i: int8 = 0;
+    let j: uint16 = 1;
+    let k: uint = 2;
+    return xs[i] + xs[j] + xs[k as int];
+}

@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 9 9 3
+//! | 2,3 7
+//! since: 5.0.0
+// 03 §5.1: an array is an object behind a reference — a binding shares it — with its elements
+// inline; an element is a place in the array whatever holds the array, a struct element too.
+import std.io { println };
+
+struct Point { var x: int, y: int }
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    let ys = xs;
+    ys[0] = 9;
+    println(f"{xs[0]} {ys[0]} {xs.length()}");
+    let ps = [Point { x = 1, y = 2 }, Point { x = 2, y = 3 }];
+    ps[0].x = 7;
+    let copy = ps[1];
+    println(f"{copy.x},{copy.y} {ps[0].x}");
+    return 0;
+}

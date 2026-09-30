@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0003
+//! since: 5.0.0
+// 03 §5.1: '^0' is the length, and as an index that is out of bounds.
+fn last(xs: int[]): int { return xs[^0]; }
+
+fn main(): int { return last([1, 2, 3]); }

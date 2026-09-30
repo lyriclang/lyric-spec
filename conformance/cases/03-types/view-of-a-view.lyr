@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 2 30 40 30
+//! since: 5.0.0
+// 03 §5.2: a view of a view is a view of the same array.
+import std.io { println };
+
+fn main(): int {
+    let xs = [10, 20, 30, 40, 50];
+    let mid = xs[1..];
+    let inner = mid[1..3];
+    inner[0] = 30;
+    println(f"{inner.length()} {inner[0]} {inner[^1]} {xs[2]}");
+    return 0;
+}

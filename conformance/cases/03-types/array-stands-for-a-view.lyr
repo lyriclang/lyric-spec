@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 10 3 10
+//! since: 5.0.0
+// 03 §5.2: at a coercion site an array gives a view of itself, whole — as an argument, in a
+// binding with a written type, in a field — and the view writes into it.
+import std.io { println };
+
+class Holder { var view: Slice<int> }
+
+fn total(xs: Slice<int>): int {
+    var sum = 0;
+    for (i in 0..xs.length()) { sum += xs[i]; }
+    return sum;
+}
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    let v: Slice<int> = xs;
+    let h = Holder { view = xs };
+    h.view[0] = 5;
+    println(f"{total(xs)} {v.length()} {total(h.view)}");
+    return 0;
+}

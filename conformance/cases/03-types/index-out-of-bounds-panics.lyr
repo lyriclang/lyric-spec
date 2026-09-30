@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0003
+//! since: 5.0.0
+// 03 §5.1: an index at the length panics, in every profile.
+fn at(xs: int[], i: int): int { return xs[i]; }
+
+fn main(): int { return at([1, 2, 3], 3); }

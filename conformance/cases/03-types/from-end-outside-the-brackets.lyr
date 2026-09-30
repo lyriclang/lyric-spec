@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0114
+//! since: 5.0.0
+// 03 §5.1: '^n' is sugar inside '[…]' and has no value of its own.
+fn f(xs: int[]): int {
+    let i = ^1;
+    return xs[i];
+}
+
+fn main(): int { return f([1]); }
