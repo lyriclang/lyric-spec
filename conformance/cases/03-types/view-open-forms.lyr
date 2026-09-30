@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 2 10 40 50 5 30 0 0
+//! since: 5.0.0
+// 03 §5.2: '..b', 'a..', '..', 'a..=b', '^n' as a bound; 'n..n' and 'length()..' are empty.
+import std.io { println };
+
+fn main(): int {
+    let xs = [10, 20, 30, 40, 50];
+    let head = xs[..2];
+    let tail = xs[^2..];
+    let all = xs[..];
+    let inc = xs[1..=2];
+    println(f"{head.length()} {head[0]} {tail[0]} {tail[1]} {all.length()} {inc[^1]} {xs[2..2].length()} {xs[5..].length()}");
+    return 0;
+}

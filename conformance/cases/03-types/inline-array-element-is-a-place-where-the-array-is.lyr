@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0019
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §5.3: an element of an inline array is written where the array is a place; under a 'let'
+// and through a parameter it is not.
+fn f(p: int[3]): int {
+    let a: int[3] = [1, 2, 3];
+    a[0] = 9;
+    p[0] = 9;
+    return a[0] + p[0];
+}
+
+fn main(): int { return f([1, 2, 3]); }

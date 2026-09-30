@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §5.2: a view never stands where an array is expected.
+fn f(xs: int[]): int[] { return xs[1..]; }
+
+fn main(): int { return f([1, 2]).length(); }

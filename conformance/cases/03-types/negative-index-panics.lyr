@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0003
+//! since: 5.0.0
+// 03 §5.1: a negative index is out of bounds like any other; nothing counts from the end by sign.
+fn at(xs: int[], i: int): int { return xs[i]; }
+
+fn main(): int { return at([1, 2, 3], -1); }

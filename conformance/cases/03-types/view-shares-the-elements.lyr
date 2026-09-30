@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 3 20 40
+//! | 21 31 31
+//! since: 5.0.0
+// 03 §5.2: 'xs[a..b]' is a view — indexed and measured like the array, sharing its elements:
+// a write through the view is seen in the array, a write in the array through the view.
+import std.io { println };
+
+fn main(): int {
+    let xs = [10, 20, 30, 40, 50];
+    let mid = xs[1..4];
+    println(f"{mid.length()} {mid[0]} {mid[^1]}");
+    mid[0] = 21;
+    xs[2] = 31;
+    println(f"{xs[1]} {xs[2]} {mid[1]}");
+    return 0;
+}

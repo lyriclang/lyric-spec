@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0115
+//! error: LYR-SEM0115
+//! since: 5.0.0
+// 03 §5.3: no view of a local or a parameter, whose frame may end before the view; the array
+// is copied or passed whole instead.
+fn total(xs: Slice<int>): int { return xs.length(); }
+
+fn f(p: int[3]): int {
+    let a: int[3] = [1, 2, 3];
+    return a[1..].length() + total(p);
+}
+
+fn main(): int { return f([1, 2, 3]); }

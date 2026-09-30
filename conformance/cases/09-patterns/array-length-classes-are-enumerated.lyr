@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3.2: an array is enumerated by its length classes; leaving one open is a gap, and the
+// witness is the smallest length nothing covers — here '[_]'.
+fn f(xs: int[]): int {
+    return match (xs) {
+        [] => 0,
+        [a, b, ..] => a + b,
+    };
+}
+
+fn main(): int { return f([1]); }

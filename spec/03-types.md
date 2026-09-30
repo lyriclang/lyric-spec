@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 to §4 were written with milestone **M3** of the Lyric 5 plan (slices S1
-> to S4); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 to §5 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> to S5); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -300,3 +300,82 @@ One of several variants, each with a payload or none
    `Signal.Red` stands everywhere, whatever the position expects.
 3. In a pattern the same form tests the variant ([09 §2](09-patterns.md)); a bare name never
    does.
+
+## 5. Arrays, views and inline arrays
+
+Elements in a row: behind a reference, through a view, or as a value
+([01 V10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
+[03 T13, T14](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
+[10 C2, C7, N8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 5.1 `T[]`
+
+1. `T[]` is an **object** of a fixed length holding its elements inline and contiguous — a
+   struct element lies in the array, not behind it — reached through a **reference**
+   ([§2.1](#21-values-and-references)): a binding, an assignment, an argument and a return share
+   the one array. The length is a property of the value, not of the type.
+2. `[a, b, c]` builds an array of its elements; `[]` takes its element type from the position.
+   `[x] * n` builds an array of `n` elements each a copy of `x` — a value copied, a string
+   shared — and panics with `LYR-RT0007` when `n` is negative; `xs * n` is the only order.
+   `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
+   An element that is or holds a class or an array is repeated by `clone` ([05](05-interfaces.md)),
+   never shared into every slot.
+3. `xs.length()` is the length, a **call** with its parentheses like every length in the
+   language ([10 N8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md));
+   the bare name is refused (`LYR-SEM0012`). The length and the index are the two primitives of
+   an array; every other member is written in the standard library.
+4. `xs[i]` is the element at `i`. The index is an **`int`**: a narrower integer widens to it as
+   at any coercion site ([§1.3](#13-widening)), a `uint` or a `uint64` is converted with
+   `as`, nothing else stands there (`LYR-SEM0007`). An index outside `0 ≤ i < length()`
+   **panics** with `LYR-RT0003`, in every profile — a negative index like any other; there is
+   no counting from the end by sign. An element is a place in the array, whatever holds the
+   array ([§2.2](#22-fields-and-places)): `xs[i] = v` and `xs[i].f = v` write the array
+   through a `let` as through a `var`.
+5. **`^n`** inside the brackets counts from the end: `xs[^1]` is the last element, `xs[^n]`
+   stands for `xs[xs.length() - n]` with `xs` evaluated once. It is sugar for that
+   subtraction and nothing more — no type, no value of its own: outside `[…]`, or as a part
+   of a larger index expression, it is refused (`LYR-SEM0114`). `^0` as an index panics as
+   `length()` does; as the end of a range (§5.2) it is the length.
+
+### 5.2 `Slice<T>`
+
+1. `Slice<T>` is a **view** of the elements of an array — a pointer into them and a length,
+   a value of two words that is copied by a binding and **shares the elements**: what is
+   written through a view is written in the array, and what is written in the array is seen
+   through every view of it. `Slice` is a primitive of `std.core`, visible without an import.
+2. `xs[a..b]` is the view of the elements from `a` up to but not including `b`; `xs[a..=b]`
+   includes `b`; `xs[..b]`, `xs[a..]` and `xs[..]` leave the start, the end or both open.
+   The bounds are indices as in §5.1, `^n` among them, and satisfy `0 ≤ a ≤ b ≤ length()`
+   or the expression **panics** with `LYR-RT0003`, in every profile; `xs[n..n]` is the empty
+   view, `xs[length()..]` too.
+3. A view is indexed, measured and counted from the end as the array is (§5.1), its elements
+   are places in the array, `v[a..b]` is a view of the same array, and an array pattern
+   matches it ([09 §2](09-patterns.md)).
+4. At a coercion site an array stands where a view of its element type is expected and gives a
+   view of itself, whole; a view never stands where an array is expected (`LYR-SEM0001`).
+5. There is no lifetime: the array lives as long as any view of it does, and a view kept in an
+   object or returned from a function is as good as one in a local ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+6. `StringView`, the view of a string's bytes, is written with the strings ([12](12-stdlib.md)).
+
+### 5.3 `T[N]`
+
+1. `T[N]` is a **value** of exactly `N` elements, `N` a positive decimal literal, laid out
+   inline where it lies — in a local, in a struct, in an object, in an element of an array —
+   with the size and the identity of a struct ([§2.1](#21-values-and-references)): a binding,
+   an assignment, an argument and a return **copy** it. The length is part of the type:
+   `int[3]` and `int[4]` are two types, and neither stands for `int[]` nor `int[]` for
+   them. `T[N][M]` is an inline array of inline arrays; `T[N][]` is an array of inline arrays.
+2. It is built from a literal of exactly `N` elements, or from `[x] * N` with the literal
+   count `N`, where a `T[N]` is expected; another length is refused (`LYR-SEM0001`).
+3. It is indexed, measured and counted from the end as an array is (§5.1), with the same
+   check. An element is a place when the array is one — a `var` local, a `var` field of a
+   place, an element of an array — as a field of a struct is ([§2.2](#22-fields-and-places));
+   a `let` freezes it (`LYR-SEM0019`).
+4. A view of an inline array (§5.2) is taken where the array lies in the **heap** — a field of
+   an object, an element of an array or of a view, a struct inside those — never of a local,
+   a parameter, or a field of a struct local, whose frame may end before the view
+   (`LYR-SEM0115`); such an array is copied or passed whole. A value type cannot hold itself
+   through an inline array ([§4.1](#41-variants-and-payloads)).
+5. An array pattern of the one length covers the type ([09 §3](09-patterns.md)).

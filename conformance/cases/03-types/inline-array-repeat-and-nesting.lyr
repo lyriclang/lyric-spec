@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 0 7 4 3 2 2
+//! since: 5.0.0
+// 03 §5.3: '[x] * N' builds an inline array where one of that length is expected; 'T[N][M]' is
+// an inline array of inline arrays; 'T[N][]' an array of them, each element its own copy.
+import std.io { println };
+
+fn main(): int {
+    var z: int[4] = [0] * 4;
+    z[2] = 7;
+    let grid: int[2][2] = [[1, 2], [3, 4]];
+    let rows = [z, z];
+    rows[0][2] = 8;
+    println(f"{z[0]} {z[2]} {z.length()} {grid[1][0]} {grid.length()} {rows.length()}");
+    return if (rows[0][2] == 8 && rows[1][2] == 7 && z[2] == 7) 0 else 1;
+}

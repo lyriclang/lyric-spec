@@ -1,0 +1,8 @@
+//! check
+//! since: 5.0.0
+// 09 §3.2, 03 §5.3: an inline array has one length; a pattern of that length covers it.
+fn f(a: int[3]): int {
+    return match (a) { [x, y, z] => x + y + z };
+}
+
+fn main(): int { return f([1, 2, 3]); }

@@ -1,0 +1,7 @@
+//! run
+//! panic: LYR-RT0003
+//! since: 5.0.0
+// 03 §5.2: an end before its start is out of bounds like any other.
+fn part(xs: int[]): Slice<int> { return xs[3..1]; }
+
+fn main(): int { return part([1, 2, 3, 4, 5]).length(); }

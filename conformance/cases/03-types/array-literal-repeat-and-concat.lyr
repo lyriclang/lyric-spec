@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 3 5 0 7
+//! | 5 1 5
+//! | 0 9 0
+//! since: 5.0.0
+// 03 §5.1: a literal, '[x] * n' copying a value into every slot, 'xs + ys' as a new array, and
+// '[]' taking its element type from the position.
+import std.io { println };
+
+struct Cell { var n: int }
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    let zeros = [0] * 5;
+    println(f"{xs.length()} {zeros.length()} {zeros[4]} {([1, 2] + zeros).length()}");
+    let both = [1, 2] + [3, 4, 5];
+    println(f"{both.length()} {both[0]} {both[^1]}");
+    let cells = [Cell { n = 0 }] * 2;
+    cells[1].n = 9;
+    let none: int[] = [];
+    println(f"{cells[0].n} {cells[1].n} {none.length()}");
+    return 0;
+}

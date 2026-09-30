@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0001
+//! error: LYR-SEM0001
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §5.3: a literal of another length, a repetition of another count, and an array where an
+// inline array is expected are refused; the length is part of the type.
+fn f(xs: int[]): int {
+    let a: int[3] = [1, 2];
+    let b: int[4] = [0] * 8;
+    let c: int[2] = xs;
+    return a[0] + b[0] + c[0];
+}
+
+fn main(): int { return f([1]); }

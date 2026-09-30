@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0056
+//! since: 5.0.0
+// 03 §5.3, §4.1: a value type cannot hold itself, through an inline array either.
+struct Node { kids: Node[2] }
+
+fn main(): int { return 0; }

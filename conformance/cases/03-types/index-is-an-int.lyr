@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0007
+//! error: LYR-SEM0007
+//! since: 5.0.0
+// 03 §5.1: the index is an 'int'; a 'uint' is converted with 'as', a float never stands there.
+fn f(xs: int[], u: uint): int { return xs[u] + xs[1.5]; }
+
+fn main(): int { return f([1, 2], 1); }

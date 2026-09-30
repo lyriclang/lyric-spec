@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | empty one 1 pair 1,2 many 1..4 last 4
+//! since: 5.0.0
+// 09 §2.10: an array pattern matches by length, a rest takes what is left; the same over a view.
+import std.io { println };
+
+fn describe(xs: Slice<int>): string {
+    return match (xs) {
+        [] => "empty",
+        [one] => f"one {one}",
+        [a, b] => f"pair {a},{b}",
+        [first, .., last] => f"many {first}..{last}",
+    };
+}
+
+fn main(): int {
+    let xs = [1, 2, 3, 4];
+    println(describe(xs[..0]) + " " + describe(xs[..1]) + " " + describe(xs[..2]) + " " + describe(xs)
+        + " " + (match (xs) { [.., last] => f"last {last}", _ => "none" }));
+    return 0;
+}
