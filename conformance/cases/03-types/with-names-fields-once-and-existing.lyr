@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0070
+//! error: LYR-SEM0015
+//! since: 5.0.0
+// 03 §2.5: a field twice, and a field the struct does not have, are refused.
+struct Point { x: int, y: int }
+
+fn f(p: Point): Point {
+    let q = p with { x = 1, x = 2 };
+    return q with { z = 3 };
+}
+
+fn main(): int { return f(Point { x = 0, y = 0 }).x; }

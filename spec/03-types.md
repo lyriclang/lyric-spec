@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 to §5 were written with milestone **M3** of the Lyric 5 plan (slices S1
-> to S5); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 to §7 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> to S6); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -188,7 +188,26 @@ Two forms of a composite type, chosen once at the type
    validate, answer any type, and hand out an object that exists already. A type that declares
    no `static fn new` is not callable (`LYR-SEM0013`).
 
-### 2.5 Identity and equality
+### 2.5 `with`
+
+1. **`p with { x = 3, y = 4 }`** is a **copy** of the struct `p` with the named fields
+   replaced, of `p`'s type; `p` is unchanged. It is the way to change a fixed field: no
+   `var` is needed, since nothing is written in place
+   ([02 M6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md)).
+2. The values are evaluated left to right and see the **old** `p`: `p with { x = p.y, y = p.x }`
+   swaps. A field named twice (`LYR-SEM0070`) and a field the type does not have
+   (`LYR-SEM0015`) are refused.
+3. A **path** reaches into a struct the value holds by value: `line with { to.x = 9 }` is
+   `line with { to = line.to with { x = 9 } }`. Every segment but the last names a struct
+   (`LYR-SEM0116`).
+4. `with` stands on a **struct** only: on a class — an object is changed in place, or cloned
+   ([05](05-interfaces.md)) — and on a tuple, which has no field names, it is refused
+   (`LYR-SEM0116`).
+5. `with` is a postfix: `p with { x = 1 }.x` reads the copy's `x`, and `q + p with { … }` is
+   `q + (p with { … })`. As a statement it has no effect and is refused like any other value
+   (`LYR-SEM0022`).
+
+### 2.6 Identity and equality
 
 1. `same(a, b)` answers whether two references are one object. Both arguments are references
    — class values, arrays, coroutines — of one type. On a value it is an error
@@ -379,3 +398,42 @@ Elements in a row: behind a reference, through a view, or as a value
    (`LYR-SEM0115`); such an array is copied or passed whole. A value type cannot hold itself
    through an inline array ([§4.1](#41-variants-and-payloads)).
 5. An array pattern of the one length covers the type ([09 §3](09-patterns.md)).
+
+## 6. Tuples
+
+Positional elements in one value
+([03 T16](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
+[01 V11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+1. `(A, B)` and on, from two elements — there is no tuple of one and no empty tuple (`void`
+   stays what it is) — is a **value** of positional elements laid out inline where it lies,
+   copied like a struct ([§2.1](#21-values-and-references)); it has no identity. `(1, "a")`
+   builds one. Its elements are not written; the tuple is replaced whole.
+2. `t.0`, `t.1`, … read the elements by position; a position the tuple does not have is refused
+   (`LYR-SEM0012`).
+3. A written type may **label** its elements: `(x: int, y: int)`, and `p.x` reads `p.0`. A
+   label is a name for the reader and no part of the type: `(x: int, y: int)` and `(int, int)`
+   are **one type**, a value of either stands where the other is expected, and the label is
+   seen through the type of the binding it was written on, not through another's. A label
+   twice in one type is refused.
+4. A tuple is taken apart by a pattern ([09 §2](09-patterns.md)) and by `let (a, b) = t;`.
+   Equality, hashing and display come with the interfaces ([05](05-interfaces.md)).
+
+## 7. Ranges
+
+The values `a..b` and `a..=b`
+([03 T13 A3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+1. `a..b` is a value of `Range<T>` and `a..=b` of `RangeInclusive<T>`, structs of `std.core`
+   holding their bounds as `start` and `end`; `T` is the bounds' one type, a number type. The
+   open forms `a..`, `..b` and `..` are the structs `RangeFrom<T>`, `RangeTo<T>` and
+   `RangeFull` and are written inside `[…]` only, where they take a view ([§5.2](#52-slicet)).
+2. In a **`for` head**, `for (i in a..b)` and `for (i in a..=b)` with the range written there
+   are the counted loop: no value is built, and `for (i in ..b)` is refused. A range held in
+   a binding is walked as an `Iterator` ([05](05-interfaces.md)).
+3. A range is an ordinary value everywhere else: bound, stored in a field or an array, passed
+   and returned. A range is not an integer (`LYR-SEM0001`).

@@ -1,0 +1,12 @@
+//! run
+//! exit: 16
+//! since: 5.0.0
+// 03 §7: written in the 'for' head, a range is the counted loop — over literal bounds and over
+// the bounds of a range value alike.
+fn main(): int {
+    let r = 1..4;
+    var total = 0;
+    for (i in r.start..r.end) { total += i; }
+    for (i in 0..5) { total += i; }
+    return total;
+}

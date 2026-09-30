@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0029
+//! since: 5.0.0
+// 09 §2.11: a pattern of another arity is refused.
+fn f(t: (int, int)): int {
+    return match (t) { (a, b, c) => a + b + c };
+}
+
+fn main(): int { return f((1, 2)); }

@@ -1,8 +1,8 @@
 # Patterns
 
 > **Partly written.** §1 to §4 were written with milestone **M3** of the Lyric 5 plan (slices S4
-> and S5); the type patterns (M4) and the tuple patterns (M3 S6) follow with their slices,
-> spec-first: each rule lands here with its conformance case before or with its implementation. Source of the decisions:
+> to S6); the type patterns (M4) follow with the interfaces, spec-first: each rule lands here
+> with its conformance case before or with its implementation. Source of the decisions:
 > [08 Syntax Y6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md),
 > [03 Type system T9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -72,8 +72,12 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
     and `[first, .., last]` match one long enough for the elements beside the rest. At most
     one rest stands in a pattern, and `..rest` **binds a view** of the elements it covers —
     a `Slice<T>`, sharing them, never a copy.
-11. The type patterns `c: Circle` and `s in [Circle, Rect]` are written with the interfaces
-    ([05](05-interfaces.md), M4); the tuple patterns `(a, _)` with the tuples (M3 S6).
+11. **Tuple.** `(a, _)` matches a tuple ([03 §6](03-types.md)) of that many elements, each
+    against its pattern; `let (a, b) = t;` binds through the same pattern, and a nested tuple
+    is taken apart in place: `((a, b), c)`. The arity is the type's, or the pattern is refused
+    (`LYR-SEM0029`).
+12. The type patterns `c: Circle` and `s in [Circle, Rect]` are written with the interfaces
+    ([05](05-interfaces.md), M4).
 
 ## 3. Exhaustiveness
 
@@ -86,8 +90,10 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
    type); a field pattern enumerates through its fields. An array or a view is enumerated by
    its **length classes**: an arm whose fixed positions all bind without testing covers its
    length, or every length from there up when it carries a rest, and the witness is the
-   smallest length nothing covers; an inline array has one length. Every other type — `int`,
-   `string`, `float`, `char`, a class — is **open** and needs a `_` or a binding arm.
+   smallest length nothing covers; an inline array has one length. A tuple is enumerated
+   **through its columns**: the arms cover it when every combination of the elements' values
+   does, and the witness is written as a tuple. Every other type — `int`, `string`, `float`,
+   `char`, a class — is **open** and needs a `_` or a binding arm.
 3. A guarded arm covers nothing: whether its guard holds is not known to the check.
 4. A scrutinee of type `?E` admits `null` and the variants of `E` in one `match`; presence is
    established before a variant is examined, and the arms are still tried in order.

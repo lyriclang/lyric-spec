@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0116
+//! error: LYR-SEM0116
+//! since: 5.0.0
+// 03 §2.5: 'with' stands on a struct only.
+class Holder { var n: int }
+
+fn f(h: Holder, t: (int, int)): int {
+    let g = h with { n = 1 };
+    let u = t with { x = 1 };
+    return g.n + u.0;
+}
+
+fn main(): int { return f(Holder { n = 0 }, (1, 2)); }

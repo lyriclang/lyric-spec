@@ -1,0 +1,10 @@
+//! run
+//! exit: 12
+//! since: 5.0.0
+// 03 §2.5: 'p with { x = 5 }.x' reads the copy's field; a 'with' on a 'with' is a copy of a copy.
+struct Point { x: int, y: int }
+
+fn main(): int {
+    let p = Point { x = 1, y = 2 };
+    return p with { x = 5 }.x + ((p with { x = 5 }) with { y = 7 }).y;
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0012
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 03 §6: a position the tuple does not have, and a label of another binding's type, are refused.
+fn main(): int {
+    let t = (1, 2);
+    let p: (x: int, y: int) = t;
+    let q: (int, int) = p;
+    return t.2 + q.x;
+}

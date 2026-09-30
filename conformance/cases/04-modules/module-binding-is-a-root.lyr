@@ -1,0 +1,18 @@
+//! run
+//! exit: 0
+//! since: 5.0.0
+// 04 §1: what only a module-level binding references stays alive across collections.
+class Item { id: int, label: string }
+class Keeper { var last: Item }
+
+let keeper = Keeper { last = Item { id = 0, label = "none" } };
+
+fn main(): int {
+    var i = 0;
+    while (i < 200000) {
+        let item = Item { id = i, label = f"item-{i}" };
+        if (i % 1000 == 999) { keeper.last = item; }
+        i += 1;
+    }
+    return if (keeper.last.id == 199999 && keeper.last.label == "item-199999") 0 else 1;
+}
