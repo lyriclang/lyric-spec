@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | ann 10 1
+//! since: 5.0.0
+// 03 §2.4: written values in written order, then the defaults of what was omitted.
+import std.io { println };
+
+class P { name: string, hp: int = 10, level: int = 1 }
+
+fn main(): int {
+    let p = P { name = "ann" };
+    println(f"{p.name} {p.hp} {p.level}");
+    return 0;
+}

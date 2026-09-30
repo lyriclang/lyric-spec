@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.3: a method that writes this is declared mut fn, on a class as on a struct.
+class C {
+    var n: int,
+    fn poke(): void { this.n = 9; }
+}
+
+fn main(): int { return 0; }

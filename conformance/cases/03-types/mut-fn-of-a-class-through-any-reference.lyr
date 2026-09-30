@@ -1,0 +1,21 @@
+//! run
+//! exit: 3
+//! since: 5.0.0
+// 03 §2.3: on a class a mut fn is called through any reference.
+class C {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+}
+
+fn make(): C { return C { n = 0 }; }
+fn poke(c: C): void { c.bump(); }
+
+fn main(): int {
+    let c = C { n = 0 };
+    c.bump();
+    poke(c);
+    make().bump();
+    let d = c;
+    d.bump();
+    return c.n;
+}

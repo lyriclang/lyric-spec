@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 03 §2.5: same(a, b) answers whether two references are one object.
+import std.io { println };
+
+class C { n: int }
+
+fn main(): int {
+    let a = C { n = 1 };
+    let b = a;
+    let twin = C { n = 1 };
+    println(f"{same(a, b)} {same(a, twin)}");
+    return 0;
+}

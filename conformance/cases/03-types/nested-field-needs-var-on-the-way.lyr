@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2: the way to a var field of an inner struct leads through a var field.
+struct In { var n: int }
+struct Out { inner: In }
+
+fn main(): int {
+    var o = Out { inner = In { n = 1 } };
+    o.inner.n = 9;
+    return o.inner.n;
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2: a field is fixed unless it is declared var, on a class too.
+class P { hp: int }
+
+fn main(): int {
+    let p = P { hp = 1 };
+    p.hp = 9;
+    return p.hp;
+}

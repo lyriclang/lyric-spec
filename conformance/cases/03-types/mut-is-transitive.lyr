@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.3: a method that is not mut does not call a mut fn on this.
+class C {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+    fn twice(): void { this.bump(); }
+}
+
+fn main(): int { return 0; }

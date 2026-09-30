@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0106
+//! since: 5.0.0
+// 03 §2.4: a field without a default is given.
+class P { name: string, hp: int, level: int = 1 }
+
+fn main(): int {
+    let p = P { };
+    return p.level;
+}

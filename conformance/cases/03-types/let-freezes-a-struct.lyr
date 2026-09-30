@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2: a let freezes a struct to its fields.
+struct V { var x: int }
+
+fn main(): int {
+    let v = V { x = 1 };
+    v.x = 9;
+    return v.x;
+}
