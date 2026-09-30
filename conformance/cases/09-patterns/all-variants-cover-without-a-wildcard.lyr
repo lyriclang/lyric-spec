@@ -1,0 +1,19 @@
+//! check
+//! since: 5.0.0
+// 09 §3.2: an enum is enumerated by its variants, a bool by its two values, an optional by null
+// and its inner type; every case named, no '_' is needed.
+enum Shape { Num(int), Rect { w: int, h: int }, Empty }
+
+fn size(s: Shape): int {
+    return match (s) { .Num(n) => n, .Rect { w, h } => w * h, .Empty => 0 };
+}
+
+fn flag(b: bool): int {
+    return match (b) { true => 1, false => 0 };
+}
+
+fn present(o: ?bool): int {
+    return match (o) { null => 0, true => 1, false => 2 };
+}
+
+fn main(): int { return size(Shape.Empty) + flag(false) + present(null); }

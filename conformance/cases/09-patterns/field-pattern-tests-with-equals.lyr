@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | flat wide 2x3
+//! | axis 5
+//! since: 5.0.0
+// 09 §2.5, §2.6: 'w = P' tests the field, a bare 'h' binds it, a field left out is not read;
+// the same over a struct, where 'Point { x, y }' tests nothing.
+import std.io { println };
+
+enum Shape { Rect { w: int, h: int, depth: int }, Empty }
+struct Point { x: int, y: int }
+
+fn describe(s: Shape): string {
+    return match (s) {
+        .Rect { w = 0 } => "flat",
+        .Rect { w, h } if w > h => "wide",
+        .Rect { w, h } => f"{w}x{h}",
+        .Empty => "empty",
+    };
+}
+
+fn place(p: Point): string {
+    return match (p) {
+        Point { x = 0, y } => "axis",
+        Point { x, y } => f"{x + y}",
+    };
+}
+
+fn main(): int {
+    let a: Shape = .Rect { w = 0, h = 9, depth = 1 };
+    let b: Shape = .Rect { w = 4, h = 1, depth = 1 };
+    let c: Shape = .Rect { w = 2, h = 3, depth = 1 };
+    println(describe(a) + " " + describe(b) + " " + describe(c));
+    println(place(Point { x = 0, y = 7 }) + " " + place(Point { x = 2, y = 3 }));
+    return 0;
+}

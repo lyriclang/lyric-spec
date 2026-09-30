@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | red yellow green
+//! | 3 6 0
+//! since: 5.0.0
+// 09 §2.5: '.Red' and 'Signal.Red' test the same variant; both forms stand in one match; a tuple
+// variant takes one sub-pattern per element, a struct variant names its fields.
+import std.io { println };
+
+enum Signal { Red, Yellow, Green }
+enum Shape { Num(int), Rect { w: int, h: int }, Empty }
+
+fn name(s: Signal): string {
+    return match (s) { .Red => "red", Signal.Yellow => "yellow", .Green => "green" };
+}
+
+fn size(s: Shape): int {
+    return match (s) { .Num(n) => n, Shape.Rect { w, h } => w * h, .Empty => 0 };
+}
+
+fn main(): int {
+    println(name(.Red) + " " + name(.Yellow) + " " + name(.Green));
+    let rect: Shape = .Rect { w = 2, h = 3 };
+    println(f"{size(.Num(3))} {size(rect)} {size(.Empty)}");
+    return 0;
+}

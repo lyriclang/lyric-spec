@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 1 2 3
+//! | red green
+//! since: 5.0.0
+// 03 §4.1: an enum is a value — a binding copies it, 'this' in a method is the caller's value, and
+// a 'mut fn' moves it to another variant by replacing 'this' whole.
+import std.io { println };
+
+enum Signal {
+    Red, Yellow, Green;
+
+    fn ordinal(): int { return match (this) { .Red => 1, .Yellow => 2, .Green => 3 }; }
+    mut fn advance(): void {
+        this = match (this) { .Red => .Yellow, .Yellow => .Green, .Green => .Red };
+    }
+}
+
+fn name(s: Signal): string {
+    return match (s) { .Red => "red", .Yellow => "yellow", .Green => "green" };
+}
+
+fn main(): int {
+    var s = Signal.Red;
+    let first = s.ordinal();
+    s.advance();
+    let copy = s;
+    s.advance();
+    println(f"{first} {copy.ordinal()} {s.ordinal()}");
+    var t = Signal.Red;
+    let kept = t;
+    t.advance();
+    t.advance();
+    println(name(kept) + " " + name(t));
+    return 0;
+}

@@ -1,7 +1,7 @@
 # Types and values
 
-> **Partly written.** §1 to §3 were written with milestone **M3** of the Lyric 5 plan (slices S1
-> to S3); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1 to §4 were written with milestone **M3** of the Lyric 5 plan (slices S1
+> to S4); the rest follows with the slices of M3, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
@@ -254,3 +254,49 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    is a `?C`, not a `??C`. `a?.f(args)` calls the method under the same rule and evaluates the
    arguments only when `a` holds a value.
 5. Nothing is assigned through `?.`: `a?.f = v` is refused (`LYR-SEM0019`). Narrow first.
+
+## 4. Enums
+
+One of several variants, each with a payload or none
+([01 V5, V6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
+[02 M13](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md),
+[03 T9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+
+**Conformance.** `conformance/cases/03-types/`.
+
+### 4.1 Variants and payloads
+
+1. An `enum` declares its **variants**, each of which is a **unit** variant (`Red`), a
+   **tuple** variant with positional payload (`Num(int)`, `Tagged(string, Point)`) or a
+   **struct** variant with named fields (`Rect { w: int, h: int }`). One enum may mix the
+   three forms. After the variants, separated by `;`, an enum declares methods, `mut fn`
+   included, as a struct does ([§2.3](#23-methods-and-mut-fn)).
+2. A value of the enum is exactly one variant with that variant's payload. A unit variant is
+   written by its name, `Signal.Red`; a tuple variant is called, `Shape.Num(3)`; a struct
+   variant is built with the initializer, `Shape.Rect { w = 1, h = 2 }`, under the rules of
+   [§2.4](#24-construction). A variant is not a type: `Num` names no type, and a payload is
+   read by a pattern ([09](09-patterns.md)) and in no other way.
+3. An enum is a **value** ([§2.1](#21-values-and-references)): stored inline, copied by a
+   binding, an assignment, an argument and a return, without identity. `this` in a method is
+   the caller's value; a `mut fn` replaces it whole with `this = value`
+   ([§2.3](#23-methods-and-mut-fn)), which is how a method moves a value to another variant.
+4. A value type cannot hold itself: an enum whose payload holds the enum by value — directly,
+   through a struct, a tuple or an optional — is refused (`LYR-SEM0056`); the diagnostic
+   names the cycle. A recursive payload lies behind a reference: `Box<T>` of `std.core`, a
+   class of one's own, or an array. `enum Tree { Leaf(int), Node(Box<Tree>, Box<Tree>) }`.
+5. *(Informative.)* An enum occupies a tag and the union of its payloads, inline. An optional
+   of an enum is the enum with a tag no variant has ([§3.1](#31-the-type)).
+
+### 4.2 The enum the position names
+
+1. **`.Red`** is the member `Red` of the enum the position expects, the enum unnamed: a unit
+   variant as it stands, the callee of `.Num(3)`, the head of `.Rect { w = 1, h = 2 }`. The
+   position expects an enum where a value of one is required: an initializer with a written
+   type, an assignment, an argument, a return, an arm under a context type, a field of an
+   initializer, a default, and either side of `==` and `!=` when the other side has the enum
+   type. An expected `?E` names `E`: `let o: ?Signal = .Green` is a present optional.
+2. Where the position expects no particular type, or a type that is not an enum, the form is
+   refused (`LYR-SEM0113`), and the diagnostic says to name the enum. The qualified form
+   `Signal.Red` stands everywhere, whatever the position expects.
+3. In a pattern the same form tests the variant ([09 §2](09-patterns.md)); a bare name never
+   does.

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0029
+//! since: 5.0.0
+// 09 §2.5: the dotted form on a scrutinee that is no enum is refused.
+fn code(n: int): int {
+    return match (n) { .Red => 0, _ => 1 };
+}
+
+fn main(): int { return code(1); }

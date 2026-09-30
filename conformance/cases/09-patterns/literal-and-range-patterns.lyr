@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | zero neg digit many
+//! | letter digit other
+//! | quit word yes
+//! since: 5.0.0
+// 09 §2.3, §2.4: literal patterns over numbers, characters, strings and bool, a negative literal
+// among them; ranges over integers and characters, a negative one among them.
+import std.io { println };
+
+fn grade(n: int): string {
+    return match (n) {
+        0 => "zero",
+        -1 => "neg",
+        -9..=-2 => "neg",
+        1..=9 => "digit",
+        _ => "many",
+    };
+}
+
+fn kind(c: char): string {
+    return match (c) { 'a'..='z' | 'A'..='Z' => "letter", '0'..='9' => "digit", _ => "other" };
+}
+
+fn word(s: string): string {
+    return match (s) { "quit" => "quit", _ => "word" };
+}
+
+fn yes(b: bool): string {
+    return match (b) { true => "yes", false => "no" };
+}
+
+fn main(): int {
+    println(grade(0) + " " + grade(-5) + " " + grade(7) + " " + grade(42));
+    println(kind('q') + " " + kind('4') + " " + kind('-'));
+    println(word("quit") + " " + word("other") + " " + yes(true));
+    return 0;
+}

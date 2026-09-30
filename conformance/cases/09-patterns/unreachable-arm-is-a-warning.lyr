@@ -1,0 +1,15 @@
+//! check
+//! warning: LYR-SEM0112
+//! since: 5.0.0
+// 09 §4.1: an arm no value can reach is a warning, not an error — here the second '.Red'.
+enum Signal { Red, Yellow, Green }
+
+fn code(s: Signal): int {
+    return match (s) {
+        .Red => 0,
+        .Red => 1,
+        _ => 2,
+    };
+}
+
+fn main(): int { return code(Signal.Green); }

@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 0 3 6 far@3,4
+//! | 0 5 6
+//! since: 5.0.0
+// 03 §4.1: unit, tuple and struct variants in one enum; built by name, by call and by initializer,
+// qualified or with the enum unnamed; the payload is read by a pattern.
+import std.io { println };
+
+struct Point { x: int, y: int }
+
+enum Shape {
+    Dot,
+    Num(int),
+    Rect { w: int, h: int },
+    Tagged(string, Point),
+}
+
+fn size(s: Shape): string {
+    return match (s) {
+        .Dot => "0",
+        .Num(n) => f"{n}",
+        .Rect { w, h } => f"{w * h}",
+        .Tagged(label, p) => label + f"@{p.x},{p.y}",
+    };
+}
+
+fn main(): int {
+    let a = Shape.Dot;
+    let b = Shape.Num(3);
+    let c = Shape.Rect { w = 2, h = 3 };
+    let d = Shape.Tagged("far", Point { x = 3, y = 4 });
+    println(size(a) + " " + size(b) + " " + size(c) + " " + size(d));
+    let e: Shape = .Dot;
+    let f: Shape = .Num(5);
+    let g: Shape = .Rect { w = 3, h = 2 };
+    println(size(e) + " " + size(f) + " " + size(g));
+    return 0;
+}

@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3.1: a match that leaves a variant open is refused; the diagnostic names a witness written
+// as a pattern, here '.Rect { … }'.
+enum Shape { Num(int), Rect { w: int, h: int }, Empty }
+
+fn size(s: Shape): int {
+    return match (s) {
+        .Num(n) => n,
+        .Empty => 0,
+    };
+}
+
+fn main(): int { return size(Shape.Empty); }

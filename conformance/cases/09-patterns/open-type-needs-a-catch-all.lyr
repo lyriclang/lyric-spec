@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3.2: 'int' is open; without a '_' or a binding arm the match is refused.
+fn sign(n: int): int {
+    return match (n) {
+        0 => 0,
+        1..=9 => 1,
+    };
+}
+
+fn main(): int { return sign(3); }

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0097
+//! since: 5.0.0
+// 09 §2.8: a name binds once in a pattern; a second binding could only replace or drop the first.
+enum Shape { Rect { w: int, h: int }, Empty }
+
+fn code(s: Shape): int {
+    return match (s) { .Rect { w = n, h = n } => n, .Empty => 0 };
+}
+
+fn main(): int { return code(Shape.Empty); }

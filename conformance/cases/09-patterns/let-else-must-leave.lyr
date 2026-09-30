@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0098
+//! since: 5.0.0
+// 09 §1.5: the else block leaves on every path, or the names would be read unbound.
+enum Shape { Num(int), Empty }
+
+fn number(s: Shape): int {
+    let .Num(n) = s else { let fallback = 0; };
+    return n;
+}
+
+fn main(): int { return number(Shape.Empty); }

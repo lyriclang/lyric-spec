@@ -1,0 +1,25 @@
+//! run
+//! exit: 7
+//! since: 5.0.0
+// 03 §4.1: a recursive payload lies behind a reference — here a class of the program's own, as
+// 'Box<T>' of std.core is.
+class Cell { tree: Tree }
+
+enum Tree {
+    Leaf(int),
+    Node(Cell, Cell),
+}
+
+fn leaf(n: int): Cell { return Cell { tree = Tree.Leaf(n) }; }
+
+fn sum(t: Tree): int {
+    return match (t) {
+        .Leaf(n) => n,
+        .Node(l, r) => sum(l.tree) + sum(r.tree),
+    };
+}
+
+fn main(): int {
+    let tree = Tree.Node(leaf(1), Cell { tree = Tree.Node(leaf(2), leaf(4)) });
+    return sum(tree);
+}

@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 3 -1
+//! since: 5.0.0
+// 09 §1.5: 'let P = e else { … };' binds the names of P when it matches and runs the block
+// otherwise, which leaves.
+import std.io { println };
+
+enum Shape { Num(int), Empty }
+
+fn number(s: Shape): int {
+    let .Num(n) = s else { return -1; };
+    return n;
+}
+
+fn main(): int {
+    println(f"{number(.Num(3))} {number(.Empty)}");
+    return 0;
+}

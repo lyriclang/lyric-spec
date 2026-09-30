@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 7 flat inner 0
+//! since: 5.0.0
+// 09 §2.9: a pattern tests and binds at every depth — a variant inside a variant, a field test
+// inside a payload, a literal under a field, an 'if (let …)' with a nested pattern.
+import std.io { println };
+
+enum Shape { Num(int), Rect { w: int, h: int }, Empty }
+enum Opt { Some(Shape), None }
+
+fn inner(o: Opt): string {
+    return match (o) {
+        .Some(.Num(7)) => "7",
+        .Some(.Rect { w = 0 }) => "flat",
+        .Some(_) => "inner",
+        .None => "0",
+    };
+}
+
+fn main(): int {
+    let a: Opt = .Some(.Num(7));
+    let b: Opt = .Some(.Rect { w = 0, h = 1 });
+    let c: Opt = .Some(.Empty);
+    var seen = "";
+    if (let .Some(.Num(n)) = a) { seen = f"{n}"; }
+    println(seen + " " + inner(b) + " " + inner(c) + " " + inner(.None));
+    return 0;
+}

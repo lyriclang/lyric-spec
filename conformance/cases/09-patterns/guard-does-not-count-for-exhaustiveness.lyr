@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3.3: a guarded arm covers nothing; the match below leaves '.Num(_)' open.
+enum Shape { Num(int), Empty }
+
+fn positive(s: Shape): bool {
+    return match (s) {
+        .Num(n) if n > 0 => true,
+        .Empty => false,
+    };
+}
+
+fn main(): int { return if (positive(Shape.Num(1))) 0 else 1; }
