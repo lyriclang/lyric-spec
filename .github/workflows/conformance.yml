@@ -1,15 +1,19 @@
-# The suite runs against a RELEASED toolchain, never a working tree. There is no Lyric 5 release
-# yet, so there is nothing to pin: until 5.0.0 the toolchain repository's CI runs the suite
-# against its own tree. The 4.x workflow, pinned to its release, lives on the 'script' branch.
+# Until a 5.0 toolchain is released there is nothing pinned to run the suite against, and the
+# working tree of the compiler is the compiler's own business: lyriclang/lyric runs this suite
+# in its CI (job "Conformance gate") against every commit, in both profiles. What this
+# repository can check on its own is the suite itself: every header well-formed.
 name: Conformance
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
-  conformance:
+  cases:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Nothing to pin before 5.0.0
-        run: echo "no Lyric 5 release exists; see the comment at the top of this workflow"
+
+      - name: Every case header is well-formed
+        run: python3 tools/run_conformance.py --parse-only

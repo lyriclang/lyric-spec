@@ -42,10 +42,15 @@ the library's own tests, not here.
 ## Running
 
 ```
-python tools/run_conformance.py --toolchain <dir with lyrc and lyrvm> [--stdlib <dir>]
+python tools/run_conformance.py --lyric5 <compiler executable> [--profile debug|release] [--toolchain-version 5.0.0]
 ```
 
-The runner compiles with `lyrc build`, executes with `lyrvm run`, and compares. Exit codes it
-relies on (spec-fixed): 0 success, 1 rejected compilation, 101 panic.
+The runner builds with `lyric5 build` — a `check` case through the front end only
+(`--emit ir`), a `run` case to a native binary in the profile asked for — runs the binary, and
+compares. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
+compilation, 101 panic. `--parse-only` reads every header and runs nothing: the suite's own
+format check, which is what this repository's CI runs, since no 5.0 toolchain is released yet
+— the suite is run against the compiler's working tree by the compiler's own CI
+(lyriclang/lyric, job *Conformance gate*), in both profiles.
 
 Case files live under `conformance/cases/<chapter>/`, named after the sentence they pin.
