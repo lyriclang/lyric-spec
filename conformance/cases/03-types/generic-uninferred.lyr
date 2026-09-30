@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.2: a parameter in no argument and not in the expected type is not inferred.
+fn empty<T>(): T[] { return []; }
+
+fn main(): int {
+    let xs = empty();
+    return 0;
+}

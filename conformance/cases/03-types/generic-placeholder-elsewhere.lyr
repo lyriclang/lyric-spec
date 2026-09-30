@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0117
+//! since: 5.0.0
+// 03 §9.2: '_' stands only in a list of type arguments; a binding's type is written or omitted.
+struct Pair<A, B> { first: A, second: B }
+
+fn main(): int {
+    let p: Pair<_, int> = Pair<int, int> { first = 1, second = 2 };
+    return p.second;
+}

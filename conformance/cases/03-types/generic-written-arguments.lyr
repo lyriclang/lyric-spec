@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 0 n7 2
+//! since: 5.0.0
+// 03 §9.2: written type arguments; a placeholder among them is filled from the arguments.
+import std.io { println };
+
+fn empty<T>(): T[] { return []; }
+fn collect<T, U>(x: T, f: fn(T) -> U): U { return f(x); }
+fn same<T>(a: T, b: T): T { return b; }
+
+fn main(): int {
+    let xs = empty<int>();
+    let u = collect<_, string>(7, (n: int): string => f"n{n}");
+    println(f"{xs.length()} {u} {same<int>(1, 2)}");
+    return 0;
+}

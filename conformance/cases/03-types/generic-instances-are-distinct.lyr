@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §9.1: two argument lists that differ are two types; nothing coerces between them.
+struct Pair<A, B> { first: A, second: B }
+
+fn main(): int {
+    let p: Pair<int8, string> = Pair<int, string> { first = 1, second = "x" };
+    return 0;
+}

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0052
+//! since: 5.0.0
+// 03 §9.4: the bare name of a generic function is no value.
+fn ident<T>(x: T): T { return x; }
+
+fn main(): int {
+    let f = ident;
+    return 0;
+}

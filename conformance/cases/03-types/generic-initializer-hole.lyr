@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.3: a field value that fixes no type of its own fills no placeholder.
+struct Pair<A, B> { first: A, second: B }
+
+fn main(): int {
+    let p = Pair<_, int> { first = [], second = 2 };
+    return p.second;
+}

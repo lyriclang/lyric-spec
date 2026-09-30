@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 03 §9.4: an instance method through its type is no value; 'obj.method' is.
+struct Counter { n: int, fn bump<T>(x: T): int { return this.n; } }
+
+fn main(): int {
+    let b = Counter.bump<int>;
+    return 0;
+}

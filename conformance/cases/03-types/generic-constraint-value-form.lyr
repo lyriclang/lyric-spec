@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 03 §9.1, §9.4: an argument of the value form satisfies the constraints like a written one at a call.
+interface Show { fn show(): string; }
+struct Num { n: int }
+fn shown<T :: [Show]>(x: T): T { return x; }
+
+fn main(): int {
+    let g = shown<Num>;
+    return 0;
+}

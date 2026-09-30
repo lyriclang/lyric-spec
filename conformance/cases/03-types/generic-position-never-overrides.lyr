@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §9.2: the arguments bind first; a position that disagrees is the assignment's error, not another instance.
+fn ident<T>(x: T): T { return x; }
+
+fn main(): int {
+    let xs: int[] = ident("x");
+    return 0;
+}

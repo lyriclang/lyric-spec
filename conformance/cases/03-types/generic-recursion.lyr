@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 3
+//! since: 5.0.0
+// 03 §9.1: an instance may call itself — the same instance, not a new one per call.
+import std.io { println };
+
+fn depth<T>(x: T, n: int): int { return if (n == 0) 0 else depth<T>(x, n - 1) + 1; }
+
+fn main(): int {
+    let d = depth("a", 3);
+    println(f"{d}");
+    return 0;
+}
