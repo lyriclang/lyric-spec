@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 06 §4.6: a match over the caught set without a default covers every type of it - here
+// 'Parse' is missing.
+enum NotFound :: [Error] { Gone; fn message(): string { return "gone"; } }
+enum Parse :: [Error] { Bad; fn message(): string { return "bad"; } }
+fn both(): int throws [NotFound, Parse] { return 1; }
+fn name(): string {
+    try { return f"{both()}"; }
+    catch (e) { return match (e) { _: NotFound => "gone" }; }
+}
+fn main(): int { return 0; }

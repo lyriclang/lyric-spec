@@ -11,11 +11,11 @@ value and the error, each in plain sight
 
 What is thrown, the `throws` set, the `try` mark and what covers a thrown type (S1a); the `try`
 block with its clauses and the error path at run time — propagation, `defer` on the way out,
-`main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a). Written with
-M5; the chapter grows with the milestone's slices — a clause over several types, the set a
-typeless clause carries and the refusal of a clause no error can reach (S2b), a `defer` that
-throws and `using` (S3), panics, `never` and the thrown set of a function type (S4). What is not
-written here yet is decided in the design documents, not here.
+`main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a); a clause over
+several types, the set a binding carries and the refusal of a clause no error can reach (S2b).
+Written with M5; the chapter grows with the milestone's slices — a `defer` that throws and `using`
+(S3), panics, `never` and the thrown set of a function type (S4). What is not written here yet is
+decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -87,14 +87,28 @@ written here yet is decided in the design documents, not here.
    execution continues after the `try`. A block without a clause is refused (`LYR-SEM0036`).
 2. A typed clause binds the value under its own type — a class's object, a struct's or an
    enum's value, an interface value of the clause's interface — so its fields and its variants
-   are there to read and match. `catch (e)` and `catch (_)` take everything; `e` is an `Error`.
-   A clause without a type stands last (`LYR-SEM0035`). A clause's type conforms to `Error`
-   (`LYR-SEM0030`).
+   are there to read and match. The **set form** `catch (e in [A, B])` takes a value of any of its
+   types — one alone without the brackets, `catch (e in A)`, several in them, the list rule
+   (`LYR-PAR0049`) — and `e` is an `Error` that carries the set (rule 6). `catch (e)` and
+   `catch (_)` take everything; `e` is an `Error`. A clause without a type stands last
+   (`LYR-SEM0035`). A clause's types conform to `Error` (`LYR-SEM0030`).
 3. When no clause covers the value, it goes on as though the `try` were not there: to the
    clauses of a `try` around this one, or out of the function ([§5](#5-the-error-path)).
 4. A clause is not inside its own `try`: what it throws goes past its sister clauses to the next
    `try` around, or out of the function (E9 C6). `throw e` in a clause throws the value it took.
-5. *(Informative.)* Since the value travels with its type, the clause test is one comparison of
+5. A type is caught **once** per `try` (`LYR-SEM0141`, E9 C1), and a clause no value can reach is
+   refused (`LYR-SEM0142`, C2): a type of it is covered ([§3](#3-the-try-mark-and-coverage) rule 4)
+   by a type caught before it — `catch (e: IoError)` above `catch (e: Disk)`, or `Error` above
+   anything. Within a set the same holds from left to right. Below the clause without a type,
+   rule 2's `LYR-SEM0035` is the one error.
+6. The binding of a set clause, or of a clause without a type, **carries a set** (05 E2 K7): the
+   set's types; for the clause without a type, what reaches it — every type the body throws past
+   the `try`s inside it, less the types the clauses above cover. `throw e` throws exactly that set
+   (precise rethrow): `catch (_: NotFound) { … } catch (e) { throw e; }` in a function that
+   declares `throws Parse` is covered when the body throws `[NotFound, Parse]`. A `match (e)`
+   whose type patterns cover the set needs no default (`LYR-SEM0050` names a missing type). The
+   set is the binding's alone: stored elsewhere, the value is an `Error`.
+7. *(Informative.)* Since the value travels with its type, the clause test is one comparison of
    the value's type descriptor, an interface clause a search of the type's short conformance
    list.
 
@@ -139,4 +153,4 @@ written here yet is decided in the design documents, not here.
    give it to the outer `try`. `try?` and `try!` take no clause (`LYR-PAR0051`).
 6. *(Informative.)* Each form opens a dispatch of its own, as the block does: `try?` clears the
    error and gives `null` there, `try!` panics there, the clauses are tested there. Nothing is
-   unwound; the cost is the block's (§4 rule 5, §5 rule 1).
+   unwound; the cost is the block's (§4 rule 7, §5 rule 1).

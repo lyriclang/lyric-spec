@@ -138,7 +138,7 @@ same. What is not written here yet is decided in the design documents, not here.
    implemented by `fn first(): int` (`LYR-SEM0042` otherwise). The answer belongs to the
    **conformance instance**: `Mul<int>` and `Mul<float>` of one type each answer `Out` for
    themselves ([§12](#12-the-operator-interfaces)); a second conformance block for the same
-   instance may repeat the answer, not change it (`LYR-SEM0129`). In a type's own body
+   instance is refused as a whole, its answers with it (`LYR-SEM0133`). In a type's own body
    `Self.Item` is its answer. A built-in conforms through its block alone and answers there.
 4. Through a constraint the associated type is a **type path**, `T.Item`:
    `fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }` — the answer of whatever

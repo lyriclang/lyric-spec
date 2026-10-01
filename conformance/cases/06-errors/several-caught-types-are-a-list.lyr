@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0049
+//! since: 5.0.0
+// 06 §4.2: several caught types are a bracketed list - 'catch (e in [A, B])'.
+enum A :: [Error] { Bad; fn message(): string { return "a"; } }
+enum B :: [Error] { Bad; fn message(): string { return "b"; } }
+fn risky(): int throws [A, B] { return 1; }
+fn main(): int {
+    try { return risky(); }
+    catch (_ in A, B) { return 0; }
+}
