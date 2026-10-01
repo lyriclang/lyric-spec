@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 6 5 8
+//! since: 5.0.0
+// 05 §12.7: 'T :: [Add<Out = T>]' adds ints and vectors alike — the scalars conform.
+import std.io { println };
+
+struct V :: [Add, Sub, Mul<int>, Neg, Equatable, Ordered, Display] {
+    x: int,
+    y: int,
+    fn add(rhs: V): V { return V { x = this.x + rhs.x, y = this.y + rhs.y }; }
+    fn sub(rhs: V): V { return V { x = this.x - rhs.x, y = this.y - rhs.y }; }
+    fn mul(rhs: int): V { return V { x = this.x * rhs, y = this.y * rhs }; }
+    fn neg(): V { return V { x = -this.x, y = -this.y }; }
+    fn equals(o: V): bool { return this.x == o.x && this.y == o.y; }
+    fn compare(o: V): ?Ordering {
+        let a = this.x * this.x + this.y * this.y;
+        let b = o.x * o.x + o.y * o.y;
+        if (a < b) { return Ordering.Less; }
+        if (a > b) { return Ordering.Greater; }
+        return Ordering.Equal;
+    }
+    fn show(): string { return f"({this.x}, {this.y})"; }
+}
+
+fn sum<T :: [Add<Out = T>]>(a: T, b: T, c: T): T { return a + b + c; }
+
+fn main(): int {
+    let t = sum(V { x = 1, y = 2 }, V { x = 3, y = 4 }, V { x = 1, y = 2 });
+    println(f"{sum(1, 2, 3)} {t.x} {t.y}");
+    return 0;
+}

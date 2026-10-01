@@ -10,11 +10,11 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3, S4, S4b, S5a and S5b; the chapter grows with the milestone's slices — operator
-interfaces (D6), generic extends (T7), synthesis (D7). Of the associated types (T6,
-[§8](#8-associated-types)) the value form `Iterator<Item = int>` and an answer per interface
-instance are not written yet. What is not written here yet is decided in the design documents,
-not here.
+M4 S1, S3, S4, S4b, S5a, S5b and S6; the chapter grows with the milestone's slices — generic
+extends (T7), synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value
+form `Iterator<Item = int>` is not written yet; of the operators (D6, [§12](#12-the-operator-interfaces))
+`in`, `[]` and the conversions `From`/`Into` wait for the collections. What is not written here
+yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -134,9 +134,11 @@ not here.
    A conformer without an answer, where the interface gives no default, is refused
    (`LYR-SEM0128`); an answer that no interface of the type asks for is refused
    (`LYR-SEM0129`); the answer is what the signatures read — `fn first(): Self.Item` is
-   implemented by `fn first(): int` (`LYR-SEM0042` otherwise). The answer is one per type and
-   interface: a second conformance block may repeat it, not change it (`LYR-SEM0129`). In a
-   type's own body `Self.Item` is its answer.
+   implemented by `fn first(): int` (`LYR-SEM0042` otherwise). The answer belongs to the
+   **conformance instance**: `Mul<int>` and `Mul<float>` of one type each answer `Out` for
+   themselves ([§12](#12-the-operator-interfaces)); a second conformance block for the same
+   instance may repeat the answer, not change it (`LYR-SEM0129`). In a type's own body
+   `Self.Item` is its answer. A built-in conforms through its block alone and answers there.
 4. Through a constraint the associated type is a **type path**, `T.Item`:
    `fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }` — the answer of whatever
    `T` becomes, `int` at `firstOf(IntBox { … })`. The parameter's constraints declare it
@@ -206,3 +208,41 @@ not here.
    conformance list; the data stays the same object or box.
 2. Only up the chain: an unrelated interface and the way down are refused (`LYR-SEM0001`); the
    way down is `is` ([§9](#9-any-type-tests-and-type-patterns)).
+
+## 12. The operator interfaces
+
+1. The operators on a struct, a class or an enum are **method calls through the interfaces of
+   `std.core`** (04 D6), one per operator: `a + b` is exactly `a.add(b)` through
+   `Add<Rhs = Self> { type Out = Self; fn add(rhs: Rhs): Self.Out; }`, and likewise `-` `Sub`,
+   `*` `Mul`, `/` `Div`, `%` `Rem`, `&` `BitAnd`, `|` `BitOr`, `^` `BitXor`, `<<` `Shl<Rhs = int>`,
+   `>>` `Shr<Rhs = int>`; the unary `-x` is `x.neg()` through `Neg`, `~x` is `x.bitNot()`
+   through `BitNot`. `!x` is `bool` only. The scalars keep their own arithmetic and conform
+   besides, so a constraint `T :: [Add]` takes them.
+2. **One resolution.** The conformance is chosen by the **static type of the right operand**:
+   `v * 2` takes `Mul<int>`, `v * 2.5` takes `Mul<float>`; a literal adapts
+   ([03 §9.2](03-types.md)), and two conformances a literal fits are an ambiguity to annotate
+   (`LYR-SEM0083`). The result is the conformance's **`Out`** — `Self` unless the conformer
+   answers otherwise. The homogeneous case is `struct Vec2 :: [Add]`; a heterogeneous
+   conformance stands in a **conformance block** of its own with its answer,
+   `extend Vec2 :: [Mul<float>] { type Out = float; fn mul(rhs: float): float { … } }`, beside the
+   type's own `mul` ([§3](#3-one-method-set): the operand tells the two apart, and the block's
+   stays reachable qualified).
+3. Without the conformance the operator is **refused**, with the conformance to write
+   (`LYR-SEM0003`): a method of the name alone is not the operator — nominal, not structural.
+4. **`a += b`** and the other compound forms are `a = a.add(b)` on a `var` place whose type the
+   answer is; there is no `AddAssign`. `++` and `--` stay the integers' own.
+5. **Equality.** `a == b` on a struct, a class or an enum is `a.equals(b)` through
+   `Equatable { fn equals(o: Self): bool; }`, `!=` its negation; both sides are the one type,
+   and the scalars compare natively. Without the conformance `==` is refused (`LYR-SEM0059`).
+6. **Ordering.** `<`, `<=`, `>` and `>=` read `a.compare(b)` through
+   `Ordered :: [Equatable] { fn compare(o: Self): ?Ordering; }` with
+   `enum Ordering { Less, Equal, Greater }`: `<` is `.Less`, `>` is `.Greater`, `<=` is not
+   `.Greater`, `>=` is not `.Less`; **`null`** — the two are not ordered, as `float` with NaN —
+   makes all four **false**. `TotalOrder :: [Ordered] { fn totalCompare(o: Self): Ordering; }`
+   is what sorting and keys ask; `float` has none. Without `Ordered` an ordering is refused
+   (`LYR-SEM0003`).
+7. A generic body sees the answer the constraint fixes: `fn sum<T :: [Add<Out = T>]>(a: T, b: T): T`
+   adds; under `T :: [Add]` alone `a + b` is a `T.Out`, which is not a `T`
+   ([§8](#8-associated-types) rule 5).
+8. `{x}` in an f-string renders through `Display { fn show(): string; }`; the scalars render
+   natively and conform besides.

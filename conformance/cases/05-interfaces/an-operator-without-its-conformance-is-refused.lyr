@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 05 §12.3: a method of the name alone is not the operator.
+struct P { n: int, fn add(rhs: P): P { return rhs; } }
+fn f(a: P, b: P): P { return a + b; }
+fn main(): int { return 0; }

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 05 §12.6: '<' on a type without 'Ordered'.
+struct P :: [Equatable] { n: int, fn equals(o: P): bool { return true; } }
+fn f(a: P, b: P): bool { return a < b; }
+fn main(): int { return 0; }
