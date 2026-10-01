@@ -1,0 +1,14 @@
+//! check
+//! since: 5.0.0
+// 06 §3.1-2: one 'try' marks every call to its right; a binding, an argument and a return each
+// start an expression it may stand at.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn add(a: int, b: int): int { return a + b; }
+fn f(): int throws Oops {
+    let sum = try one() + two() * one();
+    let more = add(try one(), try two());
+    return try sum + more + one();
+}
+fn main(): int throws Oops { return try f(); }

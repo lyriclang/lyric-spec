@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0137
+//! since: 5.0.0
+// 06 §2.1: a set names each type once.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn f(): int throws [Oops, Oops] { return 1; }
+fn main(): int { return 0; }

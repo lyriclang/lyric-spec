@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0030
+//! since: 5.0.0
+// 06 §1.2-3: a number conforms to nothing - it is not thrown.
+fn f(): int throws { throw 5; }
+fn main(): int { return 0; }

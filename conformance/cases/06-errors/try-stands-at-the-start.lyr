@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0050
+//! since: 5.0.0
+// 06 §3.2: to the right of another operator 'try' would cover another expression than it seems to.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn f(): int throws Oops { return 1 + try one(); }
+fn main(): int { return 0; }

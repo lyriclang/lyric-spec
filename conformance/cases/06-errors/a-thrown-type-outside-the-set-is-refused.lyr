@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §3.3: 'f' throws 'Oops' and 'g' declares only 'Other' - nothing covers 'Oops'.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+enum Other :: [Error] { Else; fn message(): string { return "other"; } }
+fn f(): int throws Oops { return 1; }
+fn g(): int throws Other { return try f(); }
+fn main(): int { return 0; }

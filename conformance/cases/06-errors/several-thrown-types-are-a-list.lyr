@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0049
+//! since: 5.0.0
+// 06 §2.1: several thrown types stand in brackets, like every list (08 D5/D6).
+enum A :: [Error] { X; fn message(): string { return "a"; } }
+enum B :: [Error] { Y; fn message(): string { return "b"; } }
+fn f(): int throws A, B { return 1; }
+fn main(): int { return 0; }

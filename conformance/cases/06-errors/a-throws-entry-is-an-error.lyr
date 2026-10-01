@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0030
+//! since: 5.0.0
+// 06 §2.1: every element of a set conforms to 'Error'.
+struct Plain { x: int }
+fn f(): int throws Plain { return 1; }
+fn main(): int { return 0; }
