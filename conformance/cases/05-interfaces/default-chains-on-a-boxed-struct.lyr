@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 882
+//! since: 5.0.0
+// 05 §2.2–2.3: a default calling another slot virtually, on a struct that lives in the interface value.
+import std.io { println };
+
+interface Shape {
+    fn area(): int;
+    fn doubled(): int { return this.area() * 2; }
+}
+
+struct Square :: [Shape] { side: int, fn area(): int { return this.side * this.side; } }
+
+fn main(): int {
+    let shape: Shape = Square { side = 21 };
+    println(f"{shape.doubled()}");
+    return 0;
+}

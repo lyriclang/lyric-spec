@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | alive alive down
+//! since: 5.0.0
+// 05 §2.3: a default runs with 'this' as the interface value, so 'this.getHp()' inside it reaches the type behind; an own member overrides the default.
+import std.io { println };
+
+interface Damageable {
+    fn getHp(): int;
+    fn isAlive(): bool { return this.getHp() > 0; }
+}
+
+class Player :: [Damageable] { var hp: int, fn getHp(): int { return this.hp; } }
+class Wall :: [Damageable] {
+    var hp: int,
+    fn getHp(): int { return this.hp; }
+    fn isAlive(): bool { return this.hp > 10; }
+}
+
+fn describe(target: Damageable): string { return if (target.isAlive()) "alive" else "down"; }
+
+fn main(): int {
+    let a = describe(Player { hp = 60 });
+    let b = describe(Player { hp = 5 });
+    let c = describe(Wall { hp = 5 });
+    println(f"{a} {b} {c}");
+    return 0;
+}

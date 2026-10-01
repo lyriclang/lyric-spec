@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 1 0
+//! since: 5.0.0
+// 05 §2.1–2.2: an enum conforms; its 'mut fn' through the interface value writes the copy's tag.
+import std.io { println };
+
+interface Switch { mut fn off(); fn on(): int; }
+
+enum Light :: [Switch] {
+    On, Off;
+    mut fn off() { this = .Off; }
+    fn on(): int { return match (this) { .On => 1, .Off => 0 }; }
+}
+
+fn main(): int {
+    let light: Switch = Light.On;
+    let before = light.on();
+    light.off();
+    println(f"{before} {light.on()}");
+    return 0;
+}

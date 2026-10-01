@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | [tag] tag
+//! since: 5.0.0
+// 05 §1.3, §2.4: a value of the child interface answers the parent's member, and the child's default reaches it through 'this'.
+import std.io { println };
+
+interface Named { fn name(): string; }
+interface Labeled :: [Named] { fn label(): string { return "[" + this.name() + "]"; } }
+
+class Tag :: [Labeled] { fn name(): string { return "tag"; } }
+
+fn main(): int {
+    let l: Labeled = Tag { };
+    println(f"{l.label()} {l.name()}");
+    return 0;
+}

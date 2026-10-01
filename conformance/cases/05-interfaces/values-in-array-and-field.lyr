@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | 3 150 60 60
+//! since: 5.0.0
+// 05 §2.4: interface values in an array under a context and in a field; a class is shared through both.
+import std.io { println };
+
+interface Damageable { mut fn takeDamage(amount: int); fn getHp(): int; }
+
+class Player :: [Damageable] {
+    var hp: int,
+    mut fn takeDamage(amount: int) { this.hp -= amount; }
+    fn getHp(): int { return this.hp; }
+}
+
+struct Crate :: [Damageable] {
+    var hp: int,
+    mut fn takeDamage(amount: int) { this.hp -= amount; }
+    fn getHp(): int { return this.hp; }
+}
+
+class Holder { var target: Damageable }
+
+fn main(): int {
+    let player = Player { hp = 100 };
+    let all: Damageable[] = [player, Crate { hp = 20 }, Player { hp = 30 }];
+    var sum = 0;
+    for (i in 0..all.length()) { sum = sum + all[i].getHp(); }
+    let holder = Holder { target = player };
+    holder.target.takeDamage(40);
+    println(f"{all.length()} {sum} {holder.target.getHp()} {player.getHp()}");
+    return 0;
+}
