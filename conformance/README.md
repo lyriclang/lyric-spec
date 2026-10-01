@@ -2,7 +2,7 @@
 
 Every case is ONE `.lyr` file whose expectations stand in a `//!` header at the top. A runner
 needs no manifest beside the file, and any implementation can build one in an afternoon — the
-reference runner in `tools/run_conformance.py` is under 150 lines.
+reference runner in `tools/run_conformance.py` is under 200 lines.
 
 ## Case format
 
@@ -15,6 +15,9 @@ The header is the leading block of lines starting `//!`. Directives:
 //! stdout:                  expected standard output, byte-exact, LF line ends:
 //! | first line
 //! | second line
+//! stderr:                  the error stream begins with these lines (a debug trace may follow):
+//! | error: first
+//! |   suppressed: second
 //! check                    compile only; expect acceptance in silence
 //! error: LYR-SEM0001       compile only; expect rejection with exactly these codes (repeatable)
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
@@ -25,7 +28,8 @@ The header is the leading block of lines starting `//!`. Directives:
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)
 with exactly the listed error codes — every one reported, none besides them, so a cascade behind
 the one mistake fails the case; warnings are not compared in a rejected case. `check` without
-`error:` expects silence — no diagnostics at all.
+`error:` expects silence — no diagnostics at all. A `|` line is the text after the bar less one
+space, so `|   suppressed: second` keeps the report's two.
 
 ## What a case may use
 

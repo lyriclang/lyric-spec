@@ -99,7 +99,12 @@ written here yet is decided in the design documents, not here.
 3. When no clause covers the value, it goes on as though the `try` were not there: to the
    clauses of a `try` around this one, or out of the function ([§5](#5-the-error-path)).
 4. A clause is not inside its own `try`: what it throws goes past its sister clauses to the next
-   `try` around, or out of the function (E9 C6). `throw e` in a clause throws the value it took.
+   `try` around, or out of the function (E9 C6). `throw e` in a clause throws the value it took;
+   where `e` is the clause's own binding, thrown in the clause itself, it is **the same error
+   going on** (05 E6 O3): the errors suppressed into it stay with it
+   ([§5](#5-the-error-path) rule 5), and so, in the debug profile, does where it was first thrown
+   (§5 rule 3). Any other `throw` — the value under another name, or from a lambda — starts an
+   error of its own.
 5. A type is caught **once** per `try` (`LYR-SEM0141`, E9 C1), and a clause no value can reach is
    refused (`LYR-SEM0142`, C2): a type of it is covered ([§3](#3-the-try-mark-and-coverage) rule 4)
    by a type caught before it — `catch (e: IoError)` above `catch (e: Disk)`, or `Error` above
@@ -126,7 +131,9 @@ written here yet is decided in the design documents, not here.
    clause of an enclosing `try` takes it (E7).
 3. An error that leaves **`main`** ends the program: `error: <message>` on the error stream, then
    `  caused by: <message>` for each `cause()` in the chain and `  suppressed: <message>` for each
-   error appended to it (rule 5), and the **exit code 1** (05 E6 O4) — a panic's is 101.
+   error appended to it (rule 5), and the **exit code 1** (05 E6 O4) — a panic's is 101. In the
+   **debug profile** the report goes on with where the error was thrown, its frames in a panic's
+   trace form (01 E8); the release profile keeps no trace of an error.
 4. A `defer` body runs **where its `defer` was registered**: under the `try`s around that scope,
    not those inside it. A `defer` registered outside a `try` and run by a `return` inside it is
    not that `try`'s to catch; one registered in a `try`'s body is. What the body throws is a site

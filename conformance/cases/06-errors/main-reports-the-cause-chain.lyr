@@ -1,0 +1,29 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | before
+//! stderr:
+//! | error: app
+//! |   caused by: config
+//! |   caused by: disk
+//! since: 5.0.0
+// 06 §5.3: an error that leaves main is reported with a line for each cause() down its chain,
+// and the exit code is 1.
+import std.io { println };
+
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+class Wrap :: [Error] { what: string, inner: Error,
+    fn message(): string { return this.what; }
+    fn cause(): ?Error { return this.inner; }
+}
+
+fn read(): void throws Disk { throw Disk { }; }
+
+fn load(): void throws Wrap {
+    try { read(); } catch (e: Disk) { throw Wrap { what = "config", inner = e }; }
+}
+
+fn main(): void throws Wrap {
+    println("before");
+    try { load(); } catch (e: Wrap) { throw Wrap { what = "app", inner = e }; }
+}
