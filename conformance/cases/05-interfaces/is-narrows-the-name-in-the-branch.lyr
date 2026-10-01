@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 2 7 none
+//! since: 5.0.0
+// 05 §9.4: in the branch the test guards, the name is the tested type — through '&&' as well.
+import std.io { println };
+
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } }
+enum Dir :: [Shape] { Up, Down; fn area(): int { return 0; } }
+
+fn describe(s: Shape): string {
+    if (s is Circle && s.r > 0) { return f"{s.r}"; }
+    if (s is Rect) { return f"{s.w + s.h}"; }
+    return "none";
+}
+
+fn main(): int {
+    println(f"{describe(Circle { r = 2 })} {describe(Rect { w = 3, h = 4 })} {describe(Dir.Up)}");
+    return 0;
+}

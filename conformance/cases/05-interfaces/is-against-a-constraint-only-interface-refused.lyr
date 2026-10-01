@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §9.3: an interface that is no type for a value is no type for a test either.
+interface Shape { fn area(): int; }
+interface Parse { static fn parse(s: string): Self; }
+struct Circle :: [Shape, Parse] { r: int, fn area(): int { return 1; } static fn parse(s: string): Circle { return Circle { r = 1 }; } }
+fn f(s: Shape): bool { return s is Parse; }
+fn main(): int { return 0; }

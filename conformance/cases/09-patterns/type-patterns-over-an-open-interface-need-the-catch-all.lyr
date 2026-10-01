@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 09 §3: the conformers of an interface are an open set; '_' covers the rest.
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
+class Rect :: [Shape] { w: int, fn area(): int { return 2; } }
+fn kind(s: Shape): int {
+    return match (s) { c: Circle => c.r, r: Rect => r.w };
+}
+fn main(): int { return 0; }

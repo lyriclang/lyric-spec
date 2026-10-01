@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 2 7 0
+//! since: 5.0.0
+// 09 §2.12: 'c: Circle' tests the interface value and binds 'c' as a Circle.
+import std.io { println };
+
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } }
+enum Dir :: [Shape] { Up, Down; fn area(): int { return 0; } }
+
+fn kind(s: Shape): int {
+    return match (s) { c: Circle => c.r, r: Rect => r.w + r.h, _ => 0 };
+}
+
+fn main(): int {
+    println(f"{kind(Circle { r = 2 })} {kind(Rect { w = 3, h = 4 })} {kind(Dir.Up)}");
+    return 0;
+}

@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 1 0
+//! since: 5.0.0
+// 09 §2.12: '_: Circle' tests and binds nothing.
+import std.io { println };
+
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } }
+enum Dir :: [Shape] { Up, Down; fn area(): int { return 0; } }
+
+fn isCircle(s: Shape): int {
+    return match (s) { _: Circle => 1, _ => 0 };
+}
+
+fn main(): int {
+    println(f"{isCircle(Circle { r = 2 })} {isCircle(Dir.Up)}");
+    return 0;
+}

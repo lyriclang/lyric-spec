@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0131
+//! since: 5.0.0
+// 05 §9.3: test for null first, then the value.
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
+fn f(s: ?Shape): bool { return s is Circle; }
+fn main(): int { return 0; }
