@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 1 3 6
+//! since: 5.0.0
+// 05 §13.6: 'extend<T> T[]' and 'extend int[]' — the shape binds T, the element type alone adds to int[].
+import std.io { println };
+
+extend<T> T[] {
+    fn first(): T { return this[0]; }
+    fn last(): T { return this[this.length() - 1]; }
+}
+
+extend int[] {
+    fn sum(): int {
+        var s = 0;
+        for (i in 0..this.length()) { s = s + this[i]; }
+        return s;
+    }
+}
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    println(f"{xs.first()} {xs.last()} {xs.sum()}");
+    return 0;
+}

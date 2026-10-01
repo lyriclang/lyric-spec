@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 5 0 true false
+//! since: 5.0.0
+// 05 §13.6: 'extend<T> ?T' — 'this == null' and 'this!' in the block.
+import std.io { println };
+
+extend<T> ?T {
+    fn orElse(v: T): T {
+        if (this == null) { return v; }
+        return this!;
+    }
+    fn some(): bool { return this != null; }
+}
+
+fn main(): int {
+    let o: ?int = 5;
+    let n: ?int = null;
+    println(f"{o.orElse(0)} {n.orElse(0)} {o.some()} {n.some()}");
+    return 0;
+}

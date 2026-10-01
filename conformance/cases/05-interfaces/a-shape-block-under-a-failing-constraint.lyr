@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0134
+//! since: 5.0.0
+// 05 §13.6: the block's constraints are checked for the shape's element.
+struct Foo { n: int }
+extend<T :: [Display]> ?T { fn shown(): string { return "o"; } }
+fn f(o: ?Foo): string { return o.shown(); }
+fn main(): int { return 0; }
