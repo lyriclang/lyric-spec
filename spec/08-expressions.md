@@ -28,7 +28,8 @@ A call names a function and gives it arguments
    position (F3): a call that leaves it out gets the default, and a default in the middle is
    left out by naming what follows. The default is evaluated **per call, in the function's
    scope**, after the arguments before it, and may read the parameters declared before it —
-   `fn span(from: int, to: int = from + 10)`; a later parameter is not in its scope (F2). A
+   `fn span(from: int, to: int = from + 10)`; a later parameter is not in its scope, and
+   neither is `this` (`LYR-SEM0120`) — the receiver is nobody's before the call (F2). A
    parameter without a default that a call gives nothing for is refused (`LYR-SEM0014`).
 3. A call through a function value is positional only: the value's parameters have no names
    (`LYR-SEM0119`).
