@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | opt true false true false true false
+//! | mixed true false true
+//! | struct true false
+//! since: 5.0.0
+// 03 §3.2.7: two optionals are equal when both hold nothing or both hold equal values; a value
+// coerces up on either side; a conforming struct compares through its own equality.
+import std.io { println };
+
+struct P :: [Equatable] { x: int, y: int }
+
+fn main(): int {
+    let a: ?int = 5;
+    let b: ?int = 5;
+    let c: ?int = 6;
+    let none: ?int = null;
+    println(f"opt {a == b} {a == c} {none == null} {a == none} {a != c} {a != b}");
+    println(f"mixed {a == 5} {a == 6} {5 == a}");
+    let p: ?P = P { x = 1, y = 2 };
+    let q: ?P = P { x = 1, y = 2 };
+    let r: ?P = null;
+    println(f"struct {p == q} {p == r}");
+    return 0;
+}

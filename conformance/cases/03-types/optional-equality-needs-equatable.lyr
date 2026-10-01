@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 03 §3.2.7: the optionals compare through their values, and 'NoEq' carries no Equatable.
+struct NoEq { n: int }
+fn f(a: ?NoEq, b: ?NoEq): bool { return a == b; }
+fn main(): int { return 0; }
