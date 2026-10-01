@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §5.4: what a defer body throws is a site of the scope that registered it - here a function
+// that declares nothing.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): void throws Oops { }
+fn tidy(): void {
+    defer try risky();
+}
+fn main(): int { return 0; }

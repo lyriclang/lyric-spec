@@ -12,10 +12,10 @@ value and the error, each in plain sight
 What is thrown, the `throws` set, the `try` mark and what covers a thrown type (S1a); the `try`
 block with its clauses and the error path at run time — propagation, `defer` on the way out,
 `main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a); a clause over
-several types, the set a binding carries and the refusal of a clause no error can reach (S2b).
-Written with M5; the chapter grows with the milestone's slices — a `defer` that throws and `using`
-(S3), panics, `never` and the thrown set of a function type (S4). What is not written here yet is
-decided in the design documents, not here.
+several types, the set a binding carries and the refusal of a clause no error can reach (S2b); a
+`defer` that throws (S3a). Written with M5; the chapter grows with the milestone's slices —
+`using` (S3b), panics, `never` and the thrown set of a function type (S4). What is not written
+here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -119,11 +119,19 @@ decided in the design documents, not here.
    leaving in turn (E1). No frame is skipped; a throw costs what a return costs (01 L5).
 2. On the way out of every scope it leaves, an error runs the scope's **`defer`s**, the last
    registered first, innermost scope first — the same bodies a normal exit runs — before a
-   clause of an enclosing `try` takes it (E7). A `defer` whose body could throw out of it is not
-   written yet: the first error wins and the second is appended (05 E7, with S3).
+   clause of an enclosing `try` takes it (E7).
 3. An error that leaves **`main`** ends the program: `error: <message>` on the error stream, then
-   `  caused by: <message>` for each `cause()` in the chain, and the **exit code 1** (05 E6 O4) —
-   a panic's is 101.
+   `  caused by: <message>` for each `cause()` in the chain and `  suppressed: <message>` for each
+   error appended to it (rule 5), and the **exit code 1** (05 E6 O4) — a panic's is 101.
+4. A `defer` body runs **where its `defer` was registered**: under the `try`s around that scope,
+   not those inside it. A `defer` registered outside a `try` and run by a `return` inside it is
+   not that `try`'s to catch; one registered in a `try`'s body is. What the body throws is a site
+   of that scope ([§3](#3-the-try-mark-and-coverage)).
+5. A `defer` that **throws on a normal exit** — the end of its scope, a `return`, a `break`, a
+   `continue` — ends that exit: the error leaves like any other, and the `defer`s registered
+   before it run all the same. One that **throws while an error is in flight** does not replace
+   it: the **first error wins**, the second is appended to it as **suppressed**, and the remaining
+   `defer`s run (05 E7). Of two that throw on a normal exit, the first that ran wins.
 
 ## 6. The expression forms
 

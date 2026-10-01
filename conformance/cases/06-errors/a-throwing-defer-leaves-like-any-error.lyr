@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | earlier defer ran
+//! | caught first
+//! since: 5.0.0
+// 06 §5.5: a defer that throws on a normal exit ends it - the error leaves like any other, and the
+// defer registered before it runs all the same.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn leave(): int throws [First, Second] {
+    defer println("earlier defer ran");
+    defer try fail(1);
+    return 7;
+}
+
+fn main(): void {
+    try { let n = leave(); println(f"{n}"); } catch (e) { println(f"caught {e.message()}"); }
+}

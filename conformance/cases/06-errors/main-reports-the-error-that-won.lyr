@@ -1,0 +1,22 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §5.3, §5.5: the error that leaves main is the first one; a defer's that failed on the way out
+// is reported below it as suppressed, and the exit code is 1.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn main(): void throws [First, Second] {
+    defer try fail(2);
+    println("before");
+    try fail(1);
+}
