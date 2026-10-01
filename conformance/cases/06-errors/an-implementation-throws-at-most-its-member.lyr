@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 06 §2.4: the member allows 'IoError'; an implementation throwing 'Oops' throws more.
+interface IoError :: [Error] { }
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+interface Source { fn read(): string throws IoError; }
+struct File :: [Source] { fn read(): string throws Oops { return "f"; } }
+fn main(): int { return 0; }

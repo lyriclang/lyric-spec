@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §3.4-5: 'Box<int>' does not cover 'Box<string>' - a set names instances.
+struct Box<T> :: [Error] { v: T, fn message(): string { return "box"; } }
+fn f(): int throws Box<string> { return 1; }
+fn g(): int throws Box<int> { return try f(); }
+fn main(): int { return 0; }

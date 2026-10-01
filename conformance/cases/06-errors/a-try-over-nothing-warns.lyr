@@ -1,0 +1,6 @@
+//! check
+//! warning: LYR-SEM0139
+//! since: 5.0.0
+// 06 §3.2: the mark says a call may fail where none can.
+fn one(): int { return 1; }
+fn main(): int { return try one(); }

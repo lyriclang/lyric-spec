@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 06 §3.1: a call of a throwing function is marked 'try', even where the set covers it.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn f(): int throws Oops { return risky(); }
+fn main(): int { return 0; }

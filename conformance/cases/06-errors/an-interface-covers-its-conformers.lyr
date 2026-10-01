@@ -1,0 +1,11 @@
+//! check
+//! since: 5.0.0
+// 06 §3.4: an interface element covers every type that conforms to it, 'Error' everything thrown.
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+enum Net :: [IoError] { Down; fn message(): string { return "net"; } }
+fn read(): string throws Disk { return "d"; }
+fn fetch(): string throws Net { return "n"; }
+fn both(): string throws IoError { return try read() + fetch(); }
+fn any(): string throws { return try both(); }
+fn main(): void throws { try any(); }

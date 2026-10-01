@@ -1,0 +1,6 @@
+//! check
+//! since: 5.0.0
+// 06 §2.5: 'main' declares a set like any function (08 D18).
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn value(): int throws Oops { return 7; }
+fn main(): int throws Oops { return try value(); }

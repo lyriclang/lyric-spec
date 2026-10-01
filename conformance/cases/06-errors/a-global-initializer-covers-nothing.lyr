@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §3.3: a global's initializer has no set and no handler.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn value(): int throws Oops { return 7; }
+let g: int = try value();
+fn main(): int { return g; }
