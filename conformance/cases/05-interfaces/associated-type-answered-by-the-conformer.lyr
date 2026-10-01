@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 41 x
+//! since: 5.0.0
+// 05 §8.3, §8.4: the conformer answers 'type Item' in its body or in the conformance block, and
+// 'T.Item' through a constraint is that answer.
+import std.io { println };
+
+interface Container { type Item; fn first(): Self.Item; }
+struct IntBox :: [Container] { type Item = int; v: int, fn first(): int { return this.v; } }
+struct StrBox { s: string }
+extend StrBox :: [Container] { type Item = string; fn first(): string { return this.s; } }
+
+fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }
+
+fn main(): int {
+    println(f"{firstOf(IntBox { v = 41 })} {firstOf(StrBox { s = "x" })}");
+    return 0;
+}

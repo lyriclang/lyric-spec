@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §8.6: an interface declaring an associated type is no type for a value, for now.
+interface Container { type Item; fn first(): Self.Item; }
+struct IntBox :: [Container] { type Item = int; v: int, fn first(): int { return this.v; } }
+
+fn main(): int {
+    let c: Container = IntBox { v = 1 };
+    return 0;
+}

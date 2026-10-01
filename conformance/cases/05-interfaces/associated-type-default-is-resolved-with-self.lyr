@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 7
+//! since: 5.0.0
+// 05 §8.2: 'type Out = Self;' answers for a conformer that says nothing, with 'Self' as the conformer.
+import std.io { println };
+
+interface Mapper { type Out = Self; fn mapped(): Self.Out; }
+struct IntBox :: [Mapper] { v: int, fn mapped(): IntBox { return IntBox { v = this.v + 1 }; } }
+
+fn main(): int {
+    let m: IntBox = IntBox { v = 6 }.mapped();
+    println(f"{m.v}");
+    return 0;
+}

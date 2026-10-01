@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0128
+//! since: 5.0.0
+// 05 §8.4: 'T.Nope' where no constraint of 'T' declares an associated type 'Nope'.
+interface Container { type Item; fn first(): Self.Item; }
+fn f<T :: [Container]>(c: T): T.Nope { return c.first(); }
+
+fn main(): int { return 0; }

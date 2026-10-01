@@ -529,6 +529,8 @@ Type parameters, their inference, and what an instance is
    for the trailing ones, resolved where the type is declared — `Self` there is the conforming
    type, so `Vec2 :: [Add]` is `Vec2 :: [Add<Vec2>]`, and the constraint `T :: [Add]` is
    satisfied by either spelling.
+6. A constraint may fix an **associated type** of its interface, `T :: [Iterator<Item = int>]`,
+   and the declaration names one as a type path, `T.Item` ([05 §8](05-interfaces.md#8-associated-types)).
 
 ### 9.2 Inference at a call
 

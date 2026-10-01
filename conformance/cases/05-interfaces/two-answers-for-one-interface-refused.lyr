@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0129
+//! since: 5.0.0
+// 05 §8.3: one answer per type and interface — a second conformance block may not change it.
+interface Container { type Item; fn first(): Self.Item; }
+struct B :: [Container] { type Item = int; v: int, fn first(): int { return this.v; } }
+extend B :: [Container] { type Item = string; }
+
+fn main(): int { return 0; }

@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 3
+//! since: 5.0.0
+// 05 §8.3: a generic conformer answers with its own parameter; at 'Pair<int>' the answer is 'int'.
+import std.io { println };
+
+interface Container { type Item; fn first(): Self.Item; }
+struct Pair<T> :: [Container] { type Item = T; a: T, b: T, fn first(): T { return this.a; } }
+
+fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }
+
+fn main(): int {
+    let n: int = firstOf(Pair<int> { a = 3, b = 4 });
+    println(f"{n}");
+    return 0;
+}

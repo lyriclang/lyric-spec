@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §8.3: 'fn first(): Self.Item' with 'type Item = int' is implemented by 'fn first(): int'.
+interface Container { type Item; fn first(): Self.Item; }
+struct Wrong :: [Container] { type Item = int; v: int, fn first(): string { return "no"; } }
+
+fn main(): int { return 0; }
