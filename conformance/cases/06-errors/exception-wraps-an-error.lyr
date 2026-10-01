@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | config: disk gone
+//! since: 5.0.0
+// 06 §1.4: the ready-made Exception carries a text and, in 'inner', the error it wraps - what its
+// cause() gives.
+import std.io { println };
+
+fn read(): string throws Exception { throw Exception { text = "disk gone" }; }
+
+fn load(): string throws Exception {
+    try { return read(); }
+    catch (e) { throw Exception { text = "config", inner = e }; }
+}
+
+fn main(): void {
+    try { println(load()); }
+    catch (e) {
+        let because = e.cause()!.message();
+        println(f"{e.message()}: {because}");
+    }
+}

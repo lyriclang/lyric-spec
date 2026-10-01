@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | work
+//! | close x
+//! | caught close x failed
+//! | close y
+//! | caught body failed
+//! since: 5.0.0
+// 06 §7.3: an error from close() leaves on a normal exit, and is appended as suppressed while
+// another is in flight - the first wins.
+import std.io { println };
+
+class Res :: [Closeable] {
+    name: string,
+    failing: bool = false,
+
+    fn close(): void throws Exception {
+        println(f"close {this.name}");
+        if (this.failing) { throw Exception { text = f"close {this.name} failed" }; }
+    }
+}
+
+fn open(name: string): Res { return Res { name = name }; }
+fn openFailing(name: string): Res { return Res { name = name, failing = true }; }
+
+fn closeFails(): void throws Exception {
+    using let x = openFailing("x");
+    println("work");
+}
+
+fn bodyFails(): void throws Exception {
+    using let y = openFailing("y");
+    throw Exception { text = "body failed" };
+}
+
+fn main(): void {
+    try { closeFails(); } catch (e) { println(f"caught {e.message()}"); }
+    try { bodyFails(); } catch (e) { println(f"caught {e.message()}"); }
+}

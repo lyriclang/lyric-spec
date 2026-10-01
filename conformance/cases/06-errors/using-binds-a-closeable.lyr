@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0143
+//! since: 5.0.0
+// 06 §7.2: what 'using' binds is a Closeable - a close() of its own is not enough.
+class Plain { fn close(): void { } }
+fn main(): int {
+    using let p = Plain { };
+    return 0;
+}

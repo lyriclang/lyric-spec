@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0144
+//! since: 5.0.0
+// 06 §7.4: a Closeable a call makes and an expression statement drops is never closed.
+class Res :: [Closeable] { fn close(): void throws Error { } }
+fn open(): Res { return Res { }; }
+fn main(): int {
+    open();
+    return 0;
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §7.2: the close is a site of the scope - what it throws is covered as any site is, and this
+// function declares nothing.
+enum Gone :: [Error] { Away; fn message(): string { return "gone"; } }
+class Res :: [Closeable] { fn close(): void throws Gone { } }
+fn tidy(): void {
+    using let r = Res { };
+}
+fn main(): int { return 0; }
