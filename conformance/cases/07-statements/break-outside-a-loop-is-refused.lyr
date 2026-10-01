@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0147
+//! since: 5.0.0
+// 07 §1.4: a 'break' outside every loop is refused.
+fn main(): void {
+    break;
+}

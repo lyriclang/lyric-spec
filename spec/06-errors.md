@@ -248,8 +248,9 @@ with M5. What is not written here yet is decided in the design documents, not he
    unreachable code"): never` (`LYR-RT0012`); and `todo(message = "not implemented yet"): never`
    (`LYR-RT0013`).
 2. **`never`** is the type of what gives no value (05 E12): a `throw`, a call of a function that
-   returns `never` — `panic`, `unreachable`, `todo` among them — an `if` or `match` whose every
-   branch is one, and an operator over one alone. It **fits every type** where a value is wanted,
+   returns `never` — `panic`, `unreachable`, `todo` among them — a `loop` no `break` leaves
+   ([07 §1](07-statements.md#1-loop-and-the-jumps)), an `if` or `match` whose every branch is
+   one, and an operator over one alone. It **fits every type** where a value is wanted,
    an operand included: `let n: int = found ?? unreachable();`, and `ok || fail("why")` is a
    `bool`.
 3. `never` is written **only as a return type**: the whole return type of a function, a lambda or
@@ -258,6 +259,6 @@ with M5. What is not written here yet is decided in the design documents, not he
    cannot exist and is refused (`LYR-SEM0145`); `?never` and `never[]` are refused in a return
    position too. `try?` over an expression of type `never` would be worth `?never` and is refused
    the same way.
-4. A function that returns `never` **does not return**: every path ends in a `throw`, a panic, or
-   a call that does not return (`LYR-SEM0017` otherwise), and a `return` in it is refused unless
-   what it returns does not return either (`LYR-SEM0146`).
+4. A function that returns `never` **does not return**: every path ends in a `throw`, a panic, a
+   call that does not return or a `loop` no `break` leaves (`LYR-SEM0017` otherwise), and a
+   `return` in it is refused unless what it returns does not return either (`LYR-SEM0146`).

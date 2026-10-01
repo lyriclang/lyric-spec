@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 3
+//! since: 5.0.0
+// 07 §1.1: 'loop' is a word only before its '{' — elsewhere a name like any other.
+import std.io { println };
+
+fn main(): void {
+    let loop = 2;
+    println(f"{loop + 1}");
+}

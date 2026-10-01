@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 4
+//! since: 5.0.0
+// 07 §1.4: a lambda's body is a function of its own — the labels of the loops around the lambda
+// name nothing in it, and a name after 'break' there is a value.
+import std.io { println };
+
+fn main(): void {
+    let outer = 4;
+    var n = 0;
+    outer: while (n < 1) {
+        let first = (): int => loop { break outer; };
+        println(f"{first()}");
+        n += 1;
+        continue outer;
+    }
+}

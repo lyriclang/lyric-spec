@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0018
+//! since: 5.0.0
+// 07 §1.5: a 'do' loop is left by every 'break' — one before the assignment leaves the variable
+// unassigned after the loop.
+import std.io { println };
+
+fn main(): void {
+    var n: int;
+    var i = 0;
+    do {
+        i += 1;
+        if (i == 2) { break; }
+        n = i;
+    } while (i < 5);
+    println(f"{n}");
+}
