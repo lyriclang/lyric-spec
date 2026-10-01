@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0149
+//! since: 5.0.0
+// 07 §1.2: the breaks of one 'loop' give a value all, or none.
+fn indexOf(xs: int[], wanted: int): int {
+    var i = 0;
+    let at = loop {
+        if (i == xs.length()) { break; }
+        if (xs[i] == wanted) { break i; }
+        i += 1;
+    };
+    return at;
+}
+
+fn main(): void { }

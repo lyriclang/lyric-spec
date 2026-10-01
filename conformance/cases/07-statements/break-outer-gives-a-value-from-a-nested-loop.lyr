@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 39
+//! since: 5.0.0
+// 07 §1.3: 'break outer value' leaves the labeled loop from a loop nested in it, with the value.
+import std.io { println };
+
+fn pairSum(target: int): int {
+    var a = 0;
+    return outer: loop {
+        var b = 0;
+        loop {
+            if (a + b == target) { break outer a * 10 + b; }
+            if (b == 9) { break; }
+            b += 1;
+        }
+        a += 1;
+    };
+}
+
+fn main(): void {
+    println(f"{pairSum(12)}");
+}

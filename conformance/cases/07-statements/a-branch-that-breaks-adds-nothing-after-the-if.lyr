@@ -1,0 +1,15 @@
+//! check
+//! since: 5.0.0
+// 07 §1.5: a branch that does not complete adds nothing to what follows the 'if' — after it, the
+// variable is assigned on the one way on.
+import std.io { println };
+
+fn main(): void {
+    var last: int;
+    var i = 0;
+    loop {
+        if (i < 3) { last = i; } else { break; }
+        println(f"{last}");
+        i += 1;
+    }
+}

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0102
+//! since: 5.0.0
+// 07 §1.3: a label repeating one around it is refused — a jump to it would be ambiguous.
+fn main(): void {
+    outer: loop {
+        outer: loop { break outer; }
+    }
+}

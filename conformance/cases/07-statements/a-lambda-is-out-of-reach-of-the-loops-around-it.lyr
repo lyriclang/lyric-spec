@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0147
+//! since: 5.0.0
+// 07 §1.4: a lambda's body is a function of its own — a 'break' in it leaves no loop around the
+// lambda.
+fn main(): void {
+    var n = 0;
+    while (n < 3) {
+        let stop = () => { break; };
+        n += 1;
+    }
+}

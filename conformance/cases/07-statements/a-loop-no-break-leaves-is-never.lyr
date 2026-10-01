@@ -1,0 +1,20 @@
+//! check
+//! since: 5.0.0
+// 07 §1.2: a 'loop' no 'break' leaves is worth 'never' — a function whose body ends in one needs
+// no 'return', one that returns 'never' included, and the loop fits where a value is wanted.
+import std.io { println };
+
+fn serve(): never {
+    loop { println("tick"); }
+}
+
+fn count(): int {
+    var n = 0;
+    loop { n += 1; }
+}
+
+fn main(): void {
+    let n: int = if (count() > 0) 1 else loop { };
+    println(f"{n}");
+    serve();
+}

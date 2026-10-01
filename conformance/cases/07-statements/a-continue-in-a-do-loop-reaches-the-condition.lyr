@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0018
+//! since: 5.0.0
+// 07 §1.5: a 'do' loop reaches its condition from every 'continue' — one before the assignment
+// reaches it with the variable unassigned.
+fn main(): void {
+    var n: int;
+    var i = 0;
+    do {
+        i += 1;
+        if (i == 1) { continue; }
+        n = i;
+    } while (n < 5);
+}

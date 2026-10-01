@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 25
+//! | 3
+//! | 2
+//! | 1
+//! since: 5.0.0
+// 07 §1.1: 'loop' at the start of a statement is the statement, no ';' after its block; a
+// 'continue' starts its next pass.
+import std.io { println };
+
+fn main(): void {
+    var i = 0;
+    var sum = 0;
+    loop {
+        i += 1;
+        if (i > 9) { break; }
+        if (i % 2 == 0) { continue; }
+        sum += i;
+    }
+    println(f"{sum}");
+    var k = 3;
+    loop {
+        if (k == 0) { break; }
+        println(f"{k}");
+        k -= 1;
+    }
+}
