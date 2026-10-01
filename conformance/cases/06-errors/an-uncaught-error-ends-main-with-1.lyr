@@ -1,0 +1,18 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §5.3: the error leaves main; the program ends with exit code 1 (its report goes to the error
+// stream).
+import std.io { println };
+
+class Wrap :: [Error] { what: string, fn message(): string { return this.what; } }
+fn config(): int throws Wrap { throw Wrap { what = "config" }; }
+
+fn main(): int throws Wrap {
+    println("before");
+    let n = try config();
+    println(f"not reached {n}");
+    return 0;
+}

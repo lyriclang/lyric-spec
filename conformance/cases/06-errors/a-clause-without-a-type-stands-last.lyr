@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0035
+//! since: 5.0.0
+// 06 §4.2: a clause without a type takes everything - a clause after it could never run.
+import std.io { println };
+
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+fn read(): int throws Disk { throw Disk { }; }
+
+fn main(): void {
+    try { let n = read(); println(f"{n}"); }
+    catch (_) { println("any"); }
+    catch (_: Disk) { println("disk"); }
+}

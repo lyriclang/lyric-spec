@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | defer 3
+//! | defer 2
+//! | defer 1
+//! | caught 7 at 3
+//! since: 5.0.0
+// 06 §5.1-2: the throw leaves three frames, each running its defers on the way out, and the
+// clause at the top takes it with its payload.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty, BadDigit(char, int);
+    fn message(): string { return "parse"; }
+}
+
+fn level3(): int throws ParseError {
+    defer println("defer 3");
+    throw ParseError.BadDigit('7', 3);
+}
+fn level2(): int throws ParseError {
+    defer println("defer 2");
+    let v = try level3();
+    println("not reached");
+    return v;
+}
+fn level1(): int throws ParseError {
+    defer { println("defer 1"); }
+    return try level2() + 1;
+}
+
+fn main(): int {
+    try {
+        let n = level1();
+        println(f"not reached {n}");
+    } catch (e: ParseError) {
+        match (e) {
+            .BadDigit(ch, at) => println(f"caught {ch} at {at}"),
+            .Empty => println("empty"),
+        }
+    }
+    return 0;
+}
