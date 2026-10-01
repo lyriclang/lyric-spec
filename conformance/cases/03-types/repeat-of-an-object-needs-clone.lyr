@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0136
+//! since: 5.0.0
+// 03 §5.1.2: a class element without Clone is not repeated — arrayOf is the way out.
+class Plain { v: int }
+fn f(): int { let xs = [Plain { v = 1 }] * 2; return xs.length(); }
+fn main(): int { return 0; }

@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | repeat 3 1 0 0 false
+//! | nested 2 5 0
+//! since: 5.0.0
+// 03 §5.1.2: '[x] * n' over an object clones every slot — writing one slot leaves the others,
+// and two slots are two objects; a struct holding an array clones the array too.
+import std.io { println };
+
+class Cell :: [Clone] { var v: int }
+struct Holder :: [Clone] { items: int[], n: int }
+
+fn main(): int {
+    let cells = [Cell { v = 1 }] * 3;
+    cells[0].v = 0;
+    println(f"repeat {cells.length()} {cells[1].v} {cells[0].v} {cells[2].v - 1} {same(cells[0], cells[1])}");
+    let hs = [Holder { items = [1, 2], n = 5 }] * 2;
+    hs[0].items[0] = 0;
+    println(f"nested {hs.length()} {hs[1].n} {hs[0].items[0] + (hs[1].items[0] - 1)}");
+    return 0;
+}

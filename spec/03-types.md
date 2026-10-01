@@ -257,6 +257,12 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
 6. A narrowed name is the value where it lies, not a copy of it: through a narrowed `var` of
    type `?S`, with `S` a struct, a `var` field of the struct is written in place
    ([§2.2](#22-fields-and-places)).
+7. **Equality.** `a == b` on two `?T` is true when both hold nothing, or both hold a value and
+   the values are equal through `T`'s own equality ([05 §12](05-interfaces.md) rule 5 — the
+   scalars natively); `!=` is its negation. A `T` on one side coerces up to `?T` (§3.1): `x == 5`
+   with `x: ?int` asks whether `x` holds a 5. A `T` without `Equatable` gives its optional no
+   equality (`LYR-SEM0059`). There is **no ordering** on an optional: `<` and its siblings are
+   refused (`LYR-SEM0003`), and `null` orders with nothing.
 
 ### 3.3 `??`, `!` and `?.`
 
@@ -339,8 +345,11 @@ Elements in a row: behind a reference, through a view, or as a value
    `[x] * n` builds an array of `n` elements each a copy of `x` — a value copied, a string
    shared — and panics with `LYR-RT0007` when `n` is negative; `xs * n` is the only order.
    `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
-   An element that is or holds a class or an array is repeated by `clone` ([05](05-interfaces.md)),
-   never shared into every slot.
+   An element that is or holds an object — a class, an array, a view, a function value, an
+   interface value, directly or inside a struct, an enum, a tuple, an optional or an inline
+   array — is repeated by **`clone`** ([05 §14](05-interfaces.md)), never shared into every slot:
+   its type conforms to `Clone`, or the repetition is refused with `arrayOf` as the way out
+   (`LYR-SEM0136`). A string is shared; nobody can tell.
 3. `xs.length()` is the length, a **call** with its parentheses like every length in the
    language ([10 N8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md));
    the bare name is refused (`LYR-SEM0012`). The length and the index are the two primitives of
