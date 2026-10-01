@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 5
+//! | caught negative
+//! | 0
+//! since: 5.0.0
+// 06 §8.5: a lambda no position types throws what its body lets escape - and nothing a 'try'
+// inside it takes.
+import std.io { println };
+
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn check(n: int): int throws Negative {
+    if (n < 0) { throw Negative { }; }
+    return n;
+}
+
+fn main(): void {
+    let g = (n: int): int => try check(n);
+    try {
+        println(f"{g(5)}");
+        println(f"{g(-5)}");
+    } catch (e: Negative) {
+        println(f"caught {e.message()}");
+    }
+    let quiet = (n: int): int => try check(n) catch (_: Negative) 0;
+    println(f"{quiet(-1)}");
+}

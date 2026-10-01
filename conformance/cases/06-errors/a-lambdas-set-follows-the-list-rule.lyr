@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0049
+//! since: 5.0.0
+// 06 §8.5: several types in a lambda's set are written in brackets.
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn main(): void {
+    let g = (n: int): int throws A, B => n;
+}

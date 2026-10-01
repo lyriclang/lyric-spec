@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §8.6: an argument that throws several types binds 'E' to 'Error' (the K7 join), which a set
+// naming the two does not cover.
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn both(n: int): int throws [A, B] {
+    if (n < 0) { throw A { }; }
+    if (n > 9) { throw B { }; }
+    return n;
+}
+
+fn twice<T, E :: [Error]>(x: T, f: fn(T) -> T throws E): T throws E {
+    let y = try f(x);
+    return try f(y);
+}
+
+fn run(): int throws [A, B] {
+    return try twice(1, both);
+}
+
+fn main(): void { }

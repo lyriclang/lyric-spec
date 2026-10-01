@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §8.5: a set the lambda writes covers its body like any declared set.
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+class Other :: [Error] { fn message(): string { return "other"; } }
+
+fn check(n: int): int throws Negative {
+    if (n < 0) { throw Negative { }; }
+    return n;
+}
+
+fn main(): void {
+    let g = (n: int): int throws Other => try check(n);
+}

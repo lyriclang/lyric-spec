@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §8.2: what a call through a function value throws is covered - by a clause around it or by
+// the set of the function it stands in.
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn apply(f: fn(int) -> int throws Negative, n: int): int {
+    return try f(n);
+}
+
+fn main(): void { }

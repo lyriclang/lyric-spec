@@ -1,0 +1,17 @@
+//! check
+//! warning: LYR-SEM0139
+//! since: 5.0.0
+// 06 §8.6: a call whose set comes out empty throws nothing; a 'try' over it is warned about.
+import std.io { println };
+
+fn twice<T, E :: [Error]>(x: T, f: fn(T) -> T throws E): T throws E {
+    let y = try f(x);
+    return try f(y);
+}
+
+fn plain(n: int): int { return n + 1; }
+
+fn main(): void {
+    let v = try twice(5, plain);
+    println(f"{v}");
+}

@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 3
+//! | too big
+//! since: 5.0.0
+// 06 §8.4: a throwing method named through its object is a value of a type that throws.
+import std.io { println };
+
+class TooBig :: [Error] { fn message(): string { return "too big"; } }
+
+class Limit { max: int,
+    fn take(n: int): int throws TooBig {
+        if (n > this.max) { throw TooBig { }; }
+        return n;
+    }
+}
+
+fn main(): void {
+    let limit = Limit { max = 10 };
+    let take = limit.take;
+    try {
+        println(f"{take(3)}");
+        println(f"{take(30)}");
+    } catch (e: TooBig) {
+        println(e.message());
+    }
+}

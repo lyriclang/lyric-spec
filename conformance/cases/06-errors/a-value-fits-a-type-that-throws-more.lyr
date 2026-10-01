@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 2
+//! | 2
+//! | caught a
+//! | 4
+//! since: 5.0.0
+// 06 §8.3: a function value fits a type that throws more - from one that throws nothing, and from
+// a part of the set.
+import std.io { println };
+
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn plain(n: int): int { return n + 1; }
+
+fn onlyA(n: int): int throws A {
+    if (n < 0) { throw A { }; }
+    return n;
+}
+
+fn run(f: fn(int) -> int throws [A, B], n: int): void {
+    try { println(f"{f(n)}"); } catch (e) { println(f"caught {e.message()}"); }
+}
+
+fn main(): void {
+    run(plain, 1);
+    run(onlyA, 2);
+    run(onlyA, -2);
+    let g: fn(int) -> int throws A = plain;
+    run(g, 3);
+}

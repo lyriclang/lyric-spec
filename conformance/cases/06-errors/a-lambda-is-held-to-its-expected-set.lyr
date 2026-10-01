@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §8.5: a lambda whose position expects a function type throws that type's set, and its body
+// is held to it.
+import std.io { println };
+
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+class Other :: [Error] { fn message(): string { return "other"; } }
+
+fn other(n: int): int throws Other { return n; }
+
+fn apply(f: fn(int) -> int throws Negative, n: int): int throws Negative {
+    return try f(n);
+}
+
+fn main(): void {
+    let v = try? apply(n => try other(n), 1);
+    if (v == null) { println("none"); }
+}
