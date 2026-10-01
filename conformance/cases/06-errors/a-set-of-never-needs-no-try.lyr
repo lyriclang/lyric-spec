@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 7
+//! since: 5.0.0
+// 06 §8.6: an argument that throws nothing binds 'E' to 'never', and the call throws nothing - it
+// needs no 'try'.
+import std.io { println };
+
+fn twice<T, E :: [Error]>(x: T, f: fn(T) -> T throws E): T throws E {
+    let y = try f(x);
+    return try f(y);
+}
+
+fn plain(n: int): int { return n + 1; }
+
+fn main(): void {
+    println(f"{twice(5, plain)}");
+}

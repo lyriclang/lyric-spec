@@ -13,9 +13,10 @@ What is thrown, the `throws` set, the `try` mark and what covers a thrown type (
 block with its clauses and the error path at run time — propagation, `defer` on the way out,
 `main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a); a clause over
 several types, the set a binding carries and the refusal of a clause no error can reach (S2b); a
-`defer` that throws (S3a); `using` and `Exception` (S3b). Written with M5; the chapter grows with
-the milestone's slices — panics, `never` and the thrown set of a function type (S4). What is not
-written here yet is decided in the design documents, not here.
+`defer` that throws (S3a); `using` and `Exception` (S3b); where an error was thrown, and a rethrow
+that keeps it (S3c); the thrown set of a function type (S4a). Written with M5; the chapter grows
+with the milestone's slices — panics and `never` (S4b). What is not written here yet is decided in
+the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -53,9 +54,8 @@ written here yet is decided in the design documents, not here.
 5. `fn main()` may declare `throws` ([08 D18](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)),
    like any function; its return type is `int` or `void`, with or without `args: string[]`
    (`LYR-SEM0021`).
-6. *(Informative.)* A function value of a throwing function and a lambda that throws wait for
-   the thrown set of a function type (T17); until then the former is refused (`LYR-SEM0037`) and
-   a lambda's body catches what it calls.
+6. A **function type** has a set too, `fn(string) -> int throws ParseError`: a function value and
+   a lambda throw what their type says ([§8](#8-function-values-that-throw)).
 
 ## 3. The `try` mark and coverage
 
@@ -144,25 +144,6 @@ written here yet is decided in the design documents, not here.
    it: the **first error wins**, the second is appended to it as **suppressed**, and the remaining
    `defer`s run (05 E7). Of two that throw on a normal exit, the first that ran wins.
 
-## 7. Closing: `using`
-
-1. **`using let f = e;`** binds `f` like a `let` and **closes** it — calls `f.close()` — when its
-   scope is left, on every way out but a panic, in the scope's one LIFO list with its `defer`s
-   (05 E7 R2): `using let a = …; defer d; using let b = …;` closes `b`, runs `d`, closes `a`.
-   `using var`, and a `using` without one name and a value, are refused (`LYR-PAR0052`). `using`
-   is a word only before `let` or `var`.
-2. What `using` binds is a **`Closeable`** of `std.core`,
-   `interface Closeable { fn close(): void throws Error; }` (`LYR-SEM0143`, R6). The close is a
-   site of the scope, `using` its mark: what `close()` throws on the bound type is covered as any
-   site is ([§3](#3-the-try-mark-and-coverage)).
-3. An error from `close()` is a `defer`'s error ([§5](#5-the-error-path) rule 5, R4): on a normal
-   exit it leaves, while an error is in flight it is appended to it as suppressed.
-4. A `Closeable` nothing closes is warned about (`LYR-SEM0144`, R3): a call's result an expression
-   statement drops, or a plain `let` used only to call its other methods — not closed, not
-   `using`-bound, not stored, returned or passed on.
-5. *(Informative.)* A use after the close is a run-time error once the library's types track it
-   (R5); a `for` loop closes a `Closeable` iterator (R7) with the iterators.
-
 ## 6. The expression forms
 
 1. **`try? e`** is worth `?T` for an `e` of type `T`: the value, or **`null`** when something
@@ -192,3 +173,66 @@ written here yet is decided in the design documents, not here.
 6. *(Informative.)* Each form opens a dispatch of its own, as the block does: `try?` clears the
    error and gives `null` there, `try!` panics there, the clauses are tested there. Nothing is
    unwound; the cost is the block's (§4 rule 7, §5 rule 1).
+
+## 7. Closing: `using`
+
+1. **`using let f = e;`** binds `f` like a `let` and **closes** it — calls `f.close()` — when its
+   scope is left, on every way out but a panic, in the scope's one LIFO list with its `defer`s
+   (05 E7 R2): `using let a = …; defer d; using let b = …;` closes `b`, runs `d`, closes `a`.
+   `using var`, and a `using` without one name and a value, are refused (`LYR-PAR0052`). `using`
+   is a word only before `let` or `var`.
+2. What `using` binds is a **`Closeable`** of `std.core`,
+   `interface Closeable { fn close(): void throws Error; }` (`LYR-SEM0143`, R6). The close is a
+   site of the scope, `using` its mark: what `close()` throws on the bound type is covered as any
+   site is ([§3](#3-the-try-mark-and-coverage)).
+3. An error from `close()` is a `defer`'s error ([§5](#5-the-error-path) rule 5, R4): on a normal
+   exit it leaves, while an error is in flight it is appended to it as suppressed.
+4. A `Closeable` nothing closes is warned about (`LYR-SEM0144`, R3): a call's result an expression
+   statement drops, or a plain `let` used only to call its other methods — not closed, not
+   `using`-bound, not stored, returned or passed on.
+5. *(Informative.)* A use after the close is a run-time error once the library's types track it
+   (R5); a `for` loop closes a `Closeable` iterator (R7) with the iterators.
+
+## 8. Function values that throw
+
+1. A **function type** may say what a call of it throws, after its return type and under the
+   rules of a function's clause ([§2](#2-the-throws-set)): `fn(string) -> int throws ParseError`,
+   `fn() -> void throws [IoError, ParseError]`, the bare `throws` for `Error`
+   ([03 T17](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+   Without it the type throws nothing. The set is part of the type, as a set: `throws [A, B]` and
+   `throws [B, A]` are one type, `fn() -> int` and `fn() -> int throws A` two. The **nearest**
+   function type takes the `throws` after it — `fn make(): fn() -> int throws E` returns a
+   throwing function and throws nothing itself — and a parenthesized return gives it to the outer
+   one, `fn make(): (fn() -> int) throws E`. After one type a comma ends the function type, as in a
+   parameter list; several are written in brackets.
+2. A **call through a value** of such a type is a site like the call of a throwing function: it is
+   marked ([§3](#3-the-try-mark-and-coverage) rule 1), and its set is covered (rule 3).
+3. A function value **coerces** to a function type that throws more: the same parameters and
+   return, and every type of its set covered by the target's (05 E2 K6) — `fn(int) -> int` where
+   `fn(int) -> int throws E` is expected, `throws A` where `throws [A, B]` is. Never the other way:
+   a value that may throw does not fit a type that throws less (`LYR-SEM0001`). The parameters and
+   the return still match exactly ([03 §8.1](03-types.md#81-the-type)).
+4. A throwing **function or method named as a value** has its set in its type, in the instance's
+   terms ([§3](#3-the-try-mark-and-coverage) rule 5): `check`, declared
+   `fn check(n: int): int throws Negative`, is a `fn(int) -> int throws Negative`, and `limit.take`
+   bound to its object likewise ([03 §8.4](03-types.md#84-functions-and-methods-as-values)).
+5. A **lambda** throws what its type says (05 E2 K3). The parenthesized form may write the set
+   after its return type, `(s: string): int throws ParseError => try parse(s)`, and several types
+   in brackets (`LYR-PAR0049`); otherwise a position that expects a function type gives the set,
+   and the body is held to it (`LYR-SEM0034`); where neither fixes it, the set is what the body lets
+   escape — the types its sites throw past every `try` inside it. The function around the lambda
+   covers nothing of it: the lambda runs later.
+6. A **type parameter** may stand as the set, `throws E` with `E :: [Error]`
+   ([§1](#1-what-is-thrown) rule 2, `LYR-SEM0030`), and is **inferred** at a call from the
+   argument's set (05 E2 K4): a set of none binds `never`, one type binds it, several bind `Error`
+   (the K7 join) — `fn map<T, U, E :: [Error]>(xs: T[], f: fn(T) -> U throws E): U[] throws E`
+   throws what `f` throws. Where several arguments could bind it, one binding stands, as for any
+   type parameter ([03 §9.2](03-types.md#92-inference-at-a-call)), and an argument that throws
+   beyond it is refused there. An `E` bound to `never` names nothing: a call
+   whose set comes out empty throws nothing, needs no `try`, and a `try` over it is warned about
+   (`LYR-SEM0139`).
+7. *(Informative.)* A function value is two words, code and environment
+   ([03 §8.1](03-types.md#81-the-type)); the code takes its caller's error slot whether its type
+   throws or not, so the coercion of rule 3 changes nothing at run time and wraps nothing, and code
+   that cannot throw never writes the slot. An instance whose `E` is `never` is compiled as a
+   function that does not throw.

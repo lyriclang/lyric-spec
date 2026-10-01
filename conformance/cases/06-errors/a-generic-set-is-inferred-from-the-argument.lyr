@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 40
+//! | caught negative
+//! since: 5.0.0
+// 06 §8.6: a type parameter standing as a function type's set is inferred from the argument -
+// here 'Negative', so the call throws it.
+import std.io { println };
+
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn check(n: int): int throws Negative {
+    if (n < 0) { throw Negative { }; }
+    return n;
+}
+
+fn twice<T, E :: [Error]>(x: T, f: fn(T) -> T throws E): T throws E {
+    let y = try f(x);
+    return try f(y);
+}
+
+fn main(): void {
+    try {
+        println(f"{twice(10, (n: int): int => try check(n) * 2)}");
+        println(f"{twice(-1, (n: int): int => try check(n) * 2)}");
+    } catch (e: Negative) {
+        println(f"caught {e.message()}");
+    }
+}

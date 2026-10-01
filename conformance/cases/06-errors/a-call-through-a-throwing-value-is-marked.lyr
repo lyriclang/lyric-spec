@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 06 §8.2: a call through a value whose type throws is marked, as every throwing call is.
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn apply(f: fn(int) -> int throws Negative, n: int): int throws Negative {
+    return f(n);
+}
+
+fn main(): void { }

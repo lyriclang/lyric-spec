@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0030
+//! since: 5.0.0
+// 06 §8.6: a type parameter stands in a set only constrained to 'Error' - what is thrown is one.
+fn run<E>(f: fn() -> void throws E): void throws E {
+    try f();
+}
+
+fn main(): void { }

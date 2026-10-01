@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 7
+//! | caught negative
+//! since: 5.0.0
+// 06 §8.1, §8.2, §8.4: a function type may say what a call of it throws; a throwing function is a
+// value of such a type, and a call through it is marked and covered like a call of the function.
+import std.io { println };
+
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn check(n: int): int throws Negative {
+    if (n < 0) { throw Negative { }; }
+    return n;
+}
+
+fn apply(f: fn(int) -> int throws Negative, n: int): int throws Negative {
+    return try f(n);
+}
+
+fn main(): void {
+    try {
+        println(f"{apply(check, 7)}");
+        println(f"{apply(check, -7)}");
+    } catch (e: Negative) {
+        println(f"caught {e.message()}");
+    }
+}

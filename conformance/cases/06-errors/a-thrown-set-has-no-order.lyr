@@ -1,0 +1,11 @@
+//! check
+//! since: 5.0.0
+// 06 §8.1: the set of a function type is a set - the order of its types is no part of the type.
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn same(f: fn() -> void throws [A, B]): fn() -> void throws [B, A] {
+    return f;
+}
+
+fn main(): void { }

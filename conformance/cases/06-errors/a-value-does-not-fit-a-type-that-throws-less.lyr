@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 06 §8.3: never the other way - a value that may throw does not fit a type that throws less.
+class A :: [Error] { fn message(): string { return "a"; } }
+
+fn onlyA(n: int): int throws A { return n; }
+
+fn main(): void {
+    let f: fn(int) -> int = onlyA;
+}

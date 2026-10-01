@@ -460,9 +460,12 @@ Functions as values, and the lambdas that make them
 ### 8.1 The type
 
 1. `fn(A, B) -> R` is the type of a function value taking `A` and `B` and answering `R`;
-   `fn() -> void` takes nothing and answers nothing. A free function, a lambda and a method
-   bound to its object are values of it alike (V8): what a value of the type is made of is not
-   observable. The type has no variance: `fn(int) -> int` and `fn(int8) -> int` are two types.
+   `fn() -> void` takes nothing and answers nothing; `fn(A) -> R throws E` may throw, its set part
+   of the type ([06 §8](06-errors.md#8-function-values-that-throw)). A free function, a lambda and
+   a method bound to its object are values of it alike (V8): what a value of the type is made of is
+   not observable. The type has no variance: `fn(int) -> int` and `fn(int8) -> int` are two types.
+   That a value throwing less fits a type throwing more is a coercion of its own (06 §8 rule 3), not
+   a variance.
 2. A value of a function type is **called** with `f(a, b)`; it is copied by a binding, held in
    a field, an array or an optional, passed and returned. Two function values are not compared.
 3. *(Informative.)* A function value is a pointer to the code and the environment it runs in,
