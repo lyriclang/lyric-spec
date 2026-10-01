@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13.4: a block on one instance beside the generic block that reaches it.
+class List<T> { items: T[] }
+extend<T :: [Display]> List<T> :: [Display] { fn show(): string { return "list"; } }
+extend List<int> :: [Display] { fn show(): string { return "ints"; } }
+fn main(): int { return 0; }

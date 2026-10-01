@@ -10,11 +10,12 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3, S4, S4b, S5a, S5b and S6; the chapter grows with the milestone's slices — generic
-extends (T7), synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value
-form `Iterator<Item = int>` is not written yet; of the operators (D6, [§12](#12-the-operator-interfaces))
-`in`, `[]` and the conversions `From`/`Into` wait for the collections. What is not written here
-yet is decided in the design documents, not here.
+M4 S1, S3, S4, S4b, S5a, S5b, S6 and S7a; the chapter grows with the milestone's slices —
+extends on the built-in constructors (T7 X2, S7b), synthesis (D7). Of the associated types (T6,
+[§8](#8-associated-types)) the value form `Iterator<Item = int>` is not written yet; of the
+operators (D6, [§12](#12-the-operator-interfaces)) `in`, `[]` and the conversions `From`/`Into`
+wait for the collections. What is not written here yet is decided in the design documents, not
+here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -246,3 +247,31 @@ yet is decided in the design documents, not here.
    ([§8](#8-associated-types) rule 5).
 8. `{x}` in an f-string renders through `Display { fn show(): string; }`; the scalars render
    natively and conform besides.
+
+## 13. Generic extends
+
+1. An extend block may carry **type parameters** of its own, `extend<T> List<T> { … }`
+   (03 T7 X1), with constraints as a function's: `extend<T :: [Display]> List<T> { … }`. The
+   target is a named type at the block's parameters, or one instance of it, `extend Box<int> { … }`;
+   an array, an optional, a tuple or a function type is no target yet (`LYR-SEM0047`, X2 follows).
+   In the block, `this` is the target as written; `Self` stands for a plain target only.
+2. A member of such a block is reached on every receiver the target **matches**: the receiver
+   binds the parameters — `List<int>.first()` is an `int` — and the block's constraints must
+   hold for what it bound; where they do not, the member is not there (`LYR-SEM0134`). A block
+   on one instance adds to that instance alone (`LYR-SEM0012` elsewhere).
+3. **Conditional conformance.** `extend<T :: [Display]> List<T> :: [Display] { … }` gives the
+   conformance to every instance whose arguments satisfy the block's constraints and to no
+   other: `List<int>` is a `Display`, `List<Foo>` is not (`LYR-SEM0001`) — the form the
+   library's containers take. A block on one instance conforms that instance alone. The
+   signatures are checked at the block's target (`List<T>` with the block's `T`), as
+   [§1](#1-interfaces-and-conformance) checks them at the type.
+4. **Coherence** (X3, X4): one conformance per **type instance and interface instance** in the
+   whole program, from whichever site — the type's own list, a block, a generic block. Two sites
+   that could meet on one instance are refused where the second stands (`LYR-SEM0133`):
+   `extend List<int> :: [Display]` beside `extend<T :: [Display]> List<T> :: [Display]`, a block
+   beside the type's own declaration, two generic blocks over the same target. There is **no
+   specialization**; two blocks on instances that never meet (`Box<int>`, `Box<string>`) stand.
+   There is no orphan rule: a block may stand in any module.
+5. *(Informative.)* A generic block's member is compiled per receiver instance, as a method of
+   a generic type is; a table row for a conformance a block gives is built for the instances
+   the program uses it on.

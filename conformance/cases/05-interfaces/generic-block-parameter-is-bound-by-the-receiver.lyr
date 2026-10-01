@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 1 a 2
+//! since: 5.0.0
+// 05 §13.2: 'extend<T> List<T>' — 'first' is a T, bound by the receiver.
+import std.io { println };
+
+class List<T> { items: T[] }
+struct Foo { n: int }
+
+extend<T> List<T> {
+    fn first(): T { return this.items[0]; }
+    fn count(): int { return this.items.length(); }
+}
+
+fn main(): int {
+    let ints = List<int> { items = [1, 2] };
+    let strs = List<string> { items = ["a"] };
+    println(f"{ints.first()} {strs.first()} {ints.count()}");
+    return 0;
+}

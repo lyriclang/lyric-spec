@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0134
+//! since: 5.0.0
+// 05 §13.2: the member is not there for a receiver the block's constraints refuse.
+class List<T> { items: T[] }
+struct Foo { n: int }
+extend<T :: [Display]> List<T> { fn shown(): string { return "list"; } }
+fn f(l: List<Foo>): string { return l.shown(); }
+fn main(): int { return 0; }

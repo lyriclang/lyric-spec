@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | [i, i] <a>
+//! since: 5.0.0
+// 05 §13.3: 'extend<T :: [Display]> List<T> :: [Display]' — List<int> is a Display value, through the block.
+import std.io { println };
+
+class List<T> { items: T[] }
+struct Foo { n: int }
+
+struct One<A> { a: A }
+
+extend<T :: [Display]> List<T> :: [Display] {
+    fn show(): string {
+        var out = "[";
+        for (i in 0..this.items.length()) {
+            if (i > 0) { out = out + ", "; }
+            out = out + "i";
+        }
+        return out + "]";
+    }
+}
+
+extend<A :: [Display]> One<A> :: [Display] {
+    fn show(): string { return f"<{this.a.show()}>"; }
+}
+
+fn render(d: Display): string { return d.show(); }
+
+fn main(): int {
+    println(f"{render(List<int> { items = [1, 2] })} {render(One<string> { a = "a" })}");
+    return 0;
+}
