@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 05 §8.5: a conformer whose answer is another type does not satisfy 'Container<Item = int>'.
+interface Container { type Item; fn first(): Self.Item; }
+struct StrBox :: [Container] { type Item = string; s: string, fn first(): string { return this.s; } }
+fn sumFirst<T :: [Container<Item = int>]>(c: T): int { return c.first(); }
+
+fn main(): int { return sumFirst(StrBox { s = "x" }); }

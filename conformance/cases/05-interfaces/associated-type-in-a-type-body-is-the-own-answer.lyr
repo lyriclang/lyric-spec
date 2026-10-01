@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 2
+//! since: 5.0.0
+// 05 §8.3: in a type's own body 'Self.Item' is its answer.
+import std.io { println };
+
+interface Container { type Item; fn first(): Self.Item; }
+struct Two :: [Container] {
+    type Item = int;
+    v: int,
+    fn first(): Self.Item { return this.v; }
+    fn again(): Self.Item { return this.first(); }
+}
+
+fn main(): int {
+    println(f"{Two { v = 2 }.again()}");
+    return 0;
+}

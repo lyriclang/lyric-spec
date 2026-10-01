@@ -10,9 +10,11 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3 and S4; the chapter grows with the milestone's slices — associated types (T6), `Any`,
-type tests and `sealed` (T10, T11, D8), operator interfaces (D6), generic extends (T7),
-synthesis (D7). What is not written here yet is decided in the design documents, not here.
+M4 S1, S3, S4 and S4b; the chapter grows with the milestone's slices — `Any`, type tests and
+`sealed` (T10, T11, D8), operator interfaces (D6), generic extends (T7), synthesis (D7). Of the
+associated types (T6, [§8](#8-associated-types)) the value form `Iterator<Item = int>` and an
+answer per interface instance are not written yet. What is not written here yet is decided in
+the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -118,3 +120,33 @@ synthesis (D7). What is not written here yet is decided in the design documents,
    **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). An interface with neither is a
    value as [§2](#2-interface-values) says.
+
+## 8. Associated types
+
+1. An interface may declare an **associated type**, `type Item;` (03 T6): a type every
+   conforming type names, once. Where a type parameter of the interface is an input — chosen
+   by whoever writes the conformance, `Add<int>` beside `Add<Vec2>` — an associated type is an
+   output of the conformance: one answer per type, read off the type wherever it is used. The
+   two combine, `interface Index<K> { type Output; fn get(k: K): Self.Output; }`.
+2. Inside the interface the associated type is **`Self.Item`**. The declaration may carry a
+   default, `type Out = Self;`, resolved with `Self` as the conforming type.
+3. A conforming type **answers** in its body or in the conformance block: `type Item = int;`.
+   A conformer without an answer, where the interface gives no default, is refused
+   (`LYR-SEM0128`); an answer that no interface of the type asks for is refused
+   (`LYR-SEM0129`); the answer is what the signatures read — `fn first(): Self.Item` is
+   implemented by `fn first(): int` (`LYR-SEM0042` otherwise). The answer is one per type and
+   interface: a second conformance block may repeat it, not change it (`LYR-SEM0129`). In a
+   type's own body `Self.Item` is its answer.
+4. Through a constraint the associated type is a **type path**, `T.Item`:
+   `fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }` — the answer of whatever
+   `T` becomes, `int` at `firstOf(IntBox { … })`. The parameter's constraints declare it
+   (`LYR-SEM0128` where none does). An interface is no head for the path: `Container.Item` is
+   nobody's answer.
+5. A constraint may **fix** an associated type: `T :: [Iterator<Item = int>]`. Inside the
+   declaration `T.Item` is `int`; an argument whose answer is another type does not satisfy
+   the constraint (`LYR-SEM0028`); a name no associated type of the interface carries is
+   refused (`LYR-SEM0128`).
+6. An interface declaring an associated type is a **constraint only** for now
+   ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`): the value form, the interface
+   with its answer fixed as a fat pointer, comes with the iterators of M8a and is not written
+   here.

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0128
+//! since: 5.0.0
+// 05 §8.5: 'Container<Nope = int>' fixes an associated type the interface does not declare.
+interface Container { type Item; fn first(): Self.Item; }
+struct IntBox :: [Container] { type Item = int; v: int, fn first(): int { return this.v; } }
+fn s<T :: [Container<Nope = int>]>(c: T): int { return 0; }
+
+fn main(): int { return s(IntBox { v = 1 }); }

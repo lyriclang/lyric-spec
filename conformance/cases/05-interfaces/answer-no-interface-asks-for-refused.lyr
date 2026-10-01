@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0129
+//! since: 5.0.0
+// 05 §8.3: 'type Item = int;' where no interface of the type declares an 'Item' is refused.
+struct Stray { type Item = int; v: int }
+
+fn main(): int { return 0; }

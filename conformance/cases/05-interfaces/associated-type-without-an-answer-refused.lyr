@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0128
+//! since: 5.0.0
+// 05 §8.3: a conformer that does not answer an associated type without a default is refused.
+interface Container { type Item; fn first(): Self.Item; }
+struct Mute :: [Container] { v: int, fn first(): int { return this.v; } }
+
+fn main(): int { return 0; }

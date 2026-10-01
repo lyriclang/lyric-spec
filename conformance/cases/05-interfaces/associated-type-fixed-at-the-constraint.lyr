@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 42 5
+//! since: 5.0.0
+// 05 §8.5: 'T :: [Container<Item = int>]' fixes the answer; inside, 'T.Item' is 'int' and adds.
+import std.io { println };
+
+interface Container { type Item; fn first(): Self.Item; fn count(): int; }
+struct IntBox :: [Container] { type Item = int; v: int, fn first(): int { return this.v; } fn count(): int { return 1; } }
+struct Pair<T> :: [Container] { type Item = T; a: T, b: T, fn first(): T { return this.a; } fn count(): int { return 2; } }
+
+fn sumFirst<T :: [Container<Item = int>]>(c: T): int { return c.first() + c.count(); }
+
+fn main(): int {
+    println(f"{sumFirst(IntBox { v = 41 })} {sumFirst(Pair<int> { a = 3, b = 4 })}");
+    return 0;
+}
