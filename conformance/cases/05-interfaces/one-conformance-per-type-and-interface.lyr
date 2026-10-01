@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13.4: a block beside the type's own declaration of the same conformance.
+struct S :: [Display] { n: int, fn show(): string { return "s"; } }
+extend S :: [Display] { }
+fn main(): int { return 0; }

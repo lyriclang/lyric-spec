@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 6
+//! since: 5.0.0
+// 05 §13.1, §13.2: 'extend Box<int>'.
+import std.io { println };
+
+struct Box<T> { v: T }
+extend Box<int> { fn doubled(): int { return this.v * 2; } }
+
+fn main(): int {
+    println(f"{Box<int> { v = 3 }.doubled()}");
+    return 0;
+}

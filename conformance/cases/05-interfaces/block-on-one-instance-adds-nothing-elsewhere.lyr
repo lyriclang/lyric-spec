@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §13.2: Box<string> has no 'doubled'.
+struct Box<T> { v: T }
+extend Box<int> { fn doubled(): int { return this.v * 2; } }
+fn f(b: Box<string>): int { return b.doubled(); }
+fn main(): int { return 0; }

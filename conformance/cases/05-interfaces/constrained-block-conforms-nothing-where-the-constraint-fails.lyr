@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 05 §13.3: List<Foo> is no Display — Foo is none.
+class List<T> { items: T[] }
+struct Foo { n: int }
+extend<T :: [Display]> List<T> :: [Display] { fn show(): string { return "list"; } }
+fn f(l: List<Foo>): Display { return l; }
+fn main(): int { return 0; }

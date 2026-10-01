@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 05 §13.1: 'extend<T> T[]' comes with the built-in constructors (T7 X2).
+extend<T> T[] { fn len(): int { return 0; } }
+fn main(): int { return 0; }
