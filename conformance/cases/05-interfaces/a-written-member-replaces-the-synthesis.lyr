@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | w true true
+//! since: 5.0.0
+// 05 §14.1: 'equals' written, 'hash' still synthesized.
+import std.io { println };
+
+struct W :: [Equatable, Hashable] { x: int, y: int,
+    fn equals(o: W): bool { return this.x == o.x; }
+}
+
+fn main(): int {
+    let a = W { x = 1, y = 2 };
+    let b = W { x = 1, y = 9 };
+    println(f"w {a == b} {a.hash() == W { x = 1, y = 2 }.hash()}");
+    return 0;
+}

@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | pair true false Pair { a = "a", b = "b" }
+//! | box Box { v = 0 }
+//! since: 5.0.0
+// 05 §14.4: 'struct Pair<T> :: [Equatable]' is 'extend<T :: [Equatable]> Pair<T> :: [Equatable]';
+// a static of such a block answers in the instance.
+import std.io { println };
+
+struct Pair<T> :: [Equatable, Debug] { a: T, b: T }
+struct Box<T> :: [Default] { v: T }
+
+fn main(): int {
+    let pa = Pair<string> { a = "a", b = "b" };
+    println(f"pair {pa == Pair<string> { a = "a", b = "b" }} {pa == Pair<string> { a = "a", b = "c" }} {pa.debug()}");
+    println(f"box {Box<int>.default().debug()}");
+    return 0;
+}

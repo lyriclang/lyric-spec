@@ -284,3 +284,53 @@ same. What is not written here yet is decided in the design documents, not here.
    tuple's. `length()` stays the primitive ([03 §5](03-types.md)). An element of a tuple comes
    first, a block's member after. A **conformance** of a shape — `T[] :: [Display]` — is not
    written yet (`LYR-SEM0047`): a block on a constructor adds members only.
+
+## 14. Conformance synthesis
+
+1. A conformance to one of the **family** — `Equatable`, `Hashable`, `Ordered`, `TotalOrder`,
+   `Clone`, `Default`, `Display`, `Debug` — written in a struct's, class's or enum's own list
+   **without the member** is **synthesized** from the fields (04 D7): `struct P :: [Equatable,
+   Hashable] { x: int, y: string }` compares and hashes field by field, in declaration order.
+   There is no `derive` word. A member the type writes itself replaces the synthesis for that
+   member; the others are still synthesized. The list is fixed in 5.0; a synthesis of the
+   program's own interfaces is [11](11-metaprogramming.md)'s question.
+2. **Field by field, declaration order.** `equals` is the conjunction of the fields' equalities;
+   `hash` mixes the fields' hashes in order; `compare` and `totalCompare` are lexicographic,
+   the first field that is not `.Equal` decides, and a `compare` that meets `null` is `null`;
+   `clone` copies the value fields and clones the reference fields — an array element by
+   element, an optional's value, a tuple's elements; `default` takes every field's `default()`,
+   or the field's own initializer where it has one, `[]` for an array, `null` for an optional
+   and a tuple of its elements' defaults;
+   `show` on request is the `debug` form; `debug` renders `P { x = 1, y = "a" }` with every
+   field's `debug()`, an array as `[1, 2]`, an optional as its value or `null`, a tuple as
+   `(1, "a")`, a string quoted and a char in single quotes. An **inline array** field is taken
+   element by element.
+3. **Enums** as structs, variant by variant: two values are equal when they are the same
+   variant with equal payloads; the hash mixes the variant's position and its payload; the
+   order is the **variant's position first**, then the payload lexicographically; `clone`
+   rebuilds the variant; `debug` renders `E.B(3)`, `E.R { w = 4 }`, `E.A`. A `Default` of an
+   enum is **refused** — no variant is the default (`LYR-SEM0135`).
+4. **Generic types conditionally** (04 D7, Rust's derive bound): `struct Pair<T> :: [Equatable]`
+   is `extend<T :: [Equatable]> Pair<T> :: [Equatable]`, so `Pair<int>` compares and
+   `Pair<NoEq>` does not (`LYR-SEM0059` at the comparison, [§13](#13-generic-extends) rule 3);
+   `Display` asks `Debug` of the parameters.
+5. **The implied parents come along.** A type listing `Hashable` or `Ordered` alone gets
+   `Equatable` synthesized too, `TotalOrder` brings `Ordered` and `Equatable` — unless the
+   type lists them or writes their member. A conformance written in a block of its own beside
+   such a list meets the synthesized one as two sites ([§13](#13-generic-extends) rule 4,
+   `LYR-SEM0133`): list it, and the block is the one site.
+6. **What is refused is said at the declaration.** A field whose type lacks the conformance
+   the synthesis needs is an error at the type's conformance-list entry, the diagnostic of the
+   missing operation prefixed with the synthesis it stands in and the field's line beside it
+   (`note: synthesized as: && this.f == o.f`); a shape the synthesis has no form for — a
+   `Slice<T>` or a function to `clone`, a function to `default` — is
+   `LYR-SEM0135` with the field's type, and the member is written by hand.
+7. **`Debug` is given unasked** to every struct, class and enum that writes none, **where the
+   fields allow it**: a type holding an interface value, a function, or a type that has no
+   `debug()` of its own gets none, silently — there was nothing asked and nothing to report —
+   and `x.debug()` on it is `LYR-SEM0012`. Listing `Debug` asks, and then rule 6 names the
+   field. `Display` is never automatic ([§12](#12-the-operator-interfaces) rule 8).
+8. *(Informative.)* The synthesized member stands in an `extend` block of the type's own
+   module, generated as source and compiled like one written; it is reached, overridden and
+   qualified exactly as a block's member is. Hints about its style are nobody's to act on and
+   are not reported.

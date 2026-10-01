@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | enum true false true E.B(3) E.R { w = 4 }
+//! | shape true true false true true true true
+//! | hash true false
+//! since: 5.0.0
+// 05 §14.3: an enum variant by variant — equal when the same variant with equal payloads,
+// ordered by the variant's position first and the payload after, cloned by rebuilding.
+import std.io { println };
+
+enum E :: [Equatable, Clone, Hashable] { A, B(int), R { w: int } }
+enum Sh :: [Ordered] { Dot, Box(int), Rect { w: int, h: int } }
+
+fn main(): int {
+    let e1 = E.B(3);
+    let e2 = e1.clone();
+    println(f"enum {e1 == E.B(3)} {e1 == E.A} {E.A == E.A} {e2.debug()} {E.R { w = 4 }.debug()}");
+    let dot = Sh.Dot;
+    let b3 = Sh.Box(3);
+    let b4 = Sh.Box(4);
+    let rc = Sh.Rect { w = 1, h = 2 };
+    println(f"shape {dot < b3} {b3 < b4} {b4 < b3} {b4 < rc} {rc > dot} {rc == Sh.Rect { w = 1, h = 2 }} {b3 <= Sh.Box(3)}");
+    println(f"hash {e1.hash() == E.B(3).hash()} {e1.hash() == E.A.hash()}");
+    return 0;
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 05 §14.6: the missing '==' of the field's type, said at N's conformance-list entry with the
+// synthesized line ('&& this.f == o.f') beside it.
+struct NoEq { n: int }
+struct N :: [Equatable] { k: int, f: NoEq }
+fn main(): int { return 0; }
