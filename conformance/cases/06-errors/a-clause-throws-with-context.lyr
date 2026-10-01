@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | config: disk
+//! since: 5.0.0
+// 06 §6.4: 'throw' as a clause's body throws with context - a new error whose cause is the one the
+// clause took.
+import std.io { println };
+
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+class ConfigError :: [Error] {
+    inner: Error,
+    fn message(): string { return "config"; }
+    fn cause(): ?Error { return this.inner; }
+}
+
+fn read(): string throws Disk { throw Disk { }; }
+
+fn load(): string throws ConfigError {
+    return try read() catch (e: IoError) throw ConfigError { inner = e };
+}
+
+fn main(): void {
+    try {
+        let text = load();
+        println(text);
+    } catch (e: ConfigError) {
+        let cause = e.cause()!;
+        println(f"{e.message()}: {cause.message()}");
+    }
+}

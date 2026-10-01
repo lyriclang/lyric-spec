@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | 42
+//! | -1
+//! | fallback after disk
+//! | 2
+//! | sum 84
+//! since: 5.0.0
+// 06 §6.4: 'try e catch ...' is worth the value, or the value of the clause that took the error -
+// an expression or a value block; the clauses are asked in order; a clause may leave instead.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+
+fn parse(s: string): int throws ParseError {
+    if (s == "") { throw ParseError.Empty; }
+    return 42;
+}
+
+fn read(): string throws Disk { throw Disk { }; }
+
+fn main(): void {
+    let a = try parse("1") catch (_) -1;
+    let b = try parse("") catch (_: ParseError) -1;
+    let c = try read() catch (e: IoError) { let m = e.message(); f"fallback after {m}" };
+    let d = try parse("") catch (_: IoError) 1 catch (_: ParseError) 2 catch (_) 3;
+    println(f"{a}");
+    println(f"{b}");
+    println(c);
+    println(f"{d}");
+
+    let inputs = ["1", "", "1"];
+    var sum = 0;
+    var at = 0;
+    while (at < 3) {
+        let s = inputs[at];
+        at += 1;
+        let n = try parse(s) catch (_) { continue; };
+        sum += n;
+    }
+    println(f"sum {sum}");
+}

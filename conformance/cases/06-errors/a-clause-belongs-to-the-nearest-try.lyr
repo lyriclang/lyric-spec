@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | bare -1
+//! | parenthesized 3
+//! since: 5.0.0
+// 06 §6.5: a clause belongs to the nearest 'try' on its left - a clause body that is a 'try' of its
+// own takes the clauses after it; parentheses give them to the outer one.
+import std.io { println };
+
+enum A :: [Error] { Bad; fn message(): string { return "a"; } }
+enum B :: [Error] { Bad; fn message(): string { return "b"; } }
+
+fn failA(): int throws A { throw A.Bad; }
+fn failB(): int throws B { throw B.Bad; }
+
+fn main(): void {
+    // 'catch (_: B)' is 'try failA()'s: failB's error passes the outer's only clause and leaves the
+    // whole expression - the 'try?' around it makes that null.
+    let x = try? (try failB() catch (_: A) try failA() catch (_: B) 2);
+    println(f"bare {x ?? -1}");
+    let y = try (try failB() catch (_: A) 1) catch (_: B) 3;
+    println(f"parenthesized {y}");
+}

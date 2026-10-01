@@ -1,0 +1,12 @@
+//! check
+//! since: 5.0.0
+// 06 §6.3: 'try?' and 'try!' mark what they cover and take every error under it - the function
+// declares nothing.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+enum Other :: [Error] { Worse; fn message(): string { return "other"; } }
+fn risky(): int throws [Oops, Other] { return 1; }
+fn main(): int {
+    let a = try? risky();
+    let b = try! risky();
+    return (a ?? 0) + b;
+}

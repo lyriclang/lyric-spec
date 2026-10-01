@@ -1,0 +1,15 @@
+//! check
+//! warning: LYR-SEM0139
+//! since: 5.0.0
+// 06 §3.2: a 'try' no error reaches is warned about - the 'try?' inside takes all of it, and the
+// block's clause never runs.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn main(): int {
+    try {
+        let a = try? risky();
+        return a ?? 0;
+    } catch (_) {
+        return -1;
+    }
+}

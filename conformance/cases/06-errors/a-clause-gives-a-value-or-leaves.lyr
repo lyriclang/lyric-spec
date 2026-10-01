@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0033
+//! since: 5.0.0
+// 06 §6.4: a clause's value block without a tail leaves on every path - otherwise the clause has
+// no value to give.
+import std.io { println };
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn main(): int {
+    return try risky() catch (_) { println("failed"); };
+}

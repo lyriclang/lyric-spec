@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0140
+//! since: 5.0.0
+// 06 §6.1: 'try?' over a call without a value has nothing to make optional - it stands as a
+// statement, where it drops the error.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn save(): void throws Oops { }
+fn main(): void {
+    let saved = try? save();
+}

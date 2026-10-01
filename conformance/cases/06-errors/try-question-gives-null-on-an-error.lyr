@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 42
+//! | -1
+//! | dropped
+//! since: 5.0.0
+// 06 §6.1: 'try?' is worth the value, or null when something under it throws; over a call without
+// a value it stands as a statement and drops the error.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+
+fn parse(s: string): int throws ParseError {
+    if (s == "") { throw ParseError.Empty; }
+    return 42;
+}
+
+fn check(s: string): void throws ParseError {
+    if (s == "") { throw ParseError.Empty; }
+}
+
+fn main(): void {
+    let a: ?int = try? parse("1");
+    let b: ?int = try? parse("");
+    println(f"{a ?? -1}");
+    println(f"{b ?? -1}");
+    try? check("");
+    println("dropped");
+}
