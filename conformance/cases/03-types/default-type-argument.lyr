@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 3 6 4
+//! since: 5.0.0
+// 03 §9.1: a default type argument; 'Add' is 'Add<Self>' at a conformance and at a constraint, either spelling satisfies it, a written argument beats the default.
+import std.io { println };
+
+interface Add<Rhs = Self> { fn add(o: Rhs): Self; }
+struct P :: [Add] { n: int, fn add(o: P): P { return P { n = this.n + o.n }; } }
+struct V :: [Add<V>] { n: int, fn add(o: V): V { return V { n = this.n * o.n }; } }
+struct Q :: [Add<int>] { n: int, fn add(o: int): Q { return Q { n = this.n + o }; } }
+fn plus<T :: [Add]>(a: T, b: T): T { return a.add(b); }
+
+fn main(): int {
+    let one = P { n = 1 };
+    let two = P { n = 2 };
+    let v2 = V { n = 2 };
+    let v3 = V { n = 3 };
+    let q = Q { n = 1 };
+    println(f"{plus(one, two).n} {plus(v2, v3).n} {q.add(3).n}");
+    return 0;
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §7.2: a static interface member is implemented by a static member.
+interface Parse { static fn parse(s: string): Self; }
+struct P :: [Parse] { n: int, fn parse(s: string): P { return P { n = 1 }; } }
+
+fn main(): int { return 0; }

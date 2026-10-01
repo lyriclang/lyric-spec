@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | true false 2
+//! since: 5.0.0
+// 05 §7.1: 'Self' in the interface is the conformer's own type in the implementation; 'Self' in a type body is the type.
+import std.io { println };
+
+interface Equatable { fn equals(o: Self): bool; }
+struct P :: [Equatable] {
+    n: int,
+    fn equals(o: P): bool { return this.n == o.n; }
+    fn twin(): Self { return P { n = this.n }; }
+}
+
+fn main(): int {
+    let p = P { n = 2 };
+    let twin = p.twin();
+    let other = P { n = 3 };
+    println(f"{p.equals(twin)} {p.equals(other)} {twin.n}");
+    return 0;
+}

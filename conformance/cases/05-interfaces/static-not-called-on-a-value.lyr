@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 05 §7.2: the static member is reached through the type parameter, not a value of it.
+interface Parse { static fn parse(s: string): Self; }
+fn make<T :: [Parse]>(t: T): T { return t.parse("x"); }
+
+fn main(): int { return 0; }

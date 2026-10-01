@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 2
+//! since: 5.0.0
+// 03 §9.1: a trailing parameter of a class left unwritten takes its default.
+import std.io { println };
+
+class Map<K, V, H = int> { var k: K, var v: V, var h: H }
+
+fn main(): int {
+    let m: Map<string, bool> = Map<string, bool> { k = "a", v = true, h = 2 };
+    println(f"{m.h}");
+    return 0;
+}

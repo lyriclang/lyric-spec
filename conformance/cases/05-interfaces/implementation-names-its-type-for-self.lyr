@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §7.1: where the interface writes 'Self', the implementation writes its own type.
+interface Equatable { fn equals(o: Self): bool; }
+struct P :: [Equatable] { n: int, fn equals(o: int): bool { return true; } }
+
+fn main(): int { return 0; }
