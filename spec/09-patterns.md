@@ -104,9 +104,11 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
 4. A scrutinee of type `?E` admits `null` and the variants of `E` in one `match`; presence is
    established before a variant is examined, and the arms are still tried in order.
 
-A type pattern never covers an interface's values: the set of its conformers is open, so a
-match of type patterns over an interface needs `_` (`LYR-SEM0050`) — until a `sealed`
-interface closes it (04 D8, not written yet).
+A type pattern covers one conformer. Over an open interface the set of conformers is open, so a
+match of type patterns needs `_` (`LYR-SEM0050`); over a **sealed** interface
+([05 §10](05-interfaces.md#10-sealed-interfaces)) the set is closed, and unguarded type
+patterns for every conformer make the match exhaustive — the diagnostic names the conformer
+missing as the pattern to add, `_: Rect`.
 
 ## 4. Unreachable arms
 

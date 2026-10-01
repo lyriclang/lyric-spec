@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 05 §10.2, 09 §3: a guard does not count for exhaustiveness, over a sealed interface as anywhere.
+sealed interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
+class Rect :: [Shape] { w: int, fn area(): int { return 2; } }
+fn kind(s: Shape): int {
+    return match (s) { c: Circle => c.r, r: Rect if r.w > 0 => r.w };
+}
+fn main(): int { return 0; }

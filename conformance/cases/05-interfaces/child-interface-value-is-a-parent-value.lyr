@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | circle rect
+//! since: 5.0.0
+// 05 §11.1: a Shape value where a Display is expected — by binding and by argument.
+import std.io { println };
+
+interface Display { fn show(): string; }
+sealed interface Shape :: [Display] { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } fn show(): string { return "circle"; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } fn show(): string { return "rect"; } }
+struct Tri { b: int, h: int }
+extend Tri :: [Shape] { fn area(): int { return this.b * this.h / 2; } fn show(): string { return "tri"; } }
+
+fn shown(d: Display): string { return d.show(); }
+
+fn main(): int {
+    let s: Shape = Circle { r = 1 };
+    let d: Display = s;
+    let r: Shape = Rect { w = 1, h = 1 };
+    println(f"{d.show()} {shown(r)}");
+    return 0;
+}

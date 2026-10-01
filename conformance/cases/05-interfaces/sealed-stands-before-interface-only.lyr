@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PAR0048
+//! since: 5.0.0
+// 05 §10.1: 'sealed' is a word for interfaces.
+sealed struct Odd { n: int }
+fn main(): int { return 0; }

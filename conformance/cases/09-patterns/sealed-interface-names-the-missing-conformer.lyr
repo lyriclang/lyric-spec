@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 05 §10.2: a conformer without an arm is named, as the pattern to add.
+interface Display { fn show(): string; }
+sealed interface Shape :: [Display] { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } fn show(): string { return "c"; } }
+class Rect :: [Shape] { w: int, fn area(): int { return 2; } fn show(): string { return "r"; } }
+fn kind(s: Shape): int {
+    return match (s) { c: Circle => c.r };
+}
+fn main(): int { return 0; }
