@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 1 7 6 -3 6 2
+//! since: 5.0.0
+// 05 §12.1: '&', '|', '^', '~', '<<', '>>' and '%' on a conforming type.
+import std.io { println };
+
+struct Bits :: [Rem, BitAnd, BitOr, BitXor, BitNot, Shl, Shr] {
+    n: int,
+    fn rem(rhs: Bits): Bits { return Bits { n = this.n % rhs.n }; }
+    fn bitAnd(rhs: Bits): Bits { return Bits { n = this.n & rhs.n }; }
+    fn bitOr(rhs: Bits): Bits { return Bits { n = this.n | rhs.n }; }
+    fn bitXor(rhs: Bits): Bits { return Bits { n = this.n ^ rhs.n }; }
+    fn bitNot(): Bits { return Bits { n = ~this.n }; }
+    fn shl(rhs: int): Bits { return Bits { n = this.n << rhs }; }
+    fn shr(rhs: int): Bits { return Bits { n = this.n >> rhs }; }
+}
+
+fn main(): int {
+    let p = Bits { n = 5 };
+    let q = Bits { n = 3 };
+    println(f"{(p & q).n} {(p | q).n} {(p ^ q).n} {(~Bits { n = 2 }).n} {(q << 1).n} {(p >> 1).n}");
+    return 0;
+}

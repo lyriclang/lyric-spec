@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 05 §12.1: '-x' is 'x.neg()' through 'Neg'; without it, refused.
+struct P { n: int }
+fn f(a: P): P { return -a; }
+fn main(): int { return 0; }

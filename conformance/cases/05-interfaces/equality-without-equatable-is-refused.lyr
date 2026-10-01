@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 05 §12.5: nominal — 'equals' alone is not '=='.
+struct P { n: int, fn equals(o: P): bool { return true; } }
+fn f(a: P, b: P): bool { return a == b; }
+fn main(): int { return 0; }

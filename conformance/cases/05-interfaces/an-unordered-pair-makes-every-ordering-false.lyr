@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | false false false false
+//! since: 5.0.0
+// 05 §12.6: 'compare' answering null — the partial order.
+import std.io { println };
+
+struct Partial :: [Equatable, Ordered] {
+    v: int,
+    fn equals(o: Partial): bool { return this.v == o.v; }
+    fn compare(o: Partial): ?Ordering { return null; }
+}
+
+fn main(): int {
+    let x = Partial { v = 1 };
+    let y = Partial { v = 2 };
+    println(f"{x < y} {x <= y} {x > y} {x >= y}");
+    return 0;
+}
