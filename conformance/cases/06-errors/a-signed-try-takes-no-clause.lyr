@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0051
+//! since: 5.0.0
+// 06 §6.5: 'try?' and 'try!' take every error themselves; a clause belongs to a plain 'try'.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn main(): int {
+    return try! risky() catch (_) 0;
+}

@@ -11,9 +11,9 @@ value and the error, each in plain sight
 
 What is thrown, the `throws` set, the `try` mark and what covers a thrown type (S1a); the `try`
 block with its clauses and the error path at run time — propagation, `defer` on the way out,
-`main`'s report (S1b). Written with M5; the chapter grows with the milestone's slices — the
-expression forms `try?`, `try!` and `try … catch`, a clause over several types, the set a
-typeless clause carries and the refusal of a clause no error can reach (S2), a `defer` that
+`main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a). Written with
+M5; the chapter grows with the milestone's slices — a clause over several types, the set a
+typeless clause carries and the refusal of a clause no error can reach (S2b), a `defer` that
 throws and `using` (S3), panics, `never` and the thrown set of a function type (S4). What is not
 written here yet is decided in the design documents, not here.
 
@@ -56,7 +56,8 @@ written here yet is decided in the design documents, not here.
 ## 3. The `try` mark and coverage
 
 1. Every call of a throwing function is **marked**: it stands under **`try`** — the prefix
-   `try e`, or the body of a `try { … }` block — of its own function (`LYR-SEM0138`). A
+   `try e`, `try? e` or `try! e` ([§6](#6-the-expression-forms)), or the body of a `try { … }`
+   block — of its own function (`LYR-SEM0138`). A
    refactoring that makes a function throw shows at every caller instead of passing through
    unseen (E1). A lambda's body is a function of its own: a `try` around the lambda does not mark
    what its body calls.
@@ -65,12 +66,13 @@ written here yet is decided in the design documents, not here.
    therefore stands at the **start** of the expression it covers — a binding's value, an
    argument, a `return`, the right of an `=` — and to the right of another operator it is
    refused (`LYR-PAR0050`): `1 + try f()` is written `try 1 + f()`. The value and the type are
-   the expression's. A `try` under which nothing throws is warned about (`LYR-SEM0139`), as is a
-   `try` block whose body throws nothing.
-3. Every type a site may throw — a marked call, or a `throw` — is **covered** (K8): by a `catch`
-   clause of a `try` block around the site ([§4](#4-the-try-block-and-its-clauses)), or by the
-   `throws` set of the function the site stands in (`LYR-SEM0034`). A global's initializer and a
-   default cover nothing.
+   the expression's. A `try` no error reaches is warned about (`LYR-SEM0139`): nothing under it
+   throws, or a `try` inside it takes all of it.
+3. Every type a site may throw — a marked call, or a `throw` — is **covered** (K8): by a `try?`
+   or `try!` around the site, by a `catch` clause of a `try` around it
+   ([§4](#4-the-try-block-and-its-clauses), [§6](#6-the-expression-forms)), or by the `throws` set
+   of the function the site stands in (`LYR-SEM0034`). A global's initializer and a default cover
+   nothing.
 4. An element **covers** a thrown type when it **is** that type — on the instance: `Box<int>`
    does not cover `Box<string>` (K5) — or when it is an interface the type conforms to. `Error`
    covers everything thrown.
@@ -108,3 +110,33 @@ written here yet is decided in the design documents, not here.
 3. An error that leaves **`main`** ends the program: `error: <message>` on the error stream, then
    `  caused by: <message>` for each `cause()` in the chain, and the **exit code 1** (05 E6 O4) —
    a panic's is 101.
+
+## 6. The expression forms
+
+1. **`try? e`** is worth `?T` for an `e` of type `T`: the value, or **`null`** when something
+   under it throws — the error is dropped. It is **not flattened**: for an `e` of type `?int` it
+   is `??int`, so "the call failed" stays apart from "the call gave `null`" (05 E4). Over an
+   expression without a value `try?` stands as a statement, where it only drops the error;
+   anywhere else it is refused (`LYR-SEM0140`).
+2. **`try! e`** is worth `e`'s value; when something under it throws, the program ends with a
+   **panic** — `panic [LYR-RT0010]: 'try!' on an error: <message>`, exit code 101 — and no
+   `defer` runs past it (05 E8).
+3. `try?` and `try!` take every error under them themselves: they mark the calls they cover
+   ([§3](#3-the-try-mark-and-coverage) rule 1) and cover what those throw (rule 3). The sign is
+   written against the keyword — `try !done()` is the mark over a negation — and the form stands
+   at the start of what it covers, as the mark does (`LYR-PAR0050`).
+4. **`try e catch (x: A) v catch (y) w`** is the expression form of the block (05 E4): its
+   clauses are asked as a block's are ([§4](#4-the-try-block-and-its-clauses)), and the
+   expression is worth `e`'s value, or the value of the clause that took the error. A clause's
+   body is an expression, or a value block `{ …; v }`; a value block without a tail leaves on
+   every path — `return`, `throw`, `break`, `continue` — unless the expression has no value
+   (`LYR-SEM0033`). The parts unify like the arms of a `match`, or each meets the context where
+   there is one (`LYR-SEM0016`). The rules of §4 hold: the clause without a type last
+   (`LYR-SEM0035`), a clause not inside its own `try`. `throw` as a clause's body throws with
+   context — `try read(p) catch (e: IoError) throw ConfigError { inner = e }`.
+5. A clause belongs to the **nearest `try` on its left** ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)): in
+   `try f() catch (_: A) try g() catch (_: B) 0` the clause for `B` is `g`'s, and parentheses
+   give it to the outer `try`. `try?` and `try!` take no clause (`LYR-PAR0051`).
+6. *(Informative.)* Each form opens a dispatch of its own, as the block does: `try?` clears the
+   error and gives `null` there, `try!` panics there, the clauses are tested there. Nothing is
+   unwound; the cost is the block's (§4 rule 5, §5 rule 1).

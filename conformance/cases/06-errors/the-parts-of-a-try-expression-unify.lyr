@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0016
+//! since: 5.0.0
+// 06 §6.4: the value and the clauses unify like the arms of a match.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn main(): void {
+    let n = try risky() catch (_) "none";
+}

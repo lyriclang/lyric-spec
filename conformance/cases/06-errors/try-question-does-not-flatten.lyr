@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | failed
+//! | gave null
+//! | gave 7
+//! since: 5.0.0
+// 06 §6.1: an optional operand is wrapped once more - 'try?' over a '?int' is a '??int', so "the
+// call failed" stays apart from "the call gave null".
+import std.io { println };
+
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn find(n: int): ?int throws Oops {
+    if (n < 0) { throw Oops.Bad; }
+    if (n == 0) { return null; }
+    return n;
+}
+
+fn show(r: ??int): void {
+    if (r == null) { println("failed"); return; }
+    // Past the test 'r' is the '?int' it holds - and that one may be null.
+    let inner: ?int = r;
+    if (inner == null) { println("gave null"); return; }
+    println(f"gave {inner}");
+}
+
+fn main(): void {
+    show(try? find(-1));
+    show(try? find(0));
+    show(try? find(7));
+}

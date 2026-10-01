@@ -1,0 +1,23 @@
+//! run
+//! panic: LYR-RT0010
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 06 §6.2: 'try!' is worth the value; on an error the program ends with a panic carrying the
+// error's message - and no defer runs past it, main's included.
+import std.io { println };
+
+class Boom :: [Error] { fn message(): string { return "boom"; } }
+
+fn risky(fail: bool): int throws Boom {
+    if (fail) { throw Boom { }; }
+    return 42;
+}
+
+fn main(): void {
+    defer println("main's defer");
+    let a = try! risky(false);
+    println(f"{a}");
+    let b = try! risky(true);
+    println(f"{b}");
+}
