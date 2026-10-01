@@ -13,9 +13,9 @@ What is thrown, the `throws` set, the `try` mark and what covers a thrown type (
 block with its clauses and the error path at run time — propagation, `defer` on the way out,
 `main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a); a clause over
 several types, the set a binding carries and the refusal of a clause no error can reach (S2b); a
-`defer` that throws (S3a). Written with M5; the chapter grows with the milestone's slices —
-`using` (S3b), panics, `never` and the thrown set of a function type (S4). What is not written
-here yet is decided in the design documents, not here.
+`defer` that throws (S3a); `using` and `Exception` (S3b). Written with M5; the chapter grows with
+the milestone's slices — panics, `never` and the thrown set of a function type (S4). What is not
+written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -31,6 +31,10 @@ here yet is decided in the design documents, not here.
    string, an array, an optional — is not (`LYR-SEM0030`).
 3. `throw e` throws `e`; it is a statement, or an expression of type `never` wherever an
    expression may stand (`x ?? throw NotFound { }`). `e` is throwable (`LYR-SEM0030`).
+4. **`Exception`** of `std.core` is the ready-made error for a message:
+   `throw Exception { text = "…" }`, with `inner` for the error it wraps — what its `cause()`
+   gives (12 E06). The field is `text`: a type's members share one name space, and `message` is
+   `Error`'s method.
 
 ## 2. The `throws` set
 
@@ -132,6 +136,25 @@ here yet is decided in the design documents, not here.
    before it run all the same. One that **throws while an error is in flight** does not replace
    it: the **first error wins**, the second is appended to it as **suppressed**, and the remaining
    `defer`s run (05 E7). Of two that throw on a normal exit, the first that ran wins.
+
+## 7. Closing: `using`
+
+1. **`using let f = e;`** binds `f` like a `let` and **closes** it — calls `f.close()` — when its
+   scope is left, on every way out but a panic, in the scope's one LIFO list with its `defer`s
+   (05 E7 R2): `using let a = …; defer d; using let b = …;` closes `b`, runs `d`, closes `a`.
+   `using var`, and a `using` without one name and a value, are refused (`LYR-PAR0052`). `using`
+   is a word only before `let` or `var`.
+2. What `using` binds is a **`Closeable`** of `std.core`,
+   `interface Closeable { fn close(): void throws Error; }` (`LYR-SEM0143`, R6). The close is a
+   site of the scope, `using` its mark: what `close()` throws on the bound type is covered as any
+   site is ([§3](#3-the-try-mark-and-coverage)).
+3. An error from `close()` is a `defer`'s error ([§5](#5-the-error-path) rule 5, R4): on a normal
+   exit it leaves, while an error is in flight it is appended to it as suppressed.
+4. A `Closeable` nothing closes is warned about (`LYR-SEM0144`, R3): a call's result an expression
+   statement drops, or a plain `let` used only to call its other methods — not closed, not
+   `using`-bound, not stored, returned or passed on.
+5. *(Informative.)* A use after the close is a run-time error once the library's types track it
+   (R5); a `for` loop closes a `Closeable` iterator (R7) with the iterators.
 
 ## 6. The expression forms
 

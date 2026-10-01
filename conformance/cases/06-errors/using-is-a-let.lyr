@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0052
+//! since: 5.0.0
+// 06 §7.1: 'using var' could rebind the name and leave the first value open.
+class Res :: [Closeable] { fn close(): void throws Error { } }
+fn main(): int throws Error {
+    using var r = Res { };
+    return 0;
+}
