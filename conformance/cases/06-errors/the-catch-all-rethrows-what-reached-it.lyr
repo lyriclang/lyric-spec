@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | -1
+//! | rethrown disk
+//! since: 5.0.0
+// 06 §4.6: the clause without a type carries what reaches it - here 'Disk' alone, the clause above
+// taking 'ParseError' - and 'throw e' throws exactly that, which 'throws Disk' covers.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+
+fn work(n: int): int throws [ParseError, Disk] {
+    if (n == 1) { throw ParseError.Empty; }
+    if (n == 2) { throw Disk { }; }
+    return n;
+}
+
+fn pass(n: int): int throws Disk {
+    try { return work(n); }
+    catch (_: ParseError) { return -1; }
+    catch (e) { throw e; }
+}
+
+fn main(): void {
+    let a = try pass(1) catch (_: Disk) -2;
+    let b = try f"{pass(2)}" catch (e: Disk) f"rethrown {e.message()}";
+    println(f"{a}");
+    println(b);
+}

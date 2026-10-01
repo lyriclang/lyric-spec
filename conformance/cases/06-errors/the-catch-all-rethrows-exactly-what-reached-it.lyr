@@ -1,0 +1,13 @@
+//! check
+//! since: 5.0.0
+// 06 §4.6: 'throw e' from the clause without a type throws the set the binding carries - 'Parse'
+// alone, the clause above taking 'NotFound' - so 'throws Parse' covers it, silently.
+enum NotFound :: [Error] { Gone; fn message(): string { return "gone"; } }
+enum Parse :: [Error] { Bad; fn message(): string { return "bad"; } }
+fn both(): int throws [NotFound, Parse] { return 1; }
+fn pass(): int throws Parse {
+    try { return both(); }
+    catch (_: NotFound) { return 0; }
+    catch (e) { throw e; }
+}
+fn main(): int { return try! pass(); }

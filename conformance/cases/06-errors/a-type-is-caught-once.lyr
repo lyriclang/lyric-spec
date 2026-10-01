@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0141
+//! since: 5.0.0
+// 06 §4.5: a type is caught once per try.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn risky(): int throws Oops { return 1; }
+fn main(): int {
+    try { return risky(); }
+    catch (_: Oops) { return 1; }
+    catch (_: Oops) { return 2; }
+}

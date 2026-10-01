@@ -16,14 +16,16 @@ The header is the leading block of lines starting `//!`. Directives:
 //! | first line
 //! | second line
 //! check                    compile only; expect acceptance in silence
-//! error: LYR-SEM0001       compile only; expect rejection with this code (repeatable)
+//! error: LYR-SEM0001       compile only; expect rejection with exactly these codes (repeatable)
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
 //! since: 5.0.0             the case pins behavior of this language version and later; a
 //!                          runner given an older --toolchain-version skips it
 ```
 
-Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1);
-`check` without `error:` expects silence — no diagnostics at all.
+Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)
+with exactly the listed error codes — every one reported, none besides them, so a cascade behind
+the one mistake fails the case; warnings are not compared in a rejected case. `check` without
+`error:` expects silence — no diagnostics at all.
 
 ## What a case may use
 

@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | parse
+//! | disk
+//! | ok 3
+//! since: 5.0.0
+// 06 §4.6: a match over the binding of the clause without a type is exhaustive when its type
+// patterns cover the set the binding carries - no '_' arm.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+
+fn work(n: int): int throws [ParseError, Disk] {
+    if (n == 1) { throw ParseError.Empty; }
+    if (n == 2) { throw Disk { }; }
+    return n;
+}
+
+fn classify(n: int): string {
+    try { let v = work(n); return f"ok {v}"; }
+    catch (e) {
+        return match (e) {
+            _: ParseError => "parse",
+            _: Disk => "disk",
+        };
+    }
+}
+
+fn main(): void {
+    println(classify(1));
+    println(classify(2));
+    println(classify(3));
+}

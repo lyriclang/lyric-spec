@@ -7,6 +7,7 @@ codes it relies on (14 §1, 13 §1.4): 0 success, 1 rejected compilation, 101 pa
 
 import argparse
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -65,9 +66,12 @@ def run_case(path, spec, lyric5, profile, workdir):
     if spec["errors"]:
         if compiled.returncode != 1:
             return fail(f"expected rejection (exit 1), got exit {compiled.returncode}:\n{diagnostics}")
-        for code in spec["errors"]:
-            if code not in diagnostics:
-                return fail(f"expected {code}, diagnostics were:\n{diagnostics}")
+        # Exactly the codes the header names: one mistake, the errors it names, and no cascade
+        # behind them. A case that only asked "is the code among them" passed with a second error
+        # for the same mistake.
+        reported = set(re.findall(r"error\[(LYR-[A-Z]+[0-9]+)\]", diagnostics))
+        if reported != set(spec["errors"]):
+            return fail(f"expected exactly {sorted(set(spec['errors']))}, reported {sorted(reported)}:\n{diagnostics}")
         return (True, "")
 
     if compiled.returncode != 0:

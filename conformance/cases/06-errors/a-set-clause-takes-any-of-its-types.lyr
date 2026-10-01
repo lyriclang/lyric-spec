@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | set took parse
+//! | disk took disk
+//! | set took timeout
+//! | single disk
+//! | other
+//! since: 5.0.0
+// 06 §4.2: 'catch (e in [A, B])' takes a value of any of its types, 'catch (e in A)' of one; the
+// binding is an Error.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+class Timeout :: [Error] { fn message(): string { return "timeout"; } }
+
+fn work(n: int): int throws [ParseError, Disk, Timeout] {
+    if (n == 1) { throw ParseError.Empty; }
+    if (n == 2) { throw Disk { }; }
+    if (n == 3) { throw Timeout { }; }
+    return n;
+}
+
+fn set(n: int): string {
+    try { let v = work(n); return f"value {v}"; }
+    catch (e in [ParseError, Timeout]) { return f"set took {e.message()}"; }
+    catch (e: Disk) { return f"disk took {e.message()}"; }
+}
+
+fn main(): void {
+    println(set(1));
+    println(set(2));
+    println(set(3));
+    let a = try f"{work(2)}" catch (_ in Disk) "single disk" catch (_) "other";
+    let b = try f"{work(1)}" catch (_ in Disk) "single disk" catch (_) "other";
+    println(a);
+    println(b);
+}

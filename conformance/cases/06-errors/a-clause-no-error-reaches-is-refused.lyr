@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0142
+//! since: 5.0.0
+// 06 §4.5: an interface caught before a conformer takes every value of it - the clause for the
+// conformer can never run.
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+fn read(): int throws Disk { return 1; }
+fn main(): int {
+    try { return read(); }
+    catch (_: IoError) { return 1; }
+    catch (_: Disk) { return 2; }
+}
