@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 06 §9.4: every path of a function that returns 'never' ends in a throw, a panic or a call that
+// does not return - here one falls off the end.
+fn stop(n: int): never {
+    if (n > 0) { panic("positive"); }
+}
+
+fn main(): void { }

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 06 §9.3: only the whole return type may be 'never' - '?never' is refused there too.
+fn nothing(): ?never {
+    return null;
+}
+
+fn main(): void { }

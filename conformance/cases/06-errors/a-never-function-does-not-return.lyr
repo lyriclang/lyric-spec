@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0146
+//! since: 5.0.0
+// 06 §9.4: a function that returns 'never' has no 'return'.
+fn stop(): never {
+    return;
+}
+
+fn main(): void { }

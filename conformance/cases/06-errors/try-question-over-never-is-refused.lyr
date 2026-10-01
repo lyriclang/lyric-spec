@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 06 §9.3: 'try?' over an expression that gives no value would be worth '?never'.
+class Boom :: [Error] { fn message(): string { return "boom"; } }
+
+fn main(): void {
+    let v = try? throw Boom { };
+}

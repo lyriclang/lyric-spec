@@ -1,0 +1,14 @@
+//! run
+//! panic: LYR-RT0011
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §9.1: a false 'assert' ends the program with LYR-RT0011 and exit code 101; no 'defer' runs
+// past it.
+import std.io { println };
+
+fn main(): void {
+    defer println("not run");
+    println("before");
+    assert(1 > 2);
+}

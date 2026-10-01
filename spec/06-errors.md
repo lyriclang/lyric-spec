@@ -14,9 +14,8 @@ block with its clauses and the error path at run time — propagation, `defer` o
 `main`'s report (S1b); the expression forms `try?`, `try!` and `try … catch` (S2a); a clause over
 several types, the set a binding carries and the refusal of a clause no error can reach (S2b); a
 `defer` that throws (S3a); `using` and `Exception` (S3b); where an error was thrown, and a rethrow
-that keeps it (S3c); the thrown set of a function type (S4a). Written with M5; the chapter grows
-with the milestone's slices — panics and `never` (S4b). What is not written here yet is decided in
-the design documents, not here.
+that keeps it (S3c); the thrown set of a function type (S4a); panics and `never` (S4b). Written
+with M5. What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -236,3 +235,29 @@ the design documents, not here.
    throws or not, so the coercion of rule 3 changes nothing at run time and wraps nothing, and code
    that cannot throw never writes the slot. An instance whose `E` is `never` is compiled as a
    function that does not throw.
+
+## 9. Panics and `never`
+
+1. A **panic** is no error: nothing throws it and no clause takes it. It ends the program with
+   its report and the exit code 101, and no `defer` and no `using` close runs past it (05 E8) —
+   the report and the codes are the runtime's ([13 §1.4](13-abi.md#14-panics-and-crashes)).
+   Besides the runtime's checks, a program panics through four functions of `std.core`, in scope
+   without an import: `panic(message): never` (`LYR-RT0008`); `assert(condition, message =
+   "assertion failed")`, which panics with `LYR-RT0011` when the condition is false — the message
+   an argument like any other, evaluated before the test; `unreachable(message = "entered
+   unreachable code"): never` (`LYR-RT0012`); and `todo(message = "not implemented yet"): never`
+   (`LYR-RT0013`).
+2. **`never`** is the type of what gives no value (05 E12): a `throw`, a call of a function that
+   returns `never` — `panic`, `unreachable`, `todo` among them — an `if` or `match` whose every
+   branch is one, and an operator over one alone. It **fits every type** where a value is wanted,
+   an operand included: `let n: int = found ?? unreachable();`, and `ok || fail("why")` is a
+   `bool`.
+3. `never` is written **only as a return type**: the whole return type of a function, a lambda or
+   a function type, `fn fail(m: string): never`. Anywhere else — a parameter, a binding, a field,
+   an element, an optional, a type argument, a thrown set, an alias — it would type a value that
+   cannot exist and is refused (`LYR-SEM0145`); `?never` and `never[]` are refused in a return
+   position too. `try?` over an expression of type `never` would be worth `?never` and is refused
+   the same way.
+4. A function that returns `never` **does not return**: every path ends in a `throw`, a panic, or
+   a call that does not return (`LYR-SEM0017` otherwise), and a `return` in it is refused unless
+   what it returns does not return either (`LYR-SEM0146`).
