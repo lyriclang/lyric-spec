@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0020
+//! since: 5.0.0
+// 05 §1.2: a conformance implements every abstract member.
+interface Named { fn name(): string; fn id(): int; }
+
+struct Tag :: [Named] { fn name(): string { return "tag"; } }
+
+fn main(): int { return 0; }

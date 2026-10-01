@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0118
+//! since: 5.0.0
+// 05 §1.1: an interface's members are public always; 'pub' on one is refused.
+interface Named { pub fn name(): string; }
+
+fn main(): int { return 0; }

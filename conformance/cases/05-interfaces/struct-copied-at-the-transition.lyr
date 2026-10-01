@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 3 10 3
+//! since: 5.0.0
+// 05 §2.2: a struct is copied into the interface value; the original changes without it, a 'mut fn' through the value writes the copy.
+import std.io { println };
+
+interface Damageable { mut fn takeDamage(amount: int); fn getHp(): int; }
+
+struct Crate :: [Damageable] {
+    var hp: int,
+    mut fn takeDamage(amount: int) { this.hp -= amount; }
+    fn getHp(): int { return this.hp; }
+}
+
+fn main(): int {
+    var crate = Crate { hp = 10 };
+    let boxed: Damageable = crate;
+    crate.hp = 3;
+    let before = boxed.getHp();
+    boxed.takeDamage(7);
+    println(f"{crate.hp} {before} {boxed.getHp()}");
+    return 0;
+}
