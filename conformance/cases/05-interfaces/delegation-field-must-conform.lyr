@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0123
+//! since: 5.0.0
+// 05 §5.1: the field a conformance is delegated to conforms to the interface.
+interface Walker { fn walk(): string; }
+class Dog :: [Walker by legs] { var legs: int }
+
+fn main(): int { return 0; }

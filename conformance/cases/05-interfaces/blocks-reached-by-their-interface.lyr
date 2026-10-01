@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | hello hi hello hi
+//! since: 5.0.0
+// 05 §3.4, §4: one name implemented separately per interface in two conformance blocks; each is reached through its interface's value and through the qualified call.
+import std.io { println };
+
+interface Greeter { fn greet(): string; }
+interface Waver { fn greet(): string; }
+struct Person { name: string }
+extend Person :: [Greeter] { fn greet(): string { return "hello"; } }
+extend Person :: [Waver] { fn greet(): string { return "hi"; } }
+
+fn main(): int {
+    let p = Person { name = "x" };
+    let g: Greeter = p;
+    let w: Waver = p;
+    println(f"{g.greet()} {w.greet()} {Greeter.greet(p)} {Waver.greet(p)}");
+    return 0;
+}

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0043
+//! since: 5.0.0
+// 05 §3.2: two defaults of one name, nobody's implementation: the type writes the member.
+interface A { fn tag(): int { return 1; } }
+interface B { fn tag(): int { return 2; } }
+struct V :: [A, B] { x: int }
+
+fn main(): int { return 0; }

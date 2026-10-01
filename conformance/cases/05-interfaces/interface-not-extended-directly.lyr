@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0124
+//! since: 5.0.0
+// 05 §6: an interface is extended through the generic form only.
+interface Walker { fn walk(): string; }
+extend Walker { fn describe(): string { return "w"; } }
+
+fn main(): int { return 0; }

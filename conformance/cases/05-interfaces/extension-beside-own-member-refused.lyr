@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §3.1: an extension cannot add a name the type has.
+struct V { x: int, fn tag(): int { return 1; } }
+extend V { fn tag(): int { return 2; } }
+
+fn main(): int { return 0; }

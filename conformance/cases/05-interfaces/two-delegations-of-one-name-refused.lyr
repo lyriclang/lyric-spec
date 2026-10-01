@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §5.4: two delegations that would answer one name.
+interface Walker { fn walk(): string; }
+interface Runner { fn walk(): string; }
+class Legs :: [Walker] { fn walk(): string { return "walk"; } }
+class Wheels :: [Runner] { fn walk(): string { return "run"; } }
+class Dog :: [Walker by legs, Runner by wheels] { var legs: Legs, var wheels: Wheels }
+
+fn main(): int { return 0; }

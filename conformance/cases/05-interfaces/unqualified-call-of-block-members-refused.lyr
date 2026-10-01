@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0122
+//! since: 5.0.0
+// 05 §3.4: a name implemented separately per interface belongs to each block; the unqualified call is refused.
+interface Greeter { fn greet(): string; }
+interface Waver { fn greet(): string; }
+struct Person { name: string }
+extend Person :: [Greeter] { fn greet(): string { return "hello"; } }
+extend Person :: [Waver] { fn greet(): string { return "hi"; } }
+
+fn main(): int {
+    let p = Person { name = "x" };
+    let s = p.greet();
+    return 0;
+}
