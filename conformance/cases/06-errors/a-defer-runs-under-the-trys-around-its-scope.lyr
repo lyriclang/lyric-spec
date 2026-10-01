@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | outside: first
+//! | inside caught second
+//! since: 5.0.0
+// 06 §5.4: a defer runs where it was registered - one outside a try, run by a return inside it, is
+// not that try's to catch; one inside a try's body is.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn outside(n: int): string throws [First, Second] {
+    defer try fail(1);
+    try { try fail(n); return "body"; } catch (_) { return "caught by the inner try"; }
+}
+
+fn inside(): string {
+    try {
+        defer try fail(2);
+        return "body";
+    } catch (e: Second) { return f"inside caught {e.message()}"; }
+    catch (_) { return "other"; }
+}
+
+fn main(): void {
+    let text = try outside(0) catch (e) f"outside: {e.message()}";
+    println(text);
+    println(inside());
+}

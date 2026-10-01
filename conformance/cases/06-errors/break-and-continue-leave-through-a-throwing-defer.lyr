@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | break: first
+//! | continue: first
+//! since: 5.0.0
+// 06 §5.5: a break and a continue are normal exits too - a defer that throws on one ends it.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+
+fn failAt(n: int): void throws First { if (n == 3) { throw First { }; } }
+
+fn breaking(): string throws First {
+    var i = 0;
+    while (i < 5) {
+        defer try failAt(i);
+        i += 1;
+        if (i == 3) { break; }
+    }
+    return f"done {i}";
+}
+
+fn continuing(): string throws First {
+    var i = 0;
+    while (i < 5) {
+        defer try failAt(i);
+        i += 1;
+        if (i == 3) { continue; }
+    }
+    return f"done {i}";
+}
+
+fn main(): void {
+    let a = try breaking() catch (e) f"break: {e.message()}";
+    let b = try continuing() catch (e) f"continue: {e.message()}";
+    println(a);
+    println(b);
+}

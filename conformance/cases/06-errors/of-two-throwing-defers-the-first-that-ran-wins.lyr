@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | caught second
+//! since: 5.0.0
+// 06 §5.5: two defers throw on a normal exit - the later registered runs first, and its error wins.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn leave(): int throws [First, Second] {
+    defer try fail(1);
+    defer try fail(2);
+    return 0;
+}
+
+fn main(): void {
+    try { let n = leave(); println(f"{n}"); } catch (e) { println(f"caught {e.message()}"); }
+}

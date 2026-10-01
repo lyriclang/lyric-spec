@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | caught first
+//! since: 5.0.0
+// 06 §5.5: a defer that throws while an error is in flight does not replace it - the first wins,
+// the defer's is appended to it as suppressed.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn leave(): int throws [First, Second] {
+    defer try fail(2);
+    try fail(1);
+    return 0;
+}
+
+fn main(): void {
+    try { let n = leave(); println(f"{n}"); } catch (e) { println(f"caught {e.message()}"); }
+}
