@@ -80,7 +80,11 @@ def run_case(path, spec, lyric5, profile, workdir):
             return fail(f"expected silence, got:\n{diagnostics}")
         return (True, "")
 
-    binaries = [p for p in (workdir / "out" / profile).rglob(path.stem + "*") if p.is_file()]
+    # The binary is named by the stem exactly ('.exe' on Windows). A prefix glob found a
+    # neighbour's binary too — 'default-type-argument-on-a-class' beside 'default-type-argument' —
+    # and ran whichever the file system listed first.
+    binaries = [p for p in (workdir / "out" / profile).rglob(path.stem + "*")
+                if p.is_file() and p.name in (path.stem, path.stem + ".exe")]
     if not binaries:
         return fail(f"no binary under {workdir / 'out' / profile}")
     executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=workdir)
