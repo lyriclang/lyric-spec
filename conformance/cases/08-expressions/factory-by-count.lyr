@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 3 4
+//! since: 5.0.0
+// 08 §1.2: 'Point(1, 2)' is 'Point.new(1, 2)'; a one-argument 'new' beside it is reached by the count.
+import std.io { println };
+
+struct Point {
+    x: int,
+    y: int,
+    static fn new(x: int, y: int): Point { return Point { x = x, y = y }; }
+    static fn new(d: int): Point { return Point { x = d, y = d }; }
+}
+
+fn main(): int {
+    let p = Point(1, 2);
+    println(f"{p.x + p.y} {Point(4).y}");
+    return 0;
+}

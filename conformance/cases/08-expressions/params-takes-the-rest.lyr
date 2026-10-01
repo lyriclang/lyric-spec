@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 6 3
+//! since: 5.0.0
+// 08 §1.1: a 'params' tail takes the remaining positional arguments.
+import std.io { println };
+
+fn sum(base: int, params xs: int[]): int {
+    var s = base;
+    for (i in 0..xs.length()) { s = s + xs[i]; }
+    return s;
+}
+
+fn main(): int {
+    println(f"{sum(1, 2, 3)} {sum(3)}");
+    return 0;
+}

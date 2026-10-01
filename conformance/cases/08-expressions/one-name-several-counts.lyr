@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 7 12 60
+//! since: 5.0.0
+// 08 §1.2: one name, told apart by how many arguments it takes.
+import std.io { println };
+
+struct Color {
+    v: int,
+    static fn of(hex: int): Color { return Color { v = hex }; }
+    static fn of(r: int, g: int, b: int): Color { return Color { v = r * 16 + g * 4 + b }; }
+}
+
+fn main(): int {
+    println(f"{Color.of(7).v} {Color.of(0, 3, 0).v} {Color.of(3, 3, 0).v}");
+    return 0;
+}

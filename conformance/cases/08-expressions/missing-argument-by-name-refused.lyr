@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0014
+//! since: 5.0.0
+// 08 §1.1: a parameter without a default that the call gives nothing for.
+fn connect(host: int, port: int = 80): int { return host + port; }
+
+fn main(): int { return connect(port: 1); }

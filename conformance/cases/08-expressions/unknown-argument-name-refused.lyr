@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0119
+//! since: 5.0.0
+// 08 §1.1: a name no parameter has.
+fn connect(host: int, port: int = 80): int { return host + port; }
+
+fn main(): int { return connect(1, prot: 2); }

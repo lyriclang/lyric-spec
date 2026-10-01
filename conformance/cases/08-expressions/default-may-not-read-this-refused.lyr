@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0120
+//! since: 5.0.0
+// 08 §1.1: a default is evaluated at the call, before the receiver; it cannot read 'this'.
+struct S {
+    n: int,
+    fn f(x: int = this.n): int { return x; }
+}
+
+fn main(): int { return S { n = 2 }.f(); }

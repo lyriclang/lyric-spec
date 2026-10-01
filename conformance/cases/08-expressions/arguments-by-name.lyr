@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 1 2 3
+//! since: 5.0.0
+// 08 §1.1: every parameter is nameable; positional first, named after in any order.
+import std.io { println };
+
+fn connect(host: int, port: int = 80, retries: int = 3): int { return host + port + retries; }
+
+fn main(): int {
+    let a = connect(host: 1, port: 0, retries: 0);
+    let b = connect(port: 0, host: 2, retries: 0);
+    let c = connect(3, retries: 0, port: 0);
+    println(f"{a} {b} {c}");
+    return 0;
+}
