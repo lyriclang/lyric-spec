@@ -129,6 +129,8 @@ def main():
     if not lyric5:
         print("need --lyric5 or 'lyric5' on PATH", file=sys.stderr)
         return 2
+    # Absolute: a case is built from its work directory, where a relative path means nothing.
+    lyric5 = pathlib.Path(lyric5).resolve()
 
     failed = 0
     skipped = 0
