@@ -10,12 +10,12 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3, S4, S4b, S5a, S5b, S6 and S7a; the chapter grows with the milestone's slices —
-extends on the built-in constructors (T7 X2, S7b), synthesis (D7). Of the associated types (T6,
-[§8](#8-associated-types)) the value form `Iterator<Item = int>` is not written yet; of the
-operators (D6, [§12](#12-the-operator-interfaces)) `in`, `[]` and the conversions `From`/`Into`
-wait for the collections. What is not written here yet is decided in the design documents, not
-here.
+M4 S1, S3, S4, S4b, S5a, S5b, S6, S7a and S7b; the chapter grows with the milestone's slices —
+synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
+`Iterator<Item = int>` is not written yet; of the operators (D6,
+[§12](#12-the-operator-interfaces)) `in`, `[]` and the conversions `From`/`Into` wait for the
+collections; a conformance of a built-in constructor (`T[] :: [Display]`, X2) waits for the
+same. What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -252,8 +252,8 @@ here.
 
 1. An extend block may carry **type parameters** of its own, `extend<T> List<T> { … }`
    (03 T7 X1), with constraints as a function's: `extend<T :: [Display]> List<T> { … }`. The
-   target is a named type at the block's parameters, or one instance of it, `extend Box<int> { … }`;
-   an array, an optional, a tuple or a function type is no target yet (`LYR-SEM0047`, X2 follows).
+   target is a named type at the block's parameters, or one instance of it, `extend Box<int> { … }`,
+   or a **built-in constructor** (X2, rule 6); a function type is no target (`LYR-SEM0047`).
    In the block, `this` is the target as written; `Self` stands for a plain target only.
 2. A member of such a block is reached on every receiver the target **matches**: the receiver
    binds the parameters — `List<int>.first()` is an `int` — and the block's constraints must
@@ -275,3 +275,12 @@ here.
 5. *(Informative.)* A generic block's member is compiled per receiver instance, as a method of
    a generic type is; a table row for a conformance a block gives is built for the instances
    the program uses it on.
+6. **The built-in constructors** (X2): `extend<T> T[] { … }`, `extend<T> ?T { … }`,
+   `extend<T> Slice<T> { … }`, a tuple of fixed arity `extend<A, B> (A, B) { … }`, and the
+   same at one element type, `extend int[] { … }`. The members are reached on every value of
+   that **shape**, the shape binding the parameters as rule 2 says, the constraints checked
+   the same way (`LYR-SEM0134`); `this` is the shape, so `this[0]` and `this.length()` stand
+   in an array's block, `this == null` and `this!` in an optional's, `let (a, _) = this;` in a
+   tuple's. `length()` stays the primitive ([03 §5](03-types.md)). An element of a tuple comes
+   first, a block's member after. A **conformance** of a shape — `T[] :: [Display]` — is not
+   written yet (`LYR-SEM0047`): a block on a constructor adds members only.

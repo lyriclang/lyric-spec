@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 05 §13.1: a function type is no target.
+extend fn(int) -> int { fn twice(): int { return 0; } }
+fn main(): int { return 0; }

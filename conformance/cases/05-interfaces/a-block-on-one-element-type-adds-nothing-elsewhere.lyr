@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §13.6: 'extend int[]' adds to int[] alone.
+extend int[] { fn sum(): int { return 0; } }
+fn f(xs: string[]): int { return xs.sum(); }
+fn main(): int { return 0; }

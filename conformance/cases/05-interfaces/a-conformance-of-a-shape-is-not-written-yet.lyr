@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 05 §13.6: a block on a constructor adds members only.
+extend<T :: [Display]> T[] :: [Display] { fn show(): string { return "xs"; } }
+fn main(): int { return 0; }
