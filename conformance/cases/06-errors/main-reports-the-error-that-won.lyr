@@ -2,6 +2,9 @@
 //! exit: 1
 //! stdout:
 //! | before
+//! stderr:
+//! | error: first
+//! |   suppressed: second
 //! since: 5.0.0
 // 06 §5.3, §5.5: the error that leaves main is the first one; a defer's that failed on the way out
 // is reported below it as suppressed, and the exit code is 1.

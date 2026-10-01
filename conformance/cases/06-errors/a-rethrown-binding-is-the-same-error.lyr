@@ -1,0 +1,44 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | middle saw first
+//! | outer saw first
+//! stderr:
+//! | error: first
+//! |   suppressed: second
+//! since: 5.0.0
+// 06 §4.4, §5.3: a clause that throws its own binding again goes on with the same error - what
+// was suppressed into it stays with it, through a clause without a type and a typed one, and
+// main's report names it.
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn inner(): void throws [First, Second] {
+    defer try fail(2);
+    try fail(1);
+}
+
+fn middle(): void throws [First, Second] {
+    try { inner(); } catch (e) {
+        println(f"middle saw {e.message()}");
+        throw e;
+    }
+}
+
+fn outer(): void throws [First, Second] {
+    try { middle(); } catch (e: First) {
+        println(f"outer saw {e.message()}");
+        throw e;
+    }
+}
+
+fn main(): void throws [First, Second] {
+    try outer();
+}
