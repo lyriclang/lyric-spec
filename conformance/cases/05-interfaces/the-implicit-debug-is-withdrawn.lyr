@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §14.7: a class holding an interface value gets no debug() — silently; asking for it is
+// the ordinary missing member.
+interface Walker { fn walk(): int; }
+class H { w: Walker }
+fn f(h: H): string { return h.debug(); }
+fn main(): int { return 0; }

@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | eq true false lt true false hash true
+//! | clone 1 default 0 0 show P { x = 1, y = 2 }
+//! | class 2 C { items = [1, 2], o = null, t = (7, "x") }
+//! since: 5.0.0
+// 05 §14.1–2: the family written without the member, field by field; a class's reference
+// fields cloned; Display on request is the debug form.
+import std.io { println };
+
+struct P :: [Equatable, Hashable, Ordered, Clone, Default, Display] { x: int, y: int }
+class C :: [Clone] { items: int[], o: ?int, t: (int, string) }
+
+fn main(): int {
+    let p = P { x = 1, y = 2 };
+    let q = P { x = 1, y = 2 };
+    let r = P { x = 2, y = 2 };
+    println(f"eq {p == q} {p == r} lt {p < r} {r < p} hash {p.hash() == q.hash()}");
+    let c = p.clone();
+    let d = P.default();
+    println(f"clone {c.x} default {d.x} {d.y} show {p}");
+    let cl = C { items = [1, 2], o = null, t = (7, "x") };
+    let cl2 = cl.clone();
+    println(f"class {cl2.items.length()} {cl.debug()}");
+    return 0;
+}

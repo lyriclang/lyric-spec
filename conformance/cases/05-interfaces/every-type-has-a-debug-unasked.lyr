@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | P { x = 1, o = null, xs = [2, 3], t = (4, "s"), m = [5, 6] }
+//! | E.B(3) E.A
+//! | shown P { x = 0, o = null, xs = [], t = (0, ""), m = [0, 0] }
+//! since: 5.0.0
+// 05 §14.7: the implicit Debug of a struct and an enum, every shape rendered; §14.2: Display on
+// request is the debug form, 'default' fills the shapes.
+import std.io { println };
+
+struct P :: [Display, Default] { x: int, o: ?int, xs: int[], t: (int, string), m: int[2] }
+enum E { A, B(int) }
+
+fn main(): int {
+    let p = P { x = 1, o = null, xs = [2, 3], t = (4, "s"), m = [5, 6] };
+    println(p.debug());
+    println(f"{E.B(3).debug()} {E.A.debug()}");
+    println(f"shown {P.default()}");
+    return 0;
+}

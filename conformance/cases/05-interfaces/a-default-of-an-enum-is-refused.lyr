@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0135
+//! since: 5.0.0
+// 05 §14.3: no variant is the default — the member is written by hand.
+enum Color :: [Default] { Red, Green }
+fn main(): int { return 0; }

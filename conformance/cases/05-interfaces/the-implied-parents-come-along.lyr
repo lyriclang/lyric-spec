@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | color false true false true false
+//! | total Ordering.Greater true false false
+//! since: 5.0.0
+// 05 §14.5: 'Ordered' and 'Hashable' alone bring 'Equatable'; 'TotalOrder' brings both.
+import std.io { println };
+
+enum Color :: [Ordered, Hashable] { Red, Green, Blue }
+struct TO :: [TotalOrder] { a: int, b: int }
+
+fn main(): int {
+    let r = Color.Red;
+    let g = Color.Green;
+    println(f"color {r == g} {r < g} {g < r} {r.hash() == Color.Red.hash()} {r.hash() == g.hash()}");
+    let t1 = TO { a = 1, b = 5 };
+    let t2 = TO { a = 1, b = 3 };
+    println(f"total {t1.totalCompare(t2).debug()} {t1 > t2} {t1 <= t2} {t1 == t2}");
+    return 0;
+}

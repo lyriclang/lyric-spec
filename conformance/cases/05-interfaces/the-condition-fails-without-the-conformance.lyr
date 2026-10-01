@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 05 §14.4: 'Pair<NoEq>' has no Equatable — the comparison is refused where it stands.
+struct NoEq { n: int }
+struct Pair<T> :: [Equatable] { a: T, b: T }
+fn f(p: Pair<NoEq>, q: Pair<NoEq>): bool { return p == q; }
+fn main(): int { return 0; }
