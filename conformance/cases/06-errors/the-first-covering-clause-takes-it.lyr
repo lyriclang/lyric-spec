@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | iface disk
+//! | data 1..9 got 12
+//! | root parse
+//! since: 5.0.0
+// 06 §4.1-2: the clauses are asked in order; a clause binds the value under its own type — an
+// interface value, a struct's fields — and a typeless one takes everything as an Error.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+struct OutOfRange :: [Error] { low: int, high: int, got: int,
+    fn message(): string { return "range"; }
+}
+
+fn read(): string throws Disk { throw Disk { }; }
+fn check(n: int): int throws OutOfRange {
+    if (n > 9) { throw OutOfRange { low = 1, high = 9, got = n }; }
+    return n;
+}
+fn parse(): int throws ParseError { throw ParseError.Empty; }
+
+fn main(): int {
+    try { let s = read(); println(s); }
+    catch (_: OutOfRange) { println("wrong"); }
+    catch (e: IoError) { println(f"iface {e.message()}"); }
+    try { let n = check(12); println(f"{n}"); }
+    catch (e: OutOfRange) { println(f"data {e.low}..{e.high} got {e.got}"); }
+    try { let n = parse(); println(f"{n}"); }
+    catch (e) { println(f"root {e.message()}"); }
+    return 0;
+}

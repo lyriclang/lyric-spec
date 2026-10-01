@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | body
+//! | a b c caught
+//! since: 5.0.0
+// 06 §5.2: an error runs the defers of every scope it leaves — the last registered first,
+// innermost first — before the clause takes it.
+import std.io { println };
+
+enum Bad :: [Error] { It; fn message(): string { return "bad"; } }
+fn fail(): int throws Bad { throw Bad.It; }
+
+fn main(): int {
+    var log = "";
+    try {
+        defer { log = log + " c"; }
+        {
+            defer { log = log + " b"; }
+            {
+                defer { log = log + "a"; }
+                println("body");
+                let n = fail();
+                println(f"{n}");
+            }
+        }
+    } catch (_: Bad) { log = log + " caught"; }
+    println(log);
+    return 0;
+}

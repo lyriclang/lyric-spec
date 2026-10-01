@@ -9,10 +9,12 @@ value and the error, each in plain sight
 
 ## Scope
 
-What is thrown, the `throws` set, the `try` mark and what covers a thrown type. Written with M5
-S1a; the chapter grows with the milestone's slices — throwing and propagating at run time and
-`main`'s report (S1b), `catch` with its clauses, `try?` and `try!` (S2), `defer` on the error
-path and `using` (S3), panics, `never` and the thrown set of a function type (S4). What is not
+What is thrown, the `throws` set, the `try` mark and what covers a thrown type (S1a); the `try`
+block with its clauses and the error path at run time — propagation, `defer` on the way out,
+`main`'s report (S1b). Written with M5; the chapter grows with the milestone's slices — the
+expression forms `try?`, `try!` and `try … catch`, a clause over several types, the set a
+typeless clause carries and the refusal of a clause no error can reach (S2), a `defer` that
+throws and `using` (S3), panics, `never` and the thrown set of a function type (S4). What is not
 written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
@@ -66,11 +68,43 @@ written here yet is decided in the design documents, not here.
    the expression's. A `try` under which nothing throws is warned about (`LYR-SEM0139`), as is a
    `try` block whose body throws nothing.
 3. Every type a site may throw — a marked call, or a `throw` — is **covered** (K8): by a `catch`
-   clause of a `try` block around the site (written with S2), or by the `throws` set of the
-   function the site stands in (`LYR-SEM0034`). A global's initializer and a default cover
-   nothing.
+   clause of a `try` block around the site ([§4](#4-the-try-block-and-its-clauses)), or by the
+   `throws` set of the function the site stands in (`LYR-SEM0034`). A global's initializer and a
+   default cover nothing.
 4. An element **covers** a thrown type when it **is** that type — on the instance: `Box<int>`
    does not cover `Box<string>` (K5) — or when it is an interface the type conforms to. `Error`
    covers everything thrown.
 5. A call throws its function's set **in the instance's terms**: a method of `Box<int>` declared
    `throws Wrong<T>` throws `Wrong<int>`.
+
+## 4. The `try` block and its clauses
+
+1. `try { … } catch (e: T) { … } catch (e) { … }` runs the body; when something in it throws,
+   the clauses are asked **in order**, and the first whose type covers the thrown value's type
+   ([§3](#3-the-try-mark-and-coverage) rule 4) takes it: the error is handled, its clause runs, and
+   execution continues after the `try`. A block without a clause is refused (`LYR-SEM0036`).
+2. A typed clause binds the value under its own type — a class's object, a struct's or an
+   enum's value, an interface value of the clause's interface — so its fields and its variants
+   are there to read and match. `catch (e)` and `catch (_)` take everything; `e` is an `Error`.
+   A clause without a type stands last (`LYR-SEM0035`). A clause's type conforms to `Error`
+   (`LYR-SEM0030`).
+3. When no clause covers the value, it goes on as though the `try` were not there: to the
+   clauses of a `try` around this one, or out of the function ([§5](#5-the-error-path)).
+4. A clause is not inside its own `try`: what it throws goes past its sister clauses to the next
+   `try` around, or out of the function (E9 C6). `throw e` in a clause throws the value it took.
+5. *(Informative.)* Since the value travels with its type, the clause test is one comparison of
+   the value's type descriptor, an interface clause a search of the type's short conformance
+   list.
+
+## 5. The error path
+
+1. A throw site that is not caught where it stands **leaves**: the function returns to its caller
+   at once, without a value, and the caller's marked call is now the site — caught there, or
+   leaving in turn (E1). No frame is skipped; a throw costs what a return costs (01 L5).
+2. On the way out of every scope it leaves, an error runs the scope's **`defer`s**, the last
+   registered first, innermost scope first — the same bodies a normal exit runs — before a
+   clause of an enclosing `try` takes it (E7). A `defer` whose body could throw out of it is not
+   written yet: the first error wins and the second is appended (05 E7, with S3).
+3. An error that leaves **`main`** ends the program: `error: <message>` on the error stream, then
+   `  caused by: <message>` for each `cause()` in the chain, and the **exit code 1** (05 E6 O4) —
+   a panic's is 101.

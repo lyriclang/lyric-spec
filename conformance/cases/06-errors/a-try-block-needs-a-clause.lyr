@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0036
+//! since: 5.0.0
+// 06 §4.1: a 'try' block has a clause; what runs on every way out is a 'defer'.
+import std.io { println };
+
+class Disk :: [Error] { fn message(): string { return "disk"; } }
+fn read(): int throws Disk { throw Disk { }; }
+
+fn main(): void throws Disk {
+    try { let n = read(); println(f"{n}"); }
+}

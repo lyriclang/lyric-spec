@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | outer got disk
+//! | rethrown parse
+//! since: 5.0.0
+// 06 §4.4: what a clause throws goes past its sisters to the next try around; 'throw e' throws the
+// value the clause took.
+import std.io { println };
+
+enum ParseError :: [Error] { Empty; fn message(): string { return "parse"; } }
+interface IoError :: [Error] { }
+class Disk :: [IoError] { fn message(): string { return "disk"; } }
+
+fn parse(): int throws ParseError { throw ParseError.Empty; }
+
+fn main(): int {
+    try {
+        try { let n = parse(); println(f"{n}"); }
+        catch (_: ParseError) { throw Disk { }; }
+        catch (_: IoError) { println("sister"); }
+    } catch (e: IoError) { println(f"outer got {e.message()}"); }
+    try {
+        try { let n = parse(); println(f"{n}"); } catch (e) { throw e; }
+    } catch (e) { println(f"rethrown {e.message()}"); }
+    return 0;
+}

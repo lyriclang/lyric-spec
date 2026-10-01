@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 7 then caught bad
+//! since: 5.0.0
+// 06 §2.4: an implementation that throws nothing fills a throwing member; the call through the
+// interface is marked, and the one that throws is caught.
+import std.io { println };
+
+enum Bad :: [Error] { It; fn message(): string { return "bad"; } }
+interface Source { fn read(n: int): int throws Bad; }
+struct Good :: [Source] { fn read(n: int): int { return n; } }
+struct Fails :: [Source] { fn read(n: int): int throws Bad { throw Bad.It; } }
+
+fn main(): int {
+    let a: Source = Good { };
+    let b: Source = Fails { };
+    var log = "";
+    try {
+        log = f"{a.read(7)}";
+        log = log + f" {b.read(1)}";
+    } catch (e: Bad) { log = log + f" then caught {e.message()}"; }
+    println(log);
+    return 0;
+}
