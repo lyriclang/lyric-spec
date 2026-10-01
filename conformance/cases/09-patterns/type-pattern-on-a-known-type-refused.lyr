@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0131
+//! since: 5.0.0
+// 09 §2.12: a type pattern asks an interface value; a known type answers already.
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
+fn f(c: Circle): int {
+    return match (c) { x: Circle => x.r, _ => 0 };
+}
+fn main(): int { return 0; }

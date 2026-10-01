@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 9 5
+//! since: 5.0.0
+// 05 §9.4, 04 D12: the narrowed name reads a copy of the boxed struct; the interface value keeps its own.
+import std.io { println };
+
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { var r: int, fn area(): int { return 1; } }
+
+fn main(): int {
+    let a: Shape = Circle { r = 5 };
+    var seen = 0;
+    if (a is Circle) {
+        var c = a;
+        c.r = 9;
+        seen = c.r;
+    }
+    var again = 0;
+    if (a is Circle) { again = a.r; }
+    println(f"{seen} {again}");
+    return 0;
+}

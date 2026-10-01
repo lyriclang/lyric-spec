@@ -10,11 +10,11 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3, S4 and S4b; the chapter grows with the milestone's slices — `Any`, type tests and
-`sealed` (T10, T11, D8), operator interfaces (D6), generic extends (T7), synthesis (D7). Of the
-associated types (T6, [§8](#8-associated-types)) the value form `Iterator<Item = int>` and an
-answer per interface instance are not written yet. What is not written here yet is decided in
-the design documents, not here.
+M4 S1, S3, S4, S4b and S5a; the chapter grows with the milestone's slices — `sealed` (D8), the
+child interface value as a parent value (D10), operator interfaces (D6), generic extends (T7),
+synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
+`Iterator<Item = int>` and an answer per interface instance are not written yet. What is not
+written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -150,3 +150,35 @@ the design documents, not here.
    ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`): the value form, the interface
    with its answer fixed as a fat pointer, comes with the iterators of M8a and is not written
    here.
+
+## 9. `Any`, type tests and type patterns
+
+1. **`Any`** is the empty interface of `std.core` (03 T10), visible without an import as
+   every public type of `std.core` is. Every struct, class and enum value is an `Any` at the
+   transition, nothing declared — the ordinary transition of [§2](#2-interface-values), a
+   copy into a box for a struct or an enum. Nothing converts to `Any` unasked: only a position
+   whose type is `Any` takes a value that way, and a scalar never (`LYR-SEM0001`). `Any[]` is
+   the heterogeneous array.
+2. **`x is T`** (03 T11) asks an interface value what it holds and answers a `bool`: for a
+   struct, a class or an enum `T`, whether the value is one — a comparison of the descriptor
+   the value's table begins with; for an interface `T` that is a value type
+   ([§7](#7-self-and-static-members) rule 3), whether the concrete type conforms to it — a
+   search of the conformance list behind that descriptor. `is` stands at the comparison level
+   and does not chain.
+3. The operand's static type is an **interface**. On a known type (`c is Circle` with
+   `c: Circle`), on an optional (`?Shape`: test for `null` first), against a type a value is
+   never behind an interface (`s is int`) and against a type parameter (`s is T`, O2: a
+   dynamic test takes `Any`) the test is refused (`LYR-SEM0131`); against a constraint-only
+   interface it is refused as a value of it is (`LYR-SEM0126`).
+4. **Narrowing.** In the branch `x is T` guards, the name `x` **is a `T`** — the smart cast,
+   the mechanism of the null test ([03 §3.2](03-types.md#32-tests-and-narrowing)):
+   `if (s is Circle) { s.r }`, `s is Circle && s.r > 0`. The branch's end ends it, as an
+   assignment to the name does; the other branch learns nothing. A read of the narrowed name
+   takes the value out of the interface value: the object for a class, a **copy** for a struct
+   or an enum (04 D12).
+5. **Type patterns.** `c: Circle` and `_: Circle` in a `match` over an interface value test
+   the same way and bind `c` as the type ([09 §2](09-patterns.md#2-the-forms) rule 12). A
+   match of type patterns over an interface needs `_`: the set of conformers is open
+   (`LYR-SEM0050`) until `sealed` closes it (D8, not written yet).
+6. There is no `as?`: `as` is the bit-near conversion of scalars (03 T1d), and `is` with its
+   narrowing is the downcast.

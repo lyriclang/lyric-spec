@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true false true
+//! since: 5.0.0
+// 05 §9.2: 'is' against a struct, a class and an enum.
+import std.io { println };
+
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } }
+enum Dir :: [Shape] { Up, Down; fn area(): int { return 0; } }
+
+fn main(): int {
+    let s: Shape = Circle { r = 2 };
+    let d: Shape = Dir.Down;
+    println(f"{s is Circle} {s is Rect} {d is Dir}");
+    return 0;
+}

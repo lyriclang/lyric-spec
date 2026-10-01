@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §9.4: after the branch the name is the interface again.
+interface Shape { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
+fn f(s: Shape): int {
+    if (s is Circle) { }
+    return s.r;
+}
+fn main(): int { return 0; }

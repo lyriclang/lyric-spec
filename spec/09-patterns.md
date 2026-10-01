@@ -79,6 +79,12 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
 12. The type patterns `c: Circle` and `s in [Circle, Rect]` are written with the interfaces
     ([05](05-interfaces.md), M4).
 
+12. **Type.** `c: Circle` and `_: Circle` stand against an **interface value** and match when
+    it holds a value of that type ([05 §9](05-interfaces.md#9-any-type-tests-and-type-patterns));
+    `c` binds that value **as that type** — the object for a class, a copy for a struct or an
+    enum. On a scrutinee whose type is no interface the pattern is refused (`LYR-SEM0131`):
+    the static type answers already.
+
 ## 3. Exhaustiveness
 
 1. A `match` is **exhaustive**: its arms cover every value of the scrutinee's type, or the
@@ -97,6 +103,10 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
 3. A guarded arm covers nothing: whether its guard holds is not known to the check.
 4. A scrutinee of type `?E` admits `null` and the variants of `E` in one `match`; presence is
    established before a variant is examined, and the arms are still tried in order.
+
+A type pattern never covers an interface's values: the set of its conformers is open, so a
+match of type patterns over an interface needs `_` (`LYR-SEM0050`) — until a `sealed`
+interface closes it (04 D8, not written yet).
 
 ## 4. Unreachable arms
 

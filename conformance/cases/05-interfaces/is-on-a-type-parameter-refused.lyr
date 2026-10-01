@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0131
+//! since: 5.0.0
+// 05 §9.3: no type test against a type parameter (03 T11, O2).
+interface Shape { fn area(): int; }
+fn f<T>(s: Shape): bool { return s is T; }
+fn main(): int { return 0; }
