@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0127
+//! since: 5.0.0
+// 05 §7.2: a static interface member has no body.
+interface Parse { static fn parse(s: string): int { return 1; } }
+
+fn main(): int { return 0; }

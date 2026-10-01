@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7.3: an interface naming 'Self' beyond the receiver is no type for a value.
+interface Equatable { fn equals(o: Self): bool; }
+struct P :: [Equatable] { n: int, fn equals(o: P): bool { return this.n == o.n; } }
+
+fn main(): int {
+    let e: Equatable = P { n = 1 };
+    return 0;
+}

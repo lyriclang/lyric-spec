@@ -10,9 +10,9 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1 and S3; the chapter grows with the milestone's slices — `Self` and associated types (T5,
-T6), `Any`, type tests and `sealed` (T10, T11, D8), operator interfaces (D6), generic extends
-(T7), synthesis (D7). What is not written here yet is decided in the design documents, not here.
+M4 S1, S3 and S4; the chapter grows with the milestone's slices — associated types (T6), `Any`,
+type tests and `sealed` (T10, T11, D8), operator interfaces (D6), generic extends (T7),
+synthesis (D7). What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -102,3 +102,19 @@ T6), `Any`, type tests and `sealed` (T10, T11, D8), operator interfaces (D6), ge
    module (03 T7 X3): there is no orphan rule — coherence is checked for the whole program. An
    interface is not extended directly (`LYR-SEM0124`); the generic form, `extend<T :: [I]> T
    { … }`, is the one (D15, with 03 §11).
+
+## 7. `Self` and static members
+
+1. In an interface, **`Self`** is the conforming type (03 T5): `fn equals(o: Self): bool`. An
+   implementation writes its own type where the interface writes `Self` (`LYR-SEM0042`
+   otherwise); through a constraint `T :: [I]`, `Self` is `T`. In a struct, a class or an enum,
+   `Self` is the type itself — a generic one at its own parameters.
+2. An interface may declare **static members**, `static fn parse(s: string): Self;`, without a
+   body (`LYR-SEM0127`): every conforming type implements one with a static member of its own
+   (`LYR-SEM0042`), and the member is reached through a type parameter alone, `T.parse(s)` —
+   the conformer's own static, a direct call. On a value of the parameter it is not called
+   (`LYR-SEM0055`).
+3. An interface that names `Self` beyond the receiver, or declares a static member, is a
+   **constraint only** (04 D9): no value of it arises — a table would hold no one function for
+   such a member — and the transition says so (`LYR-SEM0126`). An interface with neither is a
+   value as [§2](#2-interface-values) says.

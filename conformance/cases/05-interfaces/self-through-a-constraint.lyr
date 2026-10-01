@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | true
+//! since: 5.0.0
+// 05 §7.1: through a constraint, 'Self' is the type parameter.
+import std.io { println };
+
+interface Equatable { fn equals(o: Self): bool; }
+struct P :: [Equatable] { n: int, fn equals(o: P): bool { return this.n == o.n; } }
+fn same<T :: [Equatable]>(a: T, b: T): bool { return a.equals(b); }
+
+fn main(): int {
+    println(f"{same(P { n = 1 }, P { n = 1 })}");
+    return 0;
+}

@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 7
+//! since: 5.0.0
+// 05 §7.2: a static interface member, reached as 'T.parse(s)' — the conformer's own static.
+import std.io { println };
+
+interface Parse { static fn parse(s: string): Self; }
+struct P :: [Parse] { n: int, static fn parse(s: string): P { return P { n = 7 }; } }
+fn make<T :: [Parse]>(s: string): T { return T.parse(s); }
+
+fn main(): int {
+    let p: P = make("x");
+    println(f"{p.n}");
+    return 0;
+}

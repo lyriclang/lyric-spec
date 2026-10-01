@@ -524,6 +524,11 @@ Type parameters, their inference, and what an instance is
 4. *(Informative.)* Every instance is compiled as code of its own — **monomorphization** —
    with `T` replaced throughout: an `int8` field takes one byte, a call on a `T` is a direct
    call. The compiler collects the instances of a program and compiles each once (C3).
+5. A type parameter may carry a **default** (T18): `interface Add<Rhs = Self> { … }`,
+   `class Map<K, V, H = DefaultHasher>`. A use that writes fewer arguments takes the defaults
+   for the trailing ones, resolved where the type is declared — `Self` there is the conforming
+   type, so `Vec2 :: [Add]` is `Vec2 :: [Add<Vec2>]`, and the constraint `T :: [Add]` is
+   satisfied by either spelling.
 
 ### 9.2 Inference at a call
 

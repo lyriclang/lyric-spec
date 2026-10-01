@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7.3: an interface with a static member is no type for a value.
+interface Parse { static fn parse(s: string): Self; }
+struct P :: [Parse] { n: int, static fn parse(s: string): P { return P { n = 1 }; } }
+
+fn main(): int {
+    let e: Parse = P { n = 1 };
+    return 0;
+}
