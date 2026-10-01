@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0125
+//! since: 5.0.0
+// 05 §4: the receiver of the qualified call conforms to the interface.
+interface Greeter { fn greet(): string; }
+struct Person :: [Greeter] { name: string, fn greet(): string { return "hello"; } }
+
+fn main(): int {
+    let s = Greeter.greet(3);
+    return 0;
+}

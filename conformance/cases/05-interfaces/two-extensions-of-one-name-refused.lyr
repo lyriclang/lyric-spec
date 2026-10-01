@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §3.1: two extend blocks cannot add one name.
+struct V { x: int }
+extend V { fn tag(): int { return 1; } }
+extend V { fn tag(): int { return 2; } }
+
+fn main(): int { return 0; }

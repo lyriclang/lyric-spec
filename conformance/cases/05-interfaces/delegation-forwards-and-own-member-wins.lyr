@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 4 4 walk run
+//! since: 5.0.0
+// 05 §5.1–5.3: a class delegating to a field; its own member wins; the field exchanged at run time.
+import std.io { println };
+
+interface Walker { fn walk(): string; fn speed(): int; }
+class Legs :: [Walker] { var k: int, fn walk(): string { return "walk"; } fn speed(): int { return this.k; } }
+class Wheels :: [Walker] { fn walk(): string { return "run"; } fn speed(): int { return 9; } }
+class Dog :: [Walker by legs] { var legs: Walker, fn speed(): int { return 4; } }
+
+fn main(): int {
+    let dog = Dog { legs = Legs { k = 2 } };
+    let w: Walker = dog;
+    let first = dog.walk();
+    dog.legs = Wheels { };
+    let second = w.walk();
+    println(f"{dog.speed()} {w.speed()} {first} {second}");
+    return 0;
+}

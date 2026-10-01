@@ -10,10 +10,9 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1; the chapter grows with the milestone's slices — one method set and delegation (D1–D3),
-`Self` and associated types (T5, T6), `Any`, type tests and `sealed` (T10, T11, D8), operator
-interfaces (D6), generic extends (T7), synthesis (D7). What is not written here yet is decided in
-the design documents, not here.
+M4 S1 and S3; the chapter grows with the milestone's slices — `Self` and associated types (T5,
+T6), `Any`, type tests and `sealed` (T10, T11, D8), operator interfaces (D6), generic extends
+(T7), synthesis (D7). What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -54,10 +53,52 @@ the design documents, not here.
    like any value, and answers every member of the interface's chain. Two interface values are
    not compared.
 
-## 3. Resolution
+## 3. One method set
 
-1. Which implementation a member call on a **concrete** type reaches is fixed at compile time:
-   an own member, else a visible extension method, else a default of a conformed interface's
-   chain. *(The order of Lyric 4; 04 D2 makes the three one set, with M4 S3.)*
-2. The table of a (type, interface) pair holds what rule 1 settled for every member of the
-   chain; a call through an interface value reads it and searches nothing.
+1. A type holds **one function per name** (D2): its own members, the methods its inherent
+   extend blocks add, and the implementations of its conformances — an own member, a member of
+   a conformance block, an interface's default, a member delegated to a field (§5). A name two
+   of these would give it is refused where the second is declared (`LYR-SEM0121`): an
+   extension beside an own member, two extensions, an extension beside a default of a conformed
+   interface, a conformance block beside an own member.
+2. An **own member is the implementation** of every conformance's member of that name, and
+   overrides a default. Two defaults of one name from two interfaces, which the type does not
+   write itself, are the type's to settle: it writes the member, one function for both
+   (`LYR-SEM0043`, D3).
+3. **Every path reads the same set** (R3): a call on the concrete type, a call through an
+   interface value, a call through a constraint reach the one function.
+4. The one exception is scoped (D3): a type may implement one name **separately per
+   interface**, in separate conformance blocks — `extend C :: [I1] { fn greet() … }` beside
+   `extend C :: [I2] { fn greet() … }`. The name then belongs to each block: the unqualified
+   call `c.greet()` is refused and says how to qualify (`LYR-SEM0122`); through an interface
+   value of `I1` or `I2`, and through the qualified call (§4), each is reached.
+
+## 4. The qualified call
+
+1. `I.m(x, …)` calls the member `m` of the interface `I` with `x` as its receiver — the
+   implementation `x`'s type has for `I` (D2 R5). The receiver conforms to `I` (`LYR-SEM0125`
+   otherwise) and comes first (`LYR-SEM0014`). It is the form that names what the unqualified
+   call cannot (§3.4), and it is checked as the member call it is.
+
+## 5. Delegation
+
+1. A struct or a class may conform **by delegating** to one of its fields: `class Dog ::
+   [Walker by legs] { var legs: Legs, … }` (D1). The field exists and conforms to the
+   interface, or holds a value of it (`LYR-SEM0123` otherwise). Every abstract member of the
+   interface's chain that the type does not write itself is **forwarded** to the field, as if
+   `fn walk(d) { this.legs.walk(d); }` were written.
+2. Own members win. The interface's defaults run on the outer type, as every default does, and
+   reach the forwarded members through `this`. There is no passthrough of `this`: the field's
+   implementation runs with the field as its receiver, never the outer value — a call on
+   `this` inside it reaches the field's own members, which is why delegation has no fragile
+   base.
+3. A `var` field may be exchanged at run time; the next call forwards to the new value.
+4. Two delegations that would answer one name are refused (`LYR-SEM0121`); an enum delegates
+   nothing (`LYR-PAR0047`).
+
+## 6. Extend blocks
+
+1. `extend T { … }` adds methods to a type and `extend T :: [I] { … }` a conformance, in any
+   module (03 T7 X3): there is no orphan rule — coherence is checked for the whole program. An
+   interface is not extended directly (`LYR-SEM0124`); the generic form, `extend<T :: [I]> T
+   { … }`, is the one (D15, with 03 §11).

@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | walk4
+//! since: 5.0.0
+// 05 §5.2: the interface's default runs on the outer type and reaches the forwarded member and the own one through 'this'.
+import std.io { println };
+
+interface Walker {
+    fn walk(): string;
+    fn speed(): int;
+    fn pace(): string { return f"{this.walk()}{this.speed()}"; }
+}
+class Legs :: [Walker] { fn walk(): string { return "walk"; } fn speed(): int { return 1; } }
+class Dog :: [Walker by legs] { var legs: Legs, fn speed(): int { return 4; } }
+
+fn main(): int {
+    let w: Walker = Dog { legs = Legs { } };
+    println(f"{w.pace()}");
+    return 0;
+}
