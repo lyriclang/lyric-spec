@@ -96,6 +96,10 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0007` | a precondition of a runtime operation stated by the program text (a negative length) |
    | `LYR-RT0008` | `panic(message)`: the program's own message, as written |
    | `LYR-RT0009` | `as char` of a value that is no Unicode scalar value ([03 §1.4](03-types.md)) |
+   | `LYR-RT0010` | `try!` on an error: `'try!' on an error: <message>` ([06 §6](06-errors.md#6-the-expression-forms)) |
+   | `LYR-RT0011` | `assert(condition, message)` with a false condition: the message as given ([06 §9](06-errors.md#9-panics-and-never)) |
+   | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
+   | `LYR-RT0013` | `todo(message)` reached: the message as given |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It

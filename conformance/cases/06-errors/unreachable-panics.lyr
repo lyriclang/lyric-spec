@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0012
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §9.1: 'unreachable()' reached ends the program with LYR-RT0012.
+import std.io { println };
+
+fn main(): void {
+    println("before");
+    let n: int = unreachable();
+    println(f"{n}");
+}

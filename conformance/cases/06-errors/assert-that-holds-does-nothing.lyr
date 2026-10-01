@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | after
+//! since: 5.0.0
+// 06 §9.1: 'assert' does nothing when its condition holds.
+import std.io { println };
+
+fn main(): void {
+    assert(1 < 2, "never shown");
+    assert(true);
+    println("after");
+}

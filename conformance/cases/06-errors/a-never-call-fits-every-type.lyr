@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 3
+//! | 4
+//! | true
+//! since: 5.0.0
+// 06 §9.2: what gives no value fits wherever one is wanted - a call of a function that returns
+// 'never', 'unreachable()' - an operand too.
+import std.io { println };
+
+fn fail(message: string): never { panic(message); }
+
+fn main(): void {
+    let o: ?int = 3;
+    let n: int = o ?? fail("none");
+    println(f"{n}");
+    let m: int = if (n > 0) n + 1 else unreachable();
+    println(f"{m}");
+    let checked = n > 0 || fail("negative");
+    println(f"{checked}");
+}

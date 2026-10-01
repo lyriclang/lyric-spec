@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 06 §9.3: 'never' stands only as a return type - a field, a parameter, an element or a type
+// argument of it would hold a value that cannot exist.
+struct Box<T> { v: T }
+struct Holder { n: never }
+
+fn take(x: never, xs: never[], b: Box<never>): void { }
+
+fn main(): void { }

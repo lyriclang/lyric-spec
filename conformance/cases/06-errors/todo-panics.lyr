@@ -1,0 +1,17 @@
+//! run
+//! panic: LYR-RT0013
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §9.1: 'todo(message)' reached ends the program with LYR-RT0013; its type is 'never', so it
+// ends the path it stands on.
+import std.io { println };
+
+fn later(): int {
+    todo("later");
+}
+
+fn main(): void {
+    println("before");
+    println(f"{later()}");
+}
