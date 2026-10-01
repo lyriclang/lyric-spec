@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 05 §11.2: only up the chain.
+interface Display { fn show(): string; }
+interface Other { fn other(): int; }
+interface Shape :: [Display] { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 1; } fn show(): string { return "c"; } }
+fn f(s: Shape): Other { return s; }
+fn main(): int { return 0; }

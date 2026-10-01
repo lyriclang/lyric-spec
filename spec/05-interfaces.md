@@ -10,11 +10,11 @@ the language's one dynamic dispatch
 ## Scope
 
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
-M4 S1, S3, S4, S4b and S5a; the chapter grows with the milestone's slices — `sealed` (D8), the
-child interface value as a parent value (D10), operator interfaces (D6), generic extends (T7),
-synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
-`Iterator<Item = int>` and an answer per interface instance are not written yet. What is not
-written here yet is decided in the design documents, not here.
+M4 S1, S3, S4, S4b, S5a and S5b; the chapter grows with the milestone's slices — operator
+interfaces (D6), generic extends (T7), synthesis (D7). Of the associated types (T6,
+[§8](#8-associated-types)) the value form `Iterator<Item = int>` and an answer per interface
+instance are not written yet. What is not written here yet is decided in the design documents,
+not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -179,6 +179,30 @@ written here yet is decided in the design documents, not here.
 5. **Type patterns.** `c: Circle` and `_: Circle` in a `match` over an interface value test
    the same way and bind `c` as the type ([09 §2](09-patterns.md#2-the-forms) rule 12). A
    match of type patterns over an interface needs `_`: the set of conformers is open
-   (`LYR-SEM0050`) until `sealed` closes it (D8, not written yet).
+   (`LYR-SEM0050`) — unless the interface is sealed ([§10](#10-sealed-interfaces)).
 6. There is no `as?`: `as` is the bit-near conversion of scalars (03 T1d), and `is` with its
    narrowing is the downcast.
+
+## 10. Sealed interfaces
+
+1. **`sealed interface Shape { … }`** (04 D8) closes the set of its conformers: every struct,
+   class and enum that conforms to it — in its own list or in a conformance block — and every
+   interface that names it as a parent stands in the **module that declares it**
+   (`LYR-SEM0132` elsewhere). `sealed` is a contextual word and stands before `interface`
+   only (`LYR-PAR0048`).
+2. A `match` of type patterns over a sealed interface value is **exhaustive without `_`** when
+   every conformer has an unguarded arm; the diagnostic names the conformer missing, as the
+   pattern to add (`LYR-SEM0050`, `_: Rect`). A conformer added later makes every such match
+   without it an error — the point of sealing. Against an enum: an enum is closed variants
+   with payloads, a sealed interface closed types with members of their own.
+3. *(Informative.)* The compiler may dispatch such a match as a switch over the descriptors.
+
+## 11. The child interface value as a parent value
+
+1. A value of an interface is a value of each **parent** in its chain (04 D10, [§1](#1-interfaces-and-conformance)
+   rule 4): `let d: Display = shape;` with `Shape :: [Display]` is a coercion at the ordinary
+   sites — a binding, an argument, a return — never inside a container (`Shape[]` is no
+   `Display[]`). The parent's table is found at the transition through the concrete type's
+   conformance list; the data stays the same object or box.
+2. Only up the chain: an unrelated interface and the way down are refused (`LYR-SEM0001`); the
+   way down is `is` ([§9](#9-any-type-tests-and-type-patterns)).

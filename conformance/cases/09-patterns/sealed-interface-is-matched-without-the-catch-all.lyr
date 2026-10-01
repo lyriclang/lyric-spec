@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | circle rect tri
+//! since: 5.0.0
+// 05 §10.2, 09 §3: every conformer of a sealed interface has an arm — a struct, a class, one conformed in a block.
+import std.io { println };
+
+interface Display { fn show(): string; }
+sealed interface Shape :: [Display] { fn area(): int; }
+struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } fn show(): string { return "circle"; } }
+class Rect :: [Shape] { w: int, h: int, fn area(): int { return this.w * this.h; } fn show(): string { return "rect"; } }
+struct Tri { b: int, h: int }
+extend Tri :: [Shape] { fn area(): int { return this.b * this.h / 2; } fn show(): string { return "tri"; } }
+
+fn name(s: Shape): string {
+    return match (s) { _: Circle => "circle", _: Rect => "rect", _: Tri => "tri" };
+}
+
+fn main(): int {
+    println(f"{name(Circle { r = 1 })} {name(Rect { w = 1, h = 1 })} {name(Tri { b = 1, h = 1 })}");
+    return 0;
+}
