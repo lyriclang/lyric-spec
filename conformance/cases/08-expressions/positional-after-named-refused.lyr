@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0119
+//! since: 5.0.0
+// 08 §1.1: positional arguments come first.
+fn connect(host: int, port: int = 80): int { return host + port; }
+
+fn main(): int { return connect(host: 1, 2); }

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0087
+//! since: 5.0.0
+// 08 §1.2: a call counts its arguments; none of the name takes two.
+fn code(n: int): int { return 1; }
+fn code(a: int, b: int, c: int): int { return 2; }
+
+fn main(): int { return code(1, 2); }

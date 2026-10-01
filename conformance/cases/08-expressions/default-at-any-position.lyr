@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | #1 -2
+//! since: 5.0.0
+// 08 §1.1: a default may stand before a parameter without one; the call names what follows.
+import std.io { println };
+
+fn tag(prefix: string = "#", n: int): string { return f"{prefix}{n}"; }
+
+fn main(): int {
+    let a = tag(n: 1);
+    let b = tag("-", 2);
+    println(f"{a} {b}");
+    return 0;
+}

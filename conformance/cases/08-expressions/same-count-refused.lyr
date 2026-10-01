@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0085
+//! since: 5.0.0
+// 08 §1.2: two of one name taking the same number of arguments are a redeclaration, whatever their types.
+fn same(n: int): int { return n; }
+fn same(s: string): int { return 0; }
+
+fn main(): int { return 0; }

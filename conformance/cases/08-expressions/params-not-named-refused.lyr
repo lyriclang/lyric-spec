@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0119
+//! since: 5.0.0
+// 08 §1.1: the 'params' tail is not named.
+fn sum(base: int, params xs: int[]): int { return base; }
+
+fn main(): int { return sum(1, xs: [2]); }

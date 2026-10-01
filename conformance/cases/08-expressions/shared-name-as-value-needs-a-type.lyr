@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0089
+//! since: 5.0.0
+// 08 §1.2: the bare name of a shared one is a value only where the position says which.
+fn step(n: int): int { return n; }
+fn step(a: int, b: int): int { return a + b; }
+
+fn main(): int {
+    let g = step;
+    return 0;
+}

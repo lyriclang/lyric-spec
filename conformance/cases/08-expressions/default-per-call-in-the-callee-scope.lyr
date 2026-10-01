@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 10 2 3
+//! since: 5.0.0
+// 08 §1.1: a default is evaluated per call, after the arguments before it, which it may read; a middle default is left out by name.
+import std.io { println };
+
+fn span(from: int, to: int = from + 10, step: int = to - from): int { return step; }
+
+fn main(): int {
+    println(f"{span(5)} {span(5, 7)} {span(5, step: 3)}");
+    return 0;
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0119
+//! since: 5.0.0
+// 08 §1.1: a function value's parameters have no names.
+fn apply(g: fn(int) -> int): int { return g(x: 1); }
+
+fn main(): int { return apply((n: int): int => n); }

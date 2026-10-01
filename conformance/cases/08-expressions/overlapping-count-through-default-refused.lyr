@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0085
+//! since: 5.0.0
+// 08 §1.2: a default widens a count to a range; 'f(a)' and 'f(a, b = 0)' both take one.
+fn f(a: int): int { return a; }
+fn f(a: int, b: int = 0): int { return a + b; }
+
+fn main(): int { return 0; }
