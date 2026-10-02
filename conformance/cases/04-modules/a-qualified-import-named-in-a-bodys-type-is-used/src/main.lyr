@@ -1,0 +1,13 @@
+//! check
+//! since: 5.0.0
+// 04 §4 rule 3: a qualified import is used where its module is named — in the type of a binding
+// in a body too.
+import std.io { println };
+import app.a;
+
+fn main(): void {
+    let c: ?a.Cat = null;
+    if (c == null) {
+        println("none");
+    }
+}

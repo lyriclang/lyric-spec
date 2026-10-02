@@ -1,0 +1,10 @@
+//! check
+//! since: 5.0.0
+// 04 §4 rule 3: a qualified import is used where its module is named — in an initializer too.
+import std.io { println };
+import app.a;
+
+fn main(): void {
+    let c = a.Cat { n = 1 };
+    println(f"{c.n}");
+}

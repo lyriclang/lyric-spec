@@ -1,0 +1,4 @@
+pub struct Cat {
+    pub s: string,
+    pub n: int,
+}
