@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0020
+//! since: 5.0.0
+// 05 §7 rule 2: a conformer that answers no static let of its interface is refused.
+
+interface Initial {
+    static let initial: Self;
+}
+
+struct Score :: [Initial] {
+    points: int,
+}
+
+fn main(): void {
+}

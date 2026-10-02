@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3: an interface that declares a static member is a constraint only.
+
+interface Initial {
+    static let initial: Self;
+}
+
+struct Score :: [Initial] {
+    points: int,
+
+    static let initial: Score = Score { points = 0 };
+}
+
+fn main(): void {
+    let i: Initial = Score { points = 1 };
+}

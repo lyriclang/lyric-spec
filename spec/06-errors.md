@@ -74,8 +74,8 @@ with M5. What is not written here yet is decided in the design documents, not he
 3. Every type a site may throw — a marked call, or a `throw` — is **covered** (K8): by a `try?`
    or `try!` around the site, by a `catch` clause of a `try` around it
    ([§4](#4-the-try-block-and-its-clauses), [§6](#6-the-expression-forms)), or by the `throws` set
-   of the function the site stands in (`LYR-SEM0034`). A global's initializer and a default cover
-   nothing.
+   of the function the site stands in (`LYR-SEM0034`). A global's initializer, a constant's
+   (a `static let`'s) and a default cover nothing.
 4. An element **covers** a thrown type when it **is** that type — on the instance: `Box<int>`
    does not cover `Box<string>` (K5) — or when it is an interface the type conforms to. `Error`
    covers everything thrown.

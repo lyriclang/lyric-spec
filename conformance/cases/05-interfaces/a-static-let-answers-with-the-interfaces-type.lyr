@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §7 rule 2: the answer has the type the interface writes, Self read as the conformer.
+
+interface Initial {
+    static let initial: Self;
+}
+
+struct Score :: [Initial] {
+    points: int,
+
+    static let initial: int = 0;
+}
+
+fn main(): void {
+}

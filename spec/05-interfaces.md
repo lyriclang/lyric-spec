@@ -105,6 +105,12 @@ same. What is not written here yet is decided in the design documents, not here.
    module (03 T7 X3): there is no orphan rule — coherence is checked for the whole program. An
    interface is not extended directly (`LYR-SEM0124`); the generic form, `extend<T :: [I]> T
    { … }`, is the one (D15, with 03 §11).
+2. A block adds **constants** too: a `static let` in it is the type's, under the type's name,
+   as one in the type's body is — `extend int { static let answer: int = 42; }` makes
+   `int.answer` (10 N1: a constant is a static member). A type holds one member of a name: a
+   block's constant repeating a member of the type or of another block is refused
+   (`LYR-SEM0121`). A generic block holds none (`LYR-SEM0159`): its constant would be one per
+   instance, which is not decided.
 
 ## 7. `Self` and static members
 
@@ -112,11 +118,14 @@ same. What is not written here yet is decided in the design documents, not here.
    implementation writes its own type where the interface writes `Self` (`LYR-SEM0042`
    otherwise); through a constraint `T :: [I]`, `Self` is `T`. In a struct, a class or an enum,
    `Self` is the type itself — a generic one at its own parameters.
-2. An interface may declare **static members**, `static fn parse(s: string): Self;`, without a
-   body (`LYR-SEM0127`): every conforming type implements one with a static member of its own
-   (`LYR-SEM0042`), and the member is reached through a type parameter alone, `T.parse(s)` —
-   the conformer's own static, a direct call. On a value of the parameter it is not called
-   (`LYR-SEM0055`).
+2. An interface may declare **static members** — `static fn parse(s: string): Self;` and
+   `static let zero: Self;` — without a body or a value (`LYR-SEM0127`): every conforming type
+   implements one with a static member of its own, in its body or in its conformance block
+   (`LYR-SEM0042`; `LYR-SEM0020` where it has none). A `static let` answers with the type the
+   interface writes, `Self` read as the conformer — `static let zero: int = 0;` in
+   `extend int :: [Num]`. The member is reached through a type parameter alone, `T.parse(s)`,
+   `T.zero` — the conformer's own static, a direct call or a read. On a value of the parameter
+   it is not reached (`LYR-SEM0055`).
 3. An interface that names `Self` beyond the receiver, or declares a static member, is a
    **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). An interface with neither is a

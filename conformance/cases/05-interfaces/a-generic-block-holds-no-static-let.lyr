@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0159
+//! since: 5.0.0
+// 05 §6 rule 2: a generic block's constant would be one per instance, which is not decided.
+
+struct Pair<T> {
+    a: T,
+    b: T,
+}
+
+extend<T> Pair<T> {
+    static let size: int = 2;
+}
+
+fn main(): void {
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0127
+//! since: 5.0.0
+// 05 §7 rule 2: an interface's static let declares and holds no value — every conformer answers.
+
+interface Sized {
+    static let size: int = 8;
+}
+
+fn main(): void {
+}

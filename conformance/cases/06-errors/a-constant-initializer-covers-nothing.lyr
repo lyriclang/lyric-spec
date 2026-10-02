@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 06 §3.3: a constant's initializer covers nothing, as a global's does.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn value(): int throws Oops { return 7; }
+struct Limits {
+    top: int,
+
+    static let max: int = try value();
+}
+fn main(): int { return Limits.max; }

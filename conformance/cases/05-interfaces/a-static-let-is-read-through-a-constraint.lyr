@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 10 5 3
+//! since: 5.0.0
+// 05 §7 rule 2: an interface's static let is answered by every conformer — in its body, in a
+// conformance block, by a built-in — and read through a type parameter, the conformer's own.
+import std.io { println };
+
+interface Initial {
+    static let initial: Self;
+}
+
+struct Score :: [Initial] {
+    points: int,
+
+    static let initial: Score = Score { points = 10 };
+}
+
+struct Tally {
+    n: int,
+}
+
+extend Tally :: [Initial] {
+    static let initial: Tally = Tally { n = 5 };
+}
+
+extend int :: [Initial] {
+    static let initial: int = 3;
+}
+
+fn initialOf<T :: [Initial]>(): T {
+    return T.initial;
+}
+
+fn main(): void {
+    let s: Score = initialOf();
+    let t: Tally = initialOf();
+    let n: int = initialOf();
+    println(f"{s.points} {t.n} {n}");
+}
