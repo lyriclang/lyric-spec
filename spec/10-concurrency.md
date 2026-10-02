@@ -6,7 +6,7 @@
 
 ## Scope
 
-Coroutines and generators, tasks and `TaskScope`, parking, threads with one scheduler each, channels, select and timers, synchronization, the memory model.
+Coroutines and generators, tasks and `TaskScope`, parking, threads with one scheduler each, channels, select and timers, atomics and synchronization, the memory model.
 
 ## 1. Coroutines and generators
 
@@ -225,3 +225,20 @@ values of their types.
 5. **`Timer.after(d)`** gives a `Channel<void>` that fires once, when `d` has passed: then it
    closes, so a `recv()` from it answers `null` and a case on it runs. The program does not wait
    for a timer (§2 rule 1).
+
+## 8. Atomics
+
+`std.sync`'s **`Atomic<T>`** holds a value that every thread reads and writes in one step
+([06 G4, K6, N7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)).
+
+1. `Atomic<T>.new(value)` makes one. `T` is an **`AtomicValue`**: `int` or `bool`. The interface
+   is sealed, so no other type becomes one (`LYR-SEM0132`), and an `Atomic` of another type is
+   refused (`LYR-SEM0028`).
+2. **`load()`** gives the value, **`store(v)`** sets it, **`exchange(v)`** sets it and gives the
+   value it replaced, and **`compareAndSet(expected, desired)`** sets `desired` where the value is
+   `expected` and answers whether it did. Each is one step.
+3. An `Atomic<int>` also adds: **`fetchAndAdd(n)`** gives the value before, **`addAndFetch(n)`**
+   the value after. The sum wraps around, as `+%` does.
+4. Every operation is sequentially consistent (N7 P2): all threads see the operations in one
+   order, and no read or write moves across one (P4). A store happens before a load that reads
+   its value (P1).

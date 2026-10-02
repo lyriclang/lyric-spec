@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 2
+//! | 2 3
+//! | true 4
+//! | false 4
+//! | true true
+//! since: 5.0.0
+// 10 §8 rules 1, 2: load, store, exchange and compareAndSet, on an int and on a bool.
+import std.io { println };
+import std.sync { Atomic };
+
+fn main(): void {
+    let n = Atomic<int>.new(1);
+    let first = n.load();
+    n.store(2);
+    println(f"{first} {n.load()}");
+    let replaced = n.exchange(3);
+    println(f"{replaced} {n.load()}");
+    let swapped = n.compareAndSet(3, 4);
+    println(f"{swapped} {n.load()}");
+    let missed = n.compareAndSet(3, 5);
+    println(f"{missed} {n.load()}");
+    let flag = Atomic<bool>.new(false);
+    let set = flag.compareAndSet(false, true);
+    println(f"{set} {flag.load()}");
+}

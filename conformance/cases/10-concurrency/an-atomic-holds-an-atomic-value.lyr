@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 10 §8 rule 1: an Atomic holds an int or a bool — another type is refused.
+import std.sync { Atomic };
+
+fn main(): void {
+    let name = Atomic<string>.new("x");
+}

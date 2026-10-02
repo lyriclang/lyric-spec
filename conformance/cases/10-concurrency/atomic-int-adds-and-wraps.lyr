@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 10 15
+//! | 20
+//! | -9223372036854775808
+//! since: 5.0.0
+// 10 §8 rule 3: fetchAndAdd gives the value before, addAndFetch the value after, and the sum wraps
+// around as +% does.
+import std.io { println };
+import std.sync { Atomic };
+
+fn main(): void {
+    let n = Atomic<int>.new(10);
+    let before = n.fetchAndAdd(5);
+    println(f"{before} {n.load()}");
+    println(f"{n.addAndFetch(5)}");
+    let top = Atomic<int>.new(9223372036854775807);
+    println(f"{top.addAndFetch(1)}");
+}
