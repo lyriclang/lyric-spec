@@ -264,5 +264,27 @@ Threads run at the same time.
 4. What a thread did before it started another happens before the new thread's first task (N7
    P1), and what a task did before it ended happens before `await()` on it returns, on any thread.
 5. Two threads that use the same place, one of them writing, with no such order between them — a
-   channel's (§6), an atomic's (§8) or a task's end (rule 4) — race: the program has an error, and
-   the language makes no promise about what it then does (G3).
+   channel's (§6), an atomic's (§8), a lock's (§10) or a task's end (rule 4) — race: the program
+   has an error, and the language makes no promise about what it then does (G3).
+
+## 10. Locks
+
+A lock hands a value to one task at a time ([06 G4, K6, N10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). The types are
+`std.task`'s — `std.sync`'s by the module cut (10 Q10), which they join once a module can reach
+another's scheduler (M7). A task that waits for a lock parks, as at every wait (§2): the other
+tasks of its thread run meanwhile — a lock is needed on one thread too, wherever a body waits.
+
+1. **`Mutex<T>`**, made by `Mutex<T>.new(value)`: **`lock(body)`** runs `body` while the running
+   task holds the mutex alone, and gives what `body` gives. The body gets a **`LockGuard<T>`**:
+   `get()` gives the value, `set(v)` replaces it. A guard used after its body ended panics.
+2. **`RwLock<T>`**, made by `RwLock<T>.new(value)`: **`read(body)`** runs `body` with the value
+   while no writer holds the lock — readers share it; **`write(body)`** runs `body` with a guard
+   (rule 1) while the task holds the lock alone. A writer that waits goes first: the readers that
+   come after it wait for it.
+3. **`Once`**, made by `Once.new()`: **`run(body)`** runs `body` unless it has run to its end
+   already; a call while another task runs it waits until that has ended. Where `body` throws, the
+   error comes out of that call, and the next call runs `body` again.
+4. `lock`, `read`, `write` and `run` are waits: in a cancelled task they throw `Cancelled` (§3).
+   They throw what their body throws.
+5. A lock orders (N7 P1): what a body did happens before what the next body that holds the lock
+   does — the value one leaves is the value the next finds.

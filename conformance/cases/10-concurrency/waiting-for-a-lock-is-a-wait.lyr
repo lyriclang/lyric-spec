@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | cancelled
+//! since: 5.0.0
+// 10 §10 rule 4: a task that waits for a lock throws Cancelled when it is cancelled.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    let holder = spawn(() => {
+        try m.lock {
+            try sleep(Duration.ofMillis(50));
+        };
+    });
+    try yieldNow();
+    let waiter = spawn(() => {
+        try m.lock { it.set(1) };
+    });
+    try yieldNow();
+    waiter.cancel();
+    try {
+        waiter.await();
+    } catch (_: Cancelled) {
+        println("cancelled");
+    }
+    try holder.await();
+}

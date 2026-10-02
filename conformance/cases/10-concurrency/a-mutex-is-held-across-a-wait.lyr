@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | a1 a2 b1 b2
+//! since: 5.0.0
+// 10 §10 rule 1: a body that waits keeps the mutex — the other task of the thread waits for it.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let log = Mutex<string>.new("");
+    let a = spawn(() => {
+        try log.lock {
+            it.set(it.get() + "a1 ");
+            try sleep(Duration.ofMillis(5));
+            it.set(it.get() + "a2 ");
+        };
+    });
+    let b = spawn(() => {
+        try log.lock {
+            it.set(it.get() + "b1 ");
+            try yieldNow();
+            it.set(it.get() + "b2");
+        };
+    });
+    try a.await();
+    try b.await();
+    let text = try log.lock { it.get() };
+    println(text);
+}
