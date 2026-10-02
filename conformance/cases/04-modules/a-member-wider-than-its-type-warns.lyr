@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0152
+//! since: 5.0.0
+// 04 §3 rule 12: 'pub x' in an internal struct is allowed and said.
+struct Wide {
+    pub x: int,
+}
+
+fn main(): int {
+    let w = Wide { x = 1 };
+    return w.x;
+}

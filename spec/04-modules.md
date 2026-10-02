@@ -1,7 +1,7 @@
 # Modules and packages
 
 > **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 and
-> §3 with **M7** (slices S1, S2a, S2b); the rest follows with M7, spec-first: each rule lands here
+> §3 with **M7** (slices S1, S2a–S2c); the rest follows with M7, spec-first: each rule lands here
 > with its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -115,3 +115,12 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type and its
     interface are, its methods with it; a word on the block or on one of its methods is refused
     (`LYR-SEM0150`) (S5).
+11. A declaration is **no more visible than the types it names** (S2): a function's parameters,
+    result, thrown types and constraints, a field's type, an alias's, a variant's payload, a
+    module binding's or a `static let`'s type — written or inferred —, a type's constraints and an
+    interface's parents. A `pub fn` whose result is an `internal` type, an `internal fn` taking a
+    `private` one, is refused (`LYR-SEM0151`): another module could reach it and not name what
+    it hands out. A member counts as its own word narrowed to its type's.
+12. A member whose **written** word is wider than its type's — `pub x` in an `internal struct` — is
+    allowed and warned (`LYR-SEM0152`): it is exported only once the type is (S3). A member
+    without a word follows its type and is not warned.
