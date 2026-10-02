@@ -158,3 +158,21 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
    error says why the build failed (`LYR-CLI0006`).
 5. **`fastMath = true`** lets the C compiler treat the program's floating point as not
    IEEE-exact ([03 §1.6](03-types.md)); the runtime's stays exact.
+
+## 5. The native part
+
+C a package brings with it, compiled with the program and linked into it
+([07 B5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md); [11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+
+**Conformance.** `conformance/cases/13-abi/`, package cases that call their native part; the
+toolchain's own tests (`tests/Lyric5.Tests`, `NativeTests`).
+
+1. `[native]` names `sources`, patterns of the package's files as §2's `include` has them — the C
+   sources compiled with the program under its profile —, `include`, directories of the package
+   the sources find their includes in, and `libs`, libraries linked by name (`-lz`). Another key
+   is refused (`LYR-PKG0003`), as is another form of an entry (`LYR-PKG0002`).
+2. `[native.linux]`, `[native.windows]` and `[native.macos]` take the same keys: what a build for
+   that operating system gets on top of `[native]`.
+3. Every package of the program brings its native part — a dependency's too —, and each library is
+   linked once. The C functions of a native part are called through `extern "C"`
+   ([13 §2](13-abi.md)).
