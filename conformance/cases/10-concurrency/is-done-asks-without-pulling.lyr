@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | false 1 false true true
+//! since: 5.0.0
+// 10 §1.5: 'isDone()' answers whether the body has ended, and pulls nothing — suspended at its
+// last yield, the body has not ended yet.
+import std.io { println };
+
+fn one(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): void {
+    let c = one();
+    let before = c.isDone();
+    let v = c.next()!;
+    let suspended = c.isDone();
+    let end = c.next();
+    println(f"{before} {v} {suspended} {end == null} {c.isDone()}");
+}

@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 10 §1.6: a 'next()' of a throwing coroutine is marked like a call of a throwing function.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn gen(): Coroutine<int> throws Oops {
+    yield 1;
+}
+
+fn main(): int throws Oops {
+    let c = gen();
+    return c.next() ?? 0;
+}

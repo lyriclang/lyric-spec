@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | caught
+//! | true true none
+//! since: 5.0.0
+// 10 §1.6: after the error the coroutine is done; its 'result()' stays null, and a later 'next()'
+// answers null and throws nothing.
+import std.io { println };
+
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn gen(fail: bool): Coroutine<int, string> throws Oops {
+    if (fail) { throw Oops.Bad; }
+    yield 1;
+    return "all";
+}
+
+fn main(): void {
+    let c = gen(true);
+    try {
+        let v = c.next();
+        println(f"not reached {v == null}");
+    } catch (_: Oops) {
+        println("caught");
+    }
+    try {
+        let again = c.next();
+        let result = c.result() ?? "none";
+        println(f"{again == null} {c.isDone()} {result}");
+    } catch (_: Oops) {
+        println("not reached either");
+    }
+}

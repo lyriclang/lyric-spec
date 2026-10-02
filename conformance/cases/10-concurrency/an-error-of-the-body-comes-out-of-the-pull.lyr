@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 0 1
+//! | caught x
+//! since: 5.0.0
+// 10 §1.6: an error the body does not catch ends the body and comes out of the 'next()' that
+// ran into it.
+import std.io { println };
+
+enum ParseError :: [Error] { Bad(string);
+    fn message(): string { return "parse"; }
+}
+
+fn numbers(text: string[]): Coroutine<int> throws ParseError {
+    var i = 0;
+    while (i < text.length()) {
+        if (text[i] == "x") { throw ParseError.Bad(text[i]); }
+        yield i;
+        i += 1;
+    }
+}
+
+fn main(): void {
+    let c = numbers(["a", "b", "x", "c"]);
+    try {
+        let a = c.next()!;
+        let b = c.next()!;
+        println(f"{a} {b}");
+        let v = c.next();
+        println(f"not reached {v == null}");
+    } catch (e: ParseError) {
+        match (e) {
+            .Bad(what) => println(f"caught {what}"),
+        }
+    }
+}

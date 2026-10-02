@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §1.2: the value of a yield is checked against the coroutine's 'Y'.
+fn gen(): Coroutine<int> {
+    yield "one";
+}
+
+fn main(): void {
+    let c = gen();
+    let v = c.next();
+}

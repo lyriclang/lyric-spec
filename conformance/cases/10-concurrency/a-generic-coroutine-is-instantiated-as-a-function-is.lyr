@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | hi hi none
+//! | 7 true
+//! since: 5.0.0
+// 10 §1.1: a generic coroutine function is instantiated per type arguments, as any generic
+// function is; each instance makes coroutines of its own type.
+import std.io { println };
+
+fn repeat<T>(x: T, n: int): Coroutine<T> {
+    var i = 0;
+    while (i < n) {
+        yield x;
+        i += 1;
+    }
+}
+
+fn main(): void {
+    let words = repeat("hi", 2);
+    let a = words.next() ?? "none";
+    let b = words.next() ?? "none";
+    let c = words.next() ?? "none";
+    println(f"{a} {b} {c}");
+    let numbers = repeat(7, 1);
+    let n = numbers.next() ?? 0;
+    println(f"{n} {numbers.next() == null}");
+}

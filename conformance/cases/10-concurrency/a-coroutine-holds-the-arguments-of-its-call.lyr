@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | ada 3
+//! | ada 4
+//! | point 1,2 9
+//! since: 5.0.0
+// 10 §1.1: the coroutine holds its call's arguments — a method's receiver among them — and the
+// body sees them when it runs: a struct argument as it was at the call.
+import std.io { println };
+
+struct Point { x: int, y: int }
+
+class Counter {
+    name: string,
+
+    fn count(start: int): Coroutine<string> {
+        var n = start;
+        while (true) {
+            yield f"{this.name} {n}";
+            n += 1;
+        }
+    }
+}
+
+fn show(p: Point): Coroutine<string> {
+    yield f"point {p.x},{p.y}";
+}
+
+fn main(): void {
+    let counter = Counter { name = "ada" };
+    let c = counter.count(3);
+    println(c.next()!);
+    println(c.next()!);
+    var p = Point { x = 1, y = 2 };
+    let s = show(p);
+    p = Point { x = 9, y = 9 };
+    println(f"{s.next()!} {p.x}");
+}
