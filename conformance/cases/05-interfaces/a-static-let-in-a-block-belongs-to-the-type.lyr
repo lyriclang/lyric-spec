@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 42 100
+//! since: 5.0.0
+// 05 §6 rule 2: a static let in an extend block is the type's constant, under the type's name.
+import std.io { println };
+
+struct Score {
+    points: int,
+}
+
+extend Score {
+    static let best: Score = Score { points = 100 };
+}
+
+extend int {
+    static let answer: int = 42;
+}
+
+fn main(): void {
+    println(f"{int.answer} {Score.best.points}");
+}

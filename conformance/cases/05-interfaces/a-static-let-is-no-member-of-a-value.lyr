@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 05 §7 rule 2: a static member is reached through the type parameter, not through a value of it.
+
+interface Initial {
+    static let initial: Self;
+}
+
+fn reset<T :: [Initial]>(x: T): T {
+    return x.initial;
+}
+
+fn main(): void {
+}

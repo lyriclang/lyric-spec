@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 5 7
+//! since: 5.0.0
+// 04 §1 rule 2: a static let is a module binding's mechanism under a type's name — a function may
+// read the constant of a type declared after it, in its body or in a block.
+import std.io { println };
+
+fn main(): void {
+    println(f"{Score.max} {int.lucky}");
+}
+
+struct Score {
+    points: int,
+
+    static let max: int = 5;
+}
+
+extend int {
+    static let lucky: int = 7;
+}

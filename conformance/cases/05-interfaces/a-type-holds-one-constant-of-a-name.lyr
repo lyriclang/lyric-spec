@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §6 rule 2: two blocks adding a constant of one name to a type give 'T.name' two answers.
+
+extend int {
+    static let lucky: int = 7;
+}
+
+extend int {
+    static let lucky: int = 13;
+}
+
+fn main(): void {
+}
