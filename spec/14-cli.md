@@ -77,13 +77,14 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 | 101 | the toolchain itself failed (`LYR-ICE0001`) |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
 
-## 2. `clean` and `metadata`
+## 2. `clean`, `metadata`, `add` and `remove`
 
 The verbs about a package besides building it — the package of the nearest `lyric.toml` at or
 above the current directory, or above `-C <dir>`; without one there is nothing to do
 (`LYR-CLI0004`).
 
-**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `OutTests`).
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `OutTests`,
+`ManifestEditTests`).
 
 1. **`lyric clean`** removes the package's `out/`, once a build that writes into it is done
    (§1.2).
@@ -103,3 +104,16 @@ above the current directory, or above `-C <dir>`; without one there is nothing t
    Within a schema version a field may be added, none is changed or removed
    ([11 C10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)). Its options are `-C`, `--offline`, and `--json`, the one form
    there is.
+3. **`lyric add <name> --path <dir>`** or **`--git <url>`**, with at most one of `--tag`,
+   `--branch` and `--rev`, writes the dependency into `[dependencies]` as one line —
+   `geo = { path = "../geo" }`, the path relative to the manifest — in place of the line that
+   names it, or after the table's last, or in a table it begins at the end. Every other line of
+   the manifest stays as it was. The graph is then read with the dependency
+   ([15 §2](15-project.md)); a graph that refuses it leaves the manifest as it was, and the
+   refusal is the graph's.
+4. **`lyric remove <name>`** takes the dependency's line out of `[dependencies]`, and the graph —
+   the lock with it ([15 §3](15-project.md)) — is read again. A name the table does not hold is
+   refused (`LYR-CLI0003`).
+5. A dependency written otherwise than as one line — a table of its own, dotted keys — is the
+   person's to edit: `add` and `remove` refuse it (`LYR-CLI0008`). Both take `-C` and
+   `--offline`.
