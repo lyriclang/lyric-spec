@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 03 §2.6, 06 A7: a coroutine is a reference with identity — 'same' asks whether two coroutine
+// values are one coroutine.
+import std.io { println };
+
+fn gen(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): void {
+    let a = gen();
+    let b = gen();
+    let alias = a;
+    println(f"{same(a, alias)} {same(a, b)}");
+}

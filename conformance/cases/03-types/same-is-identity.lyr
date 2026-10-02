@@ -2,7 +2,7 @@
 //! stdout:
 //! | true false
 //! since: 5.0.0
-// 03 §2.5: same(a, b) answers whether two references are one object.
+// 03 §2.6: same(a, b) answers whether two references are one object.
 import std.io { println };
 
 class C { n: int }
