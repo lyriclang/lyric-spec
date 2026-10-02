@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | caught oops
+//! since: 5.0.0
+// 10 §7 rule 4: run() throws what the body that runs throws.
+import std.io { println };
+import std.task { Channel, Select };
+
+class Oops :: [Error] {
+    fn message(): string { return "oops"; }
+}
+
+fn main(): void throws Error {
+    let c = Channel<int>.new(1);
+    try c.send(1);
+    try {
+        Select.on(c) { throw Oops { }; }.run();
+    } catch (e: Oops) {
+        println(f"caught {e.message()}");
+    }
+}

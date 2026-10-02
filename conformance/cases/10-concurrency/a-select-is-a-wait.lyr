@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | cancelled
+//! since: 5.0.0
+// 10 §7 rule 4: run() is a wait — a cancel ends it with Cancelled.
+import std.io { println };
+import std.task { spawn, yieldNow, Channel, Select, Cancelled };
+
+fn main(): void throws Error {
+    let idle = Channel<int>.new();
+    let waiter = spawn(() => {
+        try Select.on(idle) { println("a value"); }.run();
+    });
+    try yieldNow();
+    waiter.cancel();
+    try {
+        waiter.await();
+    } catch (_: Cancelled) {
+        println("cancelled");
+    }
+}

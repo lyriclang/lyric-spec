@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | got 3
+//! | got null
+//! | closed while waiting
+//! since: 5.0.0
+// 10 §7 rule 1: a case's body gets what recv() would give — what a closed channel still holds,
+// then null; null too when the channel closes while the select waits.
+import std.io { println };
+import std.task { spawnDetached, Channel, Select };
+
+fn main(): void throws Error {
+    let held = Channel<int>.new(1);
+    try held.send(3);
+    held.close();
+    try Select.on(held) { println(if (it == null) "got null" else f"got {it}"); }.run();
+    try Select.on(held) { println(if (it == null) "got null" else f"got {it}"); }.run();
+    let quiet = Channel<int>.new();
+    spawnDetached(() => { quiet.close(); });
+    try Select.on(quiet) { println(if (it == null) "closed while waiting" else "a value"); }.run();
+}

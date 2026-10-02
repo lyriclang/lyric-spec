@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | done
+//! since: 5.0.0
+// 10 §7 rule 5: the program does not wait for a timer — it ends with main (§2 rule 1).
+import std.io { println };
+import std.task { Timer };
+import std.time { Duration };
+
+fn main(): void {
+    Timer.after(Duration.ofHours(1));
+    println("done");
+}

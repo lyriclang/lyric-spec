@@ -45,7 +45,8 @@ of the standard library:
   yield throws at `close()` (10 §1.9), and `std.core`'s `sequence` (10 §1.12); the tasks and
   waits of 10 §2–§5 — `std.task`'s `spawn`, `Task` with `await`, `isDone`, `status` and
   `cancel`, `TaskStatus`, `PanicInfo`, `TaskScope`, `withTimeout` and `TimedOut`,
-  `spawnDetached`, `yieldNow`, `sleep`, `Channel` and `ChannelClosed` (10 §6) — and the
+  `spawnDetached`, `yieldNow`, `sleep`, `Channel` and `ChannelClosed` (10 §6), `Select` and
+  `Timer` (10 §7) — and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to

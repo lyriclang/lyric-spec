@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | a 1
+//! | b two
+//! since: 5.0.0
+// 10 §7 rule 2: of the cases that can go on at once, the first added runs — and only it
+// receives.
+import std.io { println };
+import std.task { Channel, Select };
+
+fn main(): void throws Error {
+    let a = Channel<int>.new(1);
+    let b = Channel<string>.new(1);
+    try b.send("two");
+    try a.send(1);
+    try Select.on(a) { println(f"a {it!}"); }.on(b) { println(f"b {it!}"); }.run();
+    try Select.on(a) { println(f"a {it!}"); }.on(b) { println(f"b {it!}"); }.run();
+}

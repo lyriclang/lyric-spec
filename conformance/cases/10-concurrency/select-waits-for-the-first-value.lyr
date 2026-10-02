@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | waiting
+//! | second 42
+//! since: 5.0.0
+// 10 §7 rule 2: where no case can go on at once, the task waits on all of them, and the first
+// channel to get a value runs its case.
+import std.io { println };
+import std.task { spawn, Channel, Select };
+
+fn main(): void throws Error {
+    let first = Channel<int>.new();
+    let second = Channel<int>.new();
+    let sender = spawn(() => {
+        println("waiting");
+        try second.send(42);
+    });
+    try Select.on(first) { println(f"first {it!}"); }.on(second) { println(f"second {it!}"); }.run();
+    try sender.await();
+}
