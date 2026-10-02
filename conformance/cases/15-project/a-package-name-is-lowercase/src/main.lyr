@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §1 rule 2: a package name is a lowercase letter, then lowercase letters, digits and '_'.
+fn main(): void {
+}

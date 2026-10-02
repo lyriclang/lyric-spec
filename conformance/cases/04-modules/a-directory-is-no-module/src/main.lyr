@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-RES0003
+//! since: 5.0.0
+// 04 §2 rule 3: a directory without its file is no module to import.
+import app.net;
+
+fn main(): void {
+}

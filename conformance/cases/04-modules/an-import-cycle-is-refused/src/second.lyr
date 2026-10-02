@@ -1,0 +1,9 @@
+import app.first { one };
+
+pub fn two(): int {
+    return 2;
+}
+
+pub fn again(): int {
+    return one();
+}

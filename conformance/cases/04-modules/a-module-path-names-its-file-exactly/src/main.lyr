@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0003
+//! since: 5.0.0
+// 04 §2 rule 4: a module path names its file exactly, case included — 'app.util' is no name of
+// src/Util.lyr, on any platform.
+import app.util;
+
+fn main(): void {
+}

@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | tool 3
+//! since: 5.0.0
+// 04 §2 rule 8: a 'main' in any other module than the entry is an ordinary function — a module
+// may be a library and a program at once.
+import std.io { println };
+import app.tool;
+
+fn main(): void {
+    println(f"tool {tool.main()}");
+}

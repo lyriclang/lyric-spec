@@ -1,0 +1,5 @@
+import app.second { two };
+
+pub fn one(): int {
+    return two();
+}

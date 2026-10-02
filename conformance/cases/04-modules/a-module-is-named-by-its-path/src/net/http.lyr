@@ -1,0 +1,3 @@
+pub fn get(path: string): string {
+    return f"get {path}";
+}

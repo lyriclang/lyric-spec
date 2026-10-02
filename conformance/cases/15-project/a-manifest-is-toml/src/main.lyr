@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0001
+//! since: 5.0.0
+// 15 §1 rule 1: a manifest is TOML — here a string that is not closed.
+fn main(): void {
+}
