@@ -75,3 +75,11 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
     escapes its body. A yield in a lambda nested in it belongs to that lambda.
 12. **`sequence { … }`** (08 Y11) is `std.core`'s `fn sequence<T>(body: fn() -> Coroutine<T>):
     Coroutine<T>`, called with a trailing generator lambda — no syntax of its own.
+13. A `yield` outside a coroutine's own body — in a function a coroutine calls (06 §10a) —
+    suspends the coroutine that runs, whoever called the function. Its value is typed as what it is
+    and meets that coroutine's `Y` at run time: a value of another type panics with `LYR-RT0014`,
+    as does such a yield where no coroutine runs. It throws `Cancelled` at `close()` as a body's
+    yield does (rule 9), so its function covers it — `throws Cancelled`, or a clause
+    (`LYR-SEM0034`) — and a coroutine's body covers it for the functions it calls, as it does for
+    its own yields. A yield in a lambda is not of this kind: it makes the lambda a generator
+    (rule 11).

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §1.13: a yield outside a coroutine's body throws Cancelled at close — its function covers it.
+fn emit(x: int): void {
+    yield x;
+}
+
+fn main(): int {
+    return 0;
+}

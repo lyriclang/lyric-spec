@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 0 1 10 2 20
+//! since: 5.0.0
+// 10 §1.13: a yield in a function a coroutine calls suspends the coroutine that runs.
+import std.io { println };
+import std.task { Cancelled };
+
+fn pair(x: int): void throws Cancelled {
+    yield x;
+    yield x * 10;
+}
+
+fn pairs(): Coroutine<int> {
+    yield 0;
+    try pair(1);
+    try pair(2);
+}
+
+fn main(): void {
+    let p = pairs();
+    var s = "";
+    var v = p.next();
+    while (v != null) {
+        if (s != "") { s = s + " "; }
+        s = s + f"{v}";
+        v = p.next();
+    }
+    println(s);
+}

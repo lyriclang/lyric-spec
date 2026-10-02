@@ -1,0 +1,25 @@
+//! check
+//! since: 5.0.0
+// 10 §1.13: a coroutine's body covers the Cancelled of the functions it calls, as it does for its own
+// yields; a function may also take it itself.
+import std.task { Cancelled };
+
+fn emit(x: int): void throws Cancelled {
+    yield x;
+}
+
+fn tolerant(): void {
+    try {
+        yield 1;
+    } catch (_: Cancelled) { }
+}
+
+fn gen(): Coroutine<int> {
+    yield 0;
+    try emit(1);
+    tolerant();
+}
+
+fn main(): int {
+    return gen().next() ?? 0;
+}
