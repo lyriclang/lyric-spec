@@ -67,7 +67,9 @@ python tools/run_conformance.py --lyric5 <compiler executable> [--profile debug|
 The runner builds with `lyric5 build` — a `check` case through the front end only
 (`--emit ir`), a `run` case to a native binary in the profile asked for — runs the binary, and
 compares. A package case is copied into a directory of its own and built from there without
-naming a file, as a user builds a package; its binary is the one named after the package. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
+naming a file, as a user builds a package; its binary is the one named after the package. A case
+holds its dependencies in its own directory — `deps/geo`, named by a relative path — and a
+package nested in a case is no case of its own. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
 compilation, 101 panic. `--parse-only` reads every header and runs nothing: the suite's own
 format check, which is what this repository's CI runs, since no 5.0 toolchain is released yet
 — the suite is run against the compiler's working tree by the compiler's own CI

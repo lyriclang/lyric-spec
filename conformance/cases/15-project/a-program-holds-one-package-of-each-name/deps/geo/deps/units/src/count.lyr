@@ -1,0 +1,3 @@
+pub fn three(): int {
+    return 3;
+}

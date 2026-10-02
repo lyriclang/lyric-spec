@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0014
+//! since: 5.0.0
+// 15 §2 rule 2: what geo depends on is not app's to import.
+import units.count { three };
+
+fn main(): void {
+    let n = three();
+}

@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0004
+//! since: 5.0.0
+// 15 §2 rule 1: the directory's manifest names the package the dependency names.
+fn main(): void {
+}

@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 12
+//! since: 5.0.0
+// 15 §2 rule 1: a dependency is a directory with the package's manifest.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}
