@@ -1,6 +1,6 @@
 # ABI and embedding
 
-> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan; the rest comes
+> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 with **M6**; the rest comes
 > with **M14**, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [01 Runtime](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md), [11 Tooling and interop W4/W5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -100,6 +100,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0011` | `assert(condition, message)` with a false condition: the message as given ([06 §9](06-errors.md#9-panics-and-never)) |
    | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
    | `LYR-RT0013` | `todo(message)` reached: the message as given |
+   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield with no coroutine running (§1.6) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -119,3 +120,30 @@ The first element sits at offset 16, aligned to 16 bytes.
    changes nothing. The host chooses the program's arguments, a heap limit (0: none), whether the
    runtime installs its fault handlers (a host owns its signals, so an embedding host says no),
    and where the runtime's standard and error output go.
+
+### 1.6 Coroutines
+
+A coroutine runs a body on a stack of its own
+([01 L4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
+[06 N2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). The
+runtime gives the primitives only — create, resume, yield, status, the running coroutine
+(`lyr/coro.h`); generators, tasks and channels are built on them ([10](10-concurrency.md)).
+
+1. A coroutine is created around a body and an argument, and does not run until it is first
+   **resumed**. A resume runs it until it **yields** or its body returns; then the resumer goes
+   on. A yield goes back to the coroutine's resumer — the thread's own stack, or the coroutine
+   that resumed it — and nowhere else (asymmetric), and nothing interrupts a coroutine between a
+   resume and its next yield (cooperative).
+2. A coroutine's stack is reserved at its first resume — 256 KiB unless its creation says
+   otherwise — and costs memory only as its pages are reached. A guard page below it makes
+   running out of it a stack overflow (`LYR-RT0006`), as on a thread's stack.
+3. A coroutine runs on the thread that first resumed it, and only there.
+4. A coroutine is an object. While it is suspended, what its frames hold lives as long as the
+   coroutine: one that nothing references any more is collected with its stack, and nothing on
+   that stack runs again — no `defer`, no `using`.
+5. Resuming a coroutine that runs — itself, or one that waits for a coroutine it resumed — or one
+   whose body returned, or one that runs on another thread, and yielding where no coroutine runs,
+   is a panic (`LYR-RT0014`).
+6. C frames may lie on a coroutine's stack between a resume and a yield — a callback from C that
+   yields ([01 K4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+   The runtime counts them for each coroutine: a stack with C frames on it cannot be unwound.
