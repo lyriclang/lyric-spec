@@ -142,6 +142,11 @@ throw.
    ends with it unless its body catches it; `await()` on the handle then throws `Cancelled` (X1).
 3. A wait inside a generator the task pulls throws there: the generator unwinds and ends, its
    pull answers that it has ended, and the task's next wait throws `Cancelled` in turn.
+4. **`withTimeout(d, body)`** (X4) runs `body` as a task of its own and gives its value or throws
+   its error — unless `d` passes first: then the body is cancelled, and once it has ended,
+   `TimedOut` is thrown. It throws what the body throws, `TimedOut` and `Cancelled`
+   (`LYR-SEM0034`). Whenever it returns, the body has ended: a cancel of the caller cancels the
+   body, and waits for it.
 
 ## 4. Task scopes
 

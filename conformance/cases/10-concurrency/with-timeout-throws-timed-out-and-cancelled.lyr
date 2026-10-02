@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §3 rule 4: withTimeout throws TimedOut (and Cancelled) besides what the body throws, which
+// the caller covers.
+import std.task { withTimeout, Cancelled };
+import std.time { Duration };
+
+fn bounded(): int throws Cancelled {
+    return try withTimeout(Duration.ofSecs(1), () => 7);
+}
+
+fn main(): void {
+}

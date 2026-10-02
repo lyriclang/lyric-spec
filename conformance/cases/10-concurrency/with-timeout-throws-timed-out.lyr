@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | slow 30000 ends
+//! | timed out
+//! since: 5.0.0
+// 10 §3 rule 4: when the time runs out first, the body is cancelled, and TimedOut is thrown once
+// it has ended.
+import std.io { println };
+import std.task { spawn, withTimeout, TimedOut, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn slow(ms: int): int throws Cancelled {
+    defer println(f"slow {ms} ends");
+    try sleep(Duration.ofMillis(ms));
+    return ms;
+}
+
+fn main(): void throws Error {
+    try {
+        let v = withTimeout(Duration.ofMillis(20), () => try slow(30000));
+        println(f"{v}");
+    } catch (_: TimedOut) {
+        println("timed out");
+    }
+}
