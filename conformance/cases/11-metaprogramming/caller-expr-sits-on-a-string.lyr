@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0155
+//! since: 5.0.0
+// 11 §1 rule 3: what @callerExpr gives is text, so it sits on a string parameter.
+
+fn f(x: int, @callerExpr(x) n: int = 0): int {
+    return n;
+}
+
+fn main(): void {
+    let _ = f(1);
+}

@@ -134,7 +134,11 @@ standard library's own tests through it, `StdTests`).
    module's in the order it writes them —, each in a task of its own: a panic or an error that
    leaves a test fails it, and the run goes on. A test with a `skip` is named and not run.
 3. After each test has ended, a line: `ok`, `FAIL` with the panic or the error below it, or
-   `skip` with the reason — a test's own output comes before its line —; then the count.
+   `skip` with the reason — a test's own output comes before its line —; then the count. A
+   subtest — `std.test.subtest("name") { … }` — runs in a task of its own and has a line of its
+   own, `app.tests.math.table/name`; one that fails fails its test, and the test goes on.
+   A test that outlives its `timeout` ends the run, with its `FAIL` line, exit 1: a task gives
+   way only where it waits, so nothing stops it short of the end.
    `-f <text>` (`--filter <text>`) runs the tests whose name — the module's path and the
    function's, `app.tests.math.adds` — holds the text.
 4. The exit is 0 when every test held — or when there is none to run —, and 1 when one failed or
