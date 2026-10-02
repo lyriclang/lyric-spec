@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0151
+//! since: 5.0.0
+// 04 §3 rule 11: a 'pub' function's result is no less visible than the function.
+struct Point {
+    x: int,
+}
+
+pub fn origin(): Point {
+    return Point { x = 0 };
+}
+
+fn main(): void {
+}

@@ -1,0 +1,15 @@
+//! run
+//! exit: 2
+//! since: 5.0.0
+// 04 §3 rules 11, 12: a private function names private types freely, and a field without a word follows its type, unwarned.
+private struct Token {
+    n: int,
+}
+
+private fn spend(t: Token): int {
+    return t.n;
+}
+
+fn main(): int {
+    return spend(Token { n = 2 });
+}

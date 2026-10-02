@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0151
+//! since: 5.0.0
+// 04 §3 rule 11: inside a package too — an internal function takes no private type.
+private struct Token {
+    n: int,
+}
+
+fn spend(t: Token): int {
+    return t.n;
+}
+
+fn main(): void {
+}

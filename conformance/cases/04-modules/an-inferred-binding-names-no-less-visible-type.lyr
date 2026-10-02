@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0151
+//! since: 5.0.0
+// 04 §3 rule 11: a module binding's type counts as inferred when it is not written.
+private struct Token {
+    n: int,
+}
+
+pub let first = Token { n = 1 };
+
+fn main(): void {
+}
