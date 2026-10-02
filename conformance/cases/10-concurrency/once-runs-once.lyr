@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | ran 1
+//! since: 5.0.0
+// 10 §10 rule 3: of four threads that call run, one runs the body; the others wait for it, or find
+// it done.
+import std.io { println };
+import std.sync { Atomic };
+import std.task { Thread, Once };
+
+fn main(): void throws Error {
+    let once = Once.new();
+    let runs = Atomic<int>.new(0);
+    let a = Thread.spawn(() => try once.run { runs.fetchAndAdd(1); });
+    let b = Thread.spawn(() => try once.run { runs.fetchAndAdd(1); });
+    let c = Thread.spawn(() => try once.run { runs.fetchAndAdd(1); });
+    let d = Thread.spawn(() => try once.run { runs.fetchAndAdd(1); });
+    try a.await();
+    try b.await();
+    try c.await();
+    try d.await();
+    println(f"ran {runs.load()}");
+}

@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 2000
+//! since: 5.0.0
+// 10 §10 rules 1, 5: four threads add under one mutex; each body finds what the last one left.
+import std.io { println };
+import std.task { Thread, Mutex };
+
+fn add(m: Mutex<int>): void throws Error {
+    for (_ in 0..500) {
+        try m.lock { it.set(it.get() + 1) };
+    }
+}
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    let a = Thread.spawn(() => try add(m));
+    let b = Thread.spawn(() => try add(m));
+    let c = Thread.spawn(() => try add(m));
+    let d = Thread.spawn(() => try add(m));
+    try a.await();
+    try b.await();
+    try c.await();
+    try d.await();
+    let total = try m.lock { it.get() };
+    println(f"{total}");
+}

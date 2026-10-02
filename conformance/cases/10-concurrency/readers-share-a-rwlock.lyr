@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | readers at once 2
+//! | written 9
+//! since: 5.0.0
+// 10 §10 rule 2: readers share a reader-writer lock; a writer holds it alone.
+import std.io { println };
+import std.task { spawn, yieldNow, RwLock };
+
+fn main(): void throws Error {
+    let rw = RwLock<int>.new(1);
+    var inside = 0;
+    var most = 0;
+    let r1 = spawn(() => {
+        try rw.read {
+            inside += 1;
+            most = if (inside > most) inside else most;
+            try yieldNow();
+            inside -= 1;
+        };
+    });
+    let r2 = spawn(() => {
+        try rw.read {
+            inside += 1;
+            most = if (inside > most) inside else most;
+            try yieldNow();
+            inside -= 1;
+        };
+    });
+    try r1.await();
+    try r2.await();
+    println(f"readers at once {most}");
+    try rw.write { it.set(9) };
+    let value = try rw.read { it };
+    println(f"written {value}");
+}

@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | caught oops
+//! | attempts 2
+//! since: 5.0.0
+// 10 §10 rule 3: a run whose body throws leaves the work to the next call.
+import std.io { println };
+import std.task { Once };
+
+class Oops :: [Error] {
+    fn message(): string { return "oops"; }
+}
+
+fn main(): void throws Error {
+    let flaky = Once.new();
+    var attempts = 0;
+    try {
+        flaky.run {
+            attempts += 1;
+            throw Oops { };
+        };
+    } catch (e: Oops) {
+        println(f"caught {e.message()}");
+    }
+    try flaky.run { attempts += 1; };
+    try flaky.run { attempts += 1; };
+    println(f"attempts {attempts}");
+}

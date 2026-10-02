@@ -1,0 +1,19 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | inside 5
+//! since: 5.0.0
+// 10 §10 rule 1: a lock's guard works only while its body runs.
+import std.io { println };
+import std.task { Mutex, LockGuard, Cancelled };
+
+fn main(): void throws Cancelled {
+    let m = Mutex<int>.new(5);
+    var kept: ?LockGuard<int> = null;
+    try m.lock {
+        println(f"inside {it.get()}");
+        kept = it;
+    };
+    let after = kept!.get();
+    println(f"after {after}");
+}
