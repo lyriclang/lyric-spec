@@ -1,0 +1,3 @@
+pub struct Cat {
+    pub n: int,
+}

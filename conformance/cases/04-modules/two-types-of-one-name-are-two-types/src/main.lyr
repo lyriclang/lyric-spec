@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | 1 two 2
+//! | 3 four 4
+//! | 5 six 6
+//! since: 5.0.0
+// 04 §2 rule 9: two modules' 'Cat's are two types — as the type argument of a generic function,
+// of a block and of a generic type too.
+import std.io { println };
+import app.a;
+import app.b;
+
+struct Holder<T> {
+    v: T,
+}
+
+fn first<T>(xs: T[]): T {
+    return xs[0];
+}
+
+extend<T> T[] {
+    fn head(): T {
+        return this[0];
+    }
+}
+
+fn main(): void {
+    let x = first([a.Cat { n = 1 }]);
+    let y = first([b.Cat { s = "two", n = 2 }]);
+    println(f"{x.n} {y.s} {y.n}");
+    let p = [a.Cat { n = 3 }].head();
+    let q = [b.Cat { s = "four", n = 4 }].head();
+    println(f"{p.n} {q.s} {q.n}");
+    let u = Holder<a.Cat> { v = a.Cat { n = 5 } };
+    let w = Holder<b.Cat> { v = b.Cat { s = "six", n = 6 } };
+    println(f"{u.v.n} {w.v.s} {w.v.n}");
+}

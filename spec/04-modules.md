@@ -67,6 +67,10 @@ toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
    another form, is refused (`LYR-SEM0021`).
 8. A `main` in any other module is an **ordinary function**: a module may be a library and a
    program at once (M7a).
+9. A **declaration is its module's**: two modules may each declare one name — `app.a.Cat` and
+   `app.b.Cat` — and the two are two declarations. Two such types stay two everywhere, also as
+   the type arguments of one generic function, block or type: `first([a.Cat { … }])` and
+   `first([b.Cat { … }])` call two instances, each with its own type's fields (M1).
 
 ## 3. Visibility
 
