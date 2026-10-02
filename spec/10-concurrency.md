@@ -288,3 +288,16 @@ tasks of its thread run meanwhile — a lock is needed on one thread too, wherev
    They throw what their body throws.
 5. A lock orders (N7 P1): what a body did happens before what the next body that holds the lock
    does — the value one leaves is the value the next finds.
+
+## 11. Pools
+
+A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). `Pool` is `std.task`'s —
+`std.thread`'s by the module cut (10 Q10), which it joins with M7.
+
+1. **`Pool.new(n)`** starts `n` threads, one at least, each with a scheduler of its own (§9).
+2. **`pool.spawn(body)`** runs `body` as a task on one of the pool's threads, each in turn, and
+   gives its handle (§2 rule 8): `await()` and `cancel()` work from any thread.
+3. **`pool.close()`** waits until every task given to the pool has ended, then ends its threads;
+   closing a closed pool waits for nothing. `close()` is a wait (§3). A pool is `Closeable`
+   ([06 §7](06-errors.md)): under `using let pool = Pool.new(4);` no task of it outlives the block.
+4. A task given to a closed pool is a panic (`LYR-RT0008`).

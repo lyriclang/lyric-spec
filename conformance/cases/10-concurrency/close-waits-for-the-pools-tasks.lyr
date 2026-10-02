@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | finished true
+//! since: 5.0.0
+// 10 §11 rule 3: close() waits until every task given to the pool has ended.
+import std.io { println };
+import std.sync { Atomic };
+import std.task { sleep, Pool };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let pool = Pool.new(2);
+    let finished = Atomic<bool>.new(false);
+    pool.spawn(() => {
+        try sleep(Duration.ofMillis(20));
+        finished.store(true);
+    });
+    try pool.close();
+    println(f"finished {finished.load()}");
+}
