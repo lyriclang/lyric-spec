@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 42 4.5 -5
+//! since: 5.0.0
+// 05 §8 rule 7: a fixation in an interface's parent list holds through a constraint — 'x + x' and
+// '-x' are a 'T' — for a generic interface and a non-generic one alike.
+import std.io { println };
+import std.core { Add, Neg };
+
+interface Doubling :: [Add<Out = Self>] {
+}
+
+interface Negating :: [Neg<Out = Self>] {
+}
+
+extend int :: [Doubling, Negating] {
+}
+
+extend float :: [Doubling] {
+}
+
+fn twice<T :: [Doubling]>(x: T): T {
+    return x + x;
+}
+
+fn flip<T :: [Negating]>(x: T): T {
+    return -x;
+}
+
+fn main(): void {
+    println(f"{twice(21)} {twice(2.25)} {flip(5)}");
+}

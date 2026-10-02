@@ -171,6 +171,10 @@ same. What is not written here yet is decided in the design documents, not here.
    ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`): the value form, the interface
    with its answer fixed as a fat pointer, comes with the iterators of M8a and is not written
    here.
+7. An interface's **parent list** is a constraint on `Self` and may **fix** a parent's
+   associated type the same way: `interface Num :: [Add<Out = Self>] { … }`. Every conformer
+   answers as fixed — another answer does not conform (`LYR-SEM0042`) — and through a
+   constraint `T :: [Num]` the answer is the fixed type: `a + b` is a `T`.
 
 ## 9. `Any`, type tests and type patterns
 
