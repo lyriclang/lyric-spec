@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 10 11
+//! | log: start pulled
+//! since: 5.0.0
+// 10 §1.11: a generator lambda captures as any lambda does: a captured value read across its
+// yields, a captured variable written by its body when it runs.
+import std.io { println };
+
+fn main(): void {
+    let base = 10;
+    var log = "start";
+    let up = () => {
+        log += " pulled";
+        var i = 0;
+        while (true) {
+            yield base + i;
+            i += 1;
+        }
+    };
+    let c = up();
+    let x = c.next()!;
+    let y = c.next()!;
+    println(f"{x} {y}");
+    println(f"log: {log}");
+}

@@ -10,12 +10,14 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
 
 ## 1. Coroutines and generators
 
-1. A function whose declared result is **`Coroutine<Y, R>`** is a coroutine function;
+1. A function whose declared result is **`Coroutine<Y, R>`** and whose body has a `yield` of its
+   own — one outside every lambda in it — is a **coroutine function** (08 D11);
    `Coroutine<Y>` is `Coroutine<Y, void>` (06 A1). A call of it runs nothing of its body: it
    returns a **coroutine**, suspended before the body's first statement and holding the call's
    arguments — a method's receiver among them. A coroutine runs only when it is pulled. A
    coroutine function may be a method and may be generic; an instance is instantiated as any
-   generic function is.
+   generic function is. A function that returns a coroutine without yielding is an ordinary
+   function: it returns a coroutine value as it returns any value.
 2. **`yield v;`** hands `v` to the puller and suspends the body until the next pull; `v` is
    checked against `Y` (`LYR-SEM0001`). `yield;` without a value belongs to a `Coroutine<void>`
    and is refused in any other coroutine (`LYR-SEM0038`). The body's locals live across its
@@ -61,3 +63,15 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
     unclosed, without a warning: a suspended coroutine that nothing references any more runs
     nothing more — not its `defer`s either (rule 7) — and the debug profile reports one whose
     body has a `defer` or a `using` when the collector takes it.
+11. A lambda whose body has a `yield` of its own is a **generator lambda** (08 F5): its type is
+    `fn(…) -> Coroutine<Y, R>`, and calling it makes a coroutine over its arguments and its
+    captures that runs nothing until it is pulled (rule 1). A context that expects a coroutine —
+    the lambda's written result type, or the type of the place it is passed to — gives `Y` and `R`
+    and checks the yields and the returns against them (`LYR-SEM0001`); without one, the types of
+    the yields unify into `Y` (`LYR-SEM0016`), and those of the returns into `R`, or `void` where it
+    returns none. A generator lambda whose `R` is not `void` returns on every path that ends its
+    body (`LYR-SEM0046`). What its body throws belongs to its coroutine's pulls, as a coroutine
+    function's clause does (rule 6): the set it writes, the one its context expects, or what
+    escapes its body. A yield in a lambda nested in it belongs to that lambda.
+12. **`sequence { … }`** (08 Y11) is `std.core`'s `fn sequence<T>(body: fn() -> Coroutine<T>):
+    Coroutine<T>`, called with a trailing generator lambda — no syntax of its own.

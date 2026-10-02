@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0016
+//! since: 5.0.0
+// 10 §1.11: without a coroutine context the types of a generator lambda's yields unify into its 'Y'.
+fn main(): int {
+    let mixed = () => {
+        yield 1;
+        yield "two";
+    };
+    let c = mixed();
+    return 0;
+}
