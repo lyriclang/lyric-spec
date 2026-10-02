@@ -1,6 +1,6 @@
 # ABI and embedding
 
-> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 with **M6**; the rest comes
+> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**; the rest comes
 > with **M14**, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [01 Runtime](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md), [11 Tooling and interop W4/W5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -101,6 +101,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
    | `LYR-RT0013` | `todo(message)` reached: the message as given |
    | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)); a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
+   | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -158,3 +159,20 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    (`LYR-RT0014`).
 8. The runtime has a **monotonic clock**: nanoseconds that only move forward, from an unspecified
    start — for intervals and deadlines, not for the time of day.
+
+### 1.7 Waiting
+
+A thread's scheduler waits on the thread's **poller**
+([06 N6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)) —
+blocking the thread until another thread wakes it or a deadline passes (`lyr/poll.h`).
+
+1. Every thread has one poller, made when it is first asked for. A **wait** on it blocks the
+   thread until the poller is woken or the wait's timeout passes; a timeout of zero asks without
+   blocking, and a wait may have no timeout at all.
+2. Any thread may **wake** a poller. A wake while no wait runs is kept for the next wait, which
+   returns at once; the wakes before one wait count as one.
+3. A wait never ends early: its timeout runs on the monotonic clock (§1.6 item 8), and a signal
+   that interrupts it — the collector's, which stops threads with signals on some platforms —
+   does not end it.
+4. A poller the system refuses — no descriptors left, say — or a wait the system fails is a
+   panic (`LYR-RT0015`).
