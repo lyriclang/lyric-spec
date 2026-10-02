@@ -35,6 +35,14 @@ same. What is not written here yet is decided in the design documents, not here.
    one: a child does not redeclare a parent's member, two parents do not bring one name from
    two declarations (`LYR-SEM0079`); a name reached twice through one declaration — a diamond —
    is one member.
+4. A default is **generic over `Self`**, the conformer (04 D9): `this` is the conformer's value,
+   `Self` its type. Called on a conformer — on a value of the type, through a constraint, through
+   a block (§13) — it runs as that type's own, also on a builtin, `extend int :: [Named]`, and for
+   an interface that is a constraint only (§7 rule 3): a parameter `o: Self` takes the
+   conformer, `Self.zero` reads its constant. `this` passes as the interface and as a parent of
+   it, as a type parameter does. A **private helper** is the defaults' alone — through a
+   constraint from anywhere else as well (04 §3 rule 8, `LYR-RES0009`) — and never a
+   conformer's method of its name.
 
 ## 2. Interface values
 
@@ -49,9 +57,10 @@ same. What is not written here yet is decided in the design documents, not here.
    stays as it was, and a later change to the original is not seen. *(Informative.)* The copy
    lies in a box on the heap.
 3. A call through the interface value runs the conforming type's implementation — the language's
-   only **dynamic dispatch**. A default runs with `this` as the **interface value**, so a call on
-   `this` inside it dispatches again: `fn isAlive(): bool { return this.getHp() > 0; }` reaches
-   whichever `getHp` stands behind the value.
+   only **dynamic dispatch**. A default called through it runs with `this` as the **interface
+   value** — the interface is the conformer there (§1 rule 4) —, so a call on `this` inside it
+   dispatches again: `fn isAlive(): bool { return this.getHp() > 0; }` reaches whichever `getHp`
+   stands behind the value.
 4. An interface value is held in a binding, a field, an array, an optional, passed and returned
    like any value, and answers every member of the interface's chain. Two interface values are
    not compared.

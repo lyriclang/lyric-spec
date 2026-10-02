@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 3 items!
+//! since: 5.0.0
+// 05 §1 rule 4, §13 rule 6: a member a shape's block leaves to the default runs as the shape's own.
+import std.io { println };
+
+interface Describe {
+    fn describe(): string;
+
+    fn loud(): string {
+        return this.describe() + "!";
+    }
+}
+
+extend<T> T[] :: [Describe] {
+    fn describe(): string {
+        return f"{this.length()} items";
+    }
+}
+
+fn g<D :: [Describe]>(x: D): string {
+    return x.loud();
+}
+
+fn main(): void {
+    println(g([1, 2, 3]));
+}

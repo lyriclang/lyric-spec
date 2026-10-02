@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | hi pen
+//! | hi pen
+//! since: 5.0.0
+// 05 §1 rule 4: a default runs on an instance of a generic type as its own.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+
+    fn greet(): string {
+        return "hi " + this.name();
+    }
+}
+
+struct Pen<T> :: [Named] {
+    v: T,
+
+    fn name(): string {
+        return "pen";
+    }
+}
+
+fn g<T :: [Named]>(x: T): string {
+    return x.greet();
+}
+
+fn main(): void {
+    println(Pen<int> { v = 1 }.greet());
+    println(g(Pen<string> { v = "s" }));
+}

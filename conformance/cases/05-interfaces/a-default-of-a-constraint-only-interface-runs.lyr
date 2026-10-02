@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 05 §1 rule 4: a default of an interface that is a constraint only runs per conformer, a
+// parameter 'o: Self' taking the conformer.
+import std.io { println };
+
+interface Same {
+    fn same(o: Self): bool;
+
+    fn differs(o: Self): bool {
+        return !this.same(o);
+    }
+}
+
+struct N :: [Same] {
+    v: int,
+
+    fn same(o: N): bool {
+        return this.v == o.v;
+    }
+}
+
+fn d<T :: [Same]>(a: T, b: T): bool {
+    return a.differs(b);
+}
+
+fn main(): void {
+    println(f"{d(N { v = 1 }, N { v = 2 })} {N { v = 1 }.differs(N { v = 1 })}");
+}

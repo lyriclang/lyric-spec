@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | cow!
+//! since: 5.0.0
+// 05 §1 rule 4: a value of a type parameter passes as a parent of its constraint, as an interface
+// value does (04 D10) — and so does 'this' in a default.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Loud :: [Named] {
+    fn volume(): int;
+}
+
+struct Cow :: [Loud] {
+    fn name(): string {
+        return "cow";
+    }
+
+    fn volume(): int {
+        return 9;
+    }
+}
+
+fn shout(n: Named): string {
+    return n.name() + "!";
+}
+
+fn f<T :: [Loud]>(x: T): string {
+    return shout(x);
+}
+
+fn main(): void {
+    println(f(Cow { }));
+}

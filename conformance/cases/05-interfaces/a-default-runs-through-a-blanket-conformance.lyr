@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | hi cat hi cat
+//! since: 5.0.0
+// 05 §1 rule 4, §13 rule 8: a member a blanket block leaves to the default runs as the
+// conformer's own.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+
+    fn twice(): string {
+        return this.greeting() + " " + this.greeting();
+    }
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hi " + this.name();
+    }
+}
+
+fn g<G :: [Greeter]>(x: G): string {
+    return x.twice();
+}
+
+fn main(): void {
+    println(g(Cat { }));
+}

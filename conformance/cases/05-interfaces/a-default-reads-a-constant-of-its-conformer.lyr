@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 05 §1 rule 4: 'Self.zero' in a default is the conformer's constant.
+import std.io { println };
+
+interface Zeroed {
+    static let zero: Self;
+
+    fn value(): int;
+
+    fn isZero(): bool {
+        return this.value() == Self.zero.value();
+    }
+}
+
+struct Z :: [Zeroed] {
+    v: int,
+
+    static let zero: Z = Z { v = 0 };
+
+    fn value(): int {
+        return this.v;
+    }
+}
+
+fn z<T :: [Zeroed]>(x: T): bool {
+    return x.isZero();
+}
+
+fn main(): void {
+    println(f"{z(Z { v = 0 })} {z(Z { v = 3 })}");
+}
