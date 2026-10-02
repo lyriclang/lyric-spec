@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §4 rule 2: close() throws an Error, which the function that closes the scope covers.
+import std.task { TaskScope, Cancelled };
+
+fn scoped(): void throws Cancelled {
+    using let scope = TaskScope.new();
+}
+
+fn main(): void {
+}

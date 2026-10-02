@@ -142,3 +142,20 @@ throw.
    ends with it unless its body catches it; `await()` on the handle then throws `Cancelled` (X1).
 3. A wait inside a generator the task pulls throws there: the generator unwinds and ends, its
    pull answers that it has ended, and the task's next wait throws `Cancelled` in turn.
+
+## 4. Task scopes
+
+The tasks of a scope end before the scope does ([06 T5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)): structured
+concurrency.
+
+1. A **`TaskScope`**, made by `TaskScope.new()`, starts tasks with **`scope.spawn(body)`** — a
+   `spawn` (§2 rule 8) whose task belongs to the scope. A scope is `Closeable`
+   ([06 §7](06-errors.md)): its `close()` waits until every task of the scope has ended, so
+   under `using let scope = TaskScope.new();` no task of it outlives the block.
+2. The first task of the scope that ends with an error other than `Cancelled` cancels the scope's
+   other tasks (06 N9 X3), and `close()` throws that error once they have all ended; a task that
+   ends with `Cancelled` is no failure of the scope. What `close()` throws is an `Error`, as
+   `Closeable` says (`LYR-SEM0034`).
+3. **`scope.cancel()`** cancels every task of the scope that has not ended.
+4. A task cancelled while it waits in `close()` cancels the scope's tasks and still waits for
+   them to end; then `close()` returns or throws as before.
