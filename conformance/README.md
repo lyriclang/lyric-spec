@@ -67,10 +67,22 @@ python tools/run_conformance.py --lyric5 <compiler executable> [--profile debug|
 The runner builds with `lyric5 build` — a `check` case through the front end only
 (`--emit ir`), a `run` case to a native binary in the profile asked for — runs the binary, and
 compares. A package case is copied into a directory of its own and built from there without
-naming a file, as a user builds a package; its binary is the one named after the package. A case
-holds its dependencies in its own directory — `deps/geo`, named by a relative path — and a
-package nested in a case is no case of its own. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
-compilation, 101 panic. `--parse-only` reads every header and runs nothing: the suite's own
+naming a file, as a user builds a package; its binary is the one named after the package.
+
+A package case holds its dependencies itself:
+
+- a package read from a directory in one of its own — `deps/geo`, named by a relative path. A
+  package nested in a case is no case of its own;
+- a package read from git as `repos/<name>/<version>/`, a directory per version. The runner makes
+  each `repos/<name>` a git repository beside the case's copy: one commit per version, oldest
+  first, each tagged `v<version>`, all on the branch `main`. Where a manifest — the case's or a
+  version's — says `{repos}`, the runner writes the repositories' place as a `file://` URL:
+  `geo = { git = "{repos}/geo", tag = "v1.0.0" }`. Such a case is built with a cache of the
+  run's own (`LYRIC_CACHE`, the reference toolchain's), so what it fetches stays out of the
+  user's.
+
+Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected compilation, 101
+panic. `--parse-only` reads every header and runs nothing: the suite's own
 format check, which is what this repository's CI runs, since no 5.0 toolchain is released yet
 — the suite is run against the compiler's working tree by the compiler's own CI
 (lyriclang/lyric, job *Conformance gate*), in both profiles.

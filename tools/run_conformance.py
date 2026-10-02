@@ -6,9 +6,11 @@ a 'run' case to a native binary in the profile asked for — and compared with i
 codes it relies on (14 §1, 13 §1.4): 0 success, 1 rejected compilation, 101 panic.
 
 A case is one '.lyr' file, or — for the rules of packages — one directory holding a package: its
-'lyric.toml', its 'src/', and the header in 'src/main.lyr'."""
+'lyric.toml', its 'src/', and the header in 'src/main.lyr'; its dependencies in 'deps/', and in
+'repos/' the versions of the git repositories it reads."""
 
 import argparse
+import os
 import pathlib
 import re
 import shutil
@@ -65,6 +67,49 @@ def find_cases(root):
     files = [p for p in root.rglob("*.lyr") if not any(pkg in p.parents for pkg in packages)]
     return sorted(files + packages)
 
+# The runner's own git: no configuration of the machine's, a fixed author and fixed dates, so a
+# case's repositories are the same commits wherever the suite runs.
+GIT_ENV = {"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "GIT_TERMINAL_PROMPT": "0",
+           "GIT_AUTHOR_NAME": "conformance", "GIT_AUTHOR_EMAIL": "conformance@lyric.invalid",
+           "GIT_COMMITTER_NAME": "conformance", "GIT_COMMITTER_EMAIL": "conformance@lyric.invalid"}
+
+def version_key(directory):
+    return tuple(int(part) for part in directory.name.split("."))
+
+def make_repos(case, home):
+    """A package case's 'repos/<name>/<version>/' as git repositories under 'home': one commit
+    per version, oldest first, each tagged 'v<version>', on the branch 'main'. '{repos}' in a
+    version's manifest stands for 'home' as a file URL. The URL, or None without 'repos/'."""
+    source = case / "repos"
+    if not source.is_dir():
+        return None
+    url = home.resolve().as_uri()
+    env = {**os.environ, **GIT_ENV}
+    def git(repo, *args, when=None):
+        extra = {"GIT_AUTHOR_DATE": when, "GIT_COMMITTER_DATE": when} if when else {}
+        subprocess.run(["git", *args], cwd=repo, env={**env, **extra}, check=True, capture_output=True)
+    for origin in sorted(p for p in source.iterdir() if p.is_dir()):
+        repo = home / origin.name
+        repo.mkdir(parents=True)
+        git(repo, "init", "-q", "-b", "main")
+        for i, version in enumerate(sorted((p for p in origin.iterdir() if p.is_dir()), key=version_key)):
+            for child in repo.iterdir():
+                if child.name != ".git":
+                    shutil.rmtree(child) if child.is_dir() else child.unlink()
+            shutil.copytree(version, repo, dirs_exist_ok=True)
+            write_repos(repo, url)
+            git(repo, "add", "-A")
+            git(repo, "commit", "-q", "-m", f"v{version.name}", when=f"2026-01-01T00:00:{i:02d}Z")
+            git(repo, "tag", f"v{version.name}")
+    return url
+
+def write_repos(root, url):
+    """'{repos}' in every manifest under root, written as the URL."""
+    for manifest in root.rglob("lyric.toml"):
+        text = manifest.read_text(encoding="utf-8")
+        if "{repos}" in text:
+            manifest.write_text(text.replace("{repos}", url), encoding="utf-8")
+
 def header_of(case):
     """Where a case's header stands: in the file, or in the package's program."""
     return case / "src" / "main.lyr" if case.is_dir() else case
@@ -76,10 +121,17 @@ def run_case(case, spec, lyric5, profile, workdir):
     # A copy in the work directory: 'lyric5 build' puts 'out/' by the nearest manifest or
     # '.git' above the source, and the suite must not build into the specification's tree. A
     # package gets a directory of its own, built from there as a user builds it: no file named.
+    env = None
     if case.is_dir():
         cwd = workdir / case.name
-        shutil.copytree(case, cwd)
+        shutil.copytree(case, cwd, ignore=lambda d, names: ["repos"] if pathlib.Path(d).resolve() == case.resolve() else [])
         command = [str(lyric5), "build", "--profile", profile]
+        # A case's repositories beside its copy; what the toolchain fetches from them goes to a
+        # cache of the run's own (LYRIC_CACHE, the reference toolchain's), not the user's.
+        url = make_repos(case, workdir / (case.name + ".repos"))
+        if url is not None:
+            write_repos(cwd, url)
+            env = {**os.environ, **GIT_ENV, "LYRIC_CACHE": str(workdir / "lyric-cache")}
     else:
         cwd = workdir
         source = workdir / case.name
@@ -88,7 +140,7 @@ def run_case(case, spec, lyric5, profile, workdir):
     front_end_only = spec["mode"] == "check"
     if front_end_only:
         command += ["--emit", "ir"]
-    compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd)
+    compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd, env=env)
     diagnostics = compiled.stderr
 
     if spec["errors"]:
