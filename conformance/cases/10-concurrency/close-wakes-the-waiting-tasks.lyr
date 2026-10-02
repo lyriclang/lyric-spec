@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | receiver got null
+//! | sender got ChannelClosed
+//! since: 5.0.0
+// 10 §6 rule 4: closing a channel wakes the tasks waiting on it — a receiver with null, a sender
+// with ChannelClosed.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let empty = Channel<int>.new();
+    let receiver = spawn(() => {
+        let v = try empty.recv();
+        if (v == null) {
+            println("receiver got null");
+        }
+    });
+    let full = Channel<int>.new();
+    let sender = spawn(() => {
+        try {
+            full.send(1);
+        } catch (_: ChannelClosed) {
+            println("sender got ChannelClosed");
+        }
+    });
+    try yieldNow();
+    empty.close();
+    full.close();
+    try receiver.await();
+    try sender.await();
+}

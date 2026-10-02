@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §6 rules 2, 5: send throws ChannelClosed (and Cancelled), which its caller covers.
+import std.task { Channel, Cancelled };
+
+fn put(ch: Channel<int>): void throws Cancelled {
+    try ch.send(1);
+}
+
+fn main(): void {
+}

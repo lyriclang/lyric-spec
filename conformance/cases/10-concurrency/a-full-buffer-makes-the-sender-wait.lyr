@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | received a
+//! | sent c
+//! | received b c
+//! since: 5.0.0
+// 10 §6 rules 2-3: a send to a full buffer waits; a receive frees a place, which the waiting
+// sender's value takes.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let ch = Channel<string>.new(2);
+    try ch.send("a");
+    try ch.send("b");
+    let sender = spawn(() => {
+        try ch.send("c");
+        println("sent c");
+    });
+    try yieldNow();
+    let first = try ch.recv();
+    println("received " + (first ?? "?"));
+    try sender.await();
+    let second = try ch.recv();
+    let third = try ch.recv();
+    println("received " + (second ?? "?") + " " + (third ?? "?"));
+}

@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | pong 10
+//! | pong 20
+//! | closed
+//! since: 5.0.0
+// 10 §6 rules 1-4: an unbuffered channel hands each value from a send to a receive; closing ends
+// the receiving loop.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let ping = Channel<int>.new();
+    let pong = Channel<int>.new();
+    spawnDetached(() => {
+        try {
+            while (let n = ping.recv()) {
+                pong.send(n * 10);
+            }
+            pong.close();
+        } catch (_: ChannelClosed) {
+        }
+    });
+    for (i in 1..3) {
+        try ping.send(i);
+        let r = try pong.recv();
+        println(f"pong {r ?? -1}");
+    }
+    ping.close();
+    let end = try pong.recv();
+    if (end == null) {
+        println("closed");
+    }
+}

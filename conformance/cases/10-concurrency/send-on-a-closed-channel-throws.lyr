@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | closed
+//! since: 5.0.0
+// 10 §6 rule 2: a send on a closed channel throws ChannelClosed.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let ch = Channel<int>.new(4);
+    ch.close();
+    try {
+        ch.send(1);
+    } catch (_: ChannelClosed) {
+        println("closed");
+    }
+}
