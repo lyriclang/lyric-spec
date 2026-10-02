@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0005
+//! since: 5.0.0
+// 04 §2 rule 5: imports form no cycle.
+import app.first { one };
+
+fn main(): void {
+    one();
+}

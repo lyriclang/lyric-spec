@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0021
+//! since: 5.0.0
+// 04 §2 rule 7: a program starts at the 'main' of its entry module; a module without one is no
+// program.
+fn helper(): int {
+    return 1;
+}

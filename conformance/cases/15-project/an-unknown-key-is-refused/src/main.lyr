@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0003
+//! since: 5.0.0
+// 15 §1 rule 4: a key the toolchain does not know is refused.
+fn main(): void {
+}

@@ -3,7 +3,10 @@
 
 A case is built with 'lyric5 build' — a 'check' case only through the front end ('--emit ir'),
 a 'run' case to a native binary in the profile asked for — and compared with its header. Exit
-codes it relies on (14 §1, 13 §1.4): 0 success, 1 rejected compilation, 101 panic."""
+codes it relies on (14 §1, 13 §1.4): 0 success, 1 rejected compilation, 101 panic.
+
+A case is one '.lyr' file, or — for the rules of packages — one directory holding a package: its
+'lyric.toml', its 'src/', and the header in 'src/main.lyr'."""
 
 import argparse
 import pathlib
@@ -12,6 +15,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
@@ -52,19 +56,37 @@ def parse_header(path):
         raise ValueError(f"{path}: header must lead with 'run' or 'check'")
     return spec
 
-def run_case(path, spec, lyric5, profile, workdir):
+def find_cases(root):
+    """The single-file cases and the package cases under root, in one sorted list. A '.lyr' file
+    inside a package is one of its modules, not a case of its own."""
+    packages = sorted(manifest.parent for manifest in root.rglob("lyric.toml"))
+    files = [p for p in root.rglob("*.lyr") if not any(pkg in p.parents for pkg in packages)]
+    return sorted(files + packages)
+
+def header_of(case):
+    """Where a case's header stands: in the file, or in the package's program."""
+    return case / "src" / "main.lyr" if case.is_dir() else case
+
+def run_case(case, spec, lyric5, profile, workdir):
     def fail(reason):
         return (False, reason)
 
     # A copy in the work directory: 'lyric5 build' puts 'out/' by the nearest manifest or
-    # '.git' above the source, and the suite must not build into the specification's tree.
-    source = workdir / path.name
-    shutil.copy(path, source)
+    # '.git' above the source, and the suite must not build into the specification's tree. A
+    # package gets a directory of its own, built from there as a user builds it: no file named.
+    if case.is_dir():
+        cwd = workdir / case.name
+        shutil.copytree(case, cwd)
+        command = [str(lyric5), "build", "--profile", profile]
+    else:
+        cwd = workdir
+        source = workdir / case.name
+        shutil.copy(case, source)
+        command = [str(lyric5), "build", str(source), "--profile", profile]
     front_end_only = spec["mode"] == "check"
-    command = [str(lyric5), "build", str(source), "--profile", profile]
     if front_end_only:
         command += ["--emit", "ir"]
-    compiled = subprocess.run(command, capture_output=True, text=True, cwd=workdir)
+    compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd)
     diagnostics = compiled.stderr
 
     if spec["errors"]:
@@ -88,14 +110,19 @@ def run_case(path, spec, lyric5, profile, workdir):
             return fail(f"expected silence, got:\n{diagnostics}")
         return (True, "")
 
-    # The binary is named by the stem exactly ('.exe' on Windows). A prefix glob found a
-    # neighbour's binary too — 'default-type-argument-on-a-class' beside 'default-type-argument' —
-    # and ran whichever the file system listed first.
-    binaries = [p for p in (workdir / "out" / profile).rglob(path.stem + "*")
-                if p.is_file() and p.name in (path.stem, path.stem + ".exe")]
+    # The binary is named exactly ('.exe' on Windows): after the file's stem, or after the
+    # package (15 §1). A prefix glob found a neighbour's binary too —
+    # 'default-type-argument-on-a-class' beside 'default-type-argument' — and ran whichever the
+    # file system listed first.
+    if case.is_dir():
+        name = tomllib.loads((cwd / "lyric.toml").read_text(encoding="utf-8"))["package"]["name"]
+    else:
+        name = case.stem
+    binaries = [p for p in (cwd / "out" / profile).rglob(name + "*")
+                if p.is_file() and p.name in (name, name + ".exe")]
     if not binaries:
-        return fail(f"no binary under {workdir / 'out' / profile}")
-    executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=workdir)
+        return fail(f"no binary '{name}' under {cwd / 'out' / profile}")
+    executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd)
     expected_exit = 101 if spec["panic"] else spec["exit"]
     if executed.returncode != expected_exit:
         return fail(f"exit {executed.returncode}, expected {expected_exit};"
@@ -134,13 +161,13 @@ def main():
     version = (tuple(int(p) for p in args.toolchain_version.split("."))
                if args.toolchain_version else None)
 
-    cases = sorted(args.cases.rglob("*.lyr"))
+    cases = find_cases(args.cases)
     if not cases:
         print("no cases found", file=sys.stderr)
         return 2
     if args.parse_only:
         for case in cases:
-            parse_header(case)
+            parse_header(header_of(case))
         print(f"{len(cases)} cases, every header well-formed")
         return 0
 
@@ -155,8 +182,8 @@ def main():
     skipped = 0
     with tempfile.TemporaryDirectory() as tmp:
         for case in cases:
-            spec = parse_header(case)
-            label = case.relative_to(args.cases)
+            spec = parse_header(header_of(case))
+            label = case.relative_to(args.cases).as_posix() + ("/" if case.is_dir() else "")
             if spec["since"] and version and spec["since"] > version:
                 skipped += 1
                 print(f"SKIP {label} (since {'.'.join(map(str, spec['since']))})")

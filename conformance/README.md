@@ -1,8 +1,10 @@
 # The conformance suite
 
-Every case is ONE `.lyr` file whose expectations stand in a `//!` header at the top. A runner
-needs no manifest beside the file, and any implementation can build one in an afternoon — the
-reference runner in `tools/run_conformance.py` is under 200 lines.
+Every case is ONE `.lyr` file whose expectations stand in a `//!` header at the top — or, where
+a rule is about packages ([04 §2](../spec/04-modules.md), [15](../spec/15-project.md)), ONE
+directory holding a package: its `lyric.toml`, its `src/`, and the header at the top of
+`src/main.lyr`. A single-file case needs no manifest beside it, and any implementation can build
+a runner in an afternoon — the reference runner in `tools/run_conformance.py` is some 200 lines.
 
 ## Case format
 
@@ -37,6 +39,7 @@ Cases test the LANGUAGE. They may rely on two library edges and the §11 anchors
 of the standard library:
 
 - `import std.io { println };` — the suite's one output channel;
+- in a package case, the package's own modules;
 - f-strings and the operators, whose helpers the compiler binds itself;
 - the `std.core` names the stdlib contract fixes (§11): `Exception`, the operator and
   constraint interfaces, `@Deprecated` and the attribute markers — including pinning the
@@ -62,10 +65,12 @@ python tools/run_conformance.py --lyric5 <compiler executable> [--profile debug|
 
 The runner builds with `lyric5 build` — a `check` case through the front end only
 (`--emit ir`), a `run` case to a native binary in the profile asked for — runs the binary, and
-compares. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
+compares. A package case is copied into a directory of its own and built from there without
+naming a file, as a user builds a package; its binary is the one named after the package. Exit codes it relies on (spec-fixed, 14 §1 and 13 §1.4): 0 success, 1 rejected
 compilation, 101 panic. `--parse-only` reads every header and runs nothing: the suite's own
 format check, which is what this repository's CI runs, since no 5.0 toolchain is released yet
 — the suite is run against the compiler's working tree by the compiler's own CI
 (lyriclang/lyric, job *Conformance gate*), in both profiles.
 
-Case files live under `conformance/cases/<chapter>/`, named after the sentence they pin.
+Cases live under `conformance/cases/<chapter>/`, named after the sentence they pin — a file, or
+a package's directory.

@@ -1,0 +1,9 @@
+var count = 0;
+
+pub fn bump(): void {
+    count += 1;
+}
+
+pub fn current(): int {
+    return count;
+}

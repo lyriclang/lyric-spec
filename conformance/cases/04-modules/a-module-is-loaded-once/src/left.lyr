@@ -1,0 +1,5 @@
+import app.counter { bump };
+
+pub fn bumpLeft(): void {
+    bump();
+}

@@ -1,0 +1,3 @@
+pub fn fullName(): string {
+    return "net.http";
+}

@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | built
+//! since: 5.0.0
+// 15 §1 rules 2, 3, 5: [package] names the package, its version and edition, and may describe it;
+// the program is src/main.lyr, and the binary is named after the package.
+import std.io { println };
+
+fn main(): void {
+    println("built");
+}

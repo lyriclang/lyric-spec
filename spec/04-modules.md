@@ -1,8 +1,8 @@
 # Modules and packages
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6); the
-> rest follows with **M7**, spec-first: each rule lands here with its conformance case before or
-> with its implementation. Source of the decisions:
+> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 with
+> **M7** (slice S1); the rest follows with M7, spec-first: each rule lands here with its
+> conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -31,3 +31,39 @@ A `let` or a `var` at the top of a module
    ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
 5. An initializer does not throw (G3) — with the errors ([06](06-errors.md)) — and there is no
    `init()` hook (G6). `Lazy<T>` is a library ([12](12-stdlib.md)).
+
+## 2. Module names
+
+A module is a file, and its name comes from one source: its path
+([07 V1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). A package gathers modules under one name
+([15 §1](15-project.md)).
+
+**Conformance.** `conformance/cases/04-modules/` — a rule about a package as a package case, a
+directory ([the format](../conformance/README.md)); what only the command line shows, in the
+toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
+
+1. A **package** is a directory with a manifest, `lyric.toml`; its modules are the `.lyr` files
+   under its `src/`. A module's **path** is its file's path below `src/` without `.lyr`, with the
+   package's name in front: `src/net/http.lyr` in the package `app` is `app.net.http` (M1). The
+   package's own modules write the path the same way — there is no second, package-relative
+   spelling.
+2. A file has **no `module` header**: one is refused (`LYR-RES0008`), and the name is the path's
+   alone (M2).
+3. A **directory is a namespace, not a module**: `src/net.lyr` beside `src/net/` is the module
+   `app.net`, one of its own, and a directory without such a file is no module to import
+   (`LYR-RES0003`) (M5).
+4. A module path names its file **exactly**, case included, on every platform: `import app.util`
+   does not find `src/Util.lyr` (`LYR-RES0003`), also where the file system ignores case (M6).
+5. **A file is one module**: a module that several others import is loaded once, and its
+   bindings exist once (M4). Imports form no cycle (`LYR-RES0005`).
+6. A **single file** outside every package's `src/` is a package of its own, named after the
+   file; it imports `std` and nothing else (`LYR-RES0003`)
+   ([11 C8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+7. A program starts at the **`main` of its entry module** — a package's `src/main.lyr`
+   ([15 §1](15-project.md)), or the module the command line names ([14 §1](14-cli.md)) (M7a).
+   That `main` is `fn main(): void` or `fn main(): int` and may declare `throws`
+   ([06](06-errors.md)); it takes no parameters (M7b) — the program's arguments are the
+   standard library's ([12](12-stdlib.md)). An entry module without `main`, or with one of
+   another form, is refused (`LYR-SEM0021`).
+8. A `main` in any other module is an **ordinary function**: a module may be a library and a
+   program at once (M7a).

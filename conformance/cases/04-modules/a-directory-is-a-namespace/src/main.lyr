@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | net
+//! | net.http
+//! since: 5.0.0
+// 04 §2 rule 3: a directory is a namespace, not a module — src/net.lyr beside src/net/ is the
+// module 'app.net', one of its own.
+import std.io { println };
+import app.net { name };
+import app.net.http { fullName };
+
+fn main(): void {
+    println(name());
+    println(fullName());
+}

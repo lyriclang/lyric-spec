@@ -1,0 +1,8 @@
+[package]
+name = "geo_kit"
+version = "1.2.3-beta.1"
+edition = "5"
+description = "shapes and their areas"
+license = "MIT"
+repository = "https://example.org/geo_kit"
+authors = ["A. Author", "B. Author"]

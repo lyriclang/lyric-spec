@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | answer 42
+//! | get /index
+//! since: 5.0.0
+// 04 §2 rule 1: a module's path is its file's below src/, with the package's name in front —
+// written so in the package itself.
+import std.io { println };
+import app.util { answer };
+import app.net.http { get };
+
+fn main(): void {
+    println(f"answer {answer()}");
+    println(get("/index"));
+}

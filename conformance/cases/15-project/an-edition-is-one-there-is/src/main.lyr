@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §1 rule 2: an edition is one the toolchain knows — "5".
+fn main(): void {
+}

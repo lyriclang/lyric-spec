@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | count 2
+//! since: 5.0.0
+// 04 §2 rule 5: a module that several others import is loaded once, and its bindings exist once.
+import std.io { println };
+import app.left { bumpLeft };
+import app.right { bumpRight };
+import app.counter { current };
+
+fn main(): void {
+    bumpLeft();
+    bumpRight();
+    println(f"count {current()}");
+}
