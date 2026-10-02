@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0156
+//! since: 5.0.0
+// 03 §2.3a rule 2: a temporary is no place.
+
+fn increment(&n: int): void {
+    n += 1;
+}
+
+fn one(): int {
+    return 1;
+}
+
+fn main(): void {
+    increment(&one());
+}

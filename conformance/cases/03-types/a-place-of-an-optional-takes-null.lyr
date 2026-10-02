@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | null
+//! | 7
+//! since: 5.0.0
+// 03 §2.3a rule 4: the place of an optional lets the function write null into it.
+import std.io { println };
+
+fn clear(&o: ?int): void {
+    o = null;
+}
+
+fn fill(&o: ?int): void {
+    o = 7;
+}
+
+fn main(): void {
+    var o: ?int = 3;
+    clear(&o);
+    println(if (o == null) "null" else "set");
+    fill(&o);
+    println(f"{o ?? 0}");
+}

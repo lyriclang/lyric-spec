@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0156
+//! since: 5.0.0
+// 03 §2.3a rule 2: a let is no place the call may write.
+
+fn increment(&n: int): void {
+    n += 1;
+}
+
+fn main(): void {
+    let x = 1;
+    increment(&x);
+}

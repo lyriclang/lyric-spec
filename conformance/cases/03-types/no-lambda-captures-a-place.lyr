@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0158
+//! since: 5.0.0
+// 03 §2.3a rule 6: a place parameter is no value a lambda could keep.
+
+fn later(&n: int): fn() -> int {
+    return () => n;
+}
+
+fn main(): void {
+    var x = 1;
+    let _ = later(&x);
+}

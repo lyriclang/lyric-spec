@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 2
+//! | 10 3
+//! since: 5.0.0
+// 03 §2.3a rule 1: a place parameter writes the caller's variable itself.
+import std.io { println };
+
+fn increment(&n: int): void {
+    n += 1;
+}
+
+fn swap<T>(&a: T, &b: T): void {
+    let t = a;
+    a = b;
+    b = t;
+}
+
+fn main(): void {
+    var x = 1;
+    increment(&x);
+    println(f"{x}");
+    var a = 3;
+    var b = 10;
+    swap(&a, &b);
+    println(f"{a} {b}");
+}

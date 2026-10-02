@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | set 3
+//! since: 5.0.0
+// 03 §3.2 rule 3: a module-level let is narrowed by a test like a local — nothing writes it.
+import std.io { println };
+
+let name: ?string = "set";
+let count: ?int = 3;
+
+fn main(): void {
+    if (name != null && count != null) {
+        println(f"{name} {count}");
+    }
+}

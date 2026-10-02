@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | 4 0
+//! since: 5.0.0
+// 03 §2.3a rule 2: inside a 'mut fn', 'this' and its var fields are places a call may take.
+import std.io { println };
+
+struct Pair {
+    var a: int,
+    var b: int,
+
+    mut fn doubleA(): void {
+        twice(&this.a);
+    }
+
+    mut fn clearB(): void {
+        reset(&this);
+    }
+}
+
+fn twice(&n: int): void {
+    n *= 2;
+}
+
+fn reset(&p: Pair): void {
+    p.b = 0;
+}
+
+fn main(): void {
+    var p = Pair { a = 2, b = 5 };
+    p.doubleA();
+    p.clearB();
+    println(f"{p.a} {p.b}");
+}

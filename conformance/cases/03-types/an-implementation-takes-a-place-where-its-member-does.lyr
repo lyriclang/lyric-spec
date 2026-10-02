@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 03 §2.3a rule 5: an implementation takes a place where its interface member does.
+
+interface Resetter {
+    fn reset(&n: int): void;
+}
+
+struct Zero :: [Resetter] {
+    fn reset(n: int): void {
+    }
+}
+
+fn main(): void {
+}

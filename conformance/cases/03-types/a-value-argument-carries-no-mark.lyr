@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0157
+//! since: 5.0.0
+// 03 §2.3a rule 2: a value parameter's argument is not marked.
+
+fn show(n: int): int {
+    return n;
+}
+
+fn main(): void {
+    var x = 1;
+    let _ = show(&x);
+}

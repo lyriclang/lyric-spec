@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | after the write, n is 1
+//! since: 5.0.0
+// 03 §2.3a rule 1: what the function wrote stays written however the call ends.
+import std.io { println };
+
+fn bump(&n: int): void throws Exception {
+    n += 1;
+    throw Exception { text = "after the write" };
+}
+
+fn main(): void {
+    var n = 0;
+    try { bump(&n); }
+    catch (e) { println(f"{e.message()}, n is {n}"); }
+}

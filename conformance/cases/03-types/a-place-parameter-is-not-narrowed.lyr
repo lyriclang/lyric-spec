@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.2 rule 4: a place parameter is not narrowed — what it names may be written through
+// another name while the test holds.
+
+fn take(&o: ?int): int {
+    if (o != null) {
+        let v: int = o;
+        return v;
+    }
+    return 0;
+}
+
+fn main(): void {
+    var x: ?int = 1;
+    let _ = take(&x);
+}
