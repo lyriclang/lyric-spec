@@ -1,0 +1,27 @@
+import std.io { println };
+
+private fn hidden(): int {
+    return 1;
+}
+
+fn shared(): int {
+    return 3;
+}
+
+internal fn said(): int {
+    return 5;
+}
+
+private struct Secret {
+    x: int,
+}
+
+private let secret = 7;
+
+pub fn pick(x: int): string {
+    return "one";
+}
+
+private fn pick(x: int, y: int): string {
+    return "two";
+}

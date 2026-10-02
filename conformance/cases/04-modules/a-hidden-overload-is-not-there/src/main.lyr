@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0014
+//! since: 5.0.0
+// 04 §3 rule 3: of an overload set, what may not be named from here is not there — the call meets the one visible function.
+import app.util;
+
+fn main(): void {
+    let s = util.pick(1, 2);
+}

@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 5 6 one
+//! since: 5.0.0
+// 04 §3 rule 2: a declaration without a word is 'internal' — every module of the package names it,
+// as it names an 'internal' one; a 'private' one its own module names.
+import std.io { println };
+import app.util;
+
+private fn own(): int {
+    return 6;
+}
+
+fn main(): void {
+    println(f"{util.shared()} {util.said()} {own()} {util.pick(1)}");
+}

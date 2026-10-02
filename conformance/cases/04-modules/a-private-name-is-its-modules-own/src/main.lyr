@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rules 2, 3: a 'private' function is named in its module alone — not through it.
+import app.util;
+
+fn main(): void {
+    let x = util.hidden();
+}
