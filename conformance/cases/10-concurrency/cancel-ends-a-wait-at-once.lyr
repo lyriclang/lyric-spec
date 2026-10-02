@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | cleanup
+//! | cancelled true
+//! since: 5.0.0
+// 10 §3 rules 1-2: a cancel ends the sleep the task is in at once; Cancelled unwinds it, its
+// defer runs, and its await throws Cancelled.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    let sleeper = spawn(() => {
+        defer println("cleanup");
+        try sleep(Duration.ofSecs(30));
+        println("woke");
+    });
+    try yieldNow();
+    sleeper.cancel();
+    try {
+        sleeper.await();
+    } catch (_: Cancelled) {
+        println(f"cancelled {sleeper.isDone()}");
+    }
+}

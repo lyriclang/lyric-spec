@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | tick 1
+//! | ticks ends
+//! | pulled to the end true
+//! | task cancelled
+//! since: 5.0.0
+// 10 §3 rule 3: a wait inside a generator throws there — the generator unwinds and ends, its pull
+// says so — and the task's next wait throws Cancelled.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn ticks(): Coroutine<int> {
+    defer println("ticks ends");
+    yield 1;
+    try sleep(Duration.ofSecs(30));
+    yield 2;
+}
+
+fn main(): void throws Cancelled {
+    let t = spawn(() => {
+        let g = ticks();
+        while (let n = g.next()) {
+            println(f"tick {n}");
+        }
+        println(f"pulled to the end {g.isDone()}");
+        try sleep(Duration.ofMillis(1));
+        println("slept");
+    });
+    try yieldNow();
+    t.cancel();
+    try {
+        t.await();
+    } catch (_: Cancelled) {
+        println("task cancelled");
+    }
+}

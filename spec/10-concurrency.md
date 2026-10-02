@@ -128,3 +128,17 @@ scheduler runs another task meanwhile. The functions this section names are `std
    covered as any call that throws (`LYR-SEM0138`, `LYR-SEM0034`). The tasks waiting for one
    task run again in the order they began to wait.
 10. **`task.isDone()`** says whether the body has ended, with its value or its error (06 T3).
+
+## 3. Cancellation
+
+A task is cancelled cooperatively ([06 N9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)): a cancel marks it, and its waits
+throw.
+
+1. **`task.cancel()`** marks the task cancelled (X1). From then on every wait in it throws
+   `Cancelled`: the wait it is in ends at once, and every later wait throws before it waits (X5)
+   — a task that catches `Cancelled` and waits again gets it again. A task that never waits is
+   not cancelled (X2); a task that has ended stays as it ended.
+2. `Cancelled` unwinds the task as any error does — its `defer`s and `using`s run — and the task
+   ends with it unless its body catches it; `await()` on the handle then throws `Cancelled` (X1).
+3. A wait inside a generator the task pulls throws there: the generator unwinds and ends, its
+   pull answers that it has ended, and the task's next wait throws `Cancelled` in turn.

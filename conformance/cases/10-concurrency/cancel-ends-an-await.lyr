@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | waiter cancelled
+//! | long 5
+//! since: 5.0.0
+// 10 §3 rule 1: a cancel ends the await the task is in; the task it awaited goes on.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    let long = spawn(() => {
+        try sleep(Duration.ofMillis(20));
+        return 5;
+    });
+    let waiter = spawn(() => try long.await());
+    try yieldNow();
+    waiter.cancel();
+    let w = try? waiter.await();
+    if (w == null) {
+        println("waiter cancelled");
+    }
+    let l = try long.await();
+    println(f"long {l}");
+}

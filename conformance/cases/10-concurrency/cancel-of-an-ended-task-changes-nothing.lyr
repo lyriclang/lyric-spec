@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 3
+//! since: 5.0.0
+// 10 §3 rule 1: a task that has ended stays as it ended.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    let ended = spawn(() => 3);
+    let first = try ended.await();
+    ended.cancel();
+    let second = try ended.await();
+    println(f"{first} {second}");
+}
