@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | side
+//! | again
+//! | again
+//! | 5 true true
+//! since: 5.0.0
+// 03 §9.1 rule 7: a lambda that returns nothing binds a type parameter to void; the instance
+// passes, stores and returns the value of type void, which is nothing.
+import std.io { println };
+
+class Cell<T> {
+    var value: ?T = null,
+
+    mut fn put(v: T): void {
+        this.value = v;
+    }
+
+    fn take(): T {
+        return this.value!;
+    }
+}
+
+fn run<T>(body: fn() -> T): Cell<T> {
+    let c = Cell<T> { };
+    c.put(body());
+    return c;
+}
+
+fn twice<T>(body: fn() -> T): T {
+    body();
+    return body();
+}
+
+fn main(): void {
+    let a = run(() => 5);
+    let b = run(() => { println("side"); });
+    b.take();
+    twice(() => { println("again"); });
+    println(f"{a.take()} {a.value != null} {b.value != null}");
+}

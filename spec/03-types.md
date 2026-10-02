@@ -543,6 +543,11 @@ Type parameters, their inference, and what an instance is
    satisfied by either spelling.
 6. A constraint may fix an **associated type** of its interface, `T :: [Iterator<Item = int>]`,
    and the declaration names one as a type path, `T.Item` ([05 §8](05-interfaces.md#8-associated-types)).
+7. A type parameter may stand for **`void`** — a lambda that returns nothing binds it so,
+   `run(() => { println("x"); })`. A value of type `void` is nothing: a parameter, a local, a
+   field or an element of that type holds nothing, a `?void` holds only whether one was given,
+   and a call of a function that returns nothing gives that value wherever one is expected —
+   passed, stored, wrapped, returned. *(Informative: such a place costs one byte.)*
 
 ### 9.2 Inference at a call
 
