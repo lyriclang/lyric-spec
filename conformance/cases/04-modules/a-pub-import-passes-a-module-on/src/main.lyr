@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 04 §4 rule 2: a module imported qualified is passed on as a namespace.
+import std.io { println };
+import app.facade;
+
+fn main(): void {
+    println(f"{facade.util.answer()}");
+}

@@ -1,0 +1,7 @@
+pub fn answer(): int {
+    return 42;
+}
+
+fn helper(): int {
+    return 1;
+}

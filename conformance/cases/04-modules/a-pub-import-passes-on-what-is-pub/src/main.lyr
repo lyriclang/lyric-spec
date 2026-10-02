@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-RES0010
+//! since: 5.0.0
+// 04 §4 rule 2: 'pub import' passes on what is pub, and an internal function is not.
+import app.facade;
+
+fn main(): void {
+}

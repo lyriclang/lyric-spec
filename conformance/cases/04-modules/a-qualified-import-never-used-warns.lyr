@@ -1,0 +1,8 @@
+//! check
+//! warning: LYR-SEM0072
+//! since: 5.0.0
+// 04 §4 rule 3: an import never used warns, the qualified form as every other.
+import std.io;
+
+fn main(): void {
+}
