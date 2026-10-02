@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 4: util's import of println is util's own.
+import app.util;
+
+fn main(): void {
+    util.println("x");
+}

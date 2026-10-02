@@ -1,8 +1,8 @@
 # Modules and packages
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 with
-> **M7** (slice S1); the rest follows with M7, spec-first: each rule lands here with its
-> conformance case before or with its implementation. Source of the decisions:
+> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 and
+> §3 with **M7** (slices S1, S2a); the rest follows with M7, spec-first: each rule lands here with
+> its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -67,3 +67,31 @@ toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
    another form, is refused (`LYR-SEM0021`).
 8. A `main` in any other module is an **ordinary function**: a module may be a library and a
    program at once (M7a).
+
+## 3. Visibility
+
+Who may name a declaration ([07 V2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). *(The members of a type — fields, methods, static
+members, variants, the methods of an `extend` block — are written with the next slice of M7.)*
+
+**Conformance.** `conformance/cases/04-modules/`; the routes one by one in the toolchain's own
+tests (`tests/Lyric5.Tests`, `VisibilityTests`).
+
+1. A declaration carries at most **one visibility word**, ahead of every other: `pub fn`,
+   `internal struct`, `private let`, `pub static fn`, `pub mut fn` ([08 D3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)). A second
+   word is refused (`LYR-PAR0053`), and so is a word before an enum's variant, which is as visible
+   as its enum.
+2. **`private`** — the declaring module alone names it; **`internal`** — every module of the
+   declaring package; **`pub`** — every module of every package: it is exported. A declaration
+   **without a word is `internal`**. The standard library is a package like any: what it does
+   not mark `pub` is its own.
+3. Visibility is asked **at every route** a name takes out of its module, by one rule: a
+   selective import; a name qualified by a module in an expression (`util.helper()`,
+   `util.LIMIT`); a type named through a module in a signature, a field, a constraint, a
+   conformance list, an `extend` target or a body; an initializer (`util.Point { … }`); a pattern;
+   an interface-qualified call (`util.Walker.walk(x)`). A name that may not be named where it
+   stands is refused (`LYR-RES0009`) (S1). Of an overload set, the functions that may not be
+   named are not there.
+4. **An import is its module's own**: `import std.io { println }` in `util` brings `println`
+   into `util`, and no other module reaches it as `util.println` (`LYR-RES0009`) (I4).
+5. A **module** itself is visible to every module (B1): what it offers is what its
+   declarations' words allow.

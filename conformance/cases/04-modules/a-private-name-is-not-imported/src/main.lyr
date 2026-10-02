@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 3: a selective import asks what every route asks.
+import app.util { hidden };
+
+fn main(): void {
+    let x = hidden();
+}

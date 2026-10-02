@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 3: a type named through a module in a signature is visible from here, or refused.
+import app.util;
+
+fn take(s: util.Secret): int {
+    return 1;
+}
+
+fn main(): void {
+}

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0053
+//! since: 5.0.0
+// 04 §3 rule 1: one visibility word.
+pub private fn f(): int {
+    return 1;
+}
+
+fn main(): void {
+}
