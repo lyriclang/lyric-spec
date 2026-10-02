@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 2 items, the first an int
+//! since: 5.0.0
+// 05 §13 rule 6: a shape conforms through a block that names the interface, and a member called
+// through the constraint is the block's.
+import std.io { println };
+
+interface Describe {
+    fn describe(): string;
+}
+
+extend int :: [Describe] {
+    fn describe(): string {
+        return "an int";
+    }
+}
+
+extend<T :: [Describe]> T[] :: [Describe] {
+    fn describe(): string {
+        return f"{this.length()} items, the first {this[0].describe()}";
+    }
+}
+
+fn tell<T :: [Describe]>(x: T): string {
+    return x.describe();
+}
+
+fn main(): void {
+    println(tell([1, 2]));
+}

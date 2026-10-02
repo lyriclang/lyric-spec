@@ -1,0 +1,47 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13 rule 8: two blanket blocks whose chains share an interface both give it.
+
+interface Named {
+    fn name(): string;
+}
+
+interface Aged {
+    fn age(): int;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+interface Host :: [Greeter] {
+    fn welcome(): string;
+}
+
+interface Guest :: [Greeter] {
+    fn thanks(): string;
+}
+
+extend<T :: [Named]> T :: [Host] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+
+    fn welcome(): string {
+        return "welcome";
+    }
+}
+
+extend<T :: [Aged]> T :: [Guest] {
+    fn greeting(): string {
+        return "hi";
+    }
+
+    fn thanks(): string {
+        return "thanks";
+    }
+}
+
+fn main(): void {
+}

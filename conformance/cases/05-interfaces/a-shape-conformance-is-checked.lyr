@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §13 rule 6: a shape's block implements the interface with the signature it writes.
+
+interface Describe {
+    fn describe(): string;
+}
+
+extend<T> T[] :: [Describe] {
+    fn describe(): int {
+        return this.length();
+    }
+}
+
+fn main(): void {
+}

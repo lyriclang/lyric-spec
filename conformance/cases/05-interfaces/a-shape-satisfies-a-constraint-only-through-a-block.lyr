@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 05 §13 rule 6: a shape satisfies a constraint through a block and no other way.
+
+interface Describe {
+    fn describe(): string;
+}
+
+fn tell<T :: [Describe]>(x: T): string {
+    return x.describe();
+}
+
+fn main(): void {
+    let _ = tell((1, 2));
+}

@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7.3: an optional of a constraint-only interface would hold a value of it.
+
+interface Twice {
+    fn twice(): Self;
+}
+
+struct N :: [Twice] {
+    fn twice(): N {
+        return this;
+    }
+}
+
+fn main(): void {
+    let t: ?Twice = N { };
+}

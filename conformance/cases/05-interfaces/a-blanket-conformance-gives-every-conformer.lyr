@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | hello cat
+//! | hello int
+//! since: 5.0.0
+// 05 §13 rule 8: a blanket conformance gives the interface to every type its constraints admit.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+extend int :: [Named] {
+    fn name(): string {
+        return "int";
+    }
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn greet<G :: [Greeter]>(g: G): string {
+    return g.greeting();
+}
+
+fn main(): void {
+    println(greet(Cat { }));
+    println(greet(3));
+}

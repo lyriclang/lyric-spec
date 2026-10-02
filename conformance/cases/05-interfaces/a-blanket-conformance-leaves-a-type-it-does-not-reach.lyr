@@ -1,0 +1,54 @@
+//! run
+//! stdout:
+//! | hello dog
+//! | own cat
+//! | own int
+//! since: 5.0.0
+// 05 §13 rule 8: a blanket conformance gives the interface where its constraints hold, and a type
+// it does not reach keeps its own conformance.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+struct Dog :: [Named] {
+    fn name(): string {
+        return "dog";
+    }
+}
+
+struct Cat {
+}
+
+extend Cat :: [Greeter] {
+    fn greeting(): string {
+        return "own cat";
+    }
+}
+
+extend int :: [Greeter] {
+    fn greeting(): string {
+        return "own int";
+    }
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn greet<G :: [Greeter]>(g: G): string {
+    return g.greeting();
+}
+
+fn main(): void {
+    println(greet(Dog { }));
+    println(greet(Cat { }));
+    println(greet(3));
+}

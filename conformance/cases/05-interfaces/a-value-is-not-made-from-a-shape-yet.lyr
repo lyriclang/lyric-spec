@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 05 §13 rule 6: a value of the interface is not made from a shape yet.
+
+interface Describe {
+    fn describe(): string;
+}
+
+extend<T> T[] :: [Describe] {
+    fn describe(): string {
+        return "items";
+    }
+}
+
+fn main(): void {
+    let d: Describe = [1, 2];
+}
