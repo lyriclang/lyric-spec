@@ -2,6 +2,8 @@
 //! error: LYR-SEM0001
 //! since: 5.0.0
 // 05 §9.1: a scalar is no 'Any' — there is no reference to box.
+import std.core { Any };
+
 fn main(): int {
     let a: Any = 5;
     return 0;

@@ -4,6 +4,7 @@
 //! since: 5.0.0
 // 05 §12.1: '&', '|', '^', '~', '<<', '>>' and '%' on a conforming type.
 import std.io { println };
+import std.core { Rem, BitAnd, BitOr, BitXor, BitNot, Shl, Shr };
 
 struct Bits :: [Rem, BitAnd, BitOr, BitXor, BitNot, Shl, Shr] {
     n: int,

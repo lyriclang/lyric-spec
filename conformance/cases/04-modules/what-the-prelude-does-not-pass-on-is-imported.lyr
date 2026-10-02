@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0002
+//! since: 5.0.0
+// 04 §4 rule 4: 'Any' is std.core's and not the prelude's — named without an import, it is unresolved.
+fn take(x: Any): void {
+}
+
+fn main(): void {
+}

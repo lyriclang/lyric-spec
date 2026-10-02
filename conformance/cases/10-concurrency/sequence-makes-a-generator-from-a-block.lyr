@@ -4,6 +4,7 @@
 //! since: 5.0.0
 // 10 §1.12: 'sequence { … }' calls std.core's 'sequence' with a trailing generator lambda.
 import std.io { println };
+import std.core { sequence };
 
 fn main(): void {
     let s = sequence {

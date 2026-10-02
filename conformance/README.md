@@ -43,7 +43,8 @@ of the standard library:
 - f-strings and the operators, whose helpers the compiler binds itself;
 - the `std.core` names the stdlib contract fixes (§11): `Exception`, the operator and
   constraint interfaces, `@Deprecated` and the attribute markers — including pinning the
-  ABSENCE of surface the contract removed;
+  ABSENCE of surface the contract removed. The prelude's names need no import (04 §4); the
+  others a case imports from `std.core`;
 - the names a language rule itself stands on: `std.task`'s `Cancelled`, which a coroutine's
   yield throws at `close()` (10 §1.9), and `std.core`'s `sequence` (10 §1.12); the tasks and
   waits of 10 §2–§5 — `std.task`'s `spawn`, `Task` with `await`, `isDone`, `status` and
