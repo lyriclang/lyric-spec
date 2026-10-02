@@ -1,0 +1,19 @@
+//! run
+//! panic: LYR-RT0014
+//! since: 5.0.0
+// 10 §1.9: a body that catches 'Cancelled' may not yield again.
+import std.task { Cancelled };
+
+fn stubborn(): Coroutine<int> {
+    try {
+        yield 1;
+    } catch (_: Cancelled) { }
+    yield 2;
+}
+
+fn main(): int {
+    let s = stubborn();
+    let v = s.next() ?? 0;
+    s.close();
+    return v;
+}

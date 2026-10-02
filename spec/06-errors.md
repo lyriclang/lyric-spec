@@ -183,7 +183,8 @@ with M5. What is not written here yet is decided in the design documents, not he
 2. What `using` binds is a **`Closeable`** of `std.core`,
    `interface Closeable { fn close(): void throws Error; }` (`LYR-SEM0143`, R6). The close is a
    site of the scope, `using` its mark: what `close()` throws on the bound type is covered as any
-   site is ([§3](#3-the-try-mark-and-coverage)).
+   site is ([§3](#3-the-try-mark-and-coverage)) — and a close that cannot throw needs no mark
+   and draws no warning (no `LYR-SEM0139`).
 3. An error from `close()` is a `defer`'s error ([§5](#5-the-error-path) rule 5, R4): on a normal
    exit it leaves, while an error is in flight it is appended to it as suppressed.
 4. A `Closeable` nothing closes is warned about (`LYR-SEM0144`, R3): a call's result an expression

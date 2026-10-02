@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 0
+//! | cleaned
+//! | after
+//! since: 5.0.0
+// 10 §1.10: a coroutine is Closeable — 'using' closes it when its scope is left.
+import std.io { println };
+
+fn walk(): Coroutine<int> {
+    defer println("cleaned");
+    var i = 0;
+    while (true) {
+        yield i;
+        i += 1;
+    }
+}
+
+fn main(): void {
+    {
+        using let w = walk();
+        println(f"{w.next()!}");
+    }
+    println("after");
+}

@@ -1,0 +1,16 @@
+//! check
+//! since: 5.0.0
+// 10 §1.10: unlike another Closeable, a coroutine may be dropped unclosed without a warning (no
+// LYR-SEM0144); nothing more of it runs.
+fn gen(): Coroutine<int> {
+    var i = 0;
+    while (true) {
+        yield i;
+        i += 1;
+    }
+}
+
+fn main(): int {
+    let g = gen();
+    return g.next() ?? 0;
+}

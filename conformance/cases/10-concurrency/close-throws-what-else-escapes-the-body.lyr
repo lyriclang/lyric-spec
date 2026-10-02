@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | close threw oops
+//! | true
+//! since: 5.0.0
+// 10 §1.9: an error other than 'Cancelled' that escapes the body comes out of 'close()'; a second
+// close of the done coroutine does nothing.
+import std.io { println };
+import std.task { Cancelled };
+
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn angry(): Coroutine<int> throws Oops {
+    try {
+        yield 1;
+    } catch (_: Cancelled) {
+        throw Oops.Bad;
+    }
+}
+
+fn main(): void {
+    let a = angry();
+    try {
+        let v = a.next() ?? 0;
+        a.close();
+        println(f"not reached {v}");
+    } catch (e: Oops) {
+        println(f"close threw {e.message()}");
+    }
+    try {
+        a.close();
+        println(f"{a.isDone()}");
+    } catch (_: Oops) {
+        println("not reached either");
+    }
+}

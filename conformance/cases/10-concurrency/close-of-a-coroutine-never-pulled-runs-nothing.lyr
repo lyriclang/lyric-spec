@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | closed true
+//! since: 5.0.0
+// 10 §1.9: a coroutine never pulled ends at 'close()' without running anything — its defer not
+// either.
+import std.io { println };
+
+fn gen(): Coroutine<int> {
+    defer println("not printed");
+    yield 1;
+}
+
+fn main(): void {
+    let g = gen();
+    g.close();
+    println(f"closed {g.isDone()}");
+}
