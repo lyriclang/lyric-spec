@@ -1,7 +1,7 @@
 # Projects
 
-> **Partly written.** §1–§3 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
-> S5a, S5b); the rest follows with M7, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1–§4 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
+> S5a, S5b, S6a); the rest follows with M7, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [11 Tooling and interop W2/W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -33,9 +33,9 @@ toolchain's own tests (`tests/Lyric5.Tests`, `ManifestTests`).
    type).
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
-   The other parts of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — binaries, profiles, the native
-   part, lints, the trust rule, the toolchain pin — are refused the same way until this chapter
-   writes them.
+   `[profile]` is §4's. The other parts of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — binaries, the
+   native part, lints, the trust rule, the toolchain pin — are refused the same way until this
+   chapter writes them.
 5. A package's **program** is its `src/main.lyr`, and its binary is named after the package
    ([14 §1.2](14-cli.md)). Without `src/main.lyr`, the package is a library (P2).
 
@@ -119,3 +119,32 @@ the toolchain's own tests (`tests/Lyric5.Tests`, `LockTests`).
    branch moves to its head, a moved tag to its commit. A version moves only with a manifest that
    asks for it — the selection is the manifests' (07 P4). A name that no package read from git
    has is refused (`LYR-CLI0003`).
+
+## 4. Profiles
+
+How a program is built — the compiler's settings, not the program
+([11 P3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+
+**Conformance.** `conformance/cases/15-project/`, package cases whose manifest changes the
+built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric5.Tests`,
+`ProfileTests`).
+
+1. **`debug`, `release`, `asan` and `tsan`** are built in. `[profile.<name>]` changes a built-in
+   profile, or names one of the manifest's own — a lowercase letter, then letters, digits, `_`
+   and `-` —, which **inherits** from another, `inherits = "release"`, the chain ending in a
+   built-in one. A built-in profile inherits from nothing, a manifest's own profile always does,
+   and none inherits from itself (`LYR-PKG0002`). Only the root manifest's profiles count: the
+   program is built one way. `out/<profile>/` is named after the profile
+   ([14 §1.2](14-cli.md)).
+2. A profile sets **fields**: `opt`, the C optimization level from 0 to 3, and `debugInfo`,
+   `lto`, `denyWarnings`, `overflowChecks`, `fastMath`, each `true` or `false` (`LYR-PKG0002` for
+   another type, `LYR-PKG0003` for another key). A field a profile does not set is the one it
+   inherits — as the manifest has that profile. The built-in ones: `debug` `opt = 0`, `release`
+   `opt = 2`, the sanitizers' `opt = 1`; all four with `debugInfo` and `overflowChecks`, none with
+   `lto`, `denyWarnings` or `fastMath`.
+3. **`overflowChecks = false`** makes integer overflow wrap instead of panicking, for the whole
+   program ([03 §1.6](03-types.md)). Nothing is without the checks unless a profile says so.
+4. **`denyWarnings = true`** fails a compilation that warns: the warnings stay warnings, and an
+   error says why the build failed (`LYR-CLI0006`).
+5. **`fastMath = true`** lets the C compiler treat the program's floating point as not
+   IEEE-exact ([03 §1.6](03-types.md)); the runtime's stays exact.

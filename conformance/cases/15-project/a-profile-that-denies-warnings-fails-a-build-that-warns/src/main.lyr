@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-CLI0006
+import std.io { println };
+
+fn main(): void {
+}
