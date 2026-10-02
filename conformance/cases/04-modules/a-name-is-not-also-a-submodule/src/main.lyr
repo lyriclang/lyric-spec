@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-RES0012
+//! since: 5.0.0
+// 04 §4 rule 7: 'http' in app.net is also the module app.net.http — one name, one meaning.
+import app.net;
+import app.net.http;
+
+fn main(): void {
+    let a = net.http();
+    let b = http.get();
+}

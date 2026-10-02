@@ -2,6 +2,8 @@
 //! error: LYR-SEM0001
 //! since: 5.0.0
 // 05 §9.1: an interface value does not become an 'Any' on its own.
+import std.core { Any };
+
 interface Shape { fn area(): int; }
 struct Circle :: [Shape] { r: int, fn area(): int { return 1; } }
 fn take(a: Any): int { return 0; }

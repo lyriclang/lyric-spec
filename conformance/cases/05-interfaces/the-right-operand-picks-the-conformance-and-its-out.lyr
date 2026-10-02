@@ -4,6 +4,7 @@
 //! since: 5.0.0
 // 05 §12.2: 'Mul<int>' own with 'Out = Self', 'Mul<float>' in a block answering 'type Out = float'.
 import std.io { println };
+import std.core { Add, Sub, Mul, Neg };
 
 struct V :: [Add, Sub, Mul<int>, Neg, Equatable, Ordered, Display] {
     x: int,

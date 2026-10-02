@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0153
+//! since: 5.0.0
+// 04 §4 rule 5: a module's own 'assert' hides the prelude's, and says so.
+fn assert(x: bool): void {
+}
+
+fn main(): void {
+    assert(true);
+}

@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | true
+//! since: 5.0.0
+// 04 §4: what the compiler writes for '==' on optionals is std.core's helper, whatever the module declares by that name.
+import std.io { println };
+
+fn equalOptionals(a: int, b: int): bool {
+    return false;
+}
+
+fn main(): void {
+    let a: ?int = 1;
+    let b: ?int = 1;
+    println(f"{a == b}");
+}

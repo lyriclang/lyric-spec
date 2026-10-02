@@ -1,8 +1,8 @@
 # Modules and packages
 
 > **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 to
-> §4 with **M7** (slices S1, S2a–S2c, S3a); the rest follows with M7, spec-first: each rule lands
-> here with its conformance case before or with its implementation. Source of the decisions:
+> §4 with **M7** (slices S1, S2a–S2c, S3a, S3b); the rest follows with M7, spec-first: each rule
+> lands here with its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -127,8 +127,7 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 
 ## 4. Imports
 
-How a module names what other modules declare ([07 V3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). *(The prelude and the rules
-of one namespace per module follow with the next slice of M7.)*
+How a module names what other modules declare ([07 V3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)).
 
 **Conformance.** `conformance/cases/04-modules/`; the forms one by one in the toolchain's own
 tests (`tests/Lyric5.Tests`, `ImportTests`).
@@ -147,3 +146,17 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
 3. An import a module never uses is **warned**, in every form (`LYR-SEM0072`) (I5): a qualified
    import is used when its module is named, or one of its extension methods called. A `pub
    import` is used by being passed on.
+4. The **prelude**, the module `std.prelude`, is named in every module without an import (I8;
+   [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`; `Error`, `Exception`, `Box`,
+   `Ordering`, `Range`, `RangeInclusive`, `RangeFrom`, `RangeTo`, `RangeFull`; `Equatable`,
+   `Hashable`, `Ordered`, `TotalOrder`, `Display`, `Debug`, `Default`, `Clone`, `Closeable` — what
+   signatures and the language need, not effects: `println` is `std.io`'s. The rest of the
+   standard library is imported, `std.core`'s operator interfaces (`Add` …), `Any` and
+   `sequence` among it. The prelude grows with the library ([12](12-stdlib.md)).
+5. A name a module declares or imports hides the prelude's of that name in the module, and is
+   warned (`LYR-SEM0153`) (K6).
+6. A **builtin type's** name — `int`, `string`, `bool` … — is no declaration's (`LYR-RES0011`)
+   (K5).
+7. A name a module declares or imports is **not also one of its submodules**: `app.net` declaring
+   `http` beside the module `app.net.http` is refused (`LYR-RES0012`) (K1, K3). `std` is the
+   standard library's name: a single file `std.lyr` is refused (`LYR-RES0013`) (D1).

@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | x 2
+//! since: 5.0.0
+// 04 §4 rule 4: the prelude's names need no import.
+import std.io { println };
+
+fn check(e: Error): string {
+    return e.message();
+}
+
+fn main(): void {
+    assert(true);
+    let b = Box<int> { value = 2 };
+    let r = Range<int> { start = 0, end = b.value };
+    println(f"{check(Exception { text = "x" })} {r.end}");
+}

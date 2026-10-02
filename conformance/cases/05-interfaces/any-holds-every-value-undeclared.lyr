@@ -4,6 +4,7 @@
 //! since: 5.0.0
 // 05 §9.1: a struct, a class and an enum are an 'Any' at the transition, nothing declared; 'is' takes them out.
 import std.io { println };
+import std.core { Any };
 
 interface Shape { fn area(): int; }
 struct Circle :: [Shape] { r: int, fn area(): int { return 3 * this.r * this.r; } }

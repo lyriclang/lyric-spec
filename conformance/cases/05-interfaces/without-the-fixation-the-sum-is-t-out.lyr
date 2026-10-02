@@ -2,5 +2,7 @@
 //! error: LYR-SEM0001
 //! since: 5.0.0
 // 05 §12.7: under 'T :: [Add]' alone 'a + b' is a 'T.Out', not a 'T'.
+import std.core { Add };
+
 fn sum<T :: [Add]>(a: T, b: T): T { return a + b; }
 fn main(): int { return 0; }

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-RES0011
+//! since: 5.0.0
+// 04 §4 rule 6: no declaration takes a builtin type's name.
+struct int {
+    x: int,
+}
+
+fn main(): void {
+}
