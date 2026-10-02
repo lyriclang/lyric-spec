@@ -47,3 +47,17 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
    of its body runs again.
 8. `resume` is no word of the language: Lyric 4's `resume co` is `co.next()!`, and `resume` is a
    name like any other.
+9. **`close()`** ends a coroutine (06 A5). One that is done, or was never pulled, ends without
+   running anything. One suspended at a `yield` of its body is continued to be unwound: that
+   `yield` throws **`Cancelled`** — `std.task`'s, an `Error` — so the body's `defer`s and `using`s
+   run on the way out ([06 §5](06-errors.md#5-the-error-path)). The `Cancelled` ends at the
+   close: `close()` does not throw it on. A body that catches it may still end with a result, but
+   a `yield` after it panics with `LYR-RT0014`. What else escapes the body comes out of `close()`,
+   which belongs to the coroutine's `throws` clause like its pulls: the `close()` of a throwing
+   coroutine is marked (`LYR-SEM0138`). The coroutine is done afterwards; closing a coroutine that
+   runs — itself, or one waiting on a coroutine it pulled — panics with `LYR-RT0014`.
+10. A coroutine is **`Closeable`**: `using let c = gen();` closes it when the scope is left
+    ([06 §7](06-errors.md#7-closing-using)). Unlike another `Closeable` it may also be dropped
+    unclosed, without a warning: a suspended coroutine that nothing references any more runs
+    nothing more — not its `defer`s either (rule 7) — and the debug profile reports one whose
+    body has a `defer` or a `using` when the collector takes it.

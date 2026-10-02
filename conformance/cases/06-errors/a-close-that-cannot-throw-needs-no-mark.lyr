@@ -1,0 +1,11 @@
+//! check
+//! since: 5.0.0
+// 06 §7.2: 'using' is the close's mark — a close that cannot throw draws no warning (no LYR-SEM0139).
+class Conn :: [Closeable] {
+    fn close(): void { }
+}
+
+fn main(): int {
+    using let c = Conn {};
+    return 0;
+}

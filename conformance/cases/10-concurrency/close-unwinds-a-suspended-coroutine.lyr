@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 0 1
+//! | cleaned
+//! | true true
+//! since: 5.0.0
+// 10 §1.9: 'close()' continues a suspended coroutine to be unwound — its defers run on the way out —
+// and the coroutine is done afterwards: 'next()' answers null.
+import std.io { println };
+
+fn walk(): Coroutine<int> {
+    defer println("cleaned");
+    var i = 0;
+    while (true) {
+        yield i;
+        i += 1;
+    }
+}
+
+fn main(): void {
+    let w = walk();
+    let a = w.next()!;
+    let b = w.next()!;
+    println(f"{a} {b}");
+    w.close();
+    let after = w.next();
+    println(f"{w.isDone()} {after == null}");
+}

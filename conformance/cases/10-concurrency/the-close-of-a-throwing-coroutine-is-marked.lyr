@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 10 §1.9: 'close()' belongs to the coroutine's 'throws' clause like its pulls — marked 'try'.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn gen(): Coroutine<int> throws Oops {
+    yield 1;
+}
+
+fn main(): int throws Oops {
+    let g = gen();
+    g.close();
+    return 0;
+}

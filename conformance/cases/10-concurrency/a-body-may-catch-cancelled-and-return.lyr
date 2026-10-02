@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | caught
+//! | 1 stopped
+//! since: 5.0.0
+// 10 §1.9: the yield 'close()' finds throws 'Cancelled'; a body that catches it may end with a result.
+import std.io { println };
+import std.task { Cancelled };
+
+fn careful(): Coroutine<int, string> {
+    try {
+        yield 1;
+        yield 2;
+    } catch (_: Cancelled) {
+        println("caught");
+        return "stopped";
+    }
+    return "ran out";
+}
+
+fn main(): void {
+    let c = careful();
+    let first = c.next()!;
+    c.close();
+    let result = c.result() ?? "none";
+    println(f"{first} {result}");
+}
