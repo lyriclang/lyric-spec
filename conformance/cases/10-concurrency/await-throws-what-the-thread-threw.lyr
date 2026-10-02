@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | failed: oops
+//! since: 5.0.0
+// 10 §9 rule 1: await() on a thread's task throws what its body threw (§2 rule 9).
+import std.io { println };
+import std.task { Thread };
+
+class Oops :: [Error] {
+    fn message(): string { return "oops"; }
+}
+
+fn main(): void throws Error {
+    let failing = Thread.spawn(() => {
+        throw Oops { };
+    });
+    try {
+        failing.await();
+    } catch (e: Oops) {
+        println(f"failed: {e.message()}");
+    }
+}

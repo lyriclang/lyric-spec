@@ -242,3 +242,22 @@ values of their types.
 4. Every operation is sequentially consistent (N7 P2): all threads see the operations in one
    order, and no read or write moves across one (P4). A store happens before a load that reads
    its value (P1).
+
+## 9. Threads
+
+A program runs on the threads it starts ([06 G1–G3, N7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). Each has a scheduler of
+its own, which runs that thread's tasks as §2 says, and a task never moves to another thread.
+Threads run at the same time.
+
+1. **`Thread.spawn(body)`** starts a thread and runs `body` there as its first task. It gives
+   that task's handle, a `Task<T> throws E` (§2 rule 8): `await()` on it waits from any thread,
+   and `cancel()` cancels it from any thread (§3).
+2. A thread ends when its first task has ended, as the program ends with `main` (§2 rule 1): the
+   tasks still ready or asleep on it never run again. The program does not wait for a thread —
+   when `main` ends, the program ends.
+3. A task that `spawn` starts runs on the thread of the task that started it.
+4. What a thread did before it started another happens before the new thread's first task (N7
+   P1), and what a task did before it ended happens before `await()` on it returns, on any thread.
+5. Two threads that use the same place, one of them writing, with no such order between them — an
+   atomic's (§8) or a task's end (rule 4) — race: the program has an error, and the language makes
+   no promise about what it then does (G3).

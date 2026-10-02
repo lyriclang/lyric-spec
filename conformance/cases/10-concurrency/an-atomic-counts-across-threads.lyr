@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 4000
+//! since: 5.0.0
+// 10 §8 rule 4, §9: four threads add to one atomic; each addition is one step.
+import std.io { println };
+import std.sync { Atomic };
+import std.task { Thread };
+
+fn count(total: Atomic<int>): void {
+    for (_ in 0..1000) {
+        total.fetchAndAdd(1);
+    }
+}
+
+fn main(): void throws Error {
+    let total = Atomic<int>.new(0);
+    let a = Thread.spawn(() => count(total));
+    let b = Thread.spawn(() => count(total));
+    let c = Thread.spawn(() => count(total));
+    let d = Thread.spawn(() => count(total));
+    try a.await();
+    try b.await();
+    try c.await();
+    try d.await();
+    println(f"{total.load()}");
+}
