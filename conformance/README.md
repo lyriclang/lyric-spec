@@ -46,7 +46,7 @@ of the standard library:
   waits of 10 §2–§5 — `std.task`'s `spawn`, `Task` with `await`, `isDone`, `status` and
   `cancel`, `TaskStatus`, `PanicInfo`, `TaskScope`, `withTimeout` and `TimedOut`,
   `spawnDetached`, `yieldNow`, `sleep`, `Channel` and `ChannelClosed` (10 §6), `Select` and
-  `Timer` (10 §7), `std.sync`'s `Atomic` and `AtomicValue` (10 §8) — and the
+  `Timer` (10 §7), `std.sync`'s `Atomic` and `AtomicValue` (10 §8), `Thread` (10 §9) — and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to

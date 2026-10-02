@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | ended
+//! since: 5.0.0
+// 10 §9 rule 2: a thread ends when its first task has ended — a task it started that still sleeps
+// is not waited for.
+import std.io { println };
+import std.task { sleep, spawnDetached, Thread };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let short = Thread.spawn(() => {
+        spawnDetached(() => {
+            try sleep(Duration.ofHours(1));
+        });
+    });
+    try short.await();
+    println("ended");
+}
