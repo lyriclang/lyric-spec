@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §8 rule 7: a conformer whose answer differs from what its interface's parent list fixes does
+// not conform.
+import std.core { Add };
+
+interface Doubling :: [Add<Out = Self>] {
+}
+
+struct V :: [Doubling] {
+    n: int,
+
+    type Out = int;
+
+    fn add(rhs: V): int {
+        return this.n + rhs.n;
+    }
+}
+
+fn main(): void {
+}
