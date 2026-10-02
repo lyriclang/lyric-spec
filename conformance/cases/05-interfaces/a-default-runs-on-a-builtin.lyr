@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | hi int
+//! | hi int
+//! since: 5.0.0
+// 05 §1 rule 4: a default runs on a builtin as the builtin's own — no value of the interface.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+
+    fn greet(): string {
+        return "hi " + this.name();
+    }
+}
+
+extend int :: [Named] {
+    fn name(): string {
+        return "int";
+    }
+}
+
+fn g<T :: [Named]>(x: T): string {
+    return x.greet();
+}
+
+fn main(): void {
+    println(g(3));
+    println(3.greet());
+}

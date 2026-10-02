@@ -1,0 +1,27 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 8: an interface's helper is its defaults' alone — through a constraint as well.
+interface Shape {
+    fn area(): int;
+
+    private fn twice(): int {
+        return this.area() * 2;
+    }
+}
+
+struct Sq :: [Shape] {
+    s: int,
+
+    fn area(): int {
+        return this.s * this.s;
+    }
+}
+
+fn leak<T :: [Shape]>(x: T): int {
+    return x.twice();
+}
+
+fn main(): void {
+    let _ = leak(Sq { s = 2 });
+}
