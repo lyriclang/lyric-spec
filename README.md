@@ -37,7 +37,7 @@ design documents carry the reasoning and what was rejected.
 | `spec/15-project.md` | projects | M7 |
 | `spec/16-diagnostics.md` | diagnostics | M12 |
 | `spec/appendix-a-diagnostics.md` | the catalogue — generated | M12 |
-| `conformance/` | the suite: one `.lyr` per case, expectations in a `//!` header | — |
+| `conformance/` | the suite: one `.lyr` — or one package — per case, expectations in a `//!` header | — |
 | `tools/run_conformance.py` | the reference runner | — |
 
 ## Versioning
