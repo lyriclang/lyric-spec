@@ -1,0 +1,64 @@
+pub struct Point {
+    pub x: int,
+    y: int,
+    private z: int,
+}
+
+pub fn origin(): Point {
+    return Point { x = 0, y = 0, z = 0 };
+}
+
+pub class Box {
+    pub var v: int,
+    private secret: int,
+
+    private fn hide(): int {
+        return this.secret;
+    }
+
+    pub fn show(): int {
+        return this.hide() + 1;
+    }
+
+    private static fn hidden(): Box {
+        return Box { v = 0, secret = 0 };
+    }
+}
+
+pub fn box(): Box {
+    return Box { v = 1, secret = 2 };
+}
+
+pub struct Open {
+    pub a: int,
+}
+
+pub fn open(): Open {
+    return Open { a = 1 };
+}
+
+pub fn doubled(): int {
+    return open().twice();
+}
+
+private extend Open {
+    fn twice(): int {
+        return this.a * 2;
+    }
+}
+
+extend Open {
+    fn thrice(): int {
+        return this.a * 3;
+    }
+}
+
+pub interface Shape {
+    fn area(): int;
+}
+
+extend Open :: [Shape] {
+    fn area(): int {
+        return this.a;
+    }
+}

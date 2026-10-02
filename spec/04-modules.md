@@ -1,8 +1,8 @@
 # Modules and packages
 
 > **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 and
-> §3 with **M7** (slices S1, S2a); the rest follows with M7, spec-first: each rule lands here with
-> its conformance case before or with its implementation. Source of the decisions:
+> §3 with **M7** (slices S1, S2a, S2b); the rest follows with M7, spec-first: each rule lands here
+> with its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -70,8 +70,8 @@ toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
 
 ## 3. Visibility
 
-Who may name a declaration ([07 V2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). *(The members of a type — fields, methods, static
-members, variants, the methods of an `extend` block — are written with the next slice of M7.)*
+Who may name a declaration and a member
+([07 V2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)).
 
 **Conformance.** `conformance/cases/04-modules/`; the routes one by one in the toolchain's own
 tests (`tests/Lyric5.Tests`, `VisibilityTests`).
@@ -95,3 +95,19 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
    into `util`, and no other module reaches it as `util.println` (`LYR-RES0009`) (I4).
 5. A **module** itself is visible to every module (B1): what it offers is what its
    declarations' words allow.
+6. A **member** takes its word as a declaration does (S0): a field, a method, a `static`
+   function or `let`; without a word it is `internal`. It is named — read, written, called,
+   destructured in a pattern — where its word allows (`LYR-RES0009`), whatever route reached its
+   type. Of a member's overload set, what may not be named is not there.
+7. A type with a field a module may not name is **built** in no such module: its initializer
+   is refused there, and so is a copy with `with` (`LYR-RES0009`) — a factory builds it
+   ([04 D11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md), [02 W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md)).
+8. An enum's **variants** are as visible as the enum. An **interface's members** — what it
+   requires and its defaults — are as visible as the interface; a word on one is refused
+   (`LYR-SEM0118`) (S4).
+9. An **`extend` block's** word is the default of the methods in it: `private extend Point { … }`
+   keeps them to its module; a method's own word wins. A method of a block that a module may not
+   name is not there for it (S5).
+10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type and its
+    interface are, its methods with it; a word on the block or on one of its methods is refused
+    (`LYR-SEM0150`) (S5).

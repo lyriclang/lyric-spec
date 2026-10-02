@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 7: a copy with with is a construction, refused where the initializer is.
+import app.util;
+
+fn main(): void {
+    let p = util.origin() with { x = 5 };
+}

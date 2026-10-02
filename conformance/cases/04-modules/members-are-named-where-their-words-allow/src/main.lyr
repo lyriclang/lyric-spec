@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 0 0 7 3 3 1 2
+//! since: 5.0.0
+// 04 §3 rules 6, 9, 10: a 'pub' and an internal field, a 'pub var' field written, a 'pub' method,
+// an inherent block's internal method, a conformance's method — and a private block's method in
+// its own module.
+import std.io { println };
+import app.util;
+
+fn main(): void {
+    let b = util.box();
+    b.v = 7;
+    let o = util.open();
+    println(f"{util.origin().x} {util.origin().y} {b.v} {b.show()} {o.thrice()} {o.area()} {util.doubled()}");
+}

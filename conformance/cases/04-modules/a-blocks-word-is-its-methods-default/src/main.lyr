@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 04 §3 rule 9: 'private extend' keeps its methods to its module — for another module they are not there.
+import app.util;
+
+fn main(): void {
+    let n = util.open().twice();
+}

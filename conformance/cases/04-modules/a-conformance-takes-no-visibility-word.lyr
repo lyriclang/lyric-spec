@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0150
+//! since: 5.0.0
+// 04 §3 rule 10: a conformance is visible wherever its type and its interface are.
+interface Shape {
+    fn area(): int;
+}
+
+struct Square {
+    side: int,
+}
+
+private extend Square :: [Shape] {
+    fn area(): int {
+        return this.side * this.side;
+    }
+}
+
+fn main(): void {
+}

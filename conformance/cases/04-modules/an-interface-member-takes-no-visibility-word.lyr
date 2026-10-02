@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0118
+//! since: 5.0.0
+// 04 §3 rule 8: an interface's members are as visible as the interface — no word of their own,
+// 'internal' as little as 'pub'.
+pub interface Shape {
+    internal fn area(): int;
+}
+
+fn main(): void {
+}

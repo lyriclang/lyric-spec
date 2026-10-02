@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 6: a 'private' static function is called in its module alone.
+import app.util;
+
+fn main(): void {
+    let b = util.Box.hidden();
+}
