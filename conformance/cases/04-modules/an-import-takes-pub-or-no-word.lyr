@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0053
+//! since: 5.0.0
+// 04 §4 rule 2: 'pub import' passes on; no other word stands before an import.
+internal import std.io { println };
+
+fn main(): void {
+}

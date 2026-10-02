@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | hi
+//! since: 5.0.0
+// 04 §4 rule 1: '{ f as g }' binds g.
+import std.io { println as say };
+
+fn main(): void {
+    say("hi");
+}

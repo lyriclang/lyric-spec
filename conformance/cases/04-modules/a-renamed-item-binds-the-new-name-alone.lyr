@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0002
+//! since: 5.0.0
+// 04 §4 rule 1: a renamed item is bound under its new name, and its own is not bound.
+import std.io { println as say };
+
+fn main(): void {
+    println("hi");
+}

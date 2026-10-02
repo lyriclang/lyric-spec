@@ -1,8 +1,8 @@
 # Modules and packages
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 and
-> §3 with **M7** (slices S1, S2a–S2c); the rest follows with M7, spec-first: each rule lands here
-> with its conformance case before or with its implementation. Source of the decisions:
+> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 to
+> §4 with **M7** (slices S1, S2a–S2c, S3a); the rest follows with M7, spec-first: each rule lands
+> here with its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -124,3 +124,26 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 12. A member whose **written** word is wider than its type's — `pub x` in an `internal struct` — is
     allowed and warned (`LYR-SEM0152`): it is exported only once the type is (S3). A member
     without a word follows its type and is not warned.
+
+## 4. Imports
+
+How a module names what other modules declare ([07 V3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). *(The prelude and the rules
+of one namespace per module follow with the next slice of M7.)*
+
+**Conformance.** `conformance/cases/04-modules/`; the forms one by one in the toolchain's own
+tests (`tests/Lyric5.Tests`, `ImportTests`).
+
+1. An import takes one of **three forms** (I1): **selective**, `import app.util { answer, Point }`,
+   binds the names it lists; **qualified**, `import app.util;`, binds the module under its last
+   segment — `util.answer()`; **aliased**, `import app.util as u;`, under another name. A
+   selective item may be **renamed**: `{ answer as reply }` binds `reply`, and `answer` is not
+   bound (I2). There is no import of everything (I3).
+2. **`pub import`** passes on what it binds (I4): `pub import app.util { answer };` in `app.facade`
+   makes `answer` a `pub` member of `app.facade` — imported from there, named as `facade.answer`,
+   under the name it was renamed to; a module imported qualified or aliased is passed on as a
+   namespace (`facade.util.answer()`). It passes on what is `pub` and nothing narrower
+   (`LYR-RES0010`). No other word stands before `import` (`LYR-PAR0053`); without `pub`, an
+   import is its module's own (§3 rule 4).
+3. An import a module never uses is **warned**, in every form (`LYR-SEM0072`) (I5): a qualified
+   import is used when its module is named, or one of its extension methods called. A `pub
+   import` is used by being passed on.

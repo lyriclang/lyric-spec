@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 42 42 42
+//! since: 5.0.0
+// 04 §4 rule 2: what a 'pub import' binds is a pub member of its module — imported from there,
+// named through it, under the name it was renamed to.
+import std.io { println };
+import app.facade;
+import app.facade { answer };
+
+fn main(): void {
+    println(f"{answer()} {facade.answer()} {facade.reply()}");
+}
