@@ -70,8 +70,8 @@ The first element sits at offset 16, aligned to 16 bytes.
 ### 1.4 Panics and crashes
 
 1. A **panic** ([05 E8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/05-fehler.md))
-   writes a report to the error output and ends the process with exit code **101**. No `defer`
-   and no `using` runs.
+   writes a report to the error output and ends the process with exit code **101** — unless it
+   happens in a coroutine, which it leaves (§1.6 rule 10). No `defer` and no `using` runs.
 2. The report's first line is `panic [CODE]: message`. The lines after it are the frames of the
    panicking thread, innermost first, each starting with `    at ` (four spaces). A frame names
    its function and, where the debug information has it, its source position:
@@ -165,6 +165,14 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    the program's start makes main's context — on a stack of 8 MiB — and hands it to the
    scheduler of `std.task`, which runs until that context is done; the exit code is main's
    value as before (§1.5).
+10. A panic in a coroutine **leaves** it ([05 E8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/05-fehler.md)):
+    nothing on its stack runs again — no `defer`, no `using` — and its resumer finds it
+    **panicked**, with the report: the code, the message, and the frames where the panic
+    happened. A resume passes the panic on: the resumer panics again, with that report — so a
+    panic climbs the coroutines that resumed one another until a task's scheduler takes it
+    ([10 §5](10-concurrency.md)), or until it reaches a thread's own stack and ends the process
+    with the report (§1.4). A coroutine with foreign frames on its stack (rule 6), and a panic
+    for want of memory (`LYR-RT0005`), end the process at once.
 
 ### 1.7 Waiting
 

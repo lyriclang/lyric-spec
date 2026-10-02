@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 1
+//! | panicked LYR-RT0008 in the generator
+//! since: 5.0.0
+// 10 §5 rule 1: a panic in a generator passes to the task that pulls it, which it ends.
+import std.io { println };
+import std.task { spawn, yieldNow, TaskStatus, Cancelled };
+
+fn numbers(): Coroutine<int> {
+    yield 1;
+    panic("in the generator");
+}
+
+fn describe(s: TaskStatus<int>): string {
+    return match (s) {
+        TaskStatus.Running => "running",
+        TaskStatus.Done(v) => f"done {v}",
+        TaskStatus.Failed(e) => "failed " + e.message(),
+        TaskStatus.Cancelled => "cancelled",
+        TaskStatus.Panicked(p) => "panicked " + p.code + " " + p.message,
+    };
+}
+
+fn main(): void throws Cancelled {
+    let puller = spawn(() => {
+        let g = numbers();
+        while (let n = g.next()) {
+            println(f"{n}");
+        }
+        return 0;
+    });
+    try yieldNow();
+    println(describe(puller.status()));
+}

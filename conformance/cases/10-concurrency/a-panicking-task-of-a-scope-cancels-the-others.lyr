@@ -1,0 +1,27 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | sibling stops
+//! since: 5.0.0
+// 10 §5 rule 3: a task of a scope that panics cancels the others, and close() panics again with
+// it once they have ended.
+import std.io { println };
+import std.task { sleep, TaskScope };
+import std.time { Duration };
+
+fn scoped(): void throws Error {
+    using let scope = TaskScope.new();
+    scope.spawn(() => {
+        defer println("sibling stops");
+        try sleep(Duration.ofSecs(30));
+    });
+    scope.spawn(() => {
+        try sleep(Duration.ofMillis(5));
+        panic("in scope");
+    });
+}
+
+fn main(): void throws Error {
+    try scoped();
+    println("after");
+}
