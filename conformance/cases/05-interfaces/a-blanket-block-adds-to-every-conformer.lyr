@@ -1,0 +1,48 @@
+//! run
+//! stdout:
+//! | hello cat
+//! | hello dog
+//! | hello int
+//! | hello cat
+//! since: 5.0.0
+// 05 §13 rule 7: a blanket block adds its members to every type its constraints admit — a
+// struct, another struct, a built-in, a value of the interface itself — and 'this' is the
+// receiver.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+struct Dog :: [Named] {
+    fn name(): string {
+        return "dog";
+    }
+}
+
+extend int :: [Named] {
+    fn name(): string {
+        return "int";
+    }
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+    println(Cat { }.greeting());
+    println(Dog { }.greeting());
+    let n = 5;
+    println(n.greeting());
+    let named: Named = Cat { };
+    println(named.greeting());
+}
