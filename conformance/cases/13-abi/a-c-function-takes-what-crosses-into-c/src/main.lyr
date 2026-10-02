@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-SEM0099
+extern "C" fn shout(s: string): int;
+
+fn main(): void {
+}

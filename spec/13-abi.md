@@ -1,6 +1,6 @@
 # ABI and embedding
 
-> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**; the rest comes
+> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**, §2 with **M7**; the rest comes
 > with **M14**, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [01 Runtime](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md), [11 Tooling and interop W4/W5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -190,3 +190,24 @@ blocking the thread until another thread wakes it or a deadline passes (`lyr/pol
    does not end it.
 4. A poller the system refuses — no descriptors left, say — or a wait the system fails is a
    panic (`LYR-RT0015`).
+
+## 2. C functions, stage 1
+
+A C function the program calls, declared in Lyric and found by the linker in a package's native
+part ([15 §5](15-project.md)) or a library ([11 W4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)). Stage 1 carries the
+scalars C has as they are; strings, pointers, structs, callbacks and exports are the type table
+of a later stage (M14).
+
+**Conformance.** `conformance/cases/13-abi/`, package cases with a native part; the toolchain's
+own tests (`tests/Lyric5.Tests`, `NativeTests`).
+
+1. `extern "C" fn add(a: int, b: int): int;` declares the C function `add`; `= "c_add"` after the
+   signature names its symbol instead, a C identifier (`LYR-SEM0099` for another). The ABI is
+   `"C"`, the one foreign boundary there is (`LYR-SEM0099` for another). The declaration has no
+   body, no type parameters and no `throws` — a C function throws nothing (`LYR-SEM0099`).
+2. What crosses: `int8` to `int64` and `uint8` to `uint64` as the C integer of their width,
+   `int`/`uint` as the 64-bit ones; `float32` as `float`, `float` as `double`; `bool` as C's
+   `bool`, 0 or 1; and `void` as a return. Every other type is refused, as a parameter and as a
+   result (`LYR-SEM0099`).
+3. A call is a direct call in the target platform's C ABI. A symbol nothing defines fails the link
+   (exit 2, [14 §1.3](14-cli.md)).

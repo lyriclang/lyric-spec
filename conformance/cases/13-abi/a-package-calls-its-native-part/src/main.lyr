@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 5 2.5 true
+import std.io { println };
+
+extern "C" fn add(a: int, b: int): int;
+extern "C" fn half(x: float): float = "lyric_half";
+extern "C" fn even(n: int): bool;
+
+fn main(): void {
+    println(f"{add(2, 3)} {half(5.0)} {even(4)}");
+}
