@@ -1,6 +1,6 @@
 # ABI and embedding
 
-> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**; the rest comes
+> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**, §2 with **M7**; the rest comes
 > with **M14**, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [01 Runtime](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md), [11 Tooling and interop W4/W5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).

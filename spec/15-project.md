@@ -1,7 +1,7 @@
 # Projects
 
-> **Partly written.** §1–§4 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
-> S5a, S5b, S6a); the rest follows with M7, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1–§5 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
+> S5a–S6e); the rest follows with M7, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [11 Tooling and interop W2/W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -34,8 +34,9 @@ in `ProgramTests`.
    type).
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
-   `[profile]` is §4's. The other parts of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — the native
-   part, lints, the trust rule — are refused the same way until this chapter writes them.
+   `[profile]` is §4's, `[native]` §5's. The other parts of a manifest
+   ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — lints, the trust rule — are refused the same way until this
+   chapter writes them.
 5. A package's **programs** are its `src/main.lyr`, whose binary is named after the package
    ([14 §1.2](14-cli.md)), and each `[[bin]]`: `name = "tool"` — a lowercase letter, then
    letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the
