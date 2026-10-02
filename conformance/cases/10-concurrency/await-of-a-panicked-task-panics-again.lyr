@@ -1,17 +1,19 @@
 //! run
 //! panic: LYR-RT0008
 //! stdout:
-//! | awaiting
+//! | main goes on
 //! since: 5.0.0
-// 10 §5 rule 2: await on a panicked task panics again, with the panic's report.
+// 10 §5 rules 1-2: the task's panic ends that task only — main goes on — and await on the panicked
+// task panics again, with the panic's report.
 import std.io { println };
-import std.task { spawn, Cancelled };
+import std.task { spawn, yieldNow, Cancelled };
 
 fn main(): void throws Cancelled {
     let bad = spawn(() => {
         panic("boom");
     });
-    println("awaiting");
+    try yieldNow();
+    println("main goes on");
     try bad.await();
     println("after");
 }
