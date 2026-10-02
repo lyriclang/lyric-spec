@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0154
+//! since: 5.0.0
+// 11 §1 rule 2: lyric test calls a test with nothing, so a test takes no parameters.
+
+@Test
+fn adds(x: int): void {
+}
+
+fn main(): void {
+}

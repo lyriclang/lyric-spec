@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0154
+//! since: 5.0.0
+// 11 §1 rule 2: lyric test has no use for a value, so a test returns void.
+
+@Test
+fn answers(): int {
+    return 42;
+}
+
+fn main(): void {
+}

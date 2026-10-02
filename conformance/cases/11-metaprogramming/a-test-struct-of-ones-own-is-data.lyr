@@ -1,0 +1,17 @@
+//! check
+//! warning: LYR-SEM0153
+//! since: 5.0.0
+// 11 §1 rule 1: @Test is std.core.Test by its identity. A struct of the program's own named Test
+// hides the prelude's (a warning) and is data: none of a test's rules applies to what it marks.
+import std.core { OnFunction };
+
+struct Test :: [OnFunction] { }
+
+@Test
+fn takes(x: int): int {
+    return x;
+}
+
+fn main(): void {
+    let _ = takes(1);
+}
