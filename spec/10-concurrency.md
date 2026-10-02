@@ -128,6 +128,10 @@ scheduler runs another task meanwhile. The functions this section names are `std
    covered as any call that throws (`LYR-SEM0138`, `LYR-SEM0034`). The tasks waiting for one
    task run again in the order they began to wait.
 10. **`task.isDone()`** says whether the body has ended, with its value or its error (06 T3).
+11. **`task.status()`** says where the task stands, without waiting (06 T3): a `TaskStatus<T>` —
+    `Running`; `Done(value)`; `Failed(error)`, the error an `Error`; `Cancelled`, when it ended
+    with `Cancelled`; or `Panicked(info)` (§5), `info` a `PanicInfo` with the panic's `code`,
+    `message` and `trace`.
 
 ## 3. Cancellation
 
@@ -164,3 +168,18 @@ concurrency.
 3. **`scope.cancel()`** cancels every task of the scope that has not ended.
 4. A task cancelled while it waits in `close()` cancels the scope's tasks and still waits for
    them to end; then `close()` returns or throws as before.
+
+## 5. Panics in tasks
+
+A panic leaves the coroutine it happens in, without unwinding ([05 E8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/05-fehler.md);
+[13 §1.6](13-abi.md) rule 10), and the task it belongs to takes it ([06 T4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)).
+
+1. A panic in a task started by `spawn` — a scope's included — ends that task, not the program:
+   the task is **panicked**, nothing more of it runs — no `defer`, no `using` — and the tasks
+   waiting for it run again. A panic in a generator the task pulls passes to the task.
+2. `await()` on a panicked task panics again, with the panic's code, message and frames: a panic
+   stays a bug. `status()` (§2 rule 11) looks without panicking.
+3. A task of a scope that panics cancels the scope's other tasks, as a failure does (§4 rule 2),
+   and `close()` panics again with it once they have all ended.
+4. A panic in `main`, or in a task started by `spawnDetached` — which nobody can look at — ends
+   the program with its report ([13 §1.4](13-abi.md)).

@@ -1,0 +1,17 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | awaiting
+//! since: 5.0.0
+// 10 §5 rule 2: await on a panicked task panics again, with the panic's report.
+import std.io { println };
+import std.task { spawn, Cancelled };
+
+fn main(): void throws Cancelled {
+    let bad = spawn(() => {
+        panic("boom");
+    });
+    println("awaiting");
+    try bad.await();
+    println("after");
+}

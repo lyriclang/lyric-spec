@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | panicked LYR-RT0008 boom
+//! | main goes on
+//! since: 5.0.0
+// 10 §5 rule 1: a panic in a spawned task ends that task — not the program, and no defer of it
+// runs.
+import std.io { println };
+import std.task { spawn, yieldNow, TaskStatus, Cancelled };
+
+fn main(): void throws Cancelled {
+    let bad = spawn(() => {
+        defer println("deferred");
+        panic("boom");
+    });
+    try yieldNow();
+    let what = match (bad.status()) {
+        TaskStatus.Panicked(p) => "panicked " + p.code + " " + p.message,
+        _ => "not panicked",
+    };
+    println(what);
+    println("main goes on");
+}

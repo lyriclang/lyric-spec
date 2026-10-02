@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | running
+//! | done 5
+//! | failed oops
+//! | cancelled
+//! since: 5.0.0
+// 10 §2 rule 11: status() says where a task stands, without waiting.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskStatus, Cancelled };
+import std.time { Duration };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn failing(): int throws Oops {
+    throw Oops.Bad;
+}
+
+fn describe(s: TaskStatus<int>): string {
+    return match (s) {
+        TaskStatus.Running => "running",
+        TaskStatus.Done(v) => f"done {v}",
+        TaskStatus.Failed(e) => "failed " + e.message(),
+        TaskStatus.Cancelled => "cancelled",
+        TaskStatus.Panicked(p) => "panicked " + p.code + " " + p.message,
+    };
+}
+
+fn main(): void throws Cancelled {
+    let good = spawn(() => 5);
+    println(describe(good.status()));
+    let bad = spawn(() => try failing());
+    let slow = spawn(() => {
+        try sleep(Duration.ofSecs(30));
+        return 1;
+    });
+    try yieldNow();
+    slow.cancel();
+    try yieldNow();
+    println(describe(good.status()));
+    println(describe(bad.status()));
+    println(describe(slow.status()));
+}

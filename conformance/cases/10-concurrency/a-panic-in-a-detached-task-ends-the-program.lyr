@@ -1,0 +1,17 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 10 §5 rule 4: nobody can look at a detached task, so its panic ends the program.
+import std.io { println };
+import std.task { spawnDetached, yieldNow, Cancelled };
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => {
+        panic("lost");
+    });
+    println("before");
+    try yieldNow();
+    println("after");
+}
