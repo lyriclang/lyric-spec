@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0154
+//! since: 5.0.0
+// 11 §1 rule 2: lyric test calls a test from a module of its own, so a test is not private.
+
+@Test
+private fn hidden(): void {
+}
+
+fn main(): void {
+}

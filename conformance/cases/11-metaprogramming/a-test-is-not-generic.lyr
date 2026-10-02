@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0067
+//! since: 5.0.0
+// 11 §1 rule 2: no attribute sits on a generic declaration, a test's neither.
+
+@Test
+fn each<T>(): void {
+}
+
+fn main(): void {
+}

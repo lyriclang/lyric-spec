@@ -1,0 +1,15 @@
+//! check
+//! since: 5.0.0
+// 11 §1 rule 2: a test may throw — an error that leaves it fails it — and may be skipped.
+
+@Test
+fn throwing(): void throws Error {
+    throw Exception { text = "fails the test" };
+}
+
+@Test { skip = "needs a network" }
+fn later(): void {
+}
+
+fn main(): void {
+}

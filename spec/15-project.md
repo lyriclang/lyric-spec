@@ -1,8 +1,8 @@
 # Projects
 
 > **Partly written.** §1–§6 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
-> S5a–S6e, S8a); the rest follows with M7, spec-first: each rule lands here with its conformance case before
-> or with its implementation. Source of the decisions:
+> S5a–S6e, S8a), §7 with **M8a**; the rest follows, spec-first: each rule lands here with its
+> conformance case before or with its implementation. Source of the decisions:
 > [11 Tooling and interop W2/W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
@@ -196,3 +196,16 @@ each operating system from any host — compared byte for byte.
    Windows binary's PDB, a macOS binary's `.dSYM` — gathered on a macOS host, where `dsymutil` is.
    The binary names it by a hash of its own bytes — a PE image's PDB GUID, a Mach-O image's UUID —,
    so the two still pair.
+
+## 7. Tests
+
+([07 V4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
+
+1. A package's **`tests/`**, beside `src/`, holds modules of the package: `tests/math.lyr` in
+   `app` is `app.tests.math`. A test there sees what the package does not make `private`; a test
+   beside the code, in the module it tests, sees that module's `private` too. A module that would
+   lie both under `src/tests/` and under `tests/` is refused (`LYR-RES0015`).
+2. Only `lyric test` compiles `tests/` ([14 §3](14-cli.md)): no program's build reaches it, and a
+   package's content (§2) leaves it out.

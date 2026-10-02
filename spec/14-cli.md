@@ -1,8 +1,8 @@
 # The command line
 
-> **Partly written.** §1 was written with milestone **M2** of the Lyric 5 plan, §2 with **M7**; the
-> rest comes with **M7–M13**, spec-first: each rule lands here with its conformance case before or
-> with its implementation. Source of the decisions:
+> **Partly written.** §1 was written with milestone **M2** of the Lyric 5 plan, §2 with **M7**, §3
+> with **M8a**; the rest comes with **M8a–M13**, spec-first: each rule lands here with its
+> conformance case before or with its implementation. Source of the decisions:
 > [11 Tooling and interop W1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
 
 ## Scope
@@ -117,3 +117,25 @@ above the current directory, or above `-C <dir>`; without one there is nothing t
 5. A dependency written otherwise than as one line — a table of its own, dotted keys — is the
    person's to edit: `add` and `remove` refuse it (`LYR-CLI0008`). Both take `-C` and
    `--offline`.
+
+## 3. `test`
+
+The package's tests ([10 B12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md), [07 V4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)) — the package of the nearest `lyric.toml`,
+as in §2.
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`; the
+standard library's own tests through it, `StdTests`).
+
+1. **`lyric test`** builds every function the package marks `@Test`
+   ([11 §1](11-metaprogramming.md)) — in its modules under `src/` and under `tests/`
+   ([15 §7](15-project.md)) — into one program for this machine, under the profile asked for as
+   `build` takes it (§1.1), and runs it. A library has tests as well. It takes no file.
+2. The tests run one after another — module by module in the order of their paths, each
+   module's in the order it writes them —, each in a task of its own: a panic or an error that
+   leaves a test fails it, and the run goes on. A test with a `skip` is named and not run.
+3. After each test has ended, a line: `ok`, `FAIL` with the panic or the error below it, or
+   `skip` with the reason — a test's own output comes before its line —; then the count.
+   `-f <text>` (`--filter <text>`) runs the tests whose name — the module's path and the
+   function's, `app.tests.math.adds` — holds the text.
+4. The exit is 0 when every test held — or when there is none to run —, and 1 when one failed or
+   the program was refused (§1.3).
