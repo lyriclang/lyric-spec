@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | other
+//! | after
+//! since: 5.0.0
+// 10 §4 rule 2: a task of the scope cancelled on its own ends with Cancelled, which is no failure.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskScope, Cancelled };
+import std.time { Duration };
+
+fn work(name: string, ms: int): void throws Cancelled {
+    try sleep(Duration.ofMillis(ms));
+    println(name);
+}
+
+fn oneCancelled(): void throws Error {
+    using let scope = TaskScope.new();
+    let t = scope.spawn(() => try work("never", 30000));
+    scope.spawn(() => try work("other", 5));
+    try yieldNow();
+    t.cancel();
+}
+
+fn main(): void throws Error {
+    try oneCancelled();
+    println("after");
+}

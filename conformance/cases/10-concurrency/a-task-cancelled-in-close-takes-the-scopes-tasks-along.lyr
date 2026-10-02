@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | inner stops
+//! | owner cancelled
+//! since: 5.0.0
+// 10 §4 rule 4: a task cancelled while its scope closes cancels the scope's tasks and waits for them.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskScope, Cancelled };
+import std.time { Duration };
+
+fn work(name: string, ms: int): void throws Cancelled {
+    try sleep(Duration.ofMillis(ms));
+    println(name);
+}
+
+fn main(): void throws Error {
+    let owner = spawn(() => {
+        using let scope = TaskScope.new();
+        scope.spawn(() => {
+            defer println("inner stops");
+            try work("inner", 30000);
+        });
+        try sleep(Duration.ofSecs(30));
+    });
+    try yieldNow();
+    owner.cancel();
+    try {
+        owner.await();
+    } catch (_: Cancelled) {
+        println("owner cancelled");
+    }
+}

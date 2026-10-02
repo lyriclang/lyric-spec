@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | one stops
+//! | two stops
+//! | after
+//! since: 5.0.0
+// 10 §4 rules 2-3: scope.cancel() cancels every task of the scope; their Cancelled is no failure.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskScope, Cancelled };
+import std.time { Duration };
+
+fn work(name: string, ms: int): void throws Cancelled {
+    try sleep(Duration.ofMillis(ms));
+    println(name);
+}
+
+fn cancels(): void throws Error {
+    using let scope = TaskScope.new();
+    scope.spawn(() => {
+        defer println("one stops");
+        try work("one", 30000);
+    });
+    scope.spawn(() => {
+        defer println("two stops");
+        try work("two", 30000);
+    });
+    try yieldNow();
+    scope.cancel();
+}
+
+fn main(): void throws Error {
+    try cancels();
+    println("after");
+}

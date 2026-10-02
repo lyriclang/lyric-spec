@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | slow cleans up
+//! | scope failed: oops
+//! since: 5.0.0
+// 10 §4 rule 2: the first task that fails cancels the others; close() throws its error once they
+// have all ended.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskScope, Cancelled };
+import std.time { Duration };
+
+fn work(name: string, ms: int): void throws Cancelled {
+    try sleep(Duration.ofMillis(ms));
+    println(name);
+}
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn failing(): void throws [Oops, Cancelled] {
+    try sleep(Duration.ofMillis(5));
+    throw Oops.Bad;
+}
+
+fn fails(): void throws Error {
+    using let scope = TaskScope.new();
+    scope.spawn(() => {
+        defer println("slow cleans up");
+        try work("slow", 30000);
+    });
+    scope.spawn(() => try failing());
+}
+
+fn main(): void throws Error {
+    try {
+        fails();
+    } catch (e: Oops) {
+        println("scope failed: " + e.message());
+    }
+}

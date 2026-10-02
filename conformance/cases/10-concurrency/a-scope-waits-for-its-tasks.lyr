@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | spawned
+//! | a
+//! | b
+//! | after
+//! since: 5.0.0
+// 10 §4 rule 1: leaving the block closes the scope, and close() waits for every task of it.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, TaskScope, Cancelled };
+import std.time { Duration };
+
+fn work(name: string, ms: int): void throws Cancelled {
+    try sleep(Duration.ofMillis(ms));
+    println(name);
+}
+
+fn waits(): void throws Error {
+    using let scope = TaskScope.new();
+    scope.spawn(() => try work("b", 20));
+    scope.spawn(() => try work("a", 10));
+    println("spawned");
+}
+
+fn main(): void throws Error {
+    try waits();
+    println("after");
+}
