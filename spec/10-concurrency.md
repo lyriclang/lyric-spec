@@ -183,3 +183,21 @@ A panic leaves the coroutine it happens in, without unwinding ([05 E8](https://g
    and `close()` panics again with it once they have all ended.
 4. A panic in `main`, or in a task started by `spawnDetached` — which nobody can look at — ends
    the program with its report ([13 §1.4](13-abi.md)).
+
+## 6. Channels
+
+A channel carries values from one task to another ([06 N5 K1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)).
+
+1. A **`Channel<T>`**, made by `Channel<T>.new(capacity)` — `0`, the default, for an unbuffered
+   one — carries values from `send` to `recv`, in the order they were sent.
+2. **`send(value)`** hands the value to a task waiting in `recv`, or puts it into the buffer while
+   there is room; otherwise the sending task waits until a receiver takes it. On a closed channel,
+   or when the channel closes while it waits, it throws `ChannelClosed`.
+3. **`recv()`** gives the next value: from the buffer — where the value of a waiting sender then
+   takes the freed place — or from a task waiting in `send`; otherwise the receiving task waits
+   for one. It answers `null` once the channel is closed and nothing is left in it.
+4. **`close()`** closes the channel: the tasks waiting in `recv` get `null`, those waiting in
+   `send` throw `ChannelClosed`, and what is buffered can still be received. Closing a closed
+   channel does nothing.
+5. `send` and `recv` are waits: in a cancelled task they throw `Cancelled`, and a cancel ends them
+   (§3).

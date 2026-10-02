@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | cancelled
+//! since: 5.0.0
+// 10 §6 rule 5: recv is a wait — a cancel ends it.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let idle = Channel<int>.new();
+    let waiter = spawn(() => try idle.recv());
+    try yieldNow();
+    waiter.cancel();
+    let w = try? waiter.await();
+    if (w == null) {
+        println("cancelled");
+    }
+}

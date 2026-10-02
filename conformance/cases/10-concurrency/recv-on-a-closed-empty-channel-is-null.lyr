@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 7
+//! | null
+//! since: 5.0.0
+// 10 §6 rules 3-4: what is buffered can still be received after close; then recv answers null.
+import std.io { println };
+import std.task { spawn, spawnDetached, yieldNow, Channel, ChannelClosed, Cancelled };
+
+fn main(): void throws Error {
+    let ch = Channel<int>.new(1);
+    try ch.send(7);
+    ch.close();
+    let v = try ch.recv();
+    println(f"{v ?? -1}");
+    let none = try ch.recv();
+    if (none == null) {
+        println("null");
+    }
+}
