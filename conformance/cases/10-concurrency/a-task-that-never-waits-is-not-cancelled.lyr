@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 10 §3 rule 1: cancellation is cooperative — a task that never waits runs to its end.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    let busy = spawn(() => 41 + 1);
+    busy.cancel();
+    let v = try busy.await();
+    println(f"{v}");
+}
