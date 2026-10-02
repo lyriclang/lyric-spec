@@ -1,8 +1,8 @@
 # The command line
 
-> **Partly written.** §1 was written with milestone **M2** of the Lyric 5 plan; the rest comes with
-> **M7–M13**, spec-first: each rule lands here with its conformance case before or with its
-> implementation. Source of the decisions:
+> **Partly written.** §1 was written with milestone **M2** of the Lyric 5 plan, §2 with **M7**; the
+> rest comes with **M7–M13**, spec-first: each rule lands here with its conformance case before or
+> with its implementation. Source of the decisions:
 > [11 Tooling and interop W1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
 
 ## Scope
@@ -61,6 +61,9 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
 3. An unchanged program compiles nothing twice: the same sources — every module of the program,
    the standard library's included —, toolchain and options reuse the cache, and the binary is
    linked only when an input to it changed (11 C9).
+4. A build holds **`out/.lock`** while it writes into `out/`
+   ([11 P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a second build of the package waits for the first, and says so
+   once. The lock is the operating system's on an open file; it ends with its process.
 
 ### 1.3 Exit codes
 
@@ -73,3 +76,30 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 | 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a git repository that cannot be reached, a toolchain below what a package asks for |
 | 101 | the toolchain itself failed (`LYR-ICE0001`) |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
+
+## 2. `clean` and `metadata`
+
+The verbs about a package besides building it — the package of the nearest `lyric.toml` at or
+above the current directory, or above `-C <dir>`; without one there is nothing to do
+(`LYR-CLI0004`).
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `OutTests`).
+
+1. **`lyric clean`** removes the package's `out/`, once a build that writes into it is done
+   (§1.2).
+2. **`lyric metadata`** writes the package as one JSON object, on one line, to standard output
+   ([11 P10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
+   - `"version"`, the schema's: 1; `"toolchain"`, the toolchain's version; `"root"`, the
+     package's name;
+   - `"packages"`, the graph's, each with its `"name"`, `"version"`, `"edition"`, `"manifest"`,
+     its `"toolchain"` pin where it has one, where it is read from — `"path"`, its directory, or
+     `"git"` with the `"url"`, the revision (`"tag"`, `"branch"` or `"rev"`, none for the default
+     branch) and the `"commit"` — and the `"dependencies"` it declares;
+   - `"programs"`, each with its binary's `"name"`, its `"entry"` file and its `"module"`;
+   - `"profiles"`, each with its `"name"`, its `"base"` — the built-in profile it comes from —
+     and its fields;
+   - `"targets"`, the Tier 1 triples, `"host"`, this machine's, and `"out"`.
+
+   Within a schema version a field may be added, none is changed or removed
+   ([11 C10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)). Its options are `-C`, `--offline`, and `--json`, the one form
+   there is.
