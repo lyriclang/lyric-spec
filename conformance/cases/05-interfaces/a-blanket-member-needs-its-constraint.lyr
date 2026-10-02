@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §13 rule 7: a type the block's constraints do not admit receives none of its members.
+
+interface Named {
+    fn name(): string;
+}
+
+struct Rock {
+    weight: int,
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+    let _ = Rock { weight = 1 }.greeting();
+}

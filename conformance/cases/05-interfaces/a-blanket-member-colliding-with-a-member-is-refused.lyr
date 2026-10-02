@@ -1,0 +1,27 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §13 rule 7: a blanket member of a name a type it reaches already has is refused at the block.
+
+interface Named {
+    fn name(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+
+    fn greeting(): string {
+        return "meow";
+    }
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+}

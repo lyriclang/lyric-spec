@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | hello cat, twice
+//! since: 5.0.0
+// 05 §13 rule 7: in a generic body a type parameter whose constraints imply the block's receives
+// its members; one blanket member calls another on 'this'.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+
+    fn twice(): string {
+        return this.greeting() + ", twice";
+    }
+}
+
+fn greet<U :: [Named]>(x: U): string {
+    return x.twice();
+}
+
+fn main(): void {
+    println(greet(Cat { }));
+}
