@@ -1,0 +1,16 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | closed
+//! since: 5.0.0
+// 10 §11 rule 4: a task given to a closed pool is a panic.
+import std.io { println };
+import std.task { Pool };
+
+fn main(): void throws Error {
+    let pool = Pool.new(1);
+    try pool.close();
+    println("closed");
+    pool.spawn(() => 1);
+    println("after");
+}

@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | sum 5050
+//! | doubled 42
+//! since: 5.0.0
+// 10 §11 rules 1-2: a pool runs the tasks given to it on its threads and gives their handles.
+import std.io { println };
+import std.task { Channel, Pool };
+
+fn main(): void throws Error {
+    let pool = Pool.new(3);
+    let results = Channel<int>.new(8);
+    for (i in 1..101) {
+        pool.spawn(() => {
+            try results.send(i);
+        });
+    }
+    var sum = 0;
+    for (_ in 0..100) {
+        let v = try results.recv();
+        sum += v ?? 0;
+    }
+    println(f"sum {sum}");
+    let doubled = pool.spawn(() => 21 * 2);
+    let d = try doubled.await();
+    println(f"doubled {d}");
+    try pool.close();
+}

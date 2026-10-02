@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | counted 10
+//! since: 5.0.0
+// 10 §11 rule 3: under `using`, a pool's tasks end before the block does.
+import std.io { println };
+import std.sync { Atomic };
+import std.task { sleep, Pool };
+import std.time { Duration };
+
+fn count(total: Atomic<int>): void throws Error {
+    using let pool = Pool.new(2);
+    for (_ in 0..10) {
+        pool.spawn(() => {
+            try sleep(Duration.ofMillis(2));
+            total.fetchAndAdd(1);
+        });
+    }
+}
+
+fn main(): void throws Error {
+    let total = Atomic<int>.new(0);
+    try count(total);
+    println(f"counted {total.load()}");
+}
