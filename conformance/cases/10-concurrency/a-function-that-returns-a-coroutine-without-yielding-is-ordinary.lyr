@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 1 2
+//! since: 5.0.0
+// 10 §1.1: a function that returns a coroutine without a yield of its own is an ordinary function —
+// its 'return' gives the coroutine it was handed.
+import std.io { println };
+
+fn two(): Coroutine<int> {
+    yield 1;
+    yield 2;
+}
+
+fn handOn(make: fn() -> Coroutine<int>): Coroutine<int> {
+    return make();
+}
+
+fn main(): void {
+    let c = handOn(two);
+    let a = c.next()!;
+    let b = c.next()!;
+    println(f"{a} {b}");
+}

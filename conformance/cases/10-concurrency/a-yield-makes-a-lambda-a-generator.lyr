@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | made
+//! | 5 6 | 7
+//! since: 5.0.0
+// 10 §1.11: a lambda with a yield of its own is a generator: each call makes a coroutine over the
+// call's arguments, and runs nothing until it is pulled.
+import std.io { println };
+
+fn main(): void {
+    let counter = (from: int) => {
+        var n = from;
+        while (true) {
+            yield n;
+            n += 1;
+        }
+    };
+    let a = counter(5);
+    let b = counter(7);
+    println("made");
+    let a1 = a.next()!;
+    let a2 = a.next()!;
+    let b1 = b.next()!;
+    println(f"{a1} {a2} | {b1}");
+}

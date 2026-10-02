@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | outer 1
+//! | inner a b
+//! | outer 2
+//! since: 5.0.0
+// 10 §1.11: a yield in a lambda nested in a generator lambda belongs to the nested one — which is a
+// generator of its own, of strings here, inside a generator of ints.
+import std.io { println };
+
+fn main(): void {
+    let outer = () => {
+        let letters = () => {
+            yield "a";
+            yield "b";
+        };
+        yield 1;
+        let l = letters();
+        let a = l.next()!;
+        let b = l.next()!;
+        println(f"inner {a} {b}");
+        yield 2;
+    };
+    let o = outer();
+    let first = o.next()!;
+    println(f"outer {first}");
+    let second = o.next()!;
+    println(f"outer {second}");
+}

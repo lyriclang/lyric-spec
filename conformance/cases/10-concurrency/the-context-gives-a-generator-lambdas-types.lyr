@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | true 4 true
+//! since: 5.0.0
+// 10 §1.11: a context that expects a coroutine gives the generator lambda its 'Y' — here '?int',
+// so its pulls answer '??int'.
+import std.io { println };
+
+fn main(): void {
+    let maybe: fn() -> Coroutine<?int> = () => {
+        yield null;
+        yield 4;
+    };
+    let m = maybe();
+    let first = m.next();
+    let second = m.next();
+    let end = m.next();
+    println(f"{first! == null} {second! ?? -1} {end == null}");
+}

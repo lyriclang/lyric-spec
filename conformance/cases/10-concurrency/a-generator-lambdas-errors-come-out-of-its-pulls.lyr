@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | made
+//! | caught bad
+//! since: 5.0.0
+// 10 §1.11: what a generator lambda's body throws belongs to its coroutine's pulls: the call that
+// makes the coroutine throws nothing, the pull that runs into the error throws it.
+import std.io { println };
+
+enum Bad :: [Error] { It; fn message(): string { return "bad"; } }
+
+fn main(): void {
+    let risky = (fail: bool) => {
+        if (fail) { throw Bad.It; }
+        yield 1;
+    };
+    let c = risky(true);
+    println("made");
+    try {
+        let v = c.next() ?? 0;
+        println(f"not reached {v}");
+    } catch (e: Bad) {
+        println(f"caught {e.message()}");
+    }
+}

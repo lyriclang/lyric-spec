@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0046
+//! since: 5.0.0
+// 10 §1.11: a generator lambda whose 'R' is not void returns on every path that ends its body.
+fn main(): int {
+    let g = (early: bool) => {
+        yield 1;
+        if (early) { return "early"; }
+    };
+    let c = g(true);
+    return 0;
+}

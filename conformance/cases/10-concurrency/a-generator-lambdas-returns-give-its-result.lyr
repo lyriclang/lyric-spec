@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 3 6
+//! | sum 6
+//! since: 5.0.0
+// 10 §1.11: without a context the returns of a generator lambda give its 'R'.
+import std.io { println };
+
+fn main(): void {
+    let summing = (xs: int[]) => {
+        var total = 0;
+        var i = 0;
+        while (i < xs.length()) {
+            total += xs[i];
+            yield total;
+            i += 1;
+        }
+        return f"sum {total}";
+    };
+    let g = summing([1, 2, 3]);
+    let a = g.next()!;
+    let b = g.next()!;
+    let c = g.next()!;
+    let end = g.next();
+    println(f"{a} {b} {c}");
+    println(if (end == null) g.result() ?? "none" else "not the end");
+}

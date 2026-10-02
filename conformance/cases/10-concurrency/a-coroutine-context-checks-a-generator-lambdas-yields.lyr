@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §1.11: a context that expects a coroutine checks the generator lambda's yields against its 'Y'.
+fn main(): int {
+    let f: fn() -> Coroutine<int> = () => {
+        yield "one";
+    };
+    let c = f();
+    return 0;
+}

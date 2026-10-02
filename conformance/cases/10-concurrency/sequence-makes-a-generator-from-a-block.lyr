@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1 2 3 true
+//! since: 5.0.0
+// 10 §1.12: 'sequence { … }' calls std.core's 'sequence' with a trailing generator lambda.
+import std.io { println };
+
+fn main(): void {
+    let s = sequence {
+        yield 1;
+        yield 2;
+        yield 3;
+    };
+    let a = s.next()!;
+    let b = s.next()!;
+    let c = s.next()!;
+    let end = s.next();
+    println(f"{a} {b} {c} {end == null}");
+}
