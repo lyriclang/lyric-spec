@@ -58,8 +58,10 @@ def parse_header(path):
 
 def find_cases(root):
     """The single-file cases and the package cases under root, in one sorted list. A '.lyr' file
-    inside a package is one of its modules, not a case of its own."""
-    packages = sorted(manifest.parent for manifest in root.rglob("lyric.toml"))
+    inside a package is one of its modules, not a case of its own; a package inside a package case
+    is one of its dependencies, which the case holds in its own directory ('deps/geo')."""
+    manifests = sorted(manifest.parent for manifest in root.rglob("lyric.toml"))
+    packages = [p for p in manifests if not any(outer in p.parents for outer in manifests)]
     files = [p for p in root.rglob("*.lyr") if not any(pkg in p.parents for pkg in packages)]
     return sorted(files + packages)
 

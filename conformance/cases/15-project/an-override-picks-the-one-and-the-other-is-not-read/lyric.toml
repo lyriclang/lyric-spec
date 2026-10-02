@@ -1,0 +1,10 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[dependencies]
+geo = { path = "deps/geo" }
+units = { path = "deps/units" }
+
+[override]
+units = { path = "deps/units" }

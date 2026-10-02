@@ -36,8 +36,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
 4. A binary for a target that is not this machine is built and not run: `run` refuses it and
    names the binary.
 5. Without a file and without a manifest at or above the directory there is nothing to build
-   (`LYR-CLI0004`); a package without `src/main.lyr` is a library, which has no program to build
-   (`LYR-CLI0005`).
+   (`LYR-CLI0004`). A package without `src/main.lyr` is a library: `build` checks it
+   ([15 §2](15-project.md)), and `run` has no program there (`LYR-CLI0005`).
 
 ### 1.2 Where the files go
 
