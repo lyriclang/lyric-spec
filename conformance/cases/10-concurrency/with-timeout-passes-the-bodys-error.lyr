@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | body failed: oops
+//! since: 5.0.0
+// 10 §3 rule 4: the body's own error comes out of withTimeout as it is.
+import std.io { println };
+import std.task { spawn, withTimeout, TimedOut, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn main(): void throws Error {
+    try {
+        withTimeout(Duration.ofSecs(30), () => { throw Oops.Bad; });
+    } catch (e: Oops) {
+        println("body failed: " + e.message());
+    }
+}

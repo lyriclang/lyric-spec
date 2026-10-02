@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | slow 20000 ends
+//! | caller cancelled
+//! since: 5.0.0
+// 10 §3 rule 4: a cancel of withTimeout's caller cancels the body, and the body has ended before
+// withTimeout gives up.
+import std.io { println };
+import std.task { spawn, withTimeout, TimedOut, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn slow(ms: int): int throws Cancelled {
+    defer println(f"slow {ms} ends");
+    try sleep(Duration.ofMillis(ms));
+    return ms;
+}
+
+fn main(): void throws Error {
+    let caller = spawn(() => {
+        let v = try withTimeout(Duration.ofSecs(30), () => try slow(20000));
+        println(f"caller got {v}");
+    });
+    try yieldNow();
+    caller.cancel();
+    try {
+        caller.await();
+    } catch (_: Cancelled) {
+        println("caller cancelled");
+    }
+}

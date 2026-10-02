@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | slow 10 ends
+//! | 10
+//! since: 5.0.0
+// 10 §3 rule 4: a body that ends in time gives withTimeout its value.
+import std.io { println };
+import std.task { spawn, withTimeout, TimedOut, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn slow(ms: int): int throws Cancelled {
+    defer println(f"slow {ms} ends");
+    try sleep(Duration.ofMillis(ms));
+    return ms;
+}
+
+fn main(): void throws Error {
+    let v = try withTimeout(Duration.ofSecs(30), () => try slow(10));
+    println(f"{v}");
+}
