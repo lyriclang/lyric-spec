@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 0 1
+//! | helper cleaned
+//! | body cleaned
+//! since: 5.0.0
+// 10 §1.13, §1.9: close() finds the coroutine suspended in a function its body called — that yield
+// throws Cancelled, and the defers run on the way out of both.
+import std.io { println };
+import std.task { Cancelled };
+
+fn guarded(): void throws Cancelled {
+    defer println("helper cleaned");
+    yield 1;
+    yield 2;
+}
+
+fn outer(): Coroutine<int> {
+    defer println("body cleaned");
+    yield 0;
+    try guarded();
+}
+
+fn main(): void {
+    let o = outer();
+    let a = o.next()!;
+    let b = o.next()!;
+    println(f"{a} {b}");
+    o.close();
+}
