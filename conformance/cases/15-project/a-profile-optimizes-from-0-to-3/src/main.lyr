@@ -1,0 +1,4 @@
+//! check
+//! error: LYR-PKG0002
+fn main(): void {
+}

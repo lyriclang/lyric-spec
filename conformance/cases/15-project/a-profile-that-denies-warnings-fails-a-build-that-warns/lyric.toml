@@ -1,0 +1,9 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[profile.debug]
+denyWarnings = true
+
+[profile.release]
+denyWarnings = true

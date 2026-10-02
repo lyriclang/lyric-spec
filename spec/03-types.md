@@ -85,7 +85,8 @@ The number tower, `bool` and `char`
 ### 1.6 Arithmetic and overflow
 
 1. On integers, `+ - * / %` and unary `-` **panic on overflow** with `LYR-RT0002`, in every
-   build profile: a result outside the type's range, an unsigned result below zero,
+   build profile that keeps its overflow checks — every one does unless it says otherwise (rule
+   6): a result outside the type's range, an unsigned result below zero,
    `MIN / -1`, `MIN % -1`, `-MIN`. Division and remainder by zero panic with `LYR-RT0001`.
    `/` rounds toward zero and `%` takes the sign of the dividend, as C does.
 2. `<<` and `>>` panic with `LYR-RT0002` when the count is negative or not below the width of
@@ -102,11 +103,13 @@ The number tower, `bool` and `char`
    there is no overflow and no division fault — `1.0 / 0.0` is `inf`, `0.0 / 0.0` is `NaN` —
    and `%` is the remainder of the truncated division (`fmod`), `3.0 % 2.5` is `0.5`. An
    implementation computes each operation as written: no contraction of `a * b + c` into a
-   fused multiply-add, no reassociation, no fast-math, unless a build asks for it explicitly
-   ([01 L10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
+   fused multiply-add, no reassociation, no fast-math, unless a build asks for it explicitly —
+   a profile with `fastMath` ([15 §4](15-project.md); [01 L10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
    The same program computes the same bits on every Tier 1 target.
-6. A profile that removes the overflow checks does not exist in 5.0. An implementation may
-   offer one as an explicit option; it never is the default of any profile.
+6. A profile with `overflowChecks = false` ([15 §4](15-project.md)) takes the overflow checks
+   out: `+`, `-`, `*` and unary `-` compute as the wrap operators do. A division, a remainder
+   and a shift keep their checks — a zero divisor or a shift past the width is no overflow to
+   wrap. No profile is without the checks unless it says so.
 
 ### 1.7 The text of a number
 
