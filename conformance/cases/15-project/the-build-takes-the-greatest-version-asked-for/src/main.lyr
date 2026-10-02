@@ -1,0 +1,9 @@
+//! run
+//! stdout:
+//! | 13
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

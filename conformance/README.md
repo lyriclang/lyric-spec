@@ -75,7 +75,8 @@ A package case holds its dependencies itself:
   package nested in a case is no case of its own;
 - a package read from git as `repos/<name>/<version>/`, a directory per version. The runner makes
   each `repos/<name>` a git repository beside the case's copy: one commit per version, oldest
-  first, each tagged `v<version>`, all on the branch `main`. Where a manifest — the case's or a
+  first, each tagged `v<version>`, all on the branch `main`, by a fixed author at fixed times —
+  so a case's `lyric.lock` can name their commits. Where a manifest or a lock — the case's or a
   version's — says `{repos}`, the runner writes the repositories' place as a `file://` URL:
   `geo = { git = "{repos}/geo", tag = "v1.0.0" }`. Such a case is built with a cache of the
   run's own (`LYRIC_CACHE`, the reference toolchain's), so what it fetches stays out of the
