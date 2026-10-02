@@ -1,6 +1,8 @@
 //! run
 //! stdout:
 //! | 13
+//! since: 5.0.0
+// 15 §2 rule 6: of the versions asked for, the build reads the greatest.
 import std.io { println };
 import geo.shapes { area };
 

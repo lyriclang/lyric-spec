@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0005
+//! since: 5.0.0
+// 15 §2 rule 6: versions of two lines are two packages.
 import std.io { println };
 import geo.shapes { area };
 

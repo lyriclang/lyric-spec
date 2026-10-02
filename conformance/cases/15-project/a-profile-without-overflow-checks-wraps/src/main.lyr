@@ -1,6 +1,8 @@
 //! run
 //! stdout:
 //! | -2147483648
+//! since: 5.0.0
+// 15 §4 rule 3, 03 §1.6 rule 6: without overflow checks, + wraps.
 import std.io { println };
 
 fn inc(x: int32): int32 {

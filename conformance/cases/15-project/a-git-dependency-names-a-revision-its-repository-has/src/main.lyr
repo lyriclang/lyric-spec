@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0006
+//! since: 5.0.0
+// 15 §2 rule 2: a tag the repository lacks is refused.
 import std.io { println };
 import geo.shapes { area };
 

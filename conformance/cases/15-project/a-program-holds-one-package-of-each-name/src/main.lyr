@@ -1,6 +1,6 @@
 //! check
 //! error: LYR-PKG0005
 //! since: 5.0.0
-// 15 §2 rule 3: units from two directories is two packages of one name.
+// 15 §2 rule 6: units from two directories is two packages of one name.
 fn main(): void {
 }

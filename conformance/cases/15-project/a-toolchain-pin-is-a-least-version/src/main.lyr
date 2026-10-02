@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §1 rule 6: a pin is "5.1" or ">=5.1".
 import std.io { println };
 
 fn main(): void {

@@ -2,6 +2,8 @@
 //! bin: tool
 //! stdout:
 //! | tool
+//! since: 5.0.0
+// 15 §1 rule 5: a [[bin]] is a program of the package.
 import std.io { println };
 
 fn main(): void {

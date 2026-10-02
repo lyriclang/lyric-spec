@@ -1,6 +1,8 @@
 //! run
 //! stdout:
 //! | 13
+//! since: 5.0.0
+// 15 §2 rule 2: a branch is read at its head.
 import std.io { println };
 import geo.shapes { area };
 

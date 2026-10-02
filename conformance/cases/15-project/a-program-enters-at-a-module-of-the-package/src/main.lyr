@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §1 rule 5: a [[bin]] enters at a module under src/.
 import std.io { println };
 
 fn main(): void {

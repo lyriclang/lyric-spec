@@ -1,6 +1,8 @@
 //! run
 //! stdout:
 //! | 12
+//! since: 5.0.0
+// 15 §3 rule 2: a branch is read where the lock holds it.
 import std.io { println };
 import geo.shapes { area };
 
