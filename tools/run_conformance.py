@@ -104,11 +104,11 @@ def make_repos(case, home):
     return url
 
 def write_repos(root, url):
-    """'{repos}' in every manifest under root, written as the URL."""
-    for manifest in root.rglob("lyric.toml"):
-        text = manifest.read_text(encoding="utf-8")
+    """'{repos}' in every manifest and lock under root, written as the URL."""
+    for file in [*root.rglob("lyric.toml"), *root.rglob("lyric.lock")]:
+        text = file.read_text(encoding="utf-8")
         if "{repos}" in text:
-            manifest.write_text(text.replace("{repos}", url), encoding="utf-8")
+            file.write_text(text.replace("{repos}", url), encoding="utf-8")
 
 def header_of(case):
     """Where a case's header stands: in the file, or in the package's program."""

@@ -1,0 +1,11 @@
+# Written by lyric (07 P5): each revision of a git repository the build reads,
+# the commit it is and the hash of its package content. Check it in with lyric.toml.
+version = 1
+
+[[package]]
+name = "geo"
+version = "1.0.0"
+git = "{repos}/geo"
+branch = "main"
+commit = "33504ca77ac98dd2ba0eb4ebaf7a1b980dfcf7ee"
+hash = "h1:DElsz4vBynrvL0CZ3M9KYi3Plo061Dakqdwk9W72lnc="

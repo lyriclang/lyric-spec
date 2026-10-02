@@ -25,7 +25,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    directory — the nearest `lyric.toml` at or above it — from its `src/main.lyr`
    ([15 §1](15-project.md)). `lyric run [<file.lyr>] [-- args…]` builds the same way and then
    runs the binary with the arguments after `--`, on the caller's own console. `--` belongs to
-   `run`: `build` refuses it.
+   `run`: `build` refuses it. `lyric update [<package>…]` reads the packages from git anew and
+   writes the lock ([15 §3](15-project.md)); it takes `-C` and `--offline`.
 2. Options take a value as `--name value` or `--name=value`
    ([11 C3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
    `--profile debug|release` (default `debug`; `asan` and `tsan` need clang), `--target <triple>`

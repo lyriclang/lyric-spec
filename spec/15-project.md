@@ -1,7 +1,7 @@
 # Projects
 
-> **Partly written.** §1 and §2 were written with milestone **M7** of the Lyric 5 plan (slices S1,
-> S4, S5a); the rest follows with M7, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1–§3 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
+> S5a, S5b); the rest follows with M7, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [11 Tooling and interop W2/W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -63,9 +63,9 @@ their own directories, and the git repositories they read as their versions
    (`LYR-PKG0007`, exit 2, [14 §1.3](14-cli.md)).
 3. What is read from git is kept in the **user's cache**, not in the project: each repository
    once, each revision's package once, for every project that reads it (P9; 07 P10). A tag or a
-   commit the cache holds is not fetched again; a branch moves, and is fetched again by each
-   build that may fetch. **`--offline`** fetches nothing: what the cache does not hold is refused
-   (`LYR-PKG0007`).
+   commit the cache holds is not fetched again; a branch, or no revision, is read where the lock
+   holds it (§3), and at its head — fetched — where the lock holds nothing for it yet.
+   **`--offline`** fetches nothing: what the cache does not hold is refused (`LYR-PKG0007`).
 4. A package read from git is its **package content** (11 P8): its manifest, `src/`,
    `native/`, `build.lyr`, and the files `README*` and `LICENSE*` at its root — not `tests/`,
    not `out/`. `[package] include = […]` names the files instead of that default — the
@@ -77,12 +77,45 @@ their own directories, and the git repositories they read as their versions
    is no part of it (`LYR-PKG0004`).
 5. A module imports from its own package, from `std`, and from the packages its package's
    manifest declares — not from what those depend on (`LYR-RES0014`) (07 P6).
-6. A program holds **one package of each name** (07 P3): two sources for one name — two
-   directories, two repositories, two revisions of one — are refused (`LYR-PKG0005`), unless the
-   root manifest's `[override] units = { path = "…" }` picks the one — read wherever the graph
+6. A program holds **one package of each name** (07 P3). **Versions of one repository** are one
+   package: a tag that is a semantic version, `v1.2.0` or `1.2.0`, asks for that version or a
+   later one of its **line** — the same major version; below 1, the same minor; below 0.1, the
+   version alone (07 P2) —, and of all the versions the graph asks for, directly or through a
+   version read on the way, the build takes the greatest: the least that satisfies them all
+   (**minimal version selection**, [07 P4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)). Any other two sources for one name —
+   two directories, two repositories, two revisions of one, versions of two lines — are refused
+   (`LYR-PKG0005`), unless the root manifest's `[override] units = { path = "…" }` picks the one — read wherever the graph
    asks for `units`, and what it replaces is not read at all, not fetched either (07 P7). An
    override reads a directory (`LYR-PKG0003` for the git form); an override in another
    package's manifest is not read.
 7. A **library** — a package without `src/main.lyr` — builds as a check: every module of it
    through the compiler, nothing built ([07 B6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)); `lyric run` has no program there
    (`LYR-CLI0005`).
+
+## 3. The lock file
+
+What a build read from git, kept so that the next build reads the same
+([07 P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)): minimal version selection makes the choice, the lock makes the content
+reproducible.
+
+**Conformance.** `conformance/cases/15-project/`, package cases that hold their `lyric.lock`;
+the toolchain's own tests (`tests/Lyric5.Tests`, `LockTests`).
+
+1. **`lyric.lock`**, beside the root manifest, holds every revision of a git repository the
+   graph read — the versions chosen and the ones read on the way —, each with its package's name
+   and version, its repository and revision, the **commit** it was, and the **hash** of its
+   package content (§2): SHA-256 over one line per file — the file's SHA-256 in hexadecimal, two
+   spaces, its path with `/` between directories —, the lines sorted by path; written `h1:` and
+   base64. The toolchain writes the lock — only when what it holds changes, and none for a
+   program that reads nothing from git —, and it is checked in with the manifest. A
+   dependency's lock is not read.
+2. A build reads a revision the lock holds **at the commit the lock holds**: a branch stays where
+   it was locked, and a tag moved in the repository too. Content that is not what the lock holds
+   is refused, as is a locked commit the repository does not have (`LYR-PKG0008`). What the lock
+   does not hold yet is resolved and added; what the graph no longer reads is dropped. A lock that
+   is not one is refused (`LYR-PKG0001`, `LYR-PKG0002`).
+3. **`lyric update [<package>…]`** reads every package from git anew — or those it names, the
+   others staying at their commits —, fetching their repositories first, and writes the lock: a
+   branch moves to its head, a moved tag to its commit. A version moves only with a manifest that
+   asks for it — the selection is the manifests' (07 P4). A name that no package read from git
+   has is refused (`LYR-CLI0003`).
