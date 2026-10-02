@@ -301,3 +301,25 @@ A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com
    closing a closed pool waits for nothing. `close()` is a wait (§3). A pool is `Closeable`
    ([06 §7](06-errors.md)): under `using let pool = Pool.new(4);` no task of it outlives the block.
 4. A task given to a closed pool is a panic (`LYR-RT0008`).
+
+## 12. Signals
+
+A program learns of the system's signals through a channel ([06 K5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md),
+[10 Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)). `Signal` and `signals` are `std.task`'s — `std.os`'s by the module
+cut, which they join once modules can reach the scheduler (M7, M8b). No Lyric code runs in a
+signal handler.
+
+1. A **`Signal`** names a signal abstractly: `Interrupt`, `Terminate`, `Hangup`, `Quit`, `User1`,
+   `User2`, `WindowChange`, or `Other(n)` — the system's number `n`. Windows knows `Interrupt`
+   (Ctrl+C, Ctrl+Break) and `Terminate` (its console closes) only.
+2. **`signals(s…)`** gives a `Channel<Signal>` that the given signals come in on: from then on they
+   no longer do what the system does with them — end the program, mostly — but arrive in the
+   channel. Each comes to every channel that asked for it.
+3. A signal is no counter: two that come before the first went out may arrive as one, and one that
+   finds a channel's buffer full — sixteen — is lost for that channel.
+4. Closing the channel ends its subscription with the next signal that would come to it; a signal
+   no channel asks for any more is the system's again.
+5. `KILL` and `STOP` never come — the system does not deliver them — and neither do the faults
+   (`SEGV`, `BUS`, `FPE`, `ILL`, `ABRT`), which end the program with a crash report, nor `PIPE`,
+   `CHLD` and `ALRM`, which the runtime keeps. A runtime that a host starts without signal
+   handlers catches none.

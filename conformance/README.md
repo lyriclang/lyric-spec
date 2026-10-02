@@ -47,7 +47,8 @@ of the standard library:
   `cancel`, `TaskStatus`, `PanicInfo`, `TaskScope`, `withTimeout` and `TimedOut`,
   `spawnDetached`, `yieldNow`, `sleep`, `Channel` and `ChannelClosed` (10 §6), `Select` and
   `Timer` (10 §7), `std.sync`'s `Atomic` and `AtomicValue` (10 §8), `Thread` (10 §9), `Mutex`,
-  `RwLock`, `LockGuard` and `Once` (10 §10), `Pool` (10 §11) — and the
+  `RwLock`, `LockGuard` and `Once` (10 §10), `Pool` (10 §11), `Signal` and `signals` (10 §12) —
+  and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to
