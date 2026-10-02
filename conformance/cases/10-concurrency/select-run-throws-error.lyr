@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §7 rule 4: run()'s type says Error, which its caller covers — Cancelled alone does not.
+import std.io { println };
+import std.task { Channel, Select, Cancelled };
+
+fn pick(c: Channel<int>): void throws Cancelled {
+    try Select.on(c) { println("a value"); }.run();
+}
+
+fn main(): void {
+}

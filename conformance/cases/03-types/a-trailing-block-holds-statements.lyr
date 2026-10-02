@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 3
+//! | caught 7
+//! since: 5.0.0
+// 03 §8.2 rules 1, 3: a trailing lambda's block holds statements as any block does — struct
+// initializers included, also where the call begins a statement.
+import std.io { println };
+
+class Oops :: [Error] {
+    code: int,
+    fn message(): string { return "oops"; }
+}
+
+struct Point {
+    x: int,
+    y: int,
+}
+
+fn each(f: fn(int) -> void): void {
+    f(1);
+}
+
+fn apply(f: fn(int) -> void throws Oops): void throws Oops {
+    try f(7);
+}
+
+fn main(): void {
+    each() { let p = Point { x = it, y = 2 }; println(f"{p.x + p.y}"); };
+    try {
+        apply() { throw Oops { code = it }; };
+    } catch (e: Oops) {
+        println(f"caught {e.code}");
+    }
+}

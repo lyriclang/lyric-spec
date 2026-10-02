@@ -6,7 +6,7 @@
 
 ## Scope
 
-Coroutines and generators, tasks and `TaskScope`, parking, threads with one scheduler each, channels and synchronization, the memory model.
+Coroutines and generators, tasks and `TaskScope`, parking, threads with one scheduler each, channels, select and timers, synchronization, the memory model.
 
 ## 1. Coroutines and generators
 
@@ -201,3 +201,27 @@ A channel carries values from one task to another ([06 N5 K1](https://github.com
    channel does nothing.
 5. `send` and `recv` are waits: in a cancelled task they throw `Cancelled`, and a cancel ends them
    (§3).
+
+## 7. Select and timers
+
+A select waits on several channels at once and goes on with the first that has something
+([06 N5 K2–K3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). It is library, no statement: `std.task`'s `Select.on(c) { … }`
+begins one, a `Selection`, whose `.on(c) { … }` adds a case, `.timeout(d) { … }` a timeout, and
+`.run()` runs it. The bodies are trailing lambdas ([03 §8.2](03-types.md)) or any function
+values of their types.
+
+1. A **case** `on(c, body)` receives from the channel `c`: `body`, a `fn(?T) -> void throws
+   Error` for a `Channel<T>`, gets what `recv()` would give (§6 rule 3) — the value, or `null`
+   once `c` is closed and nothing is left in it.
+2. **`run()`** runs the first case, in the order they were added, whose channel has a value or
+   is closed: a receive from it would not wait. Is there none, the running task waits on all of
+   them, and the first channel to get a value or to close runs its case. One body runs, once,
+   and only its case receives: the other channels keep what they get for later receives.
+3. **`timeout(d, body)`** (K3): `body` runs when no case could go on before `d` passed. A `d` of
+   zero or less runs it at once where no case can go on at once.
+4. `run()` is a wait: in a cancelled task it throws `Cancelled`, and a cancel ends it (§3). It
+   throws what the body that runs throws; its type says `Error`, which its caller covers
+   (`LYR-SEM0034`).
+5. **`Timer.after(d)`** gives a `Channel<void>` that fires once, when `d` has passed: then it
+   closes, so a `recv()` from it answers `null` and a case on it runs. The program does not wait
+   for a timer (§2 rule 1).

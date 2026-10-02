@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | timed out
+//! | nothing at once
+//! | ready 5
+//! since: 5.0.0
+// 10 §7 rule 3: the timeout's body runs when no case could go on before its time passed; a
+// timeout of zero runs it at once — where no case can go on at once.
+import std.io { println };
+import std.task { Channel, Select };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let idle = Channel<int>.new();
+    try Select.on(idle) { println("a value"); }.timeout(Duration.ofMillis(10)) { println("timed out"); }.run();
+    try Select.on(idle) { println("a value"); }.timeout(Duration.ofMillis(0)) { println("nothing at once"); }.run();
+    let ready = Channel<int>.new(1);
+    try ready.send(5);
+    try Select.on(ready) { println(f"ready {it!}"); }.timeout(Duration.ofMillis(0)) { println("nothing at once"); }.run();
+}

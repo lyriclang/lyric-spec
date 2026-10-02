@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 5 ms passed
+//! | timer fired true
+//! | case ran
+//! since: 5.0.0
+// 10 §7 rule 5: Timer.after(d) is a channel that closes once d has passed — a recv from it waits
+// until then and answers null, and a case on it runs.
+import std.io { println };
+import std.task { spawn, sleep, Channel, Select, Timer };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let t = Timer.after(Duration.ofMillis(30));
+    let early = spawn(() => {
+        try sleep(Duration.ofMillis(5));
+        println("5 ms passed");
+    });
+    let v = try t.recv();
+    println(f"timer fired {v == null}");
+    try early.await();
+    let idle = Channel<int>.new();
+    try Select.on(idle) { println("a value"); }.on(Timer.after(Duration.ofMillis(5))) { println("case ran"); }.run();
+}

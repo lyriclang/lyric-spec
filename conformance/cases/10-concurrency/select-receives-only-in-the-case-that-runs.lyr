@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | x 1
+//! | y kept 2
+//! since: 5.0.0
+// 10 §7 rule 2: only the case that runs receives — a value sent to another channel once the
+// select went on stays there for a later receive.
+import std.io { println };
+import std.task { spawn, Channel, Select };
+
+fn main(): void throws Error {
+    let x = Channel<int>.new();
+    let y = Channel<int>.new();
+    let both = spawn(() => {
+        try x.send(1);
+        try y.send(2);
+    });
+    try Select.on(x) { println(f"x {it!}"); }.on(y) { println(f"y {it!}"); }.run();
+    let kept = try y.recv();
+    println(f"y kept {kept!}");
+    try both.await();
+}
