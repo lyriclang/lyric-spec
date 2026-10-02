@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | a
+//! | b
+//! | c
+//! | main
+//! since: 5.0.0
+// 10 §2 rules 2-4: a detached task waits for its turn; main's wait lets the ready ones run, in
+// the order they became ready, before main goes on.
+import std.io { println };
+import std.task { sleep, yieldNow, spawnDetached, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => { println("a"); });
+    spawnDetached(() => { println("b"); });
+    spawnDetached(() => { println("c"); });
+    try yieldNow();
+    println("main");
+}

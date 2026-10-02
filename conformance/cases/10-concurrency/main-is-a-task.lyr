@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | before
+//! | after
+//! since: 5.0.0
+// 10 §2 rules 1, 5: main is a task — it waits, and goes on.
+import std.io { println };
+import std.task { sleep, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    println("before");
+    try sleep(Duration.ofMillis(1));
+    println("after");
+}

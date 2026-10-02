@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 1
+//! | other
+//! | 2
+//! | end
+//! since: 5.0.0
+// 10 §2 rule 6: a generator that sleeps parks the task that pulls it; another task runs
+// meanwhile, and the generator then goes on and yields to its puller.
+import std.io { println };
+import std.task { sleep, yieldNow, spawnDetached, Cancelled };
+import std.time { Duration };
+
+fn numbers(): Coroutine<int> {
+    yield 1;
+    try sleep(Duration.ofMillis(40));
+    yield 2;
+}
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => {
+        try sleep(Duration.ofMillis(10));
+        println("other");
+    });
+    let gen = numbers();
+    while (let n = gen.next()) {
+        println(f"{n}");
+    }
+    println("end");
+}

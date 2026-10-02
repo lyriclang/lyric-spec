@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 20
+//! | 70
+//! | 120
+//! | main
+//! since: 5.0.0
+// 10 §2 rule 5: sleepers wake in the order of their deadlines, not in the order they fell asleep.
+import std.io { println };
+import std.task { sleep, yieldNow, spawnDetached, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => {
+        try sleep(Duration.ofMillis(120));
+        println("120");
+    });
+    spawnDetached(() => {
+        try sleep(Duration.ofMillis(20));
+        println("20");
+    });
+    spawnDetached(() => {
+        try sleep(Duration.ofMillis(70));
+        println("70");
+    });
+    try sleep(Duration.ofMillis(200));
+    println("main");
+}

@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | a1
+//! | b1
+//! | a2
+//! | b2
+//! | main
+//! since: 5.0.0
+// 10 §2 rules 2, 4: each yieldNow puts its task behind the ready ones; between two waits a task
+// runs alone.
+import std.io { println };
+import std.task { sleep, yieldNow, spawnDetached, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => {
+        println("a1");
+        try yieldNow();
+        println("a2");
+    });
+    spawnDetached(() => {
+        println("b1");
+        try yieldNow();
+        println("b2");
+    });
+    try sleep(Duration.ofMillis(20));
+    println("main");
+}

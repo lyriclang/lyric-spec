@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §2 rule 7: a wait throws Cancelled, which the function that waits must cover.
+import std.task { sleep };
+import std.time { Duration };
+
+fn nap(): void {
+    try sleep(Duration.ofMillis(1));
+}
+
+fn main(): void {
+    nap();
+}
