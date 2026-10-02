@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | null
+//! since: 5.0.0
+// 10 §6 rule 4: a close on another thread wakes a task waiting in recv, with null.
+import std.io { println };
+import std.task { sleep, Thread, Channel };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let quiet = Channel<int>.new();
+    let closer = Thread.spawn(() => {
+        try sleep(Duration.ofMillis(10));
+        quiet.close();
+    });
+    let got = try quiet.recv();
+    if (got == null) {
+        println("null");
+    }
+    try closer.await();
+}

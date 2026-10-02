@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 10
+//! | 20
+//! | 30
+//! | closed
+//! since: 5.0.0
+// 10 §6 rule 1: a channel carries values between threads, in the order they were sent.
+import std.io { println };
+import std.task { Thread, Channel, ChannelClosed };
+
+fn main(): void throws Error {
+    let ping = Channel<int>.new();
+    let pong = Channel<int>.new();
+    let echo = Thread.spawn(() => {
+        try {
+            while (let n = ping.recv()) {
+                pong.send(n * 10);
+            }
+            pong.close();
+        } catch (_: ChannelClosed) {
+        }
+    });
+    for (i in 1..4) {
+        try ping.send(i);
+        let r = try pong.recv();
+        println(f"{r ?? -1}");
+    }
+    ping.close();
+    let end = try pong.recv();
+    if (end == null) {
+        println("closed");
+    }
+    try echo.await();
+}
