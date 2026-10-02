@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0132
+//! since: 5.0.0
+// 10 §8 rule 1: AtomicValue is sealed — no other type becomes one.
+import std.sync { AtomicValue };
+
+extend string :: [AtomicValue] { }
+
+fn main(): void {
+}
