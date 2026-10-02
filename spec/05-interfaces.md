@@ -291,17 +291,28 @@ same. What is not written here yet is decided in the design documents, not here.
    the same way (`LYR-SEM0134`); `this` is the shape, so `this[0]` and `this.length()` stand
    in an array's block, `this == null` and `this!` in an optional's, `let (a, _) = this;` in a
    tuple's. `length()` stays the primitive ([03 §5](03-types.md)). An element of a tuple comes
-   first, a block's member after. A **conformance** of a shape — `T[] :: [Display]` — is not
-   written yet (`LYR-SEM0047`): a block on a constructor adds members only.
+   first, a block's member after. A shape **conforms** through a block that names the interface,
+   `extend<T :: [Display]> T[] :: [Display] { … }` — every shape the block's constraints admit
+   (rule 3), with the signatures checked at the shape, `Self` read as it (`LYR-SEM0020`,
+   `LYR-SEM0042`). That is the one way a shape satisfies a constraint (`LYR-SEM0028`
+   otherwise), and a member called through the constraint is the block's. Two blocks on
+   overlapping shapes giving one interface — of either's chain — are two conformances
+   (`LYR-SEM0133`). A value of the interface is not made from a shape yet (`LYR-SEM0047`).
 7. **Blanket blocks** (04 D15): a block whose target is its own parameter, `extend<T :: [I]> T
    { … }`, adds its members to **every type its constraints admit** — the receiver binds `T`,
    `this` is the receiver: `x.greeting()` on every `Named`. A member of the type's own, of
    another block or of a default comes first; a blanket member of a name the type already has
    is refused at the block (`LYR-SEM0121`), and one the receiver's type does not admit is not
    there (`LYR-SEM0012`). In a generic body a type parameter whose constraints imply the
-   block's receives it too (D2 R4). A shape conforms to nothing yet (rule 6), so it receives no
-   blanket member; a conformance through a blanket block, `extend<T :: [I]> T :: [J]`, is not
-   written yet (`LYR-SEM0047`).
+   block's receives it too (D2 R4). A shape receives a blanket member where it satisfies the
+   block's constraints (rule 6).
+8. **Blanket conformance** (D15): `extend<T :: [I]> T :: [J] { … }` gives `J` to every type the
+   constraints admit — the signatures checked at `T` — so a `Named` satisfies a constraint on
+   `J` and a call through it is the block's member; a type it does not reach keeps its own.
+   Such a block implements `J`'s whole chain, so it excludes, by interface: a type's own
+   conformance to one of the chain where it reaches the type (X4), and another blanket block or
+   a shape's block giving one, even where no type could meet both (`LYR-SEM0133`). A value of
+   `J` is not made through a blanket conformance yet (`LYR-SEM0047`).
 
 ## 14. Conformance synthesis
 

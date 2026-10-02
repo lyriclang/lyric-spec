@@ -1,0 +1,29 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 05 §13 rule 8: an optional of the interface holds a value of it, which is not made through a
+// blanket conformance yet.
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+    let g: ?Greeter = Cat { };
+}

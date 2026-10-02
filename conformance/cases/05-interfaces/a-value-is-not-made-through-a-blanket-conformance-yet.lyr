@@ -1,8 +1,7 @@
 //! check
 //! error: LYR-SEM0047
 //! since: 5.0.0
-// 05 §13 rule 7: a conformance through a blanket block is not written yet; the members of a
-// blanket block without one are there.
+// 05 §13 rule 8: a value of the interface is not made through a blanket conformance yet.
 
 interface Named {
     fn name(): string;
@@ -18,18 +17,12 @@ struct Cat :: [Named] {
     }
 }
 
-extend<T :: [Named]> T {
-    fn hello(): string {
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
         return "hello " + this.name();
     }
 }
 
-extend<T :: [Named]> T :: [Greeter] {
-    fn greeting(): string {
-        return this.hello();
-    }
-}
-
 fn main(): void {
-    let _ = Cat { }.hello();
+    let g: Greeter = Cat { };
 }

@@ -1,0 +1,31 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13 rule 8: a blanket conformance excludes a type's own conformance to the same interface.
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+struct Cat :: [Named, Greeter] {
+    fn name(): string {
+        return "cat";
+    }
+
+    fn greeting(): string {
+        return "meow";
+    }
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+}

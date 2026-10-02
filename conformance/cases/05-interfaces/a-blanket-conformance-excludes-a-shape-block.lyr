@@ -1,0 +1,27 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13 rule 8: a blanket conformance excludes a shape's block giving the same interface.
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+extend<T> T[] :: [Greeter] {
+    fn greeting(): string {
+        return "hello items";
+    }
+}
+
+fn main(): void {
+}
