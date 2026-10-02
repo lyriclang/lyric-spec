@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0150
+//! since: 5.0.0
+// 04 §3 rule 10: a conformance's methods are as visible as the conformance.
+interface Shape {
+    fn area(): int;
+}
+
+struct Square {
+    side: int,
+}
+
+extend Square :: [Shape] {
+    pub fn area(): int {
+        return this.side * this.side;
+    }
+}
+
+fn main(): void {
+}

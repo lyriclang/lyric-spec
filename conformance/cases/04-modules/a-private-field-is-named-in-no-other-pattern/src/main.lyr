@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 6: a field named in a pattern is named, and its word says where.
+import app.util;
+
+fn main(): void {
+    match (util.origin()) {
+        util.Point { z } => {}
+    }
+}

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 7: a type with a field this module may not name is built in no such module.
+import app.util;
+
+fn main(): void {
+    let p = util.Point { x = 1, y = 2, z = 3 };
+}
