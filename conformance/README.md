@@ -25,6 +25,8 @@ The header is the leading block of lines starting `//!`. Directives:
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
 //! since: 5.0.0             the case pins behavior of this language version and later; a
 //!                          runner given an older --toolchain-version skips it
+//! bin: tool                a package case's program, one its [[bin]] names: built with
+//!                          --bin and run (default: the package's src/main.lyr)
 ```
 
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)

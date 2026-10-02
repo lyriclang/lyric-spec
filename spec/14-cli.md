@@ -21,9 +21,10 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
 
 1. `lyric build <file.lyr>` compiles the program that starts at the file to a binary: a single
    file's own, or — for a module of a package — the package's, entered there
-   ([04 §2](04-modules.md)). `lyric build` without a file builds the package of the current
-   directory — the nearest `lyric.toml` at or above it — from its `src/main.lyr`
-   ([15 §1](15-project.md)). `lyric run [<file.lyr>] [-- args…]` builds the same way and then
+   ([04 §2](04-modules.md)). `lyric build` without a file builds the programs of the package
+   of the current directory — the nearest `lyric.toml` at or above it —: its `src/main.lyr` and
+   its `[[bin]]` programs ([15 §1](15-project.md)); `--bin <name>` names one, and a file is a
+   program by itself. `lyric run [<file.lyr>] [-- args…]` builds the same way and then
    runs the binary with the arguments after `--`, on the caller's own console. `--` belongs to
    `run`: `build` refuses it. `lyric update [<package>…]` reads the packages from git anew and
    writes the lock ([15 §3](15-project.md)); it takes `-C` and `--offline`.
@@ -69,6 +70,6 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 |---|---|
 | 0 | done |
 | 1 | the program or its manifest was refused: a compile error, or a construct the compiler does not translate yet |
-| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, no C compiler, a git repository that cannot be reached |
+| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a git repository that cannot be reached, a toolchain below what a package asks for |
 | 101 | the toolchain itself failed (`LYR-ICE0001`) |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |

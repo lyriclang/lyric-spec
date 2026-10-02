@@ -1,0 +1,9 @@
+//! run
+//! bin: tool
+//! stdout:
+//! | tool
+import std.io { println };
+
+fn main(): void {
+    println("app");
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PKG0002
+import std.io { println };
+
+fn main(): void {
+    println("app");
+}
