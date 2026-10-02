@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0156
+//! since: 5.0.0
+// 03 §2.3a rule 3: a default is a value the call makes, no place of the caller's.
+
+fn bump(&n: int = 0): void {
+    n += 1;
+}
+
+fn main(): void {
+    var x = 1;
+    bump(&x);
+}

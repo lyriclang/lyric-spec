@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 9 1
+//! since: 5.0.0
+// 03 §2.3a rule 4: the place of a class value lets the function bind the caller's variable to
+// another object; the object it held is unchanged.
+import std.io { println };
+
+class Tally {
+    var n: int,
+}
+
+fn renew(&t: Tally): void {
+    t = Tally { n = 9 };
+}
+
+fn main(): void {
+    var t = Tally { n = 1 };
+    let before = t;
+    renew(&t);
+    println(f"{t.n} {before.n}");
+}

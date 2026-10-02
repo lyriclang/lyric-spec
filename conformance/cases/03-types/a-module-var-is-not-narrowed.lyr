@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.2 rule 4: a module-level var is not narrowed — a call may change it while the test holds.
+
+var name: ?string = "set";
+
+fn main(): void {
+    if (name != null) {
+        let s: string = name;
+    }
+}

@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 11 101 21 5 7
+//! | 5
+//! since: 5.0.0
+// 03 §2.3a rule 2: a var field under a var root, an element of an array, of a view and of an
+// inline array, a module-level var and a place parameter passed on are places a call may take.
+import std.io { println };
+
+struct Counter {
+    var n: int,
+}
+
+var total = 1;
+
+fn add(&n: int, k: int): void {
+    n += k;
+}
+
+fn twice(&n: int): void {
+    add(&n, n);
+}
+
+fn main(): void {
+    var c = Counter { n = 1 };
+    add(&c.n, 10);
+    var xs = [1, 2, 3];
+    add(&xs[2], 18);
+    let view = xs[0..2];
+    add(&view[0], 100);
+    add(&total, 4);
+    var inline: int[3] = [0, 0, 0];
+    add(&inline[1], 7);
+    println(f"{c.n} {xs[0]} {xs[2]} {total} {inline[1]}");
+    var m = 5;
+    twice(&m);
+    twice(&m);
+    println(f"{m / 4}");
+}

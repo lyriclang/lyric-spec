@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0054
+//! since: 5.0.0
+// 08 §1.1 rule 4: the mark stands at an argument and nowhere else.
+
+fn main(): void {
+    var x = 1;
+    let y = &x;
+}

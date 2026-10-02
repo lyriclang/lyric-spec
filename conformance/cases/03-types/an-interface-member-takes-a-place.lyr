@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 0 10
+//! since: 5.0.0
+// 03 §2.3a rule 5: a member of an interface takes a place as a function does, through the
+// interface value too.
+import std.io { println };
+
+interface Resetter {
+    fn reset(&n: int): void;
+}
+
+struct Zero :: [Resetter] {
+    fn reset(&n: int): void {
+        n = 0;
+    }
+}
+
+struct Ten :: [Resetter] {
+    fn reset(&n: int): void {
+        n = 10;
+    }
+}
+
+fn apply(r: Resetter, &n: int): void {
+    r.reset(&n);
+}
+
+fn main(): void {
+    var a = 5;
+    var b = 5;
+    apply(Zero { }, &a);
+    apply(Ten { }, &b);
+    println(f"{a} {b}");
+}

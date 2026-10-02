@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 2 2 2 3 1 1 4
+//! since: 5.0.0
+// 03 §2.2 rule 2: '++' and '--' write a place — a field, an element, a variable a closure
+// shares, a module-level var, a place parameter — and '++x' is a statement as 'x++' is.
+import std.io { println };
+
+struct Counter {
+    var n: int,
+}
+
+class Tally {
+    var n: int = 1,
+}
+
+var total = 0;
+
+fn bump(&n: int): void {
+    n++;
+    ++n;
+}
+
+fn main(): void {
+    var c = Counter { n = 1 };
+    c.n++;
+    let t = Tally { };
+    ++t.n;
+    var xs = [1, 2];
+    xs[0]++;
+    ++xs[1];
+    var shared = 0;
+    let read = () => shared;
+    shared++;
+    let inc = () => { shared++; };
+    inc();
+    total++;
+    var m = 2;
+    bump(&m);
+    println(f"{c.n} {t.n} {xs[0]} {xs[1]} {read() - 1} {total} {m}");
+}

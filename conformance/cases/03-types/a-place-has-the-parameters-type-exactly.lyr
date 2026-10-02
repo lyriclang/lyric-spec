@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §2.3a rule 2: nothing widens into a place — an int8 variable is no place of an int.
+
+fn increment(&n: int): void {
+    n += 1;
+}
+
+fn main(): void {
+    var small: int8 = 1;
+    increment(&small);
+}

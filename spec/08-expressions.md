@@ -33,6 +33,9 @@ A call names a function and gives it arguments
    parameter without a default that a call gives nothing for is refused (`LYR-SEM0014`).
 3. A call through a function value is positional only: the value's parameters have no names
    (`LYR-SEM0119`).
+4. **`&x`** marks the argument of a place parameter ([03 §2.3a](03-types.md)): the place `x`,
+   not its value. The mark covers the whole argument and stands at an argument and nowhere else
+   (`LYR-PAR0054`).
 
 ### 1.2 One name, several counts
 

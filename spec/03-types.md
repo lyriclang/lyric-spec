@@ -147,7 +147,7 @@ Two forms of a composite type, chosen once at the type
    place that may be written when `f` is declared `var` **and** `a` may be changed in place:
    - a local is a place when it is bound with `var`; a `let` freezes a struct to the bottom —
      no field of it, and no field of a struct it holds, is written through it;
-   - a **parameter is a `let`**;
+   - a **parameter is a `let`** — a place parameter is the caller's place (§2.3a);
    - a **reference starts the chain anew**: when `a` is of a class type, the object is the
      place, whatever the binding or the field that holds the reference says — `let c: C` does
      not keep `c.count = 1` from writing the object, and neither does a fixed field of class
@@ -170,13 +170,41 @@ Two forms of a composite type, chosen once at the type
    on it — is declared **`mut fn`**, on a class as on a struct. A method without the word that
    does so is refused (`LYR-SEM0019`).
 3. A `mut fn` is called on a place (§2.2): on a struct bound with `let`, on a parameter of a
-   struct type and on a temporary the call is refused. On a class it is called through any
-   reference.
+   struct type — a place parameter aside (§2.3a) — and on a temporary the call is refused. On a
+   class it is called through any reference.
 4. `this = value` in a `mut fn` of a struct replaces the caller's value as a whole. The
    `this` of a class method is the reference the caller holds and is never replaced.
 5. A `mut fn` of a struct has something to write: the struct has a `var` field, or the method
    replaces `this`, or it calls a `mut fn` on `this`, or an interface of the struct declares
    the method `mut`. Otherwise the declaration is refused (`LYR-SEM0023`).
+
+### 2.3a Place parameters
+
+([03 T12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md))
+
+1. A parameter written **`&x: T`** takes a **place** of the caller, not a value: the function
+   reads and writes the caller's variable, field or element itself, and what it wrote stays
+   written however the call ends — a return, an error, a panic. Inside the function `x` is a
+   place of type `T`, written like a `var`.
+2. The argument is marked as the parameter is — `swap(&a, &b)` — and is a place the caller may
+   write (§2.2): a `var` local, a module-level `var`, a `var` field under a root that may be
+   changed, an element of an array, a view or an inline array, a place parameter of the
+   caller's own, `this` inside a `mut fn`. A `let`, a value parameter, a fixed field, an element
+   of a container and a temporary are refused (`LYR-SEM0156`); so are a place parameter's
+   argument without the mark and a value parameter's with it (`LYR-SEM0157`). The place's type
+   is the parameter's exactly: nothing widens and nothing is wrapped into an optional
+   (`LYR-SEM0001`).
+3. A place parameter has no default and is no `params` parameter: either would hand it a value
+   the call makes (`LYR-SEM0156`).
+4. The place of an optional, `&x: ?T`, lets the function write `null` into it; the place of a
+   class value lets it bind the caller's variable to another object.
+5. A function type writes the mark at the parameter: `fn(&int, string) -> void` is a type of
+   its own, not `fn(int, string) -> void`. An implementation of an interface member takes a
+   place where the member does (`LYR-SEM0042`).
+6. A place is the call's: no lambda captures a place parameter, and a coroutine — whose body
+   runs after the call has returned — takes none (`LYR-SEM0158`).
+7. Two places of one call may be the same place (`swap(&a, &a)`); what the function then reads
+   after a write is not specified.
 
 ### 2.4 Construction
 
@@ -254,7 +282,9 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    second test narrows again: a `??int` proven present is a `?int`, and proven present once
    more an `int`.
 4. Narrowing belongs to the binding. An assignment to a `var` ends it: from there on the name
-   has its declared type again.
+   has its declared type again. A module-level `var` and a place parameter (§2.3a) are not
+   narrowed at all: a call — and for a place, a write through another name — may change them
+   while the test holds. `if (let v = x)` (rule 5) reads one once.
 5. `if (let v = e)` and `while (let v = e)` bind `v` to the value of the optional `e` when
    there is one, one level down, and take the branch only then.
 6. A narrowed name is the value where it lies, not a copy of it: through a narrowed `var` of

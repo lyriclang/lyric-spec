@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0157
+//! since: 5.0.0
+// 03 §2.3a rule 2: a place parameter's argument is marked.
+
+fn increment(&n: int): void {
+    n += 1;
+}
+
+fn main(): void {
+    var x = 1;
+    increment(x);
+}

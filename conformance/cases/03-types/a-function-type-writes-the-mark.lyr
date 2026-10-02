@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 6
+//! since: 5.0.0
+// 03 §2.3a rule 5: a function value takes the place through its type's marked parameter.
+import std.io { println };
+
+fn triple(&n: int): void {
+    n *= 3;
+}
+
+fn main(): void {
+    let f: fn(&int) -> void = triple;
+    var n = 2;
+    f(&n);
+    println(f"{n}");
+}

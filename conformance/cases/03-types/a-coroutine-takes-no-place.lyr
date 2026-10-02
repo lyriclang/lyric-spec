@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0158
+//! since: 5.0.0
+// 03 §2.3a rule 6: a coroutine's body runs after the call has returned, so it takes no place.
+
+fn counts(&n: int): Coroutine<int> {
+    yield n;
+}
+
+fn main(): void {
+    var x = 1;
+    let _ = counts(&x);
+}
