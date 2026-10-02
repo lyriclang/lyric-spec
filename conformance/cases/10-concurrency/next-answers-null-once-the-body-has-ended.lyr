@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 1 2 true true
+//! since: 5.0.0
+// 10 §1.4: 'next()' answers the yielded value, then null on the pull that ends the body and on
+// every pull after it.
+import std.io { println };
+
+fn two(): Coroutine<int> {
+    yield 1;
+    yield 2;
+}
+
+fn main(): void {
+    let c = two();
+    let a = c.next() ?? -1;
+    let b = c.next() ?? -1;
+    let end = c.next();
+    let after = c.next();
+    println(f"{a} {b} {end == null} {after == null}");
+}

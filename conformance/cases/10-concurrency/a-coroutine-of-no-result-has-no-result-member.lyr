@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 10 §1.5: a coroutine whose 'R' is void has no 'result()'.
+fn gen(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): void {
+    let c = gen();
+    let r = c.result();
+}

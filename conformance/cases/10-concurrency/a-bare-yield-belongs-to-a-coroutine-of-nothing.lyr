@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0038
+//! since: 5.0.0
+// 10 §1.2: 'yield;' without a value is refused in a coroutine that yields something.
+fn gen(): Coroutine<int> {
+    yield;
+}
+
+fn main(): void {
+    let c = gen();
+    let v = c.next();
+}

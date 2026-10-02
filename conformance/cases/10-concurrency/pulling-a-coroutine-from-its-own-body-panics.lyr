@@ -1,0 +1,17 @@
+//! run
+//! panic: LYR-RT0014
+//! since: 5.0.0
+// 10 §1.7: pulling a coroutine that runs — here from its own body — panics.
+class Holder { var co: ?Coroutine<int> }
+
+fn selfish(h: Holder): Coroutine<int> {
+    let me = h.co!;
+    yield me.next() ?? 0;
+}
+
+fn main(): int {
+    let h = Holder { co = null };
+    let c = selfish(h);
+    h.co = c;
+    return c.next() ?? 0;
+}

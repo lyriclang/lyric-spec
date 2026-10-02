@@ -1,0 +1,12 @@
+//! check
+//! since: 5.0.0
+// 10 §1.8: 'resume' is no word of the language; Lyric 4's 'resume co' is 'co.next()!'.
+fn gen(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): int {
+    let co = gen();
+    let resume = co.next()!;
+    return resume;
+}

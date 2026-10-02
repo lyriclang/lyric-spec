@@ -12,6 +12,7 @@ carries `//! since: 5.0.0` or later; the 4.x suite lives on the `script` branch.
 | `07-statements/` | [07 Statements](../../spec/07-statements.md) §1, `loop` and the jumps | M5 S4c |
 | `08-expressions/` | [08 Expressions](../../spec/08-expressions.md) §1, calls | M4 S2 |
 | `09-patterns/` | [09 Patterns](../../spec/09-patterns.md) | M3 S4 |
+| `10-concurrency/` | [10 Concurrency](../../spec/10-concurrency.md) §1, coroutines and generators | M6 S2a |
 
 The reference runner drives `lyric5` — `python3 tools/run_conformance.py --lyric5 <compiler>
 --profile debug` (or `release`) builds every case and compares it with its header, as

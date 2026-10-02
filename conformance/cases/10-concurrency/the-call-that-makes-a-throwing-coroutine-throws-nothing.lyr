@@ -1,0 +1,18 @@
+//! check
+//! since: 5.0.0
+// 10 §1.6: the 'throws' clause of a coroutine function belongs to its pulls; the call that makes
+// the coroutine is no throw site and needs no 'try'.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn gen(): Coroutine<int> throws Oops {
+    yield 1;
+}
+
+fn main(): int {
+    let c = gen();
+    try {
+        return c.next() ?? 0;
+    } catch (_: Oops) {
+        return 1;
+    }
+}

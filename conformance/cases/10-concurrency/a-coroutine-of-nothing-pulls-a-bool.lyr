@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | true true false false
+//! since: 5.0.0
+// 10 §1.4: a 'Coroutine<void>' answers whether the body stopped at a 'yield'.
+import std.io { println };
+
+fn ticks(n: int): Coroutine<void> {
+    var i = 0;
+    while (i < n) {
+        yield;
+        i += 1;
+    }
+}
+
+fn main(): void {
+    let t = ticks(2);
+    let a = t.next();
+    let b = t.next();
+    let c = t.next();
+    let d = t.next();
+    println(f"{a} {b} {c} {d}");
+}

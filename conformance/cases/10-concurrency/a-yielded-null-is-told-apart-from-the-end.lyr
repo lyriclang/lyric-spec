@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | true true 2 true
+//! since: 5.0.0
+// 10 §1.4: a 'Coroutine<?T>' pulls '??T' — a present null where the body yielded one, the
+// outermost null at the end.
+import std.io { println };
+
+fn maybe(): Coroutine<?int> {
+    yield null;
+    yield 2;
+}
+
+fn main(): void {
+    let m = maybe();
+    let first = m.next();
+    let second = m.next();
+    let end = m.next();
+    let inner = first ?? 5;
+    println(f"{first != null} {inner == null} {second! ?? -1} {end == null}");
+}

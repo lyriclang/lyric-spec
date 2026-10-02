@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | made
+//! | started
+//! | 1
+//! since: 5.0.0
+// 10 §1.1: a call of a coroutine function runs nothing of its body; the first pull starts it.
+import std.io { println };
+
+fn gen(): Coroutine<int> {
+    println("started");
+    yield 1;
+}
+
+fn main(): void {
+    let c = gen();
+    println("made");
+    println(f"{c.next()!}");
+}

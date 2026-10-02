@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | 0 1 2
+//! | 1 1 2 3 5
+//! since: 5.0.0
+// 10 §1.2: a yield suspends the body; its locals live until the next pull continues it.
+import std.io { println };
+
+fn counter(): Coroutine<int> {
+    var n = 0;
+    while (true) {
+        yield n;
+        n += 1;
+    }
+}
+
+fn fibonacci(): Coroutine<int> {
+    var a = 1;
+    var b = 1;
+    while (true) {
+        yield a;
+        let next = a + b;
+        a = b;
+        b = next;
+    }
+}
+
+fn main(): void {
+    let c = counter();
+    let x = c.next()!;
+    let y = c.next()!;
+    let z = c.next()!;
+    println(f"{x} {y} {z}");
+    let f = fibonacci();
+    var line = f"{f.next()!}";
+    var i = 0;
+    while (i < 4) {
+        line = line + f" {f.next()!}";
+        i += 1;
+    }
+    println(line);
+}
