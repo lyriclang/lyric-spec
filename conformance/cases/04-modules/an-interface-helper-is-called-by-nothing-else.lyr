@@ -1,0 +1,32 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 8: nothing but the interface's defaults calls its helper.
+interface Greeter {
+    fn name(): string;
+
+    fn greet(): string {
+        return this.wrap(this.name());
+    }
+
+    private fn wrap(s: string): string {
+        return f"<{s}>";
+    }
+}
+
+struct Person :: [Greeter] {
+    n: string,
+
+    fn name(): string {
+        return this.n;
+    }
+
+    fn wrap(s: string): string {
+        return f"[{s}]";
+    }
+}
+
+fn main(): void {
+    let g: Greeter = Person { n = "x" };
+    let s = g.wrap("z");
+}

@@ -104,7 +104,11 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
    ([04 D11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md), [02 W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md)).
 8. An enum's **variants** are as visible as the enum. An **interface's members** — what it
    requires and its defaults — are as visible as the interface; a word on one is refused
-   (`LYR-SEM0118`) (S4).
+   (`LYR-SEM0118`) (S4). The one exception is **`private fn` with a body**, a helper: the
+   interface's defaults call it, on any value of the interface, and nothing else does
+   (`LYR-RES0009`) — a child interface's defaults no more than other code; no conformer answers
+   it, and a conformer's method of its name is the conformer's own, which the defaults do not
+   call. A `private` member without a body is refused (`LYR-SEM0118`).
 9. An **`extend` block's** word is the default of the methods in it: `private extend Point { … }`
    keeps them to its module; a method's own word wins. A method of a block that a module may not
    name is not there for it (S5).

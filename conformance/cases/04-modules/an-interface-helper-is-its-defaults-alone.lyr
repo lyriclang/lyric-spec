@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | <x> <x> [y]
+//! since: 5.0.0
+// 04 §3 rule 8: an interface's private helper is its defaults' — through a struct value and an
+// interface value alike —, and a conformer's method of its name is the conformer's own, which
+// the default does not call.
+import std.io { println };
+
+interface Greeter {
+    fn name(): string;
+
+    fn greet(): string {
+        return this.wrap(this.name());
+    }
+
+    private fn wrap(s: string): string {
+        return f"<{s}>";
+    }
+}
+
+struct Person :: [Greeter] {
+    n: string,
+
+    fn name(): string {
+        return this.n;
+    }
+
+    fn wrap(s: string): string {
+        return f"[{s}]";
+    }
+}
+
+fn main(): void {
+    let p = Person { n = "x" };
+    let g: Greeter = p;
+    println(f"{p.greet()} {g.greet()} {p.wrap("y")}");
+}

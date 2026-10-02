@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0118
+//! since: 5.0.0
+// 04 §3 rule 8: a private interface member is a helper, with a body; a requirement takes no word.
+interface Shape {
+    private fn area(): int;
+}
+
+fn main(): void {
+}
