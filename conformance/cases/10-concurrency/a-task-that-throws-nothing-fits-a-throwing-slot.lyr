@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 3 7
+//! since: 5.0.0
+// 10 §2 rule 8: a task that throws nothing fits where a throwing one is expected.
+import std.io { println };
+import std.task { spawn, Task, Cancelled };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn main(): void throws [Oops, Cancelled] {
+    let plain: Task<int> = spawn(() => 3);
+    var either: Task<int> throws Oops = plain;
+    let a = try either.await();
+    either = spawn(() => try risky(false));
+    let b = try either.await();
+    println(f"{a} {b}");
+}

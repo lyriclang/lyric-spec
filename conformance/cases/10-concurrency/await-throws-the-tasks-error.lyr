@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 7
+//! | caught oops
+//! since: 5.0.0
+// 10 §2 rule 9: await gives the body's value, or throws the error it ended with.
+import std.io { println };
+import std.task { spawn, Cancelled };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn main(): void throws Cancelled {
+    let good = spawn(() => try risky(false));
+    let bad = spawn(() => try risky(true));
+    try {
+        println(f"{good.await()}");
+        println(f"{bad.await()}");
+    } catch (e: Oops) {
+        println("caught " + e.message());
+    }
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 10 §2 rule 9: await is a wait — it throws Cancelled even on a task that throws nothing, so the
+// call is marked.
+import std.task { spawn, Cancelled };
+
+fn main(): void throws Cancelled {
+    let t = spawn(() => 5);
+    let v = t.await();
+}

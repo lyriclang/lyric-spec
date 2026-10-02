@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | false
+//! | body
+//! | 5 true
+//! since: 5.0.0
+// 10 §2 rules 8-10: spawn gives a handle; the task runs once main waits, await gives its value,
+// and a body that returns nothing gives a Task<void>.
+import std.io { println };
+import std.task { spawn, Cancelled };
+
+fn main(): void throws Cancelled {
+    let five = spawn(() => 5);
+    let quiet = spawn(() => { println("body"); });
+    println(f"{five.isDone()}");
+    let v = try five.await();
+    try quiet.await();
+    println(f"{v} {quiet.isDone()}");
+}

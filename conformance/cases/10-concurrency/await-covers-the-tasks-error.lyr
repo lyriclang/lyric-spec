@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §2 rule 9: await throws what the handle's type says, which the caller covers.
+import std.task { spawn, Cancelled };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn main(): void throws Cancelled {
+    let t = spawn(() => try risky(true));
+    let v = try t.await();
+}
