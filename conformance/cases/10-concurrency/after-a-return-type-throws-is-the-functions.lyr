@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §2 rule 8: after a return type 'throws' is the function's own — 'launch' returns a plain
+// Task<int> and may throw Oops — so the throwing task it returns does not fit; '(Task<int>
+// throws Oops)' would.
+import std.task { spawn, Task };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn launch(): Task<int> throws Oops {
+    return spawn(() => try risky(false));
+}
+
+fn main(): void {
+}

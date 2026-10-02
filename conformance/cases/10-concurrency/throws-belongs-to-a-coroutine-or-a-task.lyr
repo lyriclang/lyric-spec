@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0084
+//! since: 5.0.0
+// 10 §2 rule 8: 'throws' after a type belongs to a coroutine or a task, and to nothing else.
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn main(): void {
+    let n: int throws Oops = 1;
+}

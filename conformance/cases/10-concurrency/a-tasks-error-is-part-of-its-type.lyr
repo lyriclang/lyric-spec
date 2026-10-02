@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §2 rule 8: the handle's type carries the body's error; a throwing task does not fit a plain one.
+import std.task { spawn, Task };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn main(): void {
+    let plain: Task<int> = spawn(() => try risky(false));
+}

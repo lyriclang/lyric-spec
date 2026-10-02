@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | first
+//! | second
+//! | third
+//! | done
+//! since: 5.0.0
+// 10 §2 rule 9: the tasks waiting for one task run again in the order they began to wait — main
+// lets the two detached ones begin first.
+import std.io { println };
+import std.task { spawn, spawnDetached, sleep, yieldNow, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    let shared = spawn(() => {
+        try sleep(Duration.ofMillis(10));
+        return 1;
+    });
+    spawnDetached(() => {
+        let v = try? shared.await();
+        println("first");
+    });
+    spawnDetached(() => {
+        let v = try? shared.await();
+        println("second");
+    });
+    try yieldNow();
+    let v = try shared.await();
+    println("third");
+    try sleep(Duration.ofMillis(5));
+    println("done");
+}

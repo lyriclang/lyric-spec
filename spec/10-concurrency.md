@@ -112,5 +112,19 @@ scheduler runs another task meanwhile. The functions this section names are `std
    zero or less lets the ready tasks run first.
 6. A wait parks the whole task, also from within a generator the task pulls: once the task runs
    again, the generator goes on where it waited and yields to its puller as before.
-7. The waits — `sleep`, `yieldNow` — **throw `Cancelled`** where their task is cancelled (06 N9
-   X1): a function that waits covers it, with `throws Cancelled` or a clause (`LYR-SEM0034`).
+7. The waits — `sleep`, `yieldNow`, `await` — **throw `Cancelled`** where their task is
+   cancelled (06 N9 X1): a function that waits covers it, with `throws Cancelled` or a clause
+   (`LYR-SEM0034`).
+8. **`spawn(body)`** makes `body` a task of the running thread, ready behind the tasks ready
+   before it, and gives its **handle**, a `Task<T> throws E` (06 T1): `T` is what the body
+   returns — `void` too ([03 §9.1](03-types.md) rule 7) — and `E` what it throws. The handle's
+   type carries the error as a coroutine's carries what its pulls throw (05 E10); `Task<T>`
+   throws nothing, and fits where a `Task<T> throws E` is expected, but not the reverse
+   (`LYR-SEM0001`). `throws` after any other type than a coroutine or a task is refused
+   (`LYR-SEM0084`), and after a function's return type it is the function's own: a function
+   that returns a throwing task writes `(Task<T> throws E)`.
+9. **`task.await()`** waits until the body has ended (06 T2) and gives its value, or throws its
+   error: it throws what the handle's type says and, as every wait, `Cancelled` — marked and
+   covered as any call that throws (`LYR-SEM0138`, `LYR-SEM0034`). The tasks waiting for one
+   task run again in the order they began to wait.
+10. **`task.isDone()`** says whether the body has ended, with its value or its error (06 T3).
