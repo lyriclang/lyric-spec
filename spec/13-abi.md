@@ -100,7 +100,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0011` | `assert(condition, message)` with a false condition: the message as given ([06 §9](06-errors.md#9-panics-and-never)) |
    | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
    | `LYR-RT0013` | `todo(message)` reached: the message as given |
-   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)); a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
+   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
@@ -159,6 +159,12 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    (`LYR-RT0014`).
 8. The runtime has a **monotonic clock**: nanoseconds that only move forward, from an unspecified
    start — for intervals and deadlines, not for the time of day.
+9. A **task's context** ([10 §2](10-concurrency.md)) is a coroutine around a function value
+   `fn() -> void`, called with its environment and no error slot. Nothing yields to its resumer:
+   a yield in it, outside every generator, is a panic (`LYR-RT0014`). Where `main` is a task,
+   the program's start makes main's context — on a stack of 8 MiB — and hands it to the
+   scheduler of `std.task`, which runs until that context is done; the exit code is main's
+   value as before (§1.5).
 
 ### 1.7 Waiting
 

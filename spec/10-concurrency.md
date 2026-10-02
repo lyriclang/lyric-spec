@@ -78,8 +78,39 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
 13. A `yield` outside a coroutine's own body — in a function a coroutine calls (06 §10a) —
     suspends the coroutine that runs, whoever called the function. Its value is typed as what it is
     and meets that coroutine's `Y` at run time: a value of another type panics with `LYR-RT0014`,
-    as does such a yield where no coroutine runs. It throws `Cancelled` at `close()` as a body's
+    as does such a yield where no generator runs — on a thread's own stack, or in a task (§2). It
+    throws `Cancelled` at `close()` as a body's
     yield does (rule 9), so its function covers it — `throws Cancelled`, or a clause
     (`LYR-SEM0034`) — and a coroutine's body covers it for the functions it calls, as it does for
     its own yields. A yield in a lambda is not of this kind: it makes the lambda a generator
     (rule 11).
+
+## 2. Tasks
+
+A **task** is a body that the scheduler of its thread runs on a stack of its own
+([06 N3–N6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). Unlike a generator it yields nothing: it **waits**. A wait parks
+the task at its thread's scheduler wherever it stands ([13 §1.6](13-abi.md) rule 7), and the
+scheduler runs another task meanwhile. The functions this section names are `std.task`'s.
+
+1. **`main` is a task**, on the main thread's scheduler (06 T6). The program ends when `main`'s
+   body returns: the tasks still ready or asleep then never run again, and none of their
+   `defer`s runs. *(Informative: a program that never waits runs `main` on the thread's own
+   stack; it cannot tell the difference.)*
+2. A thread runs one of its tasks at a time, each until it waits (06 N8): the code between two
+   waits runs with no other task of its thread in between. The tasks that are ready run in the
+   order they became ready.
+3. **`spawnDetached(body)`** makes `body` a task of the running thread, ready behind the tasks
+   ready before it (06 T5). Nobody waits for it, and nothing it throws reaches anyone: its type,
+   `fn() -> void throws Cancelled`, lets only a cancellation end it early, so it handles every
+   other error itself (`LYR-SEM0034`).
+4. **`yieldNow()`** puts the running task behind the tasks that are ready: they run before it
+   goes on (06 N8).
+5. **`sleep(d)`** parks the running task until at least `d` has passed on the monotonic clock
+   (06 K3; [13 §1.6](13-abi.md) rule 8). `d` is a `std.time.Duration`, a span of whole
+   nanoseconds (10 Q1). The sleepers whose time came wake in the order of their deadlines — of
+   one deadline, in the order they fell asleep — behind the tasks already ready. A sleep of
+   zero or less lets the ready tasks run first.
+6. A wait parks the whole task, also from within a generator the task pulls: once the task runs
+   again, the generator goes on where it waited and yields to its puller as before.
+7. The waits — `sleep`, `yieldNow` — **throw `Cancelled`** where their task is cancelled (06 N9
+   X1): a function that waits covers it, with `throws Cancelled` or a clause (`LYR-SEM0034`).

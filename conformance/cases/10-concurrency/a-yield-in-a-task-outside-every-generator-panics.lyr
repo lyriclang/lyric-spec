@@ -1,0 +1,15 @@
+//! run
+//! panic: LYR-RT0014
+//! since: 5.0.0
+// 10 §1.13, §2: main is a task — it waits — and a yield in it, outside every generator, has
+// nothing to go to.
+import std.task { yieldNow, Cancelled };
+
+fn emit(): void throws Cancelled {
+    yield 1;
+}
+
+fn main(): void throws Cancelled {
+    try yieldNow();
+    try emit();
+}

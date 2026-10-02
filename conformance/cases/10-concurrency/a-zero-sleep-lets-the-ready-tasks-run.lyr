@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | ready
+//! | main
+//! since: 5.0.0
+// 10 §2 rule 5: a sleep of zero still waits, behind the tasks that are ready.
+import std.io { println };
+import std.task { sleep, yieldNow, spawnDetached, Cancelled };
+import std.time { Duration };
+
+fn main(): void throws Cancelled {
+    spawnDetached(() => { println("ready"); });
+    try sleep(Duration.ofNanos(0));
+    println("main");
+}

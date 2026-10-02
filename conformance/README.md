@@ -42,7 +42,9 @@ of the standard library:
   constraint interfaces, `@Deprecated` and the attribute markers — including pinning the
   ABSENCE of surface the contract removed;
 - the names a language rule itself stands on: `std.task`'s `Cancelled`, which a coroutine's
-  yield throws at `close()` (10 §1.9), and `std.core`'s `sequence` (10 §1.12).
+  yield throws at `close()` (10 §1.9), and `std.core`'s `sequence` (10 §1.12); the tasks and
+  waits of 10 §2 — `std.task`'s `spawnDetached`, `yieldNow` and `sleep` — and the
+  `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to
 the library's own tests, not here.

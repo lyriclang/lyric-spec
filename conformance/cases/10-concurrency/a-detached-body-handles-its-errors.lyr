@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §2 rule 3: a detached task's body may throw Cancelled and nothing else.
+import std.task { spawnDetached };
+
+fn main(): void {
+    spawnDetached(() => { throw Exception { text = "lost" }; });
+}
