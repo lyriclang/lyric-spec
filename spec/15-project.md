@@ -15,7 +15,8 @@ A package's manifest, `lyric.toml` at its root, is read and never run
 ([11 P1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 V7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)).
 
 **Conformance.** `conformance/cases/15-project/`, package cases; the TOML subset in the
-toolchain's own tests (`tests/Lyric5.Tests`, `ManifestTests`).
+toolchain's own tests (`tests/Lyric5.Tests`, `ManifestTests`), the programs and the toolchain pin
+in `ProgramTests`.
 
 1. A manifest is **TOML**, the part of it a manifest needs: tables and arrays of tables; bare,
    quoted and dotted keys; basic and literal strings, integers, booleans, arrays and inline
@@ -33,11 +34,19 @@ toolchain's own tests (`tests/Lyric5.Tests`, `ManifestTests`).
    type).
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
-   `[profile]` is §4's. The other parts of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — binaries, the
-   native part, lints, the trust rule, the toolchain pin — are refused the same way until this
-   chapter writes them.
-5. A package's **program** is its `src/main.lyr`, and its binary is named after the package
-   ([14 §1.2](14-cli.md)). Without `src/main.lyr`, the package is a library (P2).
+   `[profile]` is §4's. The other parts of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — the native
+   part, lints, the trust rule — are refused the same way until this chapter writes them.
+5. A package's **programs** are its `src/main.lyr`, whose binary is named after the package
+   ([14 §1.2](14-cli.md)), and each `[[bin]]`: `name = "tool"` — a lowercase letter, then
+   letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the
+   package under `src/` (`LYR-PKG0002`, as for an entry that is no file and for two programs of
+   one name; another key is `LYR-PKG0003`). Without any program, the package is a library (P2).
+   `lyric build` builds every program; `run` and `--emit` the one `--bin` names, else
+   `src/main.lyr`'s, else the only one — of several, `--bin` names it (`LYR-CLI0007`).
+6. **`toolchain = "5.1"`** — or `">=5.1"` — in `[package]` is the least toolchain that builds the
+   package ([11 P12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a toolchain below what any package of the program asks
+   for refuses the program (`LYR-PKG0009`, exit 2, [14 §1.3](14-cli.md)), a development build of
+   a version counting as that version. Another form is refused (`LYR-PKG0002`).
 
 ## 2. Dependencies
 

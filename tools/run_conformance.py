@@ -21,7 +21,7 @@ import tomllib
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
-            "errors": [], "warnings": [], "since": None, "until": None}
+            "errors": [], "warnings": [], "since": None, "until": None, "bin": None}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = None
     for line in lines:
@@ -52,6 +52,8 @@ def parse_header(path):
             spec["since"] = tuple(int(p) for p in body[6:].strip().split("."))
         elif body.startswith("until:"):
             spec["until"] = tuple(int(p) for p in body[6:].strip().split("."))
+        elif body.startswith("bin:"):
+            spec["bin"] = body[4:].strip()
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -137,6 +139,8 @@ def run_case(case, spec, lyric5, profile, workdir):
         source = workdir / case.name
         shutil.copy(case, source)
         command = [str(lyric5), "build", str(source), "--profile", profile]
+    if spec["bin"]:
+        command += ["--bin", spec["bin"]]
     front_end_only = spec["mode"] == "check"
     if front_end_only:
         command += ["--emit", "ir"]
@@ -168,7 +172,9 @@ def run_case(case, spec, lyric5, profile, workdir):
     # package (15 §1). A prefix glob found a neighbour's binary too —
     # 'default-type-argument-on-a-class' beside 'default-type-argument' — and ran whichever the
     # file system listed first.
-    if case.is_dir():
+    if spec["bin"]:
+        name = spec["bin"]
+    elif case.is_dir():
         name = tomllib.loads((cwd / "lyric.toml").read_text(encoding="utf-8"))["package"]["name"]
     else:
         name = case.stem
