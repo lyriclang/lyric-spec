@@ -182,10 +182,17 @@ toolchain's own tests (`tests/Lyric5.Tests`, `NativeTests`).
 ([11 P6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
 
 **Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `ReproducibilityTests`): one
-package built in two directories, in both built-in profiles, compared byte for byte.
+package built in two directories a second apart — for the host in both built-in profiles, and for
+each operating system from any host — compared byte for byte.
 
 1. The same sources, options, toolchain and C compiler give the **same bytes** — wherever the
-   package lies and whenever it is built. A binary carries no time stamp, and no path of the
-   machine that built it: a path the build would write into it — a source's, the emitted C's, the
-   runtime's — is written as the name of the package it lies in, or `lyric` for the toolchain's
-   own.
+   package lies, wherever the build runs from, and whenever it is built. A binary carries no time
+   stamp, and no path of the machine that built it: a path the build would write into it — a
+   source's, the emitted C's, the runtime's — is written as the name of the package it lies in, or
+   `lyric` for the toolchain's own, and the directory the C compiler works in as `.`. A library
+   the C compiler brings of its own — zig's `libunwind` on Linux — comes as the C compiler built
+   it.
+2. Debug information that names the machine's paths lies **beside** the binary, not in it: a
+   Windows binary's PDB, a macOS binary's `.dSYM` — gathered on a macOS host, where `dsymutil` is.
+   The binary names it by a hash of its own bytes — a PE image's PDB GUID, a Mach-O image's UUID —,
+   so the two still pair.
