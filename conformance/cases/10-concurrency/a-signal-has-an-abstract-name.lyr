@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | interrupt
+//! | other 31
+//! since: 5.0.0
+// 10 §12 rule 1: a Signal names a signal abstractly, or by the system's number.
+import std.io { println };
+import std.task { Signal };
+
+fn name(s: Signal): string {
+    return match (s) {
+        Signal.Interrupt => "interrupt",
+        Signal.Terminate => "terminate",
+        Signal.Other(n) => f"other {n}",
+        _ => "another",
+    };
+}
+
+fn main(): void {
+    println(name(Signal.Interrupt));
+    println(name(Signal.Other(31)));
+}

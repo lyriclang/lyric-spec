@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | subscribed
+//! | unsubscribed
+//! since: 5.0.0
+// 10 §12 rules 2, 4: signals() gives a channel that the signals come in on; closing it ends the
+// subscription. (No signal comes here: the suite sends none.)
+import std.io { println };
+import std.task { Channel, Signal, signals };
+
+fn main(): void {
+    let incoming: Channel<Signal> = signals(Signal.Interrupt, Signal.Terminate, Signal.Other(10));
+    println("subscribed");
+    incoming.close();
+    println("unsubscribed");
+}
