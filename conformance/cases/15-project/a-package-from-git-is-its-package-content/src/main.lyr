@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-RES0003
+import geo.draft { later };
+
+fn main(): void {
+}

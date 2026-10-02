@@ -31,7 +31,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    `--profile debug|release` (default `debug`; `asan` and `tsan` need clang), `--target <triple>`
    (a Tier 1 triple; default: this machine), `--emit ir|c` (prints instead of building; `run`
    refuses it), `-C <dir>` (the package is searched from `<dir>` instead of the current
-   directory, and a relative file is relative to it).
+   directory, and a relative file is relative to it). `--offline` takes no value: nothing is
+   fetched, and a package read from git comes from the user's cache ([15 §2](15-project.md)).
 3. The command line is strict: an unknown verb, option or value is refused.
 4. A binary for a target that is not this machine is built and not run: `run` refuses it and
    names the binary.
@@ -62,6 +63,6 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 |---|---|
 | 0 | done |
 | 1 | the program or its manifest was refused: a compile error, or a construct the compiler does not translate yet |
-| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, no C compiler |
+| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, no C compiler, a git repository that cannot be reached |
 | 101 | the toolchain itself failed (`LYR-ICE0001`) |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
