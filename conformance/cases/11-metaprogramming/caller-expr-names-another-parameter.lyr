@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0155
+//! since: 5.0.0
+// 11 §1 rule 3: @callerExpr names another parameter of the function.
+
+fn f(x: int, @callerExpr(y) text: string = ""): string {
+    return text;
+}
+
+fn main(): void {
+    let _ = f(1);
+}

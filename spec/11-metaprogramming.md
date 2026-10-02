@@ -24,4 +24,11 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 2. **`@Test`** — in the prelude — marks a test, which `lyric test` runs ([14 §3](14-cli.md)): a
    function that takes no parameters, returns `void` and is not `private` (`LYR-SEM0154`), and
    is not generic (`LYR-SEM0067`, as for every attribute). It may throw: an error that leaves it
-   fails the test. `skip` says why the test is not run.
+   fails the test. `skip` says why the test is not run, `timeout` how many seconds it may take
+   (60 unless it says; 0 for no limit).
+3. **`@callerExpr(p)`** — in the prelude — sits on a parameter: where a call leaves that
+   parameter out, it gets the text the call wrote for `p`, another parameter of the function —
+   `assertEq(xs.length(), 3)` hands the assertion the words `xs.length()`. The parameter is a
+   `string` and has a default, which a call that writes the argument itself keeps; the attribute
+   names its parameter by name (`LYR-SEM0155`). It is the one attribute a parameter takes
+   (`LYR-SEM0065`).

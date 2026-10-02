@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0065
+//! since: 5.0.0
+// 11 §1 rule 3: @callerExpr is the one attribute a parameter takes.
+
+fn f(@Test x: int): int {
+    return x;
+}
+
+fn main(): void {
+    let _ = f(1);
+}

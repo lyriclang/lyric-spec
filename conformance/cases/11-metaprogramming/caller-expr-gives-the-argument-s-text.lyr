@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 1 + 2
+//! | given
+//! since: 5.0.0
+// 11 §1 rule 3: where a call leaves the parameter out, it gets the text the call wrote for the
+// parameter @callerExpr names; a call that writes the argument itself keeps it.
+import std.io { println };
+
+fn written(x: int, @callerExpr(x) text: string = ""): string {
+    return text;
+}
+
+fn main(): void {
+    println(written(1 + 2));
+    println(written(4, "given"));
+}
