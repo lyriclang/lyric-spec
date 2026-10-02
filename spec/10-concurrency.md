@@ -189,7 +189,9 @@ A panic leaves the coroutine it happens in, without unwinding ([05 E8](https://g
 A channel carries values from one task to another ([06 N5 K1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)).
 
 1. A **`Channel<T>`**, made by `Channel<T>.new(capacity)` — `0`, the default, for an unbuffered
-   one — carries values from `send` to `recv`, in the order they were sent.
+   one — carries values from `send` to `recv`, in the order they were sent: between the tasks of
+   one thread and across threads (§9). A send happens before the receive that gets its value
+   (06 N7 P1).
 2. **`send(value)`** hands the value to a task waiting in `recv`, or puts it into the buffer while
    there is room; otherwise the sending task waits until a receiver takes it. On a closed channel,
    or when the channel closes while it waits, it throws `ChannelClosed`.
@@ -219,6 +221,9 @@ values of their types.
    and only its case receives: the other channels keep what they get for later receives.
 3. **`timeout(d, body)`** (K3): `body` runs when no case could go on before `d` passed. A `d` of
    zero or less runs it at once where no case can go on at once.
+
+   *(Informative: a select is biased to its first case. A case whose channel is closed can
+   always go on — while it stays in a select, no case after it runs.)*
 4. `run()` is a wait: in a cancelled task it throws `Cancelled`, and a cancel ends it (§3). It
    throws what the body that runs throws; its type says `Error`, which its caller covers
    (`LYR-SEM0034`).
@@ -258,6 +263,6 @@ Threads run at the same time.
 3. A task that `spawn` starts runs on the thread of the task that started it.
 4. What a thread did before it started another happens before the new thread's first task (N7
    P1), and what a task did before it ended happens before `await()` on it returns, on any thread.
-5. Two threads that use the same place, one of them writing, with no such order between them — an
-   atomic's (§8) or a task's end (rule 4) — race: the program has an error, and the language makes
-   no promise about what it then does (G3).
+5. Two threads that use the same place, one of them writing, with no such order between them — a
+   channel's (§6), an atomic's (§8) or a task's end (rule 4) — race: the program has an error, and
+   the language makes no promise about what it then does (G3).
