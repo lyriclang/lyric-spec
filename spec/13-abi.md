@@ -100,7 +100,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0011` | `assert(condition, message)` with a false condition: the message as given ([06 §9](06-errors.md#9-panics-and-never)) |
    | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
    | `LYR-RT0013` | `todo(message)` reached: the message as given |
-   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield with no coroutine running (§1.6) |
+   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)); a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -126,8 +126,9 @@ The first element sits at offset 16, aligned to 16 bytes.
 A coroutine runs a body on a stack of its own
 ([01 L4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
 [06 N2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). The
-runtime gives the primitives only — create, resume, yield, status, the running coroutine
-(`lyr/coro.h`); generators, tasks and channels are built on them ([10](10-concurrency.md)).
+runtime gives the primitives only — create, resume, yield, park, close, status, the running
+coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
+([10](10-concurrency.md)).
 
 1. A coroutine is created around a body and an argument, and does not run until it is first
    **resumed**. A resume runs it until it **yields** or its body returns; then the resumer goes
@@ -147,3 +148,13 @@ runtime gives the primitives only — create, resume, yield, status, the running
 6. C frames may lie on a coroutine's stack between a resume and a yield — a callback from C that
    yields ([01 K4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
    The runtime counts them for each coroutine: a stack with C frames on it cannot be unwound.
+7. A **park** stops the coroutine that runs where it stands and hands control back to the thread's
+   own stack — where a scheduler runs — past every coroutine between
+   ([06 N3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)):
+   the outermost coroutine of the chain, the one resumed from there, is **parked**, and those in
+   between go on waiting for the ones they resumed. Resuming the parked one continues the
+   coroutine that parked, where it parked; when that one yields, it yields to its own resumer,
+   as before. A park where no coroutine runs, and a close of a parked coroutine, is a panic
+   (`LYR-RT0014`).
+8. The runtime has a **monotonic clock**: nanoseconds that only move forward, from an unspecified
+   start — for intervals and deadlines, not for the time of day.
