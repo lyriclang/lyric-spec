@@ -1,7 +1,7 @@
 # Projects
 
-> **Partly written.** §1–§5 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
-> S5a–S6e); the rest follows with M7, spec-first: each rule lands here with its conformance case before
+> **Partly written.** §1–§6 were written with milestone **M7** of the Lyric 5 plan (slices S1, S4,
+> S5a–S6e, S8a); the rest follows with M7, spec-first: each rule lands here with its conformance case before
 > or with its implementation. Source of the decisions:
 > [11 Tooling and interop W2/W3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md), [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -176,3 +176,16 @@ toolchain's own tests (`tests/Lyric5.Tests`, `NativeTests`).
 3. Every package of the program brings its native part — a dependency's too —, and each library is
    linked once. The C functions of a native part are called through `extern "C"`
    ([13 §2](13-abi.md)).
+
+## 6. Reproducibility
+
+([11 P6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `ReproducibilityTests`): one
+package built in two directories, in both built-in profiles, compared byte for byte.
+
+1. The same sources, options, toolchain and C compiler give the **same bytes** — wherever the
+   package lies and whenever it is built. A binary carries no time stamp, and no path of the
+   machine that built it: a path the build would write into it — a source's, the emitted C's, the
+   runtime's — is written as the name of the package it lies in, or `lyric` for the toolchain's
+   own.

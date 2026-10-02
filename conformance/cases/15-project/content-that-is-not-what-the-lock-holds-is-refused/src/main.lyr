@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0008
+//! since: 5.0.0
+// 15 §3 rule 2: content that is not what the lock holds is refused.
 import std.io { println };
 import geo.shapes { area };
 

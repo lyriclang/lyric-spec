@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-RES0003
+//! since: 5.0.0
+// 15 §2 rule 4: a module outside the package content is not there.
 import geo.draft { later };
 
 fn main(): void {

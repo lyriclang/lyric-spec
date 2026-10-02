@@ -1,5 +1,7 @@
 //! check
 //! error: LYR-PKG0004
+//! since: 5.0.0
+// 15 §2 rule 4: a package from git names its dependencies by git.
 import std.io { println };
 import geo.shapes { area };
 

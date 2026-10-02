@@ -1,6 +1,8 @@
 //! run
 //! stdout:
 //! | 12
+//! since: 5.0.0
+// 15 §2 rule 2: the tag names the revision read, not the newest.
 import std.io { println };
 import geo.shapes { area };
 

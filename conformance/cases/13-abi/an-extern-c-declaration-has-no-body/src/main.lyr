@@ -1,4 +1,6 @@
 //! check
+//! since: 5.0.0
+// 13 §2 rule 1: an extern "C" declaration has no body.
 extern "C" fn add(a: int, b: int): int;
 
 fn main(): int {

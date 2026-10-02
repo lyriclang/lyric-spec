@@ -1,4 +1,6 @@
 //! check
 //! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §4 rule 1: a profile of the manifest's own inherits from one.
 fn main(): void {
 }

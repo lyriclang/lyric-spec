@@ -1,4 +1,6 @@
 //! check
 //! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §4 rule 2: opt is a level from 0 to 3.
 fn main(): void {
 }

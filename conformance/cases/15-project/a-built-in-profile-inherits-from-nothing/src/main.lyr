@@ -1,4 +1,6 @@
 //! check
 //! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §4 rule 1: a built-in profile inherits from nothing.
 fn main(): void {
 }

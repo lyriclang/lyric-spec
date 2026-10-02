@@ -2,7 +2,7 @@
 //! stdout:
 //! | 12 3
 //! since: 5.0.0
-// 15 §2 rule 3: the root's override picks units for the whole graph, and the directory geo names
+// 15 §2 rule 6: the root's override picks units for the whole graph, and the directory geo names
 // is not read — its manifest is not even TOML.
 import std.io { println };
 import geo.shapes { area };
