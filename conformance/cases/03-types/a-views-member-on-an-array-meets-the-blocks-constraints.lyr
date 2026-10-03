@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0134
+//! since: 5.0.0
+// 03 §5.2 rule 4: the view's block holds its constraints for the array's elements as for the
+// view's — an Opaque is no Display.
+
+struct Opaque {
+    n: int,
+}
+
+extend<T :: [Display]> Slice<T> {
+    fn shown(): string {
+        return f"{this[0]}";
+    }
+}
+
+fn main(): void {
+    let xs = [Opaque { n = 1 }];
+    let s = xs.shown();
+}

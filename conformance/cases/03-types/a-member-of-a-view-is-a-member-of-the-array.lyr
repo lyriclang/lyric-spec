@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 5 6
+//! | 6 5 4
+//! since: 5.0.0
+// 03 §5.2 rule 4: a member written on Slice<T> is reached on an array, on a view of the whole of
+// it — what it writes through the view is written in the array.
+import std.io { println };
+
+extend<T> Slice<T> {
+    fn second(): ?T {
+        if (this.length() < 2) {
+            return null;
+        }
+        return this[1];
+    }
+
+    fn swapEnds(): void {
+        let first = this[0];
+        this[0] = this[^1];
+        this[^1] = first;
+    }
+}
+
+fn main(): int {
+    let xs = [4, 5, 6];
+    println(f"{xs.second() ?? 0} {xs[1..].second() ?? 0}");
+    xs.swapEnds();
+    println(f"{xs[0]} {xs[1]} {xs[2]}");
+    return 0;
+}

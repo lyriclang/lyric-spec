@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | array view
+//! since: 5.0.0
+// 03 §5.2 rule 4: the view's member reaches an array where the array's own blocks give none of the
+// name.
+import std.io { println };
+
+extend<T> T[] {
+    fn which(): string {
+        return "array";
+    }
+}
+
+extend<T> Slice<T> {
+    fn which(): string {
+        return "view";
+    }
+}
+
+fn main(): int {
+    let xs = [1, 2];
+    println(f"{xs.which()} {xs[..].which()}");
+    return 0;
+}
