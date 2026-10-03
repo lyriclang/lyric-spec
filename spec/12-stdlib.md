@@ -170,3 +170,26 @@ range. All three are `std.core`'s.
   two digits; or the sign and `inf` or `nan`. The value is the float nearest the text: beyond
   the range an infinity, below it a zero, as IEEE 754 rounds — a float has no `Overflow`.
 - A **bool** is `true` or `false`.
+
+## Arrays and views
+
+The members of an array and of a view are `std.core`'s (design 10 C2), written once on
+`Slice<T>` and reached on an array through a view of all of it ([03 §5.2](03-types.md) rule 4):
+a write through one reaches the array. `length()` and the index are the primitives
+([03 §5.1](03-types.md)).
+
+- `isEmpty()`; `get(i)`, `null` outside `0 ≤ i < length()`; `first()` and `last()`, `null`
+  where there is no element.
+- `swap(i, j)`, an index outside panicking as `[i]` does; `reverse()` in place; `reversed()`, a
+  new array.
+- Of an `Equatable` element: `contains(x)`, through which `T[]` and `Slice<T>` are
+  `Contains<T>` (10 C12), and `indexOf(x)`, the first index or `null`.
+- Of a `Clone` element: `fill(v)`, every element a clone of `v` — no object shared into several
+  slots, as `[x] * n` shares none ([03 §5.1](03-types.md)).
+- `partitionPoint(p)`: the first index whose element fails `p`, for elements `p` partitions —
+  every one it holds for before every one it does not; a binary search. Of a `TotalOrder`
+  element, `binarySearch(x)`: the index of an element equal to `x` in sorted elements, any of
+  several equal ones, or `null`.
+- Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two.
+- `arrayOf(n, f)` ([03 §8](03-types.md)) calls `f` once per index, in order; a negative `n`
+  panics.
