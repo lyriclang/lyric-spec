@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 2 <1>
+//! since: 5.0.0
+// 05 §13 rule 7: a blanket block's generic member is one function per receiver and per its own
+// type arguments — 'through<int>' and 'through<string>' on one receiver.
+import std.io { println };
+
+interface Source {
+    fn get(): int;
+}
+
+struct One :: [Source] {
+    fn get(): int { return 1; }
+}
+
+extend<S :: [Source]> S {
+    fn through<U>(f: fn(int) -> U): U {
+        return f(this.get());
+    }
+}
+
+fn main(): int {
+    let o = One {};
+    println(f"{o.through((v) => v + 1)} {o.through((v) => f"<{v}>")}");
+    return 0;
+}
