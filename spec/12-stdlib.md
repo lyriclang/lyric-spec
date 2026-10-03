@@ -221,6 +221,17 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11).
 
+- **`List<T>`** (C3), a class: its elements in order, at the front of a buffer that doubles when
+  full. `new()`, `of(xs)` (a copy of the array). `xs[i]` and `xs[i] = v` through `IndexSet<int>`
+  ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`); `get(i)`,
+  `null` there. `push(v)`, `pushAll(xs)`, `pop()` (`null` for none), `insert(i, v)`, `removeAt(i)`,
+  `removeWhere(p)` (how many went), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
+  `toArray()` (a copy); of an `Equatable` element `contains(x)`, `remove(x)` (whether there was one)
+  and `dedup()` (runs of equal ones kept once). `asSlice()` is a view of the buffer, so the members
+  of arrays and views reach the list — a sort writes it; a push past the room moves the list to a
+  new buffer, and an older view keeps the older one. A list is `Iterable` front to back
+  ([10 I9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): a change of
+  its length while it is walked panics at the next pull.
 - **`Map<K :: [Hashable], V, H :: [Hasher] = DefaultHasher>`** (C4), a class: what it holds, in
   no order of its own, each key once. `Map<K, V>.new()` hashes with the process's key, so its
   order differs from run to run; `withHasher(seed)` takes a hasher, which is a value the map
