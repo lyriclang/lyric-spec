@@ -85,3 +85,9 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    cannot throw is warned about (`LYR-SEM0139`). Only the plain mark stands in a head
    (`LYR-SEM0163`): `try?`, `try!` and the catching form would take the head's value and leave
    the pulls outside.
+7. A loop over an iterator that is **`Closeable`** — by its type, or by its constraints —
+   **closes** it on every way out but a panic (design 10 B6 I6, 05 E7 R7), as a `using` binding
+   closes what it binds: at its end, at `break`, at `return`, and when something in it throws;
+   `continue` stays inside. The `close()` is a call of the loop's, marked by its head's `try`
+   where it may throw (rule 6). Through a constraint that does not say `Closeable` the loop does
+   not close.

@@ -1,0 +1,67 @@
+//! run
+//! stdout:
+//! | 1
+//! | 0
+//! | closed
+//! | after
+//! | 2
+//! | closed
+//! | after
+//! | closed
+//! | 1
+//! | 0
+//! | closed
+//! since: 5.0.0
+// 07 §2 rule 7: a Closeable iterator is closed at the loop's end, at break and at return, once;
+// continue stays inside.
+import std.io { println };
+
+class Tap :: [Iterator, Closeable] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+
+    fn close(): void {
+        println("closed");
+    }
+}
+
+fn toEnd(): void {
+    for (x in Tap { n = 2 }) { println(f"{x}"); }
+    println("after");
+}
+
+fn atBreak(): void {
+    for (x in Tap { n = 3 }) {
+        if (x == 1) { break; }
+        println(f"{x}");
+    }
+    println("after");
+}
+
+fn atReturn(): int {
+    for (x in Tap { n = 3 }) {
+        if (x == 1) { return x; }
+    }
+    return -1;
+}
+
+fn atContinue(): void {
+    for (x in Tap { n = 2 }) {
+        if (x == 1) { continue; }
+        println(f"{x}");
+    }
+}
+
+fn main(): int {
+    toEnd();
+    atBreak();
+    println(f"{atReturn()}");
+    atContinue();
+    return 0;
+}

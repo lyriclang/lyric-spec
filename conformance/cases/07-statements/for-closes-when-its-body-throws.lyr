@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | 1
+//! | closed
+//! | caught
+//! since: 5.0.0
+// 07 §2 rule 7: an error leaving the loop closes the iterator on its way.
+import std.io { println };
+
+class Stop :: [Error] {
+    fn message(): string { return "stop"; }
+}
+
+class Tap :: [Iterator, Closeable] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+
+    fn close(): void {
+        println("closed");
+    }
+}
+
+fn walk(): void throws Stop {
+    for (x in Tap { n = 2 }) {
+        println(f"{x}");
+        throw Stop {};
+    }
+}
+
+fn main(): int {
+    try {
+        try walk();
+    } catch (e: Stop) {
+        println("caught");
+    }
+    return 0;
+}
