@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0024
+//! since: 5.0.0
+// 08 §1.1 rule 1: the variadic parameter stands last.
+fn f(xs: int..., last: int): int { return last; }
+
+fn main(): int { return 0; }
