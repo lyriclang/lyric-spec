@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 6 0.75
+//! since: 5.0.0
+// 07 §2 rule 5: the index loop over 'T[]' in a generic body.
+import std.io { println };
+
+fn total<T :: [Num]>(xs: T[]): T {
+    var s = T.zero;
+    for (x in xs) { s = s + x; }
+    return s;
+}
+
+fn main(): int {
+    println(f"{total([1, 2, 3])} {total([0.5, 0.25])}");
+    return 0;
+}

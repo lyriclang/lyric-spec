@@ -119,6 +119,9 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   is both too and gives `end` as well; its last value leaves `start` past `end`, or `end` before
   `start` where that value is the type's `max` (its `min`, from the back) — no bound leaves the
   type. A range walked changes: `start` and `end` are `var`.
+- **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
+  elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
+  exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
 
 ### Parsing
 
