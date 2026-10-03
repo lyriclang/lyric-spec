@@ -23,7 +23,12 @@ A call names a function and gives it arguments
    part of the function's public form (D5 F5). Positional arguments come first, named ones after
    them in any order (F6); a positional argument after a named one, a name given twice or for a
    parameter already set positionally, and a name no parameter has are refused (`LYR-SEM0119`).
-   A `params` tail takes the remaining positional arguments and is not named (F8).
+   A **variadic** parameter, `nums: int...`, takes the remaining positional arguments as an
+   array of what it names, `int[]`, and is not named (F8). It stands last and has no default — a
+   call without its arguments passes the empty array; a single remaining argument of the array's
+   own type passes as the whole array, so that one variadic function hands its arguments on to
+   another, `fn logged(xs: int...): int { return sum(xs); }`. Lyric 4's `params xs: int[]` is
+   gone (`LYR-SEM0024`).
 2. A parameter may carry a **default**, `fn connect(host: string, port: int = 80)`, at any
    position (F3): a call that leaves it out gets the default, and a default in the middle is
    left out by naming what follows. The default is evaluated **per call, in the function's

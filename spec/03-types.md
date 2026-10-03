@@ -197,7 +197,7 @@ Two forms of a composite type, chosen once at the type
    argument without the mark and a value parameter's with it (`LYR-SEM0157`). The place's type
    is the parameter's exactly: nothing widens and nothing is wrapped into an optional
    (`LYR-SEM0001`).
-3. A place parameter has no default and is no `params` parameter: either would hand it a value
+3. A place parameter has no default and is no variadic parameter: either would hand it a value
    the call makes (`LYR-SEM0156`).
 4. The place of an optional, `&x: ?T`, lets the function write `null` into it; the place of a
    class value lets it bind the caller's variable to another object.

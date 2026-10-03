@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 6 3 0 15 15 3 2
+//! since: 5.0.0
+// 08 §1.1 rule 1: 'xs: int...' takes the remaining positional arguments as an int[]; none is the
+// empty array; one int[] passes as the whole array; the element may be a type parameter, bound
+// by the elements — or by a single array, which is the whole array there too.
+import std.io { println };
+
+fn sum(base: int, xs: int...): int {
+    var s = base;
+    for (x in xs) { s = s + x; }
+    return s;
+}
+
+fn logged(xs: int...): int { return sum(0, xs); }
+
+fn count<T>(label: string, xs: T...): int { return xs.length(); }
+
+fn main(): int {
+    println(f"{sum(1, 2, 3)} {sum(3)} {sum(0)} {sum(0, 1, 2, 3, 4, 5)} {logged(1, 2, 3, 4, 5)} {count("x", "a", "b", "c")} {count("y", ["p", "q"])}");
+    return 0;
+}

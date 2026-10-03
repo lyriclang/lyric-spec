@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0024
+//! since: 5.0.0
+// 08 §1.1 rule 1: Lyric 4's 'params xs: int[]' is gone; the variadic parameter is 'xs: int...'.
+fn sum(params xs: int[]): int { return xs.length(); }
+
+fn main(): int { return sum(1, 2); }

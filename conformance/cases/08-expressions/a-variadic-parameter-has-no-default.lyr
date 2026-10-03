@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0024
+//! since: 5.0.0
+// 08 §1.1 rule 1: no argument is the empty array — a default would be a second meaning of none.
+fn f(xs: int... = [1]): int { return xs.length(); }
+
+fn main(): int { return f(); }
