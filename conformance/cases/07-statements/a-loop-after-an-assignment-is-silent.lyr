@@ -1,0 +1,23 @@
+//! check
+//! since: 5.0.0
+// 07 §2 rule 4: an assignment between gives the binding another iterator.
+
+class Ticker :: [Iterator] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+}
+
+fn main(): int {
+    var t = Ticker { n = 3 };
+    var sum = 0;
+    for (x in t) { sum = sum + x; }
+    t = Ticker { n = 2 };
+    for (x in t) { sum = sum + x; }
+    return sum;
+}

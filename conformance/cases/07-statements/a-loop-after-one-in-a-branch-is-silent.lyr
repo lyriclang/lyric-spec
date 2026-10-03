@@ -1,0 +1,24 @@
+//! check
+//! since: 5.0.0
+// 07 §2 rule 4: a loop in a branch may not have run — the loop after it warns not.
+
+class Ticker :: [Iterator] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+}
+
+fn main(): int {
+    let t = Ticker { n = 3 };
+    var sum = 0;
+    if (sum == 0) {
+        for (x in t) { sum = sum + x; }
+    }
+    for (x in t) { sum = sum + x; }
+    return sum;
+}
