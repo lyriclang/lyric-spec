@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 2 2
+//! since: 5.0.0
+// 07 §2.1: a class iterator is walked where it stands — a second loop goes on where the first
+// stopped.
+import std.io { println };
+
+class Ticker :: [Iterator] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+}
+
+fn main(): int {
+    let t = Ticker { n = 4 };
+    var first = 0;
+    for (x in t) {
+        first = first + 1;
+        if (x == 2) { break; }
+    }
+    var rest = 0;
+    for (x in t) { rest = rest + 1; }
+    println(f"{first} {rest}");
+    return 0;
+}

@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 3 3
+//! since: 5.0.0
+// 07 §2.1: through 'A :: [Iterable]' the loop walks whatever A becomes.
+import std.io { println };
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+fn count<A :: [Iterable]>(a: A): int {
+    var n = 0;
+    for (x in a) {
+        n = n + 1;
+    }
+    return n;
+}
+
+fn main(): int {
+    println(f"{count(Upto { cur = 2, end = 5 })} {count(0..3)}");
+    return 0;
+}

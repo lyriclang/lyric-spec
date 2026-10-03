@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 0 255 -1 7
+//! since: 5.0.0
+// 03 §3.3, §1.3: in 'a ?? 0' with 'a: ?uint8' the literal is a uint8, and in 'x ??= 7' too.
+import std.io { println };
+
+fn main(): void {
+    let none: ?uint8 = null;
+    let top: ?uint8 = 255;
+    let neg: ?int8 = null;
+    let a = none ?? 0;
+    let b: uint8 = top ?? 0;
+    var c: ?uint16 = null;
+    c ??= 7;
+    println(f"{a} {b} {neg ?? -1} {c ?? 0}");
+}

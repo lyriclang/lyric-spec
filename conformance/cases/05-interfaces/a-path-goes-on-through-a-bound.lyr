@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 3 -1 4
+//! since: 5.0.0
+// 05 §8 rule 4: a path goes on through what each step provides — 'A.Iter.Item' through the bound
+// of 'Iter', and on a type through its answers.
+import std.io { println };
+
+fn first<A :: [Iterable]>(a: A): ?A.Iter.Item {
+    var it = a.iter();
+    return it.next();
+}
+
+struct Bag :: [Iterable] {
+    type Iter = Range<int>;
+    n: int,
+
+    fn iter(): Range<int> {
+        return 0..this.n;
+    }
+}
+
+fn main(): int {
+    let none = first(5..5);
+    let x: Bag.Iter.Item = 4;
+    println(f"{first(3..9) ?? -1} {none ?? -1} {x}");
+    return 0;
+}
