@@ -296,6 +296,14 @@ same. What is not written here yet is decided in the design documents, not here.
    ([§8](#8-associated-types) rule 5).
 8. `{x}` in an f-string renders through `Display { fn show(): string; }`; the scalars render
    natively and conform besides.
+9. **Indexing.** `x[k]` on a struct, a class or an enum is `x.index(k)` through
+   `Index<K> { type Output; fn index(k: K): Self.Output; }`, and `x[k] = v` is `x.setIndex(k, v)`
+   through `IndexSet<K> :: [Index<K>] { mut fn setIndex(k: K, v: Self.Output): void; }` — the
+   containers' `[i]` and `[k]` ([12](12-stdlib.md)). A type read and not written refuses the
+   assignment (`LYR-SEM0019`); a compound assignment through an index would read and write it,
+   evaluating `k` twice, and is written out (`LYR-SEM0003`). An element so read is a value, no
+   place: `x[k].f = v` is refused (03 §2.2). The index of an array, a view and an inline array is
+   built in ([03 §5](03-types.md)).
 
 ## 13. Generic extends
 

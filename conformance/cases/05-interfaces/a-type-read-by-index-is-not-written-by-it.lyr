@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 05 §12 rule 9: Index reads; writing takes IndexSet.
+
+class Row :: [Index<int>] {
+    type Output = int;
+    cells: int[],
+
+    fn index(k: int): int {
+        return this.cells[k];
+    }
+}
+
+fn main(): void {
+    let r = Row { cells = [1, 2] };
+    r[0] = 5;
+}
