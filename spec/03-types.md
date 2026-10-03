@@ -116,10 +116,13 @@ The number tower, `bool` and `char`
 What an f-string hole and the converters of `std.string` write ([12 §1](12-stdlib.md)):
 
 1. An integer is its decimal digits, with a leading `-` when negative.
-2. A float is the **shortest** decimal text that reads back as the same value: `0.1`, `1`
-   (an integral value carries no fraction), `-0`, `0.30000000000000004`, `1e+21`, `1e-07`;
-   `inf`, `-inf` and `NaN` for the values that are no number. A `float32` is written as the
-   `float` it widens to: `0.1` as a `float32` prints `0.10000000149011612`.
+2. A float is the **shortest** decimal text that reads back as the same value (design 10 B5
+   Z5): `0.1`, `0.30000000000000004`, `1.5`. It is written plain for a decimal exponent from
+   -4 up to below 16, an integral value with `.0` — `1.0`, `-0.0`, `100.0`,
+   `1000000000000000.0` —, and with an exponent beyond, its sign always and two digits at
+   least: `1e+16`, `1e+21`, `1.5e-07`, `5e-324`. `inf`, `-inf` and `nan` stand for the values
+   that are no number. A `float32` is written as the `float` it widens to: `0.1` as a
+   `float32` prints `0.10000000149011612`.
 3. `bool` is `true` or `false`; `char` is the character itself, UTF-8 encoded.
 
 ## 2. Structs and classes
