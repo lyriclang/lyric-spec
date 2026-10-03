@@ -1,0 +1,35 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 07 §2 rule 6: the loop's next() throws — the head is marked.
+
+class Fail :: [Error] {
+    at: int,
+
+    fn message(): string {
+        return f"failed at {this.at}";
+    }
+}
+
+struct Lines :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+    stop: int,
+
+    mut fn next(): ?int throws Fail {
+        if (this.i == this.stop) { throw Fail { at = this.i }; }
+        this.i = this.i + 1;
+        return this.i;
+    }
+}
+
+fn sum(l: Lines): int throws Fail {
+    var s = 0;
+    for (x in l) { s = s + x; }
+    return s;
+}
+
+fn main(): int {
+    return 0;
+}

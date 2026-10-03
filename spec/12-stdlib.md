@@ -107,9 +107,11 @@ comes back as it is. A `char`'s code point is `c.toUint32()`, and `char.fromUint
 The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Iterator` and
 `Iterable` on.
 
-- **`Iterator { type Item; mut fn next(): ?Self.Item; fn sizeHint(): (int, ?int) }`**: `next()`
-  gives the next value, and `null` at the end. `sizeHint()` says how many values are left, at least
-  and at most where that is known; the default says `(0, null)`.
+- **`Iterator { type Item; type Error :: [Error] = never; mut fn next(): ?Self.Item throws
+  Self.Error; fn sizeHint(): (int, ?int) }`**: `next()` gives the next value, and `null` at the
+  end. A walk that can fail answers its `Error`, which `next()` throws; by default it throws
+  nothing ([07 §2](07-statements.md) rule 6). `sizeHint()` says how many values are left, at
+  least and at most where that is known; the default says `(0, null)`.
 - **`Iterable { type Iter :: [Iterator]; fn iter(): Self.Iter; }`**: what `for` walks. Every
   iterator is iterable as itself, `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]`.
 - **`DoubleEnded :: [Iterator] { mut fn nextBack(): ?Self.Item; }`**: the last value not yet

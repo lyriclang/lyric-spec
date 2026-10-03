@@ -18,10 +18,10 @@ struct Upto :: [Iterator] {
     }
 }
 
-fn countAll<A :: [Iterable]>(a: A): int {
+fn countAll<A :: [Iterable]>(a: A): int throws A.Iter.Error {
     let it = a.iter();
     var n = 0;
-    for (_ in it) {
+    for (_ in try it) {
         n = n + 1;
     }
     return n;

@@ -1,0 +1,31 @@
+//! check
+//! error: LYR-SEM0163
+//! since: 5.0.0
+// 07 §2 rule 6: 'try?' in a head would take the head's value and leave the pulls outside.
+
+class Fail :: [Error] {
+    at: int,
+
+    fn message(): string {
+        return f"failed at {this.at}";
+    }
+}
+
+struct Lines :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+    stop: int,
+
+    mut fn next(): ?int throws Fail {
+        if (this.i == this.stop) { throw Fail { at = this.i }; }
+        this.i = this.i + 1;
+        return this.i;
+    }
+}
+
+fn main(): int {
+    var s = 0;
+    for (x in try? Lines { i = 0, stop = 3 }) { s = s + 1; }
+    return s;
+}

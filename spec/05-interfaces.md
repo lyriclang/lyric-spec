@@ -155,6 +155,9 @@ same. What is not written here yet is decided in the design documents, not here.
    `type Iter :: [Iterator];` (design 10 B6) — interfaces, written as a type parameter's
    constraints are (`LYR-SEM0078` otherwise), `Self` again the conforming type. Every answer
    conforms to the bound (`LYR-SEM0160`); an answer carries none of its own (`LYR-SEM0161`).
+   `never` answers — as a default, an answer or a fixation — only an associated type bounded
+   by `Error`, as the empty thrown set ([06](06-errors.md), design 05 E2 K4); elsewhere it
+   would type a value that cannot exist (`LYR-SEM0145`).
 3. A conforming type **answers** in its body or in the conformance block: `type Item = int;`.
    A conformer without an answer, where the interface gives no default, is refused
    (`LYR-SEM0128`); an answer that no interface of the type asks for is refused

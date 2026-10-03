@@ -75,3 +75,13 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    `Iterable` besides, through `SliceIter<T>` ([12 §Iteration](12-stdlib.md)), for what takes
    an `Iterable`; an inline array is not, as a view of a local one is refused
    ([03 §5.3](03-types.md) rule 4).
+6. An iterator that **may throw** — its `Error` is not `never` (design 10 B6 I5) — makes the
+   loop's calls throw sites at its head, `iter()` once and `next()` at every pass: the head is
+   marked, **`for (line in try lines)`**, the `try` covering the source and every pull
+   (`LYR-SEM0138` without it), and what they throw is covered as a call's is
+   ([06 §3](06-errors.md)) — by a `try` block around the loop or by the function's set. Through
+   a constraint the `Error` is open: a loop over `A :: [Iterable]` throws `A.Iter.Error`, which
+   the function declares, and a call where it is `never` throws nothing. A mark over a loop that
+   cannot throw is warned about (`LYR-SEM0139`). Only the plain mark stands in a head
+   (`LYR-SEM0163`): `try?`, `try!` and the catching form would take the head's value and leave
+   the pulls outside.

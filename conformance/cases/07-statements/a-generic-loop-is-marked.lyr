@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 07 §2 rule 6: through a constraint the Error is open — an unmarked loop is refused.
+
+fn count<A :: [Iterable]>(a: A): int throws A.Iter.Error {
+    var n = 0;
+    for (_ in a) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    return 0;
+}
