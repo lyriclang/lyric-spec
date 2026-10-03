@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 1
+//! | fail
+//! since: 5.0.0
+// 07 §2 rule 6, 12 §Iteration: a throwing coroutine's pulls throw through the marked head.
+import std.io { println };
+
+class Fail :: [Error] {
+    fn message(): string { return "fail"; }
+}
+
+fn throwing(): Coroutine<int> throws Fail {
+    yield 1;
+    throw Fail {};
+}
+
+fn main(): int {
+    try {
+        for (x in try throwing()) { println(f"{x}"); }
+    } catch (e: Fail) {
+        println(e.message());
+    }
+    return 0;
+}

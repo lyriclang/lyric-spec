@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | unwound
+//! | 6
+//! | 0
+//! | unwound
+//! | after
+//! since: 5.0.0
+// 12 §Iteration, 07 §2 rule 7: a coroutine is an iterator of what it yields; a loop that leaves
+// it early closes it, and its stack unwinds.
+import std.io { println };
+
+fn gen(n: int): Coroutine<int> {
+    defer { println("unwound"); }
+    var i = 0;
+    while (i < n) {
+        yield i;
+        i = i + 1;
+    }
+}
+
+fn main(): int {
+    var s = 0;
+    for (x in gen(4)) { s = s + x; }
+    println(f"{s}");
+    for (x in gen(5)) {
+        if (x == 1) { break; }
+        println(f"{x}");
+    }
+    println("after");
+    return 0;
+}
