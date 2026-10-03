@@ -217,6 +217,18 @@ holds three:
 Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ([13](13-abi.md)).
 
+## Strings
+
+A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
+
+- `length()`, the bytes, `O(1)`; `isEmpty()`; `charCount()`, the characters, `O(n)`; `chars()`,
+  the characters decoded, an `Iterator` of `char`.
+- `string` is `Ordered` and `TotalOrder` byte by byte, which is the order of the code points.
+- The search over a string pattern: `contains(p)`, `startsWith(p)`, `endsWith(p)`; `find(p)` and
+  `rfind(p)`, the byte index of the first and the last `p` or `null` — an empty `p` stands at 0
+  and at the length; `count(p)`, the occurrences none overlapping another, an empty `p` between
+  every two characters and at both ends.
+
 ## Collections
 
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11).
