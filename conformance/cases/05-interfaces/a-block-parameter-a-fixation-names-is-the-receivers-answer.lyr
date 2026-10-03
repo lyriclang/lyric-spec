@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | <6> <hi>
+//! since: 5.0.0
+// 05 §13 rule 2: the target names H alone; the fixation in H's constraint names T, which is
+// what the receiver answers for Held.
+import std.io { println };
+
+interface Holder {
+    type Held;
+    fn held(): Self.Held;
+}
+
+extend<H :: [Holder<Held = T>], T :: [Display]> H {
+    fn shown(): string {
+        return f"<{this.held()}>";
+    }
+}
+
+struct Box :: [Holder] {
+    type Held = int;
+    v: int,
+
+    fn held(): int {
+        return this.v;
+    }
+}
+
+struct Label :: [Holder] {
+    type Held = string;
+    s: string,
+
+    fn held(): string {
+        return this.s;
+    }
+}
+
+fn main(): int {
+    println(f"{Box { v = 6 }.shown()} {Label { s = "hi" }.shown()}");
+    return 0;
+}

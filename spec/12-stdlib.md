@@ -142,6 +142,10 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
   decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`.
+- The terminators **of an element kind** stand on the iterators whose `Item` admits them
+  ([05 §13](05-interfaces.md) rule 2): `sum()` and `product()` of a `Num`, zero and one where there
+  is no value; `min()` and `max()` of an `Ordered`, `null` without a value, the first of equal
+  ones; `join(sep)` of a `Display`, the texts with `sep` between each two.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.

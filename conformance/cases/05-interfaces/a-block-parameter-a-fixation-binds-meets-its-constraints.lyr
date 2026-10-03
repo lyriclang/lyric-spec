@@ -1,0 +1,33 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 05 §13 rule 2: T is the receiver's Held, and its constraint holds for it or the member is
+// not there — an Opaque is no Display.
+
+interface Holder {
+    type Held;
+    fn held(): Self.Held;
+}
+
+extend<H :: [Holder<Held = T>], T :: [Display]> H {
+    fn shown(): string {
+        return f"<{this.held()}>";
+    }
+}
+
+struct Opaque {
+    n: int,
+}
+
+struct Raw :: [Holder] {
+    type Held = Opaque;
+    o: Opaque,
+
+    fn held(): Opaque {
+        return this.o;
+    }
+}
+
+fn main(): void {
+    let s = Raw { o = Opaque { n = 1 } }.shown();
+}
