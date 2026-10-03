@@ -339,7 +339,8 @@ same. What is not written here yet is decided in the design documents, not here.
    is refused at the block (`LYR-SEM0121`), and one the receiver's type does not admit is not
    there (`LYR-SEM0012`). In a generic body a type parameter whose constraints imply the
    block's receives it too (D2 R4). A shape receives a blanket member where it satisfies the
-   block's constraints (rule 6).
+   block's constraints (rule 6). A member with type parameters of its own, `fn mapped<U>(…)`,
+   is one function per receiver and per its own type arguments.
 8. **Blanket conformance** (D15): `extend<T :: [I]> T :: [J] { … }` gives `J` to every type the
    constraints admit — the signatures checked at `T` — so a `Named` satisfies a constraint on
    `J` and a call through it is the block's member; a type it does not reach keeps its own.
