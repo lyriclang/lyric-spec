@@ -137,6 +137,11 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
   one type where both are one, the other where one is `never`, the root `Error` where they
   differ — reduced once both are known; open, it covers each of its parts.
+- The **terminators** walk an iterator — a copy of a struct one, a class one where it stands — and
+  throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
+  value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
+  included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
+  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
