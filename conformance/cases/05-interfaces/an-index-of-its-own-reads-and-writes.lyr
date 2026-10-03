@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | b x x a
+//! since: 5.0.0
+// 05 §12 rule 9: 'x[k]' reads 'x.index(k)', 'x[k] = v' writes 'x.setIndex(k, v)' — through a
+// constraint as well.
+import std.io { println };
+
+class Grid :: [IndexSet<int>] {
+    type Output = string;
+    cells: string[],
+
+    fn index(k: int): string {
+        return this.cells[k];
+    }
+
+    mut fn setIndex(k: int, v: string): void {
+        this.cells[k] = v;
+    }
+}
+
+fn first<T :: [Index<int>]>(t: T): T.Output {
+    return t[0];
+}
+
+fn main(): int {
+    let g = Grid { cells = ["a", "b", "c"] };
+    let before = g[1];
+    g[1] = "x";
+    println(f"{before} {g[1]} {g.cells[1]} {first(g)}");
+    return 0;
+}
