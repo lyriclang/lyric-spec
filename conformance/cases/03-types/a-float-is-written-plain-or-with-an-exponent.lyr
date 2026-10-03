@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 100.0 1000000000000000.0 1e+16 123456789.0
+//! | 0.0001 1e-05 1.5e-07 5e-324
+//! | 1.7976931348623157e+308 -2.5 0.0 1234.5
+//! since: 5.0.0
+// 03 §1.7: the shortest digits, plain for an exponent from -4 below 16 with .0 on an integral value, an exponent beyond.
+import std.io { println };
+
+fn main(): int {
+    println(f"{100.0} {1e15} {1e16} {123456789.0}");
+    println(f"{0.0001} {0.00001} {1.5e-7} {5e-324}");
+    println(f"{1.7976931348623157e308} {-2.5} {0.0} {1234.5}");
+    return 0;
+}

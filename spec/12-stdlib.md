@@ -21,7 +21,7 @@ the same functions.
 | `concat(a: string, b: string): string` | the two joined; what `+` on strings is |
 | `fromInt(value: int): string` | the decimal digits, `-` when negative ([03 §1.7](03-types.md)) |
 | `fromUint(value: uint): string` | the decimal digits |
-| `fromFloat(value: float): string` | the shortest text that reads back as the value; `inf`, `-inf`, `NaN` ([03 §1.7](03-types.md)) |
+| `fromFloat(value: float): string` | the shortest text that reads back as the value, `1.0` for an integral one; `inf`, `-inf`, `nan` ([03 §1.7](03-types.md)) |
 | `fromBool(value: bool): string` | `true` or `false` |
 | `fromChar(value: char): string` | the character, UTF-8 |
 
