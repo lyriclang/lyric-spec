@@ -191,5 +191,11 @@ a write through one reaches the array. `length()` and the index are the primitiv
   element, `binarySearch(x)`: the index of an element equal to `x` in sorted elements, any of
   several equal ones, or `null`.
 - Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two.
+- The **sorts** (10 C10): `sortBy(cmp)` puts the elements in the order `cmp` gives, and
+  `sortByKey(key)` in the order of a `TotalOrder` key; of a `TotalOrder` element, `sort()` in
+  ascending order. All three are **stable** — equal elements keep their order — and take a buffer
+  of the length. `sortUnstable()`, of a `TotalOrder` element, sorts in place without one; equal
+  elements end in any order. Each is `O(n log n)` in comparisons. A `float` has no total order
+  of its own: its elements sort through `sortBy`.
 - `arrayOf(n, f)` ([03 §8](03-types.md)) calls `f` once per index, in order; a negative `n`
   panics.
