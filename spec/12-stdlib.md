@@ -37,9 +37,11 @@ arithmetic stays in the type:
 
 | Interface | Parents | Members | Conformers |
 |---|---|---|---|
-| `Num` | `Equatable`, `Ordered`, `Add`, `Sub`, `Mul`, `Div`, `Rem` (each `<Out = Self>`), `Display`, `Debug`, `Default` | `static let zero, one: Self`; `isZero(): bool` | all ten |
+| `Num` | `Equatable`, `Ordered`, `Add`, `Sub`, `Mul`, `Div`, `Rem` (each `<Out = Self>`), `Display`, `Debug`, `Parse`, `Default` | `static let zero, one: Self`; `isZero(): bool` | all ten |
 | `Signed` | `Num`, `Neg<Out = Self>` | `abs(): Self`, `signum(): Self` | `int8`…`int`, `float32`, `float` |
 | `Integer` | `Num`, `TotalOrder`, `Hashable`, the bit operators (each `<Out = Self>`) | `static let min, max: Self`; `static let bitWidth: int`, `isSigned: bool` | `int8`…`int`, `uint8`…`uint` |
+
+The prelude passes `Num` and `Integer` on (design 10 B2); `Signed` is `std.core`'s.
 
 `isZero`, `abs` and `signum` are defaults, each type's own ([05 §1](05-interfaces.md) rule 4):
 `signum` gives `-1`, `0` or `1` in the type, and a float's NaN stays NaN. `uint` has no `abs`.
@@ -59,3 +61,24 @@ arithmetic stays in the type:
 - `leadingZeros`, `trailingZeros` and `popCount` count bits at the type's width (`bitWidth` for
   zero); `rotateLeft(n)` and `rotateRight(n)` rotate modulo the width, a negative `n` the other
   way.
+
+### Parsing
+
+A type read from a text conforms to **`Parse`**, `static fn parse(s: string): Self throws
+ParseError` (design 10 B4, B5 Z6): every number type through `Num`, and `bool`. The text is
+taken whole — no whitespace, nothing after the value — and what is wrong with it is thrown,
+never panicked (10 B3): a **`ParseError`**, whose `kind` is a **`ParseErrorKind`** — `Empty` for
+no text, `Invalid` for a text not of the type's form, `Overflow` for a number beyond the type's
+range. All three are `std.core`'s.
+
+- An **integer** is an optional `+` or `-` and ASCII digits, `_` only between two digits.
+  `parse(s, radix)` stands beside `parse(s)` ([08 §1.2](08-expressions.md)) and reads digits in
+  `radix`, 2 to 36 — `a`…`z` or `A`…`Z` for 10 to 35; a radix outside is the program's error
+  and panics. An unsigned type takes no `-`, not even before `0`. A byte outside the form makes
+  the text `Invalid` however many digits run before it; only a well-formed number is an
+  `Overflow`.
+- A **float** is an optional sign, then digits with an optional `.` and fraction — one digit at
+  least — and an optional exponent, `e` or `E` with its own sign and digits, `_` only between
+  two digits; or the sign and `inf` or `nan`. The value is the float nearest the text: beyond
+  the range an infinity, below it a zero, as IEEE 754 rounds — a float has no `Overflow`.
+- A **bool** is `true` or `false`.

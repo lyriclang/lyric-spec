@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 1 2
+//! since: 5.0.0
+// 05 §3.4, 08 §1.2.1: one conformance block holding a name at two counts holds an overload set, not two scopes.
+import std.io { println };
+
+interface Make { static fn make(s: string): Self; }
+extend int8 :: [Make] {
+    static fn make(s: string, n: int): int8 { return 2; }
+    static fn make(s: string): int8 { return 1; }
+}
+
+fn main(): int {
+    println(f"{int8.make("x")} {int8.make("y", 16)}");
+    return 0;
+}

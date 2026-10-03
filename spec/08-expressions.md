@@ -43,6 +43,9 @@ A call names a function and gives it arguments
    arguments** — `of(hex)` beside `of(r, g, b)` — and never otherwise (D4): a call counts its
    arguments and finds one candidate, with no ranking and no conversion of any kind; none that
    takes that many is refused (`LYR-SEM0087`). The names of the arguments decide nothing (F7).
+   A type's members are one scope with its blocks' ([05 §13](05-interfaces.md)): a method and a
+   static reached through the type's name count among them alike — `int8.parse(s)` beside
+   `int8.parse(s, 16)`.
 2. Two declarations of one name whose counts overlap for any number — a default widens a
    count to a range — are a redeclaration (`LYR-SEM0085`), at the declaration and never at a
    call. An interface declares a member once (`LYR-SEM0088`).
