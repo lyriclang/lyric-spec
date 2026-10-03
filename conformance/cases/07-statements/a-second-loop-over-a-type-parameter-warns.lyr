@@ -3,7 +3,7 @@
 //! since: 5.0.0
 // 07 §2 rule 4: an iterator of a type parameter may be a class's — a second loop warns.
 
-fn twice<I :: [Iterator<Item = int>]>(it: I): int {
+fn twice<I :: [Iterator<Item = int, Error = never>]>(it: I): int {
     var sum = 0;
     for (x in it) { sum = sum + x; }
     if (sum > 0) {

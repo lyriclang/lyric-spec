@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 05 §8 rule 2: 'never' answers only an associated type bounded by Error — an Item of it would
+// type a value that cannot exist.
+
+interface Source {
+    type Item;
+    fn first(): Self.Item;
+}
+
+struct Empty :: [Source] {
+    type Item = never;
+
+    fn first(): never {
+        panic("empty");
+    }
+}
+
+fn main(): int {
+    return 0;
+}

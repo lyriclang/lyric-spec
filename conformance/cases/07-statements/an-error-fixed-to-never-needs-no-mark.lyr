@@ -1,9 +1,8 @@
 //! run
 //! stdout:
-//! | 3 3
+//! | 6 3
 //! since: 5.0.0
-// 07 §2.1, rule 6: through 'A :: [Iterable]' the loop walks whatever A becomes, marked: its
-// Error is open there.
+// 07 §2 rule 6, 05 §8 rule 2: 'Error = never' fixed at the constraint — the loop throws nothing.
 import std.io { println };
 
 struct Upto :: [Iterator] {
@@ -18,15 +17,13 @@ struct Upto :: [Iterator] {
     }
 }
 
-fn count<A :: [Iterable]>(a: A): int throws A.Iter.Error {
-    var n = 0;
-    for (x in try a) {
-        n = n + 1;
-    }
-    return n;
+fn total<I :: [Iterator<Item = int, Error = never>]>(it: I): int {
+    var s = 0;
+    for (x in it) { s = s + x; }
+    return s;
 }
 
 fn main(): int {
-    println(f"{count(Upto { cur = 2, end = 5 })} {count(0..3)}");
+    println(f"{total(Upto { cur = 1, end = 4 })} {total(0..3)}");
     return 0;
 }

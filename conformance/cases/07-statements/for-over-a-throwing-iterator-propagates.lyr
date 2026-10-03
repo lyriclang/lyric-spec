@@ -1,0 +1,55 @@
+//! run
+//! stdout:
+//! | failed at 3
+//! | 3
+//! since: 5.0.0
+// 07 §2 rule 6: a throwing iterator's loop is marked, and what next() throws propagates as a
+// call's does — to the function's set, or to a 'try' block around the loop.
+import std.io { println };
+
+class Fail :: [Error] {
+    at: int,
+
+    fn message(): string {
+        return f"failed at {this.at}";
+    }
+}
+
+struct Lines :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+    stop: int,
+
+    mut fn next(): ?int throws Fail {
+        if (this.i == this.stop) { throw Fail { at = this.i }; }
+        this.i = this.i + 1;
+        return this.i;
+    }
+}
+
+fn sum(l: Lines): int throws Fail {
+    var s = 0;
+    for (x in try l) { s = s + x; }
+    return s;
+}
+
+fn main(): int {
+    try {
+        let n = try sum(Lines { i = 0, stop = 3 });
+        println(f"{n}");
+    } catch (e: Fail) {
+        println(e.message());
+    }
+    try {
+        var s = 0;
+        for (x in try Lines { i = 0, stop = 3 }) {
+            s = s + x;
+            if (x == 2) { break; }
+        }
+        println(f"{s}");
+    } catch (e: Fail) {
+        println(e.message());
+    }
+    return 0;
+}

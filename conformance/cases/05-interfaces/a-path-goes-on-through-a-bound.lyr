@@ -6,9 +6,9 @@
 // of 'Iter', and on a type through its answers.
 import std.io { println };
 
-fn first<A :: [Iterable]>(a: A): ?A.Iter.Item {
+fn first<A :: [Iterable]>(a: A): ?A.Iter.Item throws A.Iter.Error {
     var it = a.iter();
-    return it.next();
+    return try it.next();
 }
 
 struct Bag :: [Iterable] {

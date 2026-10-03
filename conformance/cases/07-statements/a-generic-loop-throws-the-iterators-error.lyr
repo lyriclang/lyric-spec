@@ -1,0 +1,58 @@
+//! run
+//! stdout:
+//! | 4 2
+//! | failed at 2
+//! since: 5.0.0
+// 07 §2 rule 6: through a constraint the Error is open — the function declares it, and a call
+// where it is never throws nothing.
+import std.io { println };
+
+class Fail :: [Error] {
+    at: int,
+
+    fn message(): string {
+        return f"failed at {this.at}";
+    }
+}
+
+struct Lines :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+    stop: int,
+
+    mut fn next(): ?int throws Fail {
+        if (this.i == this.stop) { throw Fail { at = this.i }; }
+        this.i = this.i + 1;
+        return this.i;
+    }
+}
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+fn count<A :: [Iterable]>(a: A): int throws A.Iter.Error {
+    var n = 0;
+    for (_ in try a) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    println(f"{count(Upto { cur = 0, end = 4 })} {count([1, 2])}");
+    try {
+        let n = try count(Lines { i = 0, stop = 2 });
+        println(f"{n}");
+    } catch (e: Fail) {
+        println(e.message());
+    }
+    return 0;
+}
