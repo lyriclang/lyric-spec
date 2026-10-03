@@ -418,7 +418,11 @@ Elements in a row: behind a reference, through a view, or as a value
    are places in the array, `v[a..b]` is a view of the same array, and an array pattern
    matches it ([09 §2](09-patterns.md)).
 4. At a coercion site an array stands where a view of its element type is expected and gives a
-   view of itself, whole; a view never stands where an array is expected (`LYR-SEM0001`).
+   view of itself, whole; a view never stands where an array is expected (`LYR-SEM0001`). A
+   **receiver** is such a site for the members written on `Slice<T>` (design 03 A2): where the
+   array's own blocks give no member of the name, `xs.m()` is the view's member, called on a view
+   of all of `xs`, its constraints checked as for the view (`LYR-SEM0134`); a blanket member
+   comes after it ([05 §13](05-interfaces.md) rule 7). The library writes such a member once.
 5. There is no lifetime: the array lives as long as any view of it does, and a view kept in an
    object or returned from a function is as good as one in a local ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
 6. `StringView`, the view of a string's bytes, is written with the strings ([12](12-stdlib.md)).
