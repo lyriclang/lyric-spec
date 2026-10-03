@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 1 2
+//! since: 5.0.0
+// 08 §1.2.1: a type's members are one scope with its blocks' — a static through the type's name counts among them.
+import std.io { println };
+
+interface Make { static fn make(s: string): Self; }
+extend int8 :: [Make] { static fn make(s: string): int8 { return 1; } }
+extend int8 { static fn make(s: string, n: int): int8 { return 2; } }
+
+fn main(): int {
+    println(f"{int8.make("x")} {int8.make("y", 16)}");
+    return 0;
+}

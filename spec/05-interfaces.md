@@ -83,7 +83,9 @@ same. What is not written here yet is decided in the design documents, not here.
    interface**, in separate conformance blocks — `extend C :: [I1] { fn greet() … }` beside
    `extend C :: [I2] { fn greet() … }`. The name then belongs to each block: the unqualified
    call `c.greet()` is refused and says how to qualify (`LYR-SEM0122`); through an interface
-   value of `I1` or `I2`, and through the qualified call (§4), each is reached.
+   value of `I1` or `I2`, and through the qualified call (§4), each is reached. One block that
+   holds a name at two counts holds an overload set ([08 §1.2](08-expressions.md)), not two
+   scopes.
 
 ## 4. The qualified call
 
@@ -133,7 +135,8 @@ same. What is not written here yet is decided in the design documents, not here.
    (`LYR-SEM0042`; `LYR-SEM0020` where it has none). A `static let` answers with the type the
    interface writes, `Self` read as the conformer — `static let zero: int = 0;` in
    `extend int :: [Num]`. The member is reached through a type parameter alone, `T.parse(s)`,
-   `T.zero` — the conformer's own static, a direct call or a read. On a value of the parameter
+   `T.zero` — the conformer's own static, a direct call or a read; of several of the name, the
+   one that answers the member. On a value of the parameter
    it is not reached (`LYR-SEM0055`).
 3. An interface that names `Self` beyond the receiver, or declares a static member, is a
    **constraint only** (04 D9): no value of it arises — a table would hold no one function for

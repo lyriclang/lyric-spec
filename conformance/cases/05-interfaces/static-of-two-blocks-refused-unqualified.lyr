@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0122
+//! since: 5.0.0
+// 05 §3.4: a static implemented separately per interface belongs to each block; the unqualified call through the type's name is refused.
+interface Make { static fn make(s: string): Self; }
+interface Build { static fn make(s: string): Self; }
+extend int8 :: [Make] { static fn make(s: string): int8 { return 1; } }
+extend int8 :: [Build] { static fn make(s: string): int8 { return 2; } }
+
+fn main(): int {
+    let v = int8.make("x");
+    return 0;
+}

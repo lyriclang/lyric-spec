@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1
+//! since: 5.0.0
+// 05 §7.2: of a type's statics of one name, 'T.make(s)' reaches the one that answers the member.
+import std.io { println };
+
+interface Make { static fn make(s: string): Self; }
+extend int8 :: [Make] {
+    static fn make(s: string, n: int): int8 { return 2; }
+    static fn make(s: string): int8 { return 1; }
+}
+fn get<T :: [Make]>(s: string): T { return T.make(s); }
+
+fn main(): int {
+    let v: int8 = get("a");
+    println(f"{v}");
+    return 0;
+}
