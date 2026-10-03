@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | ff 0XFF 101 0o10 +42 -0007 0x00ff 1,234,567 dead_beef
+//! since: 5.0.0
+// 12 §2 rule 1: an integer in a radix, with its prefix, a sign, zeros after the sign and the prefix,
+// grouped by three decimal digits or four of another radix.
+import std.io { println };
+
+fn main(): int {
+    println(f"{255:x} {255:#X} {5:b} {8:#o} {42:+} {-7:05} {255:#06x} {1234567:,} {3735928559:_x}");
+    return 0;
+}

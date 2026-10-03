@@ -14,6 +14,7 @@ carries `//! since: 5.0.0` or later; the 4.x suite lives on the `script` branch.
 | `08-expressions/` | [08 Expressions](../../spec/08-expressions.md) §1, calls | M4 S2 |
 | `09-patterns/` | [09 Patterns](../../spec/09-patterns.md) | M3 S4 |
 | `10-concurrency/` | [10 Concurrency](../../spec/10-concurrency.md) §1, coroutines and generators | M6 S2a |
+| `12-stdlib/` | [12 The standard library as language](../../spec/12-stdlib.md) §2, the format language | M8a S9c |
 | `15-project/` | [15 Projects](../../spec/15-project.md) §1, the manifest | M7 S1 |
 
 The reference runner drives `lyric5` — `python3 tools/run_conformance.py --lyric5 <compiler>
