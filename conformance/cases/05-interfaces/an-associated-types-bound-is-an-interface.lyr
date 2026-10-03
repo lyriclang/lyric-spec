@@ -1,0 +1,30 @@
+//! check
+//! error: LYR-SEM0078
+//! since: 5.0.0
+// 05 §8 rule 2: a bound names interfaces.
+import std.io { println };
+
+interface It {
+    type Item;
+    mut fn next(): ?Self.Item;
+}
+
+struct Upto :: [It] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+interface Able {
+    type Iter :: [int];
+}
+
+fn main(): int {
+    return 0;
+}

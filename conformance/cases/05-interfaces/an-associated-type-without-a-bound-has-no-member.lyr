@@ -1,0 +1,37 @@
+//! check
+//! error: LYR-SEM0027
+//! since: 5.0.0
+// 05 §8 rule 4: without a bound the associated type has no member until its answer is known.
+import std.io { println };
+
+interface It {
+    type Item;
+    mut fn next(): ?Self.Item;
+}
+
+struct Upto :: [It] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+interface Able {
+    type Iter;
+    fn iter(): Self.Iter;
+}
+
+fn walk<A :: [Able]>(a: A): int {
+    var c = a.iter();
+    while (c.next() != null) { }
+    return 0;
+}
+
+fn main(): int {
+    return 0;
+}

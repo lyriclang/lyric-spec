@@ -1,0 +1,36 @@
+//! check
+//! error: LYR-SEM0161
+//! since: 5.0.0
+// 05 §8 rule 2: the bound is the declaring interface's; an answer carries none.
+import std.io { println };
+
+interface It {
+    type Item;
+    mut fn next(): ?Self.Item;
+}
+
+struct Upto :: [It] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+interface Able {
+    type Iter :: [It];
+    fn iter(): Self.Iter;
+}
+
+struct Box :: [Able] {
+    type Iter :: [It] = Upto;
+    fn iter(): Upto { return Upto { cur = 0, end = 1 }; }
+}
+
+fn main(): int {
+    return 0;
+}

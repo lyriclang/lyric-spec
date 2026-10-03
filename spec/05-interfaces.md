@@ -151,7 +151,10 @@ same. What is not written here yet is decided in the design documents, not here.
    output of the conformance: one answer per type, read off the type wherever it is used. The
    two combine, `interface Index<K> { type Output; fn get(k: K): Self.Output; }`.
 2. Inside the interface the associated type is **`Self.Item`**. The declaration may carry a
-   default, `type Out = Self;`, resolved with `Self` as the conforming type.
+   default, `type Out = Self;`, resolved with `Self` as the conforming type, and a **bound**,
+   `type Iter :: [Iterator];` (design 10 B6) — interfaces, written as a type parameter's
+   constraints are (`LYR-SEM0078` otherwise), `Self` again the conforming type. Every answer
+   conforms to the bound (`LYR-SEM0160`); an answer carries none of its own (`LYR-SEM0161`).
 3. A conforming type **answers** in its body or in the conformance block: `type Item = int;`.
    A conformer without an answer, where the interface gives no default, is refused
    (`LYR-SEM0128`); an answer that no interface of the type asks for is refused
@@ -160,12 +163,19 @@ same. What is not written here yet is decided in the design documents, not here.
    **conformance instance**: `Mul<int>` and `Mul<float>` of one type each answer `Out` for
    themselves ([§12](#12-the-operator-interfaces)); a second conformance block for the same
    instance is refused as a whole, its answers with it (`LYR-SEM0133`). In a type's own body
-   `Self.Item` is its answer. A built-in conforms through its block alone and answers there.
+   `Self.Item` is its answer. A built-in conforms through its block alone and answers there. A
+   **blanket or shape block** ([§13](#13-generic-extends) rules 6–8) answers in its body or by
+   a fixation in its list — `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]` — for every
+   type it reaches: a type with no answer of its own is answered there, at the parameters it
+   binds, and the block's signatures read the answer.
 4. Through a constraint the associated type is a **type path**, `T.Item`:
    `fn firstOf<T :: [Container]>(c: T): T.Item { return c.first(); }` — the answer of whatever
    `T` becomes, `int` at `firstOf(IntBox { … })`. The parameter's constraints declare it
    (`LYR-SEM0128` where none does). An interface is no head for the path: `Container.Item` is
-   nobody's answer.
+   nobody's answer. Through the path the associated type has **what its bound provides** — the
+   members, `a.iter().next()`, and the constraints the bound reaches, `count(a.iter())` with
+   `count<I :: [Iterator]>` — and nothing else: without a bound it has no member
+   (`LYR-SEM0027`) and satisfies no constraint (`LYR-SEM0028`) until its answer is known.
 5. A constraint may **fix** an associated type: `T :: [Iterator<Item = int>]`. Inside the
    declaration `T.Item` is `int`; an argument whose answer is another type does not satisfy
    the constraint (`LYR-SEM0028`); a name no associated type of the interface carries is
