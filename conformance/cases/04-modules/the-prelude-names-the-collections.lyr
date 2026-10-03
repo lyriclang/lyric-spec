@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 2 1 true
+//! since: 5.0.0
+// 04 §4 rule 4: List, Map and Set are the prelude's — named without an import.
+import std.io { println };
+
+fn main(): int {
+    let xs = List<int>.new();
+    xs.push(4);
+    xs.push(5);
+    let m = Map<string, int>.new();
+    m.insert("a", xs[1]);
+    let s = Set<string>.new();
+    s.insert("a");
+    println(f"{xs.length()} {m.length()} {s.contains("a")}");
+    return 0;
+}
