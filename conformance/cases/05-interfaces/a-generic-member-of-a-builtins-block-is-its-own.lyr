@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 8 16 80 160
+//! since: 5.0.0
+// 05 §13: a generic member of a block is its target's own — two builtins' blocks with one name are two functions, static or not.
+import std.io { println };
+
+extend int8 {
+    static fn wrap<T>(v: T): int8 { return 8; }
+    fn tag<T>(v: T): int { return 80; }
+}
+
+extend int16 {
+    static fn wrap<T>(v: T): int16 { return 16; }
+    fn tag<T>(v: T): int { return 160; }
+}
+
+fn main(): int {
+    let a: int8 = 1;
+    let b: int16 = 2;
+    println(f"{int8.wrap(1)} {int16.wrap(1)} {a.tag(true)} {b.tag(true)}");
+    return 0;
+}
