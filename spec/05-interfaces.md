@@ -301,7 +301,10 @@ same. What is not written here yet is decided in the design documents, not here.
 2. A member of such a block is reached on every receiver the target **matches**: the receiver
    binds the parameters — `List<int>.first()` is an `int` — and the block's constraints must
    hold for what it bound; where they do not, the member is not there (`LYR-SEM0134`). A block
-   on one instance adds to that instance alone (`LYR-SEM0012` elsewhere).
+   on one instance adds to that instance alone (`LYR-SEM0012` elsewhere). A parameter the target
+   does not name is bound where a **fixation** in another's constraint names it:
+   `extend<I :: [Iterator<Item = T>], T :: [Num]> I` binds `I` to the receiver and `T` to its
+   `Item`, whose constraints then hold or the member is not there.
 3. **Conditional conformance.** `extend<T :: [Display]> List<T> :: [Display] { … }` gives the
    conformance to every instance whose arguments satisfy the block's constraints and to no
    other: `List<int>` is a `Display`, `List<Foo>` is not (`LYR-SEM0001`) — the form the
