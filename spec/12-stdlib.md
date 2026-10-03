@@ -43,3 +43,19 @@ arithmetic stays in the type:
 
 `isZero`, `abs` and `signum` are defaults, each type's own ([05 §1](05-interfaces.md) rule 4):
 `signum` gives `-1`, `0` or `1` in the type, and a float's NaN stays NaN. `uint` has no `abs`.
+
+`Integer` says where its arithmetic would leave the type, each a default:
+
+- `checkedAdd`, `checkedSub`, `checkedMul`, `checkedDiv`, `checkedRem` (`o: Self`) give `?Self`:
+  `null` where the result does not fit, or the divisor is zero; `min / -1` does not fit, and a
+  remainder by `-1` is `0`.
+- `saturatingAdd`, `saturatingSub`, `saturatingMul` hold at `min` or `max`, by the sign the
+  result would have.
+- `wrappingAdd`, `wrappingSub`, `wrappingMul` reduce modulo 2^`bitWidth`, as `+%`, `-%`, `*%` do a
+  builtin's ([08](08-expressions.md)); `wrappingDiv` gives `min` for `min / -1` and
+  `wrappingRem` `0` for a remainder by `-1` — a zero divisor panics as `/` does.
+- `pow(n: uint): Self` multiplies by squaring; an overflow is one of `*`
+  ([03](03-types.md)).
+- `leadingZeros`, `trailingZeros` and `popCount` count bits at the type's width (`bitWidth` for
+  zero); `rotateLeft(n)` and `rotateRight(n)` rotate modulo the width, a negative `n` the other
+  way.
