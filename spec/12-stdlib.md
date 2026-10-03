@@ -307,6 +307,13 @@ A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
   (whether it was there), `length()`, `isEmpty()`, `clear()`; `Iterable` over its values, in no
   order of its own.
 - Every iterator's **`toList()`** collects what it gives into a `List` (I4).
+- **`Deque<T>`** (C6), a class over a ring buffer: `new()`, `pushFront(v)`, `pushBack(v)`,
+  `popFront()` and `popBack()` (the value or `null`), `peekFront()`, `peekBack()`, `length()`,
+  `isEmpty()`; `[i]` from the front, panicking outside `0 ≤ i < length()` (`LYR-RT0003`);
+  `Iterable` front to back, a change while it is walked panicking at the next pull (I9).
+- **`Heap<T :: [TotalOrder]>`** (C1), a binary heap over a list, **the greatest value first**:
+  `new()`, `push(v)`, `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
+  *(Informative.)*
 
 A value that hashes is **`Hashable`**, `fn hash<H :: [Hasher]>(&h: H): void`, a child of
 `Equatable`: it writes its parts into the hasher, and equal values write the same — nothing checks
