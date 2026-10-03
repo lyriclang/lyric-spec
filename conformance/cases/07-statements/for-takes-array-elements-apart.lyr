@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 1a2b
+//! since: 5.0.0
+// 07 §2 rules 2, 5: a pattern takes an element of an array apart.
+import std.io { println };
+
+fn main(): int {
+    var seen = "";
+    for ((k, v) in [(1, "a"), (2, "b")]) { seen = seen + f"{k}{v}"; }
+    println(seen);
+    return 0;
+}

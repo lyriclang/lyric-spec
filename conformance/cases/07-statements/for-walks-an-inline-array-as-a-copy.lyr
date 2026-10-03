@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 123 9
+//! since: 5.0.0
+// 07 §2 rule 5: an inline array is evaluated once, copied as a binding copies it.
+import std.io { println };
+
+fn main(): int {
+    var a: int[3] = [1, 2, 3];
+    var seen = "";
+    for (x in a) {
+        a[2] = 9;
+        seen = seen + f"{x}";
+    }
+    println(f"{seen} {a[2]}");
+    return 0;
+}

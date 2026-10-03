@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 3 2
+//! since: 5.0.0
+// 07 §2 rule 5, 12 §Iteration: an array and a view are Iterable, through SliceIter.
+import std.io { println };
+
+fn count<A :: [Iterable]>(a: A): int {
+    var n = 0;
+    for (_ in a) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    println(f"{count(xs)} {count(xs[0..2])}");
+    return 0;
+}

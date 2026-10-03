@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 23 34
+//! since: 5.0.0
+// 07 §2 rule 5: a view is walked as an array is.
+import std.io { println };
+
+fn main(): int {
+    let xs = [1, 2, 3, 4];
+    var seen = "";
+    for (x in xs[1..3]) { seen = seen + f"{x}"; }
+    seen = seen + " ";
+    let tail: Slice<int> = xs[2..];
+    for (x in tail) { seen = seen + f"{x}"; }
+    println(seen);
+    return 0;
+}

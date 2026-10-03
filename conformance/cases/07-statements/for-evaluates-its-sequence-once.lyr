@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 11 1
+//! since: 5.0.0
+// 07 §2 rule 5: the sequence is evaluated once — a new array assigned to the variable is not
+// walked, and a call in the head runs once.
+import std.io { println };
+
+var made = 0;
+
+fn make(): int[] {
+    made = made + 1;
+    return [4, 5];
+}
+
+fn main(): int {
+    var xs = [1, 2];
+    var n = 0;
+    for (_ in xs) {
+        xs = [5, 6, 7];
+        n = n + 1;
+    }
+    for (y in make()) { n = n + y; }
+    println(f"{n} {made}");
+    return 0;
+}

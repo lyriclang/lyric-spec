@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 123
+//! since: 5.0.0
+// 07 §2 rule 5: the index loop over an array, in order.
+import std.io { println };
+
+fn main(): int {
+    var seen = "";
+    for (x in [1, 2, 3]) {
+        seen = seen + f"{x}";
+    }
+    println(seen);
+    return 0;
+}

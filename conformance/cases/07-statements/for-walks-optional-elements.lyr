@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 1-1
+//! since: 5.0.0
+// 07 §2 rule 5: no iterator stands between — an element that is itself optional walks.
+import std.io { println };
+
+fn main(): int {
+    let none: ?int = null;
+    let one: ?int = 1;
+    var seen = "";
+    for (x in [one, none, one]) {
+        let mark = if (x == null) "-" else "1";
+        seen = seen + mark;
+    }
+    println(seen);
+    return 0;
+}

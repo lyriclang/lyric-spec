@@ -67,3 +67,11 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    first stopped (rule 1). A struct iterator is walked as a copy and warns not, nor does an
    `Iterable` whose `iter()` makes a new iterator, nor a loop after one in a branch that may not
    have run.
+5. Over an **array, a view or an inline array** the loop is the **index loop** (design 10 B6
+   I10): the sequence is evaluated once — an inline array copied, as a binding copies it — and
+   the element at each index below its length is read at its pass, so a write to a later
+   element of an array or a view is seen, and a new array assigned to the variable is not. No
+   iterator stands between: an element that is itself optional walks. An array and a view are
+   `Iterable` besides, through `SliceIter<T>` ([12 §Iteration](12-stdlib.md)), for what takes
+   an `Iterable`; an inline array is not, as a view of a local one is refused
+   ([03 §5.3](03-types.md) rule 4).
