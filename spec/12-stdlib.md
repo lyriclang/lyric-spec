@@ -80,6 +80,28 @@ defaults over `Self`, computed in `float` and rounded once to a `float32`:
   where `float` has no `TotalOrder` of its own;
 - `toBits(): uint64`, a `float32`'s 32 bits in the low ones.
 
+### `std.math`, `clamp`, a `char`'s code point
+
+What describes the world rather than a type is `std.math`'s (design 10 B5 Z2): `pi`, `e` and
+`tau`, typed `float` — `math.pi as float32` for the narrow width. Beside them stand the functions
+of two numbers:
+
+- `min(a, b)` and `max(a, b)` over `Ordered`, `a` where the two are equal or unordered (a NaN);
+- `gcd(a, b)` and `lcm(a, b)` over `Integer`, never negative, `gcd(0, 0)` is `0`; a result beyond
+  the type overflows and panics — `gcd(int.min, 0)`;
+- `lerp(a, b, t)` over `Float`, `a` at `t = 0` and `b` at `t = 1` exactly.
+
+A narrowing that answers is a static of the target (Z4): `int8.exact(v)` is the `int8` an
+integer `v` of any type names, or `null` where it does not fit; `int8.clamping(v)` holds at
+`min` or `max` instead. Each integer type has them as its own statics; through a type
+parameter they are not reached.
+
+`x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
+between; `lo` above `hi` is the program's error and panics, and a value unordered with the bounds
+comes back as it is. A `char`'s code point is `c.toUint32()`, and `char.fromUint32(n): ?char` is
+`null` for a surrogate or beyond `0x10FFFF` (Z8), where `n as char` panics
+([03 §1.4](03-types.md)).
+
 ### Parsing
 
 A type read from a text conforms to **`Parse`**, `static fn parse(s: string): Self throws
