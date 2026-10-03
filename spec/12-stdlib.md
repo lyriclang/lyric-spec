@@ -128,7 +128,10 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
   its own — monomorphized, nothing allocated: `it.map(f)` gives a `Mapped<I, U>` (`Map` is the
   collection's), `it.filter(p)` a `Filter<I>`. They pull lazily, one value at a time, and their
-  `Error` is the inner iterator's.
+  `Error` is the inner iterator's. Of one source besides: `take(n)` and `skip(n)`;
+  `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
+  value and then every `n`th, `n` below 1 a panic; `enumerate()`, each value with its position
+  from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
