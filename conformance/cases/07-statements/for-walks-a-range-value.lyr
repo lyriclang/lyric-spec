@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 6 3
+//! since: 5.0.0
+// 07 §2.3, 03 §7 rule 2: a range held in a binding is an iterator like any other.
+import std.io { println };
+
+fn main(): int {
+    let r = 1..4;
+    var sum = 0;
+    var n = 0;
+    for (i in r) {
+        sum = sum + i;
+        n = n + 1;
+    }
+    println(f"{sum} {n}");
+    return 0;
+}

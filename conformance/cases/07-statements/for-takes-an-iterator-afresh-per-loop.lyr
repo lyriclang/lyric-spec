@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 012012
+//! since: 5.0.0
+// 07 §2.2: two loops over one Iterable each take an iterator of their own.
+import std.io { println };
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+struct Bag :: [Iterable] {
+    type Iter = Upto;
+    n: int,
+
+    fn iter(): Upto {
+        return Upto { cur = 0, end = this.n };
+    }
+}
+
+fn main(): int {
+    let b = Bag { n = 3 };
+    var seen = "";
+    for (x in b) { seen = seen + f"{x}"; }
+    for (x in b) { seen = seen + f"{x}"; }
+    println(seen);
+    return 0;
+}

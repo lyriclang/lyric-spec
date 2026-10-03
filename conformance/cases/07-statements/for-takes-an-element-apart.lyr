@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 0:0 1:2 2:4
+//! since: 5.0.0
+// 07 §2.2: a pattern takes the element apart.
+import std.io { println };
+
+struct Doubles :: [Iterator] {
+    type Item = (int, int);
+    var i: int,
+    end: int,
+
+    mut fn next(): ?(int, int) {
+        if (this.i >= this.end) { return null; }
+        this.i = this.i + 1;
+        return (this.i - 1, (this.i - 1) * 2);
+    }
+}
+
+fn main(): int {
+    var text = "";
+    for ((k, v) in Doubles { i = 0, end = 3 }) {
+        if (k > 0) { text = text + " "; }
+        text = text + f"{k}:{v}";
+    }
+    println(text);
+    return 0;
+}

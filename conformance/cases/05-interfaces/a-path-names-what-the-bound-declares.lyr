@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0128
+//! since: 5.0.0
+// 05 §8 rule 4: a further step of a path names an associated type the bound declares.
+
+fn f<A :: [Iterable]>(a: A): ?A.Iter.Count {
+    return null;
+}
+
+fn main(): int {
+    return 0;
+}

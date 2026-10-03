@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 6
+//! since: 5.0.0
+// 07 §2.1: 'for' walks an Iterable; an Iterator is iterable as itself.
+import std.io { println };
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+fn main(): int {
+    var sum = 0;
+    for (x in Upto { cur = 1, end = 4 }) {
+        sum = sum + x;
+    }
+    println(f"{sum}");
+    return 0;
+}

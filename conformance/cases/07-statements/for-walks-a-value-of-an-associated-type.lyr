@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | 3 4
+//! since: 5.0.0
+// 07 §2.1, 05 §8 rule 4: a value of 'A.Iter', bounded by Iterator, is iterable through the
+// blanket block as a type parameter is.
+import std.io { println };
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+fn countAll<A :: [Iterable]>(a: A): int {
+    let it = a.iter();
+    var n = 0;
+    for (_ in it) {
+        n = n + 1;
+    }
+    return n;
+}
+
+fn main(): int {
+    println(f"{countAll(Upto { cur = 1, end = 4 })} {countAll(2..6)}");
+    return 0;
+}

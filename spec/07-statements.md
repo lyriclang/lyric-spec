@@ -43,3 +43,19 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    every `break`. A `while` and a `for` may not run their block at all: what is assigned after
    them is what was assigned before. A read of a variable that is not assigned on every way to it
    is refused (`LYR-SEM0018`).
+
+## 2. `for`
+
+1. **`for (x in e) { … }`** walks an **`Iterable`** (design 10 B6 I2): `e.iter()` gives the
+   iterator, once, and the loop calls its `next()` before every pass, running the block with `x`
+   bound to the value until `next()` answers `null`. Anything else is refused (`LYR-SEM0007`).
+   An `Iterator` is iterable as itself ([12 §Iteration](12-stdlib.md)), its `iter()` the iterator
+   as a value: a loop over a struct iterator walks a copy and leaves the variable where it was;
+   over a class iterator it walks the object, and a second loop goes on where the first stopped.
+2. `x` is the iterator's **`Item`**; a pattern takes it apart, `for ((k, v) in …)`, where it
+   cannot fail (`LYR-SEM0098`). An `Item` may itself be optional: `next()` then answers `??T`
+   ([03 §3.1](03-types.md)), and a `null` of the inner level is a value the loop runs for. Two
+   loops over one `Iterable` value each take an iterator of their own — `iter()` is called per
+   loop.
+3. A range written in the head is the counted loop ([03 §7](03-types.md) rule 2); a range held
+   in a binding is an iterator like any other.

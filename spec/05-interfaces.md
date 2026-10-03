@@ -175,7 +175,12 @@ same. What is not written here yet is decided in the design documents, not here.
    nobody's answer. Through the path the associated type has **what its bound provides** — the
    members, `a.iter().next()`, and the constraints the bound reaches, `count(a.iter())` with
    `count<I :: [Iterator]>` — and nothing else: without a bound it has no member
-   (`LYR-SEM0027`) and satisfies no constraint (`LYR-SEM0028`) until its answer is known.
+   (`LYR-SEM0027`) and satisfies no constraint (`LYR-SEM0028`) until its answer is known. The
+   path goes on through what each step provides: `A.Iter.Item` is the `Item` of what `A`'s
+   `Iter` becomes, through `Iter`'s bound while that is open (`LYR-SEM0128` where the bound
+   declares none), the answer on a type — `Bag.Iter.Item`. A blanket block reaches the
+   associated type as it reaches a type parameter ([§13](#13-generic-extends)): bounded by
+   `Iterator`, it is `Iterable` and has `iter()`.
 5. A constraint may **fix** an associated type: `T :: [Iterator<Item = int>]`. Inside the
    declaration `T.Item` is `int`; an argument whose answer is another type does not satisfy
    the constraint (`LYR-SEM0028`); a name no associated type of the interface carries is

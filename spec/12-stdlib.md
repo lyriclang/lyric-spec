@@ -102,6 +102,24 @@ comes back as it is. A `char`'s code point is `c.toUint32()`, and `char.fromUint
 `null` for a surrogate or beyond `0x10FFFF` (Z8), where `n as char` panics
 ([03 §1.4](03-types.md)).
 
+## Iteration
+
+The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Iterator` and
+`Iterable` on.
+
+- **`Iterator { type Item; mut fn next(): ?Self.Item; fn sizeHint(): (int, ?int) }`**: `next()`
+  gives the next value, and `null` at the end. `sizeHint()` says how many values are left, at least
+  and at most where that is known; the default says `(0, null)`.
+- **`Iterable { type Iter :: [Iterator]; fn iter(): Self.Iter; }`**: what `for` walks. Every
+  iterator is iterable as itself, `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]`.
+- **`DoubleEnded :: [Iterator] { mut fn nextBack(): ?Self.Item; }`**: the last value not yet
+  given.
+- A **`Range<T>`** of an integer type is an `Iterator` of `T` and `DoubleEnded`: `next()` gives
+  `start` and moves it on, `nextBack()` moves `end` back and gives it. A **`RangeInclusive<T>`**
+  is both too and gives `end` as well; its last value leaves `start` past `end`, or `end` before
+  `start` where that value is the type's `max` (its `min`, from the back) — no bound leaves the
+  type. A range walked changes: `start` and `end` are `var`.
+
 ### Parsing
 
 A type read from a text conforms to **`Parse`**, `static fn parse(s: string): Self throws
