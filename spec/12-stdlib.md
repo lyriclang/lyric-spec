@@ -29,6 +29,41 @@ A narrower integer or a `float32` in a hole widens to the converter's parameter 
 ([03 §1.3](03-types.md)): `f"{x}"` with `x: int8` is `fromInt(x)`, with `x: float32` it is
 `fromFloat(x)`.
 
+## 2. The format language
+
+A hole may name a format after a colon — `{x:>8}`, `{n:#x}`, `{f:.2f}`, `{v:?}` — in one
+language, without locale, checked where it is written
+([08 Y7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md),
+[10 S7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
+
+1. **Form**: `[[fill]align][sign][#][0][width][grouping][.precision][type]`. `align` is `<`
+   (left), `>` (right) or `^` (centred, the odd fill after), the fill any character before it, a
+   space without; `sign` is `+` (a sign on every number) or `-` (on a negative one only, as
+   without); `#` writes a radix's prefix, `0b`, `0o`, `0x`, `0X`; `0` pads with zeros between the
+   sign and prefix and the digits; `width` is the least number of **characters**, not bytes;
+   `grouping` is `,` or `_` between each three decimal digits, `_` between each four of another
+   radix; `precision` is the digits after a float's point or the most characters of a string;
+   `type` is `b`, `o`, `x`, `X` (an integer's radix), `e`, `E`, `f`, `%` (a float's form) or `?`
+   (`Debug`).
+2. **What applies**: an integer takes all but a precision and a float's type; a float all but `#`
+   and an integer's type; a `string` fill, alignment, width and precision; a `char`, a `bool`
+   and a `Display` type fill, alignment and width, on the text `show()` gives; `?` takes fill,
+   alignment and width, on the text `debug()` gives, for every type. A spec that is no format,
+   or a part that does not apply to the hole's type, is refused (`LYR-SEM0164`). A type with
+   formats of its own conforms to `Format { fn format(spec: string, &out: StringBuilder): void; }`
+   and reads the spec as written, unchecked — `?` stays `Debug`.
+3. **Defaults**: a number right-aligned, the rest left-aligned. A float without a type or a
+   precision is its shortest text ([03 §1.7](03-types.md)); with a precision and no type it is
+   fixed, `{2.5:.3}` is `2.500`; `e`, `E`, `f` and `%` take six digits without a precision; `%`
+   writes the value a hundredfold, fixed, with `%` after; an exponent carries its sign and two
+   digits at least, `{1234.5:e}` is `1.234500e+03`. The fixed and the exponent forms round to
+   nearest on the value's exact binary digits: `{2.675:.2f}` is `2.67`. `nan`, `inf` and `-inf`
+   keep their words, `NAN` and `INF` under `E`.
+4. **Binding**: `{x:spec}` compiles to `std.core`'s `formatted(x, "spec")` for a `Format` type —
+   the scalars conform —, to `padded(x, "spec")` for another `Display` type, and to
+   `debugged(x, "spec")` under `?`; a program need not import them, as with the converters
+   (§1).
+
 ## Numbers
 
 The ten number types conform, in `std.core`, to a tower of interfaces (design 10 B5 Z1), whose

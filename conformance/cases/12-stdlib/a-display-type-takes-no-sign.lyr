@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0164
+//! since: 5.0.0
+// 12 §2 rule 2: a Display type takes fill, alignment and width — a sign is a number's.
+class Badge :: [Display] {
+    name: string,
+
+    fn show(): string {
+        return this.name;
+    }
+}
+
+fn main(): void {
+    let b = Badge { name = "ok" };
+    let text = f"{b:+}";
+}

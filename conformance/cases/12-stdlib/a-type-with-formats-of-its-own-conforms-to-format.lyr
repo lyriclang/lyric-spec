@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 77.0°F 25.0°C Celsius { degrees = 25.0 }
+//! since: 5.0.0
+// 12 §2 rule 2: a Format type reads its spec as written, unchecked; '?' stays Debug.
+import std.core { Format };
+import std.io { println };
+import std.string { StringBuilder };
+
+struct Celsius :: [Format] {
+    degrees: float,
+
+    fn format(spec: string, &out: StringBuilder): void {
+        if (spec == "F") {
+            out.appendStr(f"{this.degrees * 1.8 + 32.0}°F");
+        } else {
+            out.appendStr(f"{this.degrees}°C");
+        }
+    }
+}
+
+fn main(): int {
+    let warm = Celsius { degrees = 25.0 };
+    println(f"{warm:F} {warm:C} {warm:?}");
+    return 0;
+}

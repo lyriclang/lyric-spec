@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0164
+//! since: 5.0.0
+// 12 §2 rule 2: a float has no radix.
+fn main(): void {
+    let text = f"{1.5:x}";
+}

@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | P { x = 1 } [  "a"] [  <ok>] [<ok>--] [hel]
+//! since: 5.0.0
+// 12 §2 rule 2: '?' renders debug() for every type, a Display type show(), each in fill, alignment
+// and width; a string's precision is the most characters it keeps.
+import std.io { println };
+
+struct P {
+    x: int,
+}
+
+class Badge :: [Display] {
+    name: string,
+
+    fn show(): string {
+        return f"<{this.name}>";
+    }
+}
+
+fn main(): int {
+    let p = P { x = 1 };
+    let b = Badge { name = "ok" };
+    println(f"{p:?} [{"a":>5?}] [{b:>6}] [{b:-<6}] [{"hello":.3}]");
+    return 0;
+}

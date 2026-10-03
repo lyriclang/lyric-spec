@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0164
+//! since: 5.0.0
+// 12 §2 rule 2: Lyric 4's '.NET' specs are no format — '{avg:.2f}', not '{avg:N2}'.
+fn main(): void {
+    let avg = 2.5;
+    let text = f"{avg:N2}";
+}
