@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | 4
+//! since: 5.0.0
+// 05 §8 rules 2-4: through 'A.Iter' the associated type has what its bound provides; a blanket block's fixation answers it.
+import std.io { println };
+
+interface It {
+    type Item;
+    mut fn next(): ?Self.Item;
+}
+
+struct Upto :: [It] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+interface Able {
+    type Iter :: [It];
+    fn iter(): Self.Iter;
+}
+
+extend<I :: [It]> I :: [Able<Iter = I>] {
+    fn iter(): I {
+        return this;
+    }
+}
+
+fn walk<A :: [Able]>(a: A): int {
+    var c = a.iter();
+    var n = 0;
+    while (c.next() != null) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    println(f"{walk(Upto { cur = 0, end = 4 })}");
+    return 0;
+}
