@@ -1,0 +1,32 @@
+//! check
+//! since: 5.0.0
+// 07 §2 rule 4: an Iterable whose iter() makes a new iterator is walked afresh by every loop.
+
+struct Upto :: [Iterator] {
+    type Item = int;
+    var cur: int,
+    end: int,
+
+    mut fn next(): ?int {
+        if (this.cur >= this.end) { return null; }
+        this.cur = this.cur + 1;
+        return this.cur - 1;
+    }
+}
+
+class Bag :: [Iterable] {
+    type Iter = Upto;
+    n: int,
+
+    fn iter(): Upto {
+        return Upto { cur = 0, end = this.n };
+    }
+}
+
+fn main(): int {
+    let b = Bag { n = 3 };
+    var sum = 0;
+    for (x in b) { sum = sum + x; }
+    for (x in b) { sum = sum + x; }
+    return sum;
+}

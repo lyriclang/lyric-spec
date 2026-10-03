@@ -59,3 +59,11 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    loop.
 3. A range written in the head is the counted loop ([03 §7](03-types.md) rule 2); a range held
    in a binding is an iterator like any other.
+4. A loop over a binding — a local or a parameter — that an **earlier loop walked** warns
+   (`LYR-SEM0162`, design 10 B6 I2) where the binding's `iter()` gives the iterator itself, the
+   iterator may be an object other bindings reach — a class, or a type parameter or associated
+   type a class may answer —, and the earlier loop stands before it in the same block or an
+   enclosing one with no assignment to the binding between: the second loop goes on where the
+   first stopped (rule 1). A struct iterator is walked as a copy and warns not, nor does an
+   `Iterable` whose `iter()` makes a new iterator, nor a loop after one in a branch that may not
+   have run.

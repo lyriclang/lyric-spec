@@ -1,0 +1,25 @@
+//! check
+//! warning: LYR-SEM0162
+//! since: 5.0.0
+// 07 §2 rule 4: a loop inside the first, over the same class iterator, takes its values.
+
+class Ticker :: [Iterator] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+}
+
+fn main(): int {
+    let t = Ticker { n = 4 };
+    var sum = 0;
+    for (x in t) {
+        for (y in t) { sum = sum + y; }
+        sum = sum + x;
+    }
+    return sum;
+}
