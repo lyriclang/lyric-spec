@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §1 rule 5: the conformer's member takes as many type parameters, constrained alike, at the
+// same signature once its parameters read as the interface's — another return does not answer.
+
+interface Counter {
+    fn count<T :: [Display]>(xs: T[]): int;
+}
+
+struct Shown :: [Counter] {
+    fn count<T :: [Display]>(xs: T[]): string {
+        return "";
+    }
+}
+
+fn main(): void {
+}

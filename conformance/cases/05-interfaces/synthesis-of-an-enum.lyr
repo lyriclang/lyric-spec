@@ -6,7 +6,14 @@
 //! since: 5.0.0
 // 05 §14.3: an enum variant by variant — equal when the same variant with equal payloads,
 // ordered by the variant's position first and the payload after, cloned by rebuilding.
+import std.hash { FixedHasher };
 import std.io { println };
+
+fn hashOf<T :: [Hashable]>(x: T): uint64 {
+    var h = FixedHasher.new();
+    x.hash(&h);
+    return h.finish();
+}
 
 enum E :: [Equatable, Clone, Hashable] { A, B(int), R { w: int } }
 enum Sh :: [Ordered] { Dot, Box(int), Rect { w: int, h: int } }
@@ -20,6 +27,6 @@ fn main(): int {
     let b4 = Sh.Box(4);
     let rc = Sh.Rect { w = 1, h = 2 };
     println(f"shape {dot < b3} {b3 < b4} {b4 < b3} {b4 < rc} {rc > dot} {rc == Sh.Rect { w = 1, h = 2 }} {b3 <= Sh.Box(3)}");
-    println(f"hash {e1.hash() == E.B(3).hash()} {e1.hash() == E.A.hash()}");
+    println(f"hash {hashOf(e1) == hashOf(E.B(3))} {hashOf(e1) == hashOf(E.A)}");
     return 0;
 }

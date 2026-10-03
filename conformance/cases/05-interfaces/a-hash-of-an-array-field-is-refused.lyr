@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0135
+//! since: 5.0.0
+// 05 §14 rule 6: an array is no Hashable (10 C8) — its slots can be written, so the hash of a
+// key could change under a map — and the synthesis has no form for it.
+
+struct Bag :: [Hashable] {
+    tag: int,
+    items: int[],
+}
+
+fn main(): void {
+}
