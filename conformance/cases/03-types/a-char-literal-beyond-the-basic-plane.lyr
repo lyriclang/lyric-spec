@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 128512 1 4
+//! since: 5.0.0
+// 03 §1.4: a char is a Unicode scalar value; one beyond the basic plane is one character in a
+// literal, two UTF-16 units though it may be where the source was edited.
+import std.io { println };
+
+fn main(): int {
+    let c = '😀';
+    let s = f"{c}";
+    println(f"{c.toUint32()} {s.charCount()} {s.length()}");
+    return 0;
+}

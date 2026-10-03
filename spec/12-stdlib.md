@@ -228,6 +228,17 @@ A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
   `rfind(p)`, the byte index of the first and the last `p` or `null` — an empty `p` stands at 0
   and at the length; `count(p)`, the occurrences none overlapping another, an empty `p` between
   every two characters and at both ends.
+- `split(sep)`, the parts between the separators in order, empty ones kept — an empty separator
+  panics; `splitOnce(sep)`, the parts before and after the first, or `null`; `lines()`, split at
+  `\n` with a `\r` before it taken off and no empty line after a last `\n`.
+- `trim()`, `trimStart()`, `trimEnd()`, without the white space (ASCII's: space, tab, the line
+  breaks, vertical tab, form feed); `stripPrefix(p)` and `stripSuffix(p)`, the rest, or `null`
+  where `p` is not there.
+- `replace(p, with)`, every `p` replaced, none overlapping — an empty `p` panics;
+  `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, the width in characters.
+- **`StringBuilder`** (`std.string`, a class): `appendStr(s)`, `appendChar(c)`, `append(v)` of a
+  `Display`, `length()` in bytes, `clear()`, `toString()` — in a buffer that doubles, no chain of
+  concatenations.
 
 ## Collections
 
