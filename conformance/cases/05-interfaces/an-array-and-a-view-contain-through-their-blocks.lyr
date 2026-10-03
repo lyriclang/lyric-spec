@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true false true
+//! since: 5.0.0
+// 05 §13 rule 6, 12 §Arrays and views: std.core's blocks give T[] and Slice<T> Contains<T>, so a
+// constraint on it takes both shapes.
+import std.core { Contains };
+import std.io { println };
+
+fn has<C :: [Contains<int>]>(c: C, x: int): bool {
+    return c.contains(x);
+}
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    println(f"{has(xs, 2)} {has(xs, 5)} {has(xs[1..], 3)}");
+    return 0;
+}
