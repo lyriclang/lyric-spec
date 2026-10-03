@@ -1,0 +1,59 @@
+//! run
+//! stdout:
+//! | 1a 2b fail
+//! since: 5.0.0
+// 12 §Iteration, design 05 E2 K7: zip of a Fail-throwing and a non-throwing source throws Fail —
+// the join with never is the other.
+import std.io { println };
+
+class Fail :: [Error] {
+    fn message(): string { return "fail"; }
+}
+
+class Other :: [Error] {
+    fn message(): string { return "other"; }
+}
+
+struct Failing :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+
+    mut fn next(): ?int throws Fail {
+        this.i = this.i + 1;
+        if (this.i == 3) { throw Fail {}; }
+        return this.i;
+    }
+}
+
+struct Othering :: [Iterator] {
+    type Item = int;
+    type Error = Other;
+
+    mut fn next(): ?int throws Other {
+        throw Other {};
+    }
+}
+
+class Log {
+    var text: string,
+}
+
+fn failing(): Failing {
+    return Failing { i = 0 };
+}
+
+fn walk(log: Log): void throws Fail {
+    for ((n, w) in try failing().zip(["a", "b", "c"])) { log.text = log.text + f"{n}{w} "; }
+}
+
+fn main(): int {
+    let log = Log { text = "" };
+    try {
+        try walk(log);
+    } catch (e: Fail) {
+        log.text = log.text + e.message();
+    }
+    println(log.text);
+    return 0;
+}

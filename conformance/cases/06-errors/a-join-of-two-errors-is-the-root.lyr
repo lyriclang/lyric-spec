@@ -1,0 +1,44 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 12 §Iteration, design 05 E2 K7: two sources throwing two types throw the root Error — 'Fail'
+// does not cover it.
+
+class Fail :: [Error] {
+    fn message(): string { return "fail"; }
+}
+
+class Other :: [Error] {
+    fn message(): string { return "other"; }
+}
+
+struct Failing :: [Iterator] {
+    type Item = int;
+    type Error = Fail;
+    var i: int,
+
+    mut fn next(): ?int throws Fail {
+        this.i = this.i + 1;
+        if (this.i == 3) { throw Fail {}; }
+        return this.i;
+    }
+}
+
+struct Othering :: [Iterator] {
+    type Item = int;
+    type Error = Other;
+
+    mut fn next(): ?int throws Other {
+        throw Other {};
+    }
+}
+
+fn walk(a: Failing, b: Othering): int throws Fail {
+    var n = 0;
+    for (_ in try a.zip(b)) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    return 0;
+}
