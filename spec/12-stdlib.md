@@ -216,3 +216,10 @@ holds three:
 
 Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ([13](13-abi.md)).
+
+A value that hashes is **`Hashable`**, `fn hash<H :: [Hasher]>(&h: H): void`, a child of
+`Equatable`: it writes its parts into the hasher, and equal values write the same — nothing checks
+it. An integer writes its word (`writeInt`, `writeUint` for the unsigned), a `bool` a byte, a
+`char` its code point as a word, a `string` its bytes and then 255, which no UTF-8 text holds. A
+`float` is none (10 SL-26); an array, a view, a `List`, a `Map` and a `Set` are none either (10
+C8): their slots can be written. A type's own hash is synthesized ([05 §14](05-interfaces.md)).

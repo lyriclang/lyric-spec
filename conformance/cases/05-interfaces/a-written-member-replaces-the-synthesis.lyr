@@ -3,7 +3,14 @@
 //! | w true true
 //! since: 5.0.0
 // 05 §14.1: 'equals' written, 'hash' still synthesized.
+import std.hash { FixedHasher };
 import std.io { println };
+
+fn hashOf<T :: [Hashable]>(x: T): uint64 {
+    var h = FixedHasher.new();
+    x.hash(&h);
+    return h.finish();
+}
 
 struct W :: [Equatable, Hashable] { x: int, y: int,
     fn equals(o: W): bool { return this.x == o.x; }
@@ -12,6 +19,6 @@ struct W :: [Equatable, Hashable] { x: int, y: int,
 fn main(): int {
     let a = W { x = 1, y = 2 };
     let b = W { x = 1, y = 9 };
-    println(f"w {a == b} {a.hash() == W { x = 1, y = 2 }.hash()}");
+    println(f"w {a == b} {hashOf(a) == hashOf(W { x = 1, y = 2 })}");
     return 0;
 }

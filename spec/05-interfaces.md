@@ -43,6 +43,12 @@ same. What is not written here yet is decided in the design documents, not here.
    it, as a type parameter does. A **private helper** is the defaults' alone — through a
    constraint from anywhere else as well (04 §3 rule 8, `LYR-RES0009`) — and never a
    conformer's method of its name.
+5. A member may be **generic**, `fn hash<H :: [Hasher]>(&h: H): void` (04 D9). Abstract, every
+   conformer writes it with as many type parameters, constrained alike, at the same signature
+   once its parameters are read as the interface's (`LYR-SEM0042`); a call through a constraint
+   reaches the conformer's own at the call's type arguments — monomorphized, there is no table
+   slot for it — and the interface is a constraint only (§7 rule 3). A generic member with a
+   default is every conformer's: it is not overridden (`LYR-SEM0082`).
 
 ## 2. Interface values
 
@@ -138,8 +144,8 @@ same. What is not written here yet is decided in the design documents, not here.
    `T.zero` — the conformer's own static, a direct call or a read; of several of the name, the
    one that answers the member. On a value of the parameter
    it is not reached (`LYR-SEM0055`).
-3. An interface that names `Self` beyond the receiver, or declares a static member, is a
-   **constraint only** (04 D9): no value of it arises — a table would hold no one function for
+3. An interface that names `Self` beyond the receiver, declares a static member or an abstract
+   generic one (§1 rule 5), is a **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). An interface with neither is a
    value as [§2](#2-interface-values) says.
 
@@ -364,7 +370,9 @@ same. What is not written here yet is decided in the design documents, not here.
    member; the others are still synthesized. The list is fixed in 5.0; a synthesis of the
    program's own interfaces is [11](11-metaprogramming.md)'s question.
 2. **Field by field, declaration order.** `equals` is the conjunction of the fields' equalities;
-   `hash` mixes the fields' hashes in order; `compare` and `totalCompare` are lexicographic,
+   `hash` writes the fields into the hasher in order ([12](12-stdlib.md) §Hashing) — an
+   optional as a mark and its value, a tuple's and an inline array's elements in order;
+   `compare` and `totalCompare` are lexicographic,
    the first field that is not `.Equal` decides, and a `compare` that meets `null` is `null`;
    `clone` copies the value fields and clones the reference fields — an array element by
    element, an optional's value, a tuple's elements; `default` takes every field's `default()`,
@@ -375,7 +383,7 @@ same. What is not written here yet is decided in the design documents, not here.
    `(1, "a")`, a string quoted and a char in single quotes. An **inline array** field is taken
    element by element.
 3. **Enums** as structs, variant by variant: two values are equal when they are the same
-   variant with equal payloads; the hash mixes the variant's position and its payload; the
+   variant with equal payloads; the hash writes the variant's position, then its payload; the
    order is the **variant's position first**, then the payload lexicographically; `clone`
    rebuilds the variant; `debug` renders `E.B(3)`, `E.R { w = 4 }`, `E.A`. A `Default` of an
    enum is **refused** — no variant is the default (`LYR-SEM0135`).
@@ -392,7 +400,8 @@ same. What is not written here yet is decided in the design documents, not here.
    the synthesis needs is an error at the type's conformance-list entry, the diagnostic of the
    missing operation prefixed with the synthesis it stands in and the field's line beside it
    (`note: synthesized as: && this.f == o.f`); a shape the synthesis has no form for — a
-   `Slice<T>` or a function to `clone`, a function to `default` — is
+   `Slice<T>` or a function to `clone`, a function to `default`, an array or a view to `hash`
+   (10 C8) — is
    `LYR-SEM0135` with the field's type, and the member is written by hand.
 7. **`Debug` is given unasked** to every struct, class and enum that writes none, **where the
    fields allow it**: a type holding an interface value, a function, or a type that has no

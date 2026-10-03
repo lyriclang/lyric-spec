@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 3 6
+//! since: 5.0.0
+// 05 §1 rule 5: an abstract generic member is written by every conformer, its own type parameters
+// standing for the interface's, and a constraint reaches the conformer's at the call's arguments.
+import std.io { println };
+
+interface Counter {
+    fn count<T :: [Display]>(xs: T[]): int;
+}
+
+struct Plain :: [Counter] {
+    fn count<U :: [Display]>(xs: U[]): int {
+        return xs.length();
+    }
+}
+
+struct Wide :: [Counter] {
+    fn count<T :: [Display]>(xs: T[]): int {
+        return xs.length() * 2;
+    }
+}
+
+fn counted<C :: [Counter]>(c: C): int {
+    return c.count([10, 200, 3]);
+}
+
+fn main(): int {
+    println(f"{counted(Plain { })} {counted(Wide { })}");
+    return 0;
+}

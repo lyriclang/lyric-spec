@@ -1,0 +1,25 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3: a value of an interface calls through a table, and an abstract generic member has
+// no slot in one — such an interface is a constraint only (design 04 D9).
+
+interface Counter {
+    fn count<T :: [Display]>(xs: T[]): int;
+}
+
+struct Plain :: [Counter] {
+    fn count<U :: [Display]>(xs: U[]): int {
+        return xs.length();
+    }
+}
+
+struct Wide :: [Counter] {
+    fn count<T :: [Display]>(xs: T[]): int {
+        return xs.length() * 2;
+    }
+}
+
+fn main(): void {
+    let c: Counter = Plain { };
+}
