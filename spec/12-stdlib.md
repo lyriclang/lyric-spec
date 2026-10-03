@@ -217,6 +217,19 @@ holds three:
 Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ([13](13-abi.md)).
 
+## Collections
+
+`std.collections` holds the containers (design 10 B7); none is safe across threads (C11).
+
+- **`Map<K :: [Hashable], V, H :: [Hasher] = DefaultHasher>`** (C4), a class: what it holds, in
+  no order of its own, each key once. `Map<K, V>.new()` hashes with the process's key, so its
+  order differs from run to run; `withHasher(seed)` takes a hasher, which is a value the map
+  copies fresh for every key — `FixedHasher.new()` hashes alike in every run. `insert(k, v)`
+  answers the value it replaces or `null`; `get(k)` the value or `null`; `containsKey(k)`;
+  `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`. *(Informative.)*
+  A Swiss table: groups of eight slots under a control word, the hash's seven low bits compared
+  a group at a time, at most seven of eight slots filled.
+
 A value that hashes is **`Hashable`**, `fn hash<H :: [Hasher]>(&h: H): void`, a child of
 `Equatable`: it writes its parts into the hasher, and equal values write the same — nothing checks
 it. An integer writes its word (`writeInt`, `writeUint` for the unsigned), a `bool` a byte, a
