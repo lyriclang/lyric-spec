@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 07 §2 rules 6, 7: through 'Closeable' the close may throw 'Error' — the head is marked.
+
+fn walk<I :: [Iterator<Error = never>, Closeable]>(it: I): int throws Error {
+    var n = 0;
+    for (_ in it) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    return 0;
+}
