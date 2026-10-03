@@ -153,12 +153,16 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
 4. The **prelude**, the module `std.prelude`, is named in every module without an import (I8;
    [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`; `Error`, `Exception`, `Box`,
    `Ordering`, `Range`, `RangeInclusive`, `RangeFrom`, `RangeTo`, `RangeFull`; `Equatable`,
-   `Hashable`, `Ordered`, `TotalOrder`, `Display`, `Debug`, `Default`, `Clone`, `Closeable` — what
-   signatures and the language need, not effects: `println` is `std.io`'s. The rest of the
+   `Hashable`, `Ordered`, `TotalOrder`, `Display`, `Debug`, `Default`, `Clone`, `Closeable`,
+   `Num`, `Integer`, `Float`, `Iterator`, `Iterable`, `Index`, `IndexSet`; `List`, `Map`, `Set`,
+   the collections' vocabulary — what signatures and the language need, not effects: `println`
+   is `std.io`'s. The rest of the
    standard library is imported, `std.core`'s operator interfaces (`Add` …), `Any` and
    `sequence` among it. The prelude grows with the library ([12](12-stdlib.md)).
 5. A name a module declares or imports hides the prelude's of that name in the module, and is
-   warned (`LYR-SEM0153`) (K6).
+   warned (`LYR-SEM0153`) (K6). An import of the very symbol the prelude passes on hides nothing.
+   A block of a module the prelude takes names from stands in every module, as `std.core`'s do:
+   `Map<K, V>.new()` is reached wherever `Map` is.
 6. A **builtin type's** name — `int`, `string`, `bool` … — is no declaration's (`LYR-RES0011`)
    (K5).
 7. A name a module declares or imports is **not also one of its submodules**: `app.net` declaring

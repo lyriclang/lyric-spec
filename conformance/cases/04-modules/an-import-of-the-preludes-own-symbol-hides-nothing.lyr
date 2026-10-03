@@ -1,0 +1,9 @@
+//! check
+//! since: 5.0.0
+// 04 §4 rule 5: importing the very Map the prelude passes on hides nothing — no SEM0153.
+import std.collections { Map };
+
+fn main(): void {
+    let m = Map<string, int>.new();
+    m.insert("a", 1);
+}
