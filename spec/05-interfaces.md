@@ -341,8 +341,10 @@ same. What is not written here yet is decided in the design documents, not here.
    constraints admit — the signatures checked at `T` — so a `Named` satisfies a constraint on
    `J` and a call through it is the block's member; a type it does not reach keeps its own.
    Such a block implements `J`'s whole chain, so it excludes, by interface: a type's own
-   conformance to one of the chain where it reaches the type (X4), and another blanket block or
-   a shape's block giving one, even where no type could meet both (`LYR-SEM0133`). A value of
+   conformance to one of the chain where it reaches the type (X4); a shape's block giving one
+   where it reaches the shape — the shape, or an overlapping one another block names, meeting
+   its constraints, which a shape does through a block naming them alone (rule 6); and another
+   blanket block giving one, even where no type could meet both (`LYR-SEM0133`). A value of
    `J` is not made through a blanket conformance yet (`LYR-SEM0047`).
 
 ## 14. Conformance synthesis

@@ -1,0 +1,45 @@
+//! run
+//! stdout:
+//! | hello items
+//! | hello Ann
+//! since: 5.0.0
+// 05 §13 rule 8: no array is a Named, so the blanket reaches none, and the shape's own block
+// gives them Greeter.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter {
+    fn greeting(): string;
+}
+
+extend<T :: [Named]> T :: [Greeter] {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+extend<T> T[] :: [Greeter] {
+    fn greeting(): string {
+        return "hello items";
+    }
+}
+
+struct Person :: [Named] {
+    n: string,
+
+    fn name(): string {
+        return this.n;
+    }
+}
+
+fn greet<G :: [Greeter]>(g: G): string {
+    return g.greeting();
+}
+
+fn main(): void {
+    println(greet([1, 2]));
+    println(greet(Person { n = "Ann" }));
+}

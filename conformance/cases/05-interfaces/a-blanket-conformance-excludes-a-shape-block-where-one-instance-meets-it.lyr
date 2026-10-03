@@ -1,8 +1,7 @@
 //! check
 //! error: LYR-SEM0133
 //! since: 5.0.0
-// 05 §13 rule 8: a blanket conformance excludes a shape's block giving the same interface where it
-// reaches the shape — every array is a Named here.
+// 05 §13 rule 8: 'int[]' is a Named, so the blanket reaches it, and 'T[]'s block overlaps it.
 
 interface Named {
     fn name(): string;
@@ -24,9 +23,9 @@ extend<T> T[] :: [Greeter] {
     }
 }
 
-extend<T> T[] :: [Named] {
+extend int[] :: [Named] {
     fn name(): string {
-        return "items";
+        return "numbers";
     }
 }
 
