@@ -131,7 +131,12 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   `Error` is the inner iterator's. Of one source besides: `take(n)` and `skip(n)`;
   `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
   value and then every `n`th, `n` below 1 a panic; `enumerate()`, each value with its position
-  from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through.
+  from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through. Of two
+  sources: `zip(other)`, each value beside the other's as long as both have one, the other an
+  `Iterable`; `chain(other)`, the values and then the other's, an iterator of the same items.
+  Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
+  one type where both are one, the other where one is `never`, the root `Error` where they
+  differ — reduced once both are known; open, it covers each of its parts.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
