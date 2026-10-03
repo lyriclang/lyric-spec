@@ -199,3 +199,20 @@ a write through one reaches the array. `length()` and the index are the primitiv
   of its own: its elements sort through `sortBy`.
 - `arrayOf(n, f)` ([03 §8](03-types.md)) calls `f` once per index, in order; a negative `n`
   panics.
+
+## Hashing
+
+A hash is computed with a **`Hasher`** of `std.core` (design 10 Q3, K2): `writeByte(b)` writes a
+byte; `write(bytes)` the bytes of a `Slice<uint8>`, `writeUint(v)` and `writeInt(v)` the eight
+bytes of a word, the lowest first — defaults over `writeByte` a hasher may replace; `finish()`
+answers the hash of what was written, a `uint64`, and leaves the hasher writable. `std.hash`
+holds three:
+
+- **`DefaultHasher`**, SipHash-1-3 under a key the system draws once per process, at the first
+  use — the same in every thread, another in the next run. What it hashes cannot be aimed at
+  collisions from outside, and an order that follows its hashes differs from run to run.
+- **`FixedHasher`**, SipHash-1-3 under a zero key: the same hash in every run.
+- **`Fnv1a64`**, FNV-1a in 64 bits: keyless, for input no adversary chooses.
+
+Where the system gives no random bytes, the program panics with `LYR-RT0015`
+([13](13-abi.md)).
