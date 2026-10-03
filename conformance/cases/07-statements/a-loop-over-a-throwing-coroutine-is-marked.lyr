@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 07 §2 rule 6: a coroutine's pulls throw what its body throws — the head is marked.
+
+class Fail :: [Error] {
+    fn message(): string { return "fail"; }
+}
+
+fn throwing(): Coroutine<int> throws Fail {
+    yield 1;
+    throw Fail {};
+}
+
+fn walk(): void throws Fail {
+    for (x in throwing()) { }
+}
+
+fn main(): int {
+    return 0;
+}

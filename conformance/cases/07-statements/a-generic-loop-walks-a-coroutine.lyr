@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | unwound
+//! | 3
+//! since: 5.0.0
+// 12 §Iteration: a coroutine is Iterable through the blanket block — 'A.Iter' is the coroutine,
+// its Error what it throws.
+import std.io { println };
+
+fn gen(n: int): Coroutine<int> {
+    defer { println("unwound"); }
+    var i = 0;
+    while (i < n) {
+        yield i;
+        i = i + 1;
+    }
+}
+
+fn count<A :: [Iterable]>(a: A): int throws A.Iter.Error {
+    var n = 0;
+    for (_ in try a) { n = n + 1; }
+    return n;
+}
+
+fn main(): int {
+    println(f"{count(gen(3))}");
+    return 0;
+}

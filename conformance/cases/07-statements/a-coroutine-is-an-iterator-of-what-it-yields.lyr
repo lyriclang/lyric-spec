@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 12 §Iteration: a coroutine's Item is what it yields — a fixation naming another is not met.
+
+fn words(): Coroutine<string> {
+    yield "a";
+}
+
+fn sum<I :: [Iterator<Item = int, Error = never>]>(it: I): int {
+    var s = 0;
+    for (x in it) { s = s + x; }
+    return s;
+}
+
+fn main(): int {
+    return sum(words());
+}

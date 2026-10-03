@@ -121,6 +121,10 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   is both too and gives `end` as well; its last value leaves `start` past `end`, or `end` before
   `start` where that value is the type's `max` (its `min`, from the back) — no bound leaves the
   type. A range walked changes: `start` and `end` are `var`.
+- A **`Coroutine<T>`** is an `Iterator` of `T` and `Closeable`, built in (design 10 B6 I7): its
+  `Error` is what it throws, `never` where nothing, and it conforms to nothing else. A loop over
+  one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its
+  stack unwinds and its defers run.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
