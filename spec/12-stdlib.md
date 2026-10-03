@@ -237,9 +237,18 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
   order differs from run to run; `withHasher(seed)` takes a hasher, which is a value the map
   copies fresh for every key — `FixedHasher.new()` hashes alike in every run. `insert(k, v)`
   answers the value it replaces or `null`; `get(k)` the value or `null`; `containsKey(k)`;
-  `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`. *(Informative.)*
+  `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`; `getOr(k, d)`;
+  `getOrInsert(k, make)`, `make()`'s value inserted where `k` has none; `update(k, f)`, whether
+  there was one to replace; `retain(p)`, how many went. A map is `Iterable` over its entries,
+  `(K, V)`, and `keys()` and `values()` walk the same order — none the map's own (I8); a change of
+  the map while it is walked panics at the next pull (I9). *(Informative.)*
   A Swiss table: groups of eight slots under a control word, the hash's seven low bits compared
   a group at a time, at most seven of eight slots filled.
+- **`Set<T :: [Hashable], H :: [Hasher] = DefaultHasher>`** (C5), a class over a map's keys:
+  `new()`, `withHasher(seed)`, `insert(v)` (whether it was not there), `contains(v)`, `remove(v)`
+  (whether it was there), `length()`, `isEmpty()`, `clear()`; `Iterable` over its values, in no
+  order of its own.
+- Every iterator's **`toList()`** collects what it gives into a `List` (I4).
 
 A value that hashes is **`Hashable`**, `fn hash<H :: [Hasher]>(&h: H): void`, a child of
 `Equatable`: it writes its parts into the hasher, and equal values write the same — nothing checks
