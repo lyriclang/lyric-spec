@@ -28,7 +28,8 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    (60 unless it says; 0 for no limit).
 3. **`@callerExpr(p)`** — in the prelude — sits on a parameter: where a call leaves that
    parameter out, it gets the text the call wrote for `p`, another parameter of the function —
-   `assertEq(xs.length(), 3)` hands the assertion the words `xs.length()`. The parameter is a
+   `assertEq(xs.length(), 3)` hands the assertion the words `xs.length()` — as it is written,
+   the parentheses in it and around it included: `(1..5).sum()`, `(a + b)`. The parameter is a
    `string` and has a default, which a call that writes the argument itself keeps; the attribute
    names its parameter by name (`LYR-SEM0155`). It is the one attribute a parameter takes
    (`LYR-SEM0065`).
