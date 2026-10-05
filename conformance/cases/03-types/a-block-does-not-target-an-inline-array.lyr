@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0047
+//! since: 5.0.0
+// 03 §5.3 rule 6: an extend block does not target an inline array - a member written on
+// 'Slice<T>' reaches it where it lies in the heap.
+extend<T> T[4] {
+    fn head(): T {
+        return this[0];
+    }
+}
+
+fn main(): void {
+}

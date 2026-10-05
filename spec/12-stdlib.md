@@ -210,8 +210,9 @@ range. All three are `std.core`'s.
 ## Arrays and views
 
 The members of an array and of a view are `std.core`'s (design 10 C2), written once on
-`Slice<T>` and reached on an array through a view of all of it ([03 §5.2](03-types.md) rule 4):
-a write through one reaches the array. `length()` and the index are the primitives
+`Slice<T>` and reached on an array through a view of all of it ([03 §5.2](03-types.md) rule 4)
+— and so on an inline array that lies in the heap ([03 §5.3](03-types.md) rule 6): a write
+through one reaches the array. `length()` and the index are the primitives
 ([03 §5.1](03-types.md)).
 
 - `isEmpty()`; `get(i)`, `null` outside `0 ≤ i < length()`; `first()` and `last()`, `null`
