@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0115
+//! since: 5.0.0
+// 03 §5.3 rule 6: in a frame no view of an inline array exists (rule 4), so a view's member is
+// refused where it is called - the way out is a copy, 'xs.toArray().contains(2)'.
+fn main(): void {
+    let xs: int[3] = [3, 1, 2];
+    let found = xs.contains(2);
+}

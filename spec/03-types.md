@@ -459,6 +459,14 @@ Elements in a row: behind a reference, through a view, or as a value
    (`LYR-SEM0115`); such an array is copied or passed whole. A value type cannot hold itself
    through an inline array ([§4.1](#41-variants-and-payloads)).
 5. An array pattern of the one length covers the type ([09 §3](09-patterns.md)).
+6. An inline array has **`length()`, `isEmpty()` and `toArray()`** wherever it lies (the review's
+   M4-2); `toArray()` is a new `T[]` holding copies of its elements. Where it lies in the heap
+   (rule 4) it has the **members of a view** too, called on a view of all of it, as an array has
+   them (§5.2 rule 4): `board.cells.contains(x)`, and `board.cells.sort()` sorts the array
+   itself. Where it lies in a frame no view of it exists,
+   and such a member is refused where it is called, with the way out — a copy,
+   `xs.toArray().contains(x)` (`LYR-SEM0115`). An extend block does not target an inline array
+   (`LYR-SEM0047`): a member written on `Slice<T>` is the one that reaches it.
 
 ## 6. Tuples
 

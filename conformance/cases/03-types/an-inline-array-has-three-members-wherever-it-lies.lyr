@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 3 false 3 9 | 4 false 4 | 3 1 2
+//! since: 5.0.0
+// 03 §5.3 rule 6: an inline array has 'length()', 'isEmpty()' and 'toArray()' wherever it lies -
+// in a frame, in an object. 'toArray()' is a new 'T[]' of copies: a later write to the inline
+// array is not seen in it.
+import std.io { println };
+
+class Board {
+    var cells: int[4] = [4, 1, 3, 2],
+}
+
+fn main(): void {
+    var xs: int[3] = [3, 1, 2];
+    let copy = xs.toArray();
+    xs[0] = 9;
+    let b = Board { };
+    let held = b.cells.toArray();
+    println(f"{xs.length()} {xs.isEmpty()} {copy.length()} {xs[0]} | {b.cells.length()} {b.cells.isEmpty()} {held.length()} | {copy[0]} {copy[1]} {copy[2]}");
+}
