@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 3 2 1
+//! since: 5.0.0
+// 03 §9.4 rule 1, §9.1 rule 2: 'make<int>', 'Tiny.make<int>' and 'Small.make<int>' are three
+// values - each the instance of its own declaration.
+import std.io { println };
+
+struct Small {
+    n: int,
+    static fn make<T>(v: T): int { return 1; }
+}
+
+struct Tiny {
+    n: int,
+    static fn make<T>(v: T): int { return 2; }
+}
+
+fn make<T>(v: T): int { return 3; }
+
+fn main(): void {
+    let a: fn(int) -> int = make<int>;
+    let b: fn(int) -> int = Tiny.make<int>;
+    let c: fn(int) -> int = Small.make<int>;
+    println(f"{a(7)} {b(7)} {c(7)}");
+}

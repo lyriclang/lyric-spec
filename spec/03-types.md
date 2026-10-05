@@ -602,7 +602,11 @@ Type parameters, their inference, and what an instance is
 2. An **instance** names the arguments: `Pair<int, string>`, `ident<int>`. Two argument lists
    that differ are two types with no relation between them (T3): nothing coerces
    `Pair<int, string>` to `Pair<int8, string>`, and a `T[]` at `T = int8` is an `int8[]`, laid
-   out as one.
+   out as one. An instance is an instance of **one declaration**: what else carries the name —
+   the module's function beside a type's static, the statics of two types, two of a name that
+   differ in their count ([08 §1.2](08-expressions.md#12-one-name-several-counts)) — is another
+   function under the same arguments too. `Small.make<int>`, `Tiny.make<int>` and `make<int>`
+   are three.
 3. The number of arguments is the number of parameters (`LYR-SEM0026`); an argument that does
    not satisfy its parameter's constraints is refused (`LYR-SEM0028`), written or inferred
    alike.

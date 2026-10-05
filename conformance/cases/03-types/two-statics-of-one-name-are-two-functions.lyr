@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 2 3 | 3 2 1 | 2
+//! since: 5.0.0
+// 03 §9.1 rule 2: an instance is an instance of one declaration. The statics of two types and
+// the module's function of their name are three functions under one argument list, in whatever
+// order they are called; named bare inside its type, a static is the type's.
+import std.io { println };
+
+struct Small {
+    n: int,
+    static fn make<T>(v: T): int { return 1; }
+    static fn twice(): int { return make(7) + make(8); }
+}
+
+struct Tiny {
+    n: int,
+    static fn make<T>(v: T): int { return 2; }
+}
+
+fn make<T>(v: T): int { return 3; }
+
+fn main(): void {
+    let forth = f"{Small.make(7)} {Tiny.make(7)} {make(7)}";
+    let back = f"{make(8)} {Tiny.make(8)} {Small.make(8)}";
+    println(f"{forth} | {back} | {Small.twice()}");
+}
