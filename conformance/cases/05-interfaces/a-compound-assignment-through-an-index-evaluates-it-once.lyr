@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 10 11 4 | 4 11 11
+//! since: 5.0.0
+// 05 §12 rule 9: 'x[k] op= v', 'x[k]++' and 'x[k]--' read through 'index' and write through
+// 'setIndex' with 'x' and 'k' evaluated once - the index counts its calls. The postfix form
+// is worth the old element, the prefix form the new one.
+import std.io { println };
+import std.collections { List };
+
+class Counter {
+    var calls: int = 0,
+
+    mut fn next(): int {
+        this.calls += 1;
+        return this.calls - 1;
+    }
+}
+
+fn main(): void {
+    let xs = List<int>.of([1, 2, 3]);
+    let c = Counter { };
+    xs[c.next()] += 10;
+    xs[c.next()] *= 5;
+    xs[c.next()]++;
+    let old = xs[c.next() - 3]--;
+    let now = ++xs[1];
+    println(f"{xs[0]} {xs[1]} {xs[2]} | {c.calls} {old} {now}");
+}

@@ -1,0 +1,23 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 05 §12 rule 9: 'r[0] = 9' is 'r.setIndex(0, 9)', a 'mut fn' - its receiver is a place, and a
+// struct bound with 'let' is none.
+
+struct Row :: [IndexSet<int>] {
+    type Output = int;
+    var a: int,
+
+    fn index(k: int): int {
+        return this.a;
+    }
+
+    mut fn setIndex(k: int, v: int): void {
+        this.a = v;
+    }
+}
+
+fn main(): void {
+    let r = Row { a = 1 };
+    r[0] = 9;
+}

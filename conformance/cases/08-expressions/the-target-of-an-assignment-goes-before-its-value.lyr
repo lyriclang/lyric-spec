@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 11 2 3 | 11 2 3 | 2 2
+//! since: 5.0.0
+// 08 §3 rule 1: what leads to the place - the receiver, then the index - is evaluated before the
+// value, each once: 'xs[next()] = next() + 10' stores the second count at the first, through a
+// type's own index as in an array.
+import std.io { println };
+import std.collections { List };
+
+class Counter {
+    var calls: int = 0,
+
+    mut fn next(): int {
+        this.calls += 1;
+        return this.calls - 1;
+    }
+}
+
+fn main(): void {
+    let xs = List<int>.of([1, 2, 3]);
+    let c = Counter { };
+    xs[c.next()] = c.next() + 10;
+    let arr = [1, 2, 3];
+    let d = Counter { };
+    arr[d.next()] = d.next() + 10;
+    println(f"{xs[0]} {xs[1]} {xs[2]} | {arr[0]} {arr[1]} {arr[2]} | {c.calls} {d.calls}");
+}
