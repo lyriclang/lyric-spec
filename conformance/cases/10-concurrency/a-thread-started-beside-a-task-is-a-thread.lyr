@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | true 1 2
+//! since: 5.0.0
+// 10 §9 rule 1, §2 rule 8: 'Thread.spawn' and 'spawn' are two functions where their type
+// arguments are the same too. The thread's task runs while its starter does not wait: nothing
+// but another thread ends the loop early. Its bound is there for a toolchain that made the
+// thread a task - that one prints 'false' instead of never ending.
+import std.io { println };
+import std.sync { Atomic };
+import std.task { spawn, Thread };
+
+fn main(): void throws Error {
+    let started = Atomic<int>.new(0);
+    let task = spawn(() => 1);
+    let thread = Thread.spawn(() => {
+        started.store(1);
+        return 2;
+    });
+    var turns = 0;
+    while (started.load() == 0 && turns < 2000000000) {
+        turns += 1;
+    }
+    let ran = started.load() == 1;
+    let a = try task.await();
+    let b = try thread.await();
+    println(f"{ran} {a} {b}");
+}

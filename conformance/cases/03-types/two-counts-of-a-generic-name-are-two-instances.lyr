@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 1 2 | 10 20 | 100 200 | 7 8
+//! since: 5.0.0
+// 08 §1.2 rule 1, 03 §9.1 rule 2: two generic functions of one name that differ in their count
+// are two declarations, and each has its instances - as functions of the module, as statics, as
+// methods, and as the members of a generic type's instance.
+import std.io { println };
+
+fn of<T>(a: T): int { return 1; }
+fn of<T>(a: T, b: T): int { return 2; }
+
+struct S {
+    n: int,
+    static fn mk<T>(a: T): int { return 10; }
+    static fn mk<T>(a: T, b: T): int { return 20; }
+    fn at<T>(a: T): int { return 100; }
+    fn at<T>(a: T, b: T): int { return 200; }
+}
+
+struct Holder<T> {
+    v: T,
+    fn add(a: T): int { return 7; }
+    fn add(a: T, b: T): int { return 8; }
+}
+
+fn main(): void {
+    let s = S { n = 0 };
+    let b = Holder<int> { v = 0 };
+    println(f"{of(1)} {of(1, 2)} | {S.mk(1)} {S.mk(1, 2)} | {s.at(1)} {s.at(1, 2)} | {b.add(1)} {b.add(1, 2)}");
+}

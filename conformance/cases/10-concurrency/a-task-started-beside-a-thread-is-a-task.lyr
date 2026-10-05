@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | false 1 2
+//! since: 5.0.0
+// 10 §2 rule 8, §9 rule 1: 'spawn' and 'Thread.spawn' are two functions where their type
+// arguments are the same too. The task 'spawn' made is this thread's: it has not run before
+// this thread waits, however long that takes.
+import std.io { println };
+import std.task { spawn, Thread };
+
+fn work(n: int): int {
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + i % 7;
+    }
+    return sum;
+}
+
+fn main(): void throws Error {
+    let thread = Thread.spawn(() => 1);
+    let task = spawn(() => 2);
+    let busy = work(50000000);
+    let ran = task.isDone() || busy < 0;
+    let a = try thread.await();
+    let b = try task.await();
+    println(f"{ran} {a} {b}");
+}
