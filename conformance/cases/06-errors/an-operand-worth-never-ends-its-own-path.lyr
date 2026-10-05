@@ -1,0 +1,51 @@
+//! run
+//! stdout:
+//! | if 5 arm 5 guard 5
+//! | coalesce 5 and 5 or 5 chain 5
+//! | assign 5 5
+//! | nested 5 try 5
+//! since: 5.0.0
+// 06 §9 rule 2: an operand worth 'never' ends the path it stands on and no other. Every
+// function here is called so that the path is not taken.
+import std.io { println };
+
+struct Bad :: [Error] { fn message(): string { return "bad"; } }
+struct W { n: int, fn plus(k: int): int { return this.n + k; } }
+
+fn twice(n: int): int { return n * 2; }
+fn positive(n: int): bool { return n > 0; }
+fn risky(n: int): int throws Bad { if (n > 100) { throw Bad { }; } return n; }
+
+fn branch(c: bool): int { return if (c) twice(panic("if")) else 5; }
+fn arm(n: int): int { return match (n) { 0 => twice(panic("arm")), _ => 5 }; }
+fn guard(n: int): int { return match (n) { 0 if positive(twice(panic("guard"))) => 1, _ => 5 }; }
+fn coalesce(v: ?int): int { return (v ?? twice(panic("??"))) + 2; }
+fn both(c: bool): int { return if (c && positive(twice(panic("&&")))) 1 else 5; }
+fn either(c: bool): int { return if (c || positive(twice(panic("||")))) 5 else 1; }
+fn chain(w: ?W): int { return (w?.plus(twice(panic("?.")))) ?? 5; }
+
+fn coalesceAssign(v: ?int): int {
+    var x: ?int = v;
+    x ??= twice(panic("??="));
+    return (x ?? 0) + 2;
+}
+
+fn andAssign(c: bool): int {
+    var ok = c;
+    ok &&= positive(twice(panic("&&=")));
+    return if (ok) 1 else 5;
+}
+
+// A path that is worth 'never' as a whole, inside another expression.
+fn nested(c: bool, n: int): int { return if (c) (if (n > 0) panic("then") else panic("else")) else 5; }
+
+fn underCatch(c: bool): int {
+    return try (risky(5) + (if (c) twice(panic("catch")) else 0)) catch (_: Bad) 9;
+}
+
+fn main(): void {
+    println(f"if {branch(false)} arm {arm(1)} guard {guard(1)}");
+    println(f"coalesce {coalesce(3)} and {both(false)} or {either(true)} chain {chain(null)}");
+    println(f"assign {coalesceAssign(3)} {andAssign(false)}");
+    println(f"nested {nested(false, 1)} try {underCatch(false)}");
+}
