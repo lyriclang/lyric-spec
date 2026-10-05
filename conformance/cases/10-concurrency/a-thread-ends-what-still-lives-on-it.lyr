@@ -1,0 +1,51 @@
+//! run
+//! stdout:
+//! | parked: the defer ran
+//! | parked: cancelled
+//! | fresh: the defer ran
+//! | fresh: cancelled
+//! since: 5.0.0
+// 10 §9 rule 2: a thread's first task has ended; a task it started still lives on the thread -
+// parked in a wait, or not yet started. The thread cancels it and runs until it has ended: its
+// 'defer' runs, its handle is done, and the main thread, which awaits it, goes on.
+import std.io { println };
+import std.task { spawn, sleep, Thread, Channel, Cancelled, TaskStatus };
+import std.time { Duration };
+
+fn waiter(name: string, never: Channel<int>): int throws Cancelled {
+    defer println(f"{name}: the defer ran");
+    let v = try never.recv();
+    return v ?? 0;
+}
+
+fn told(name: string, status: TaskStatus<int>): void {
+    println(match (status) {
+        .Cancelled => f"{name}: cancelled",
+        .Running => f"{name}: running",
+        _ => f"{name}: another status",
+    });
+}
+
+fn main(): void throws Error {
+    let never = Channel<int>.new();
+
+    let slow = Thread.spawn(() => {
+        let inner = spawn(() => try waiter("parked", never));
+        try sleep(Duration.ofMillis(20));
+        return inner;
+    });
+    let parked = try slow.await();
+    try {
+        parked.await();
+    } catch (_: Cancelled) {
+    }
+    told("parked", parked.status());
+
+    let quick = Thread.spawn(() => spawn(() => try waiter("fresh", never)));
+    let fresh = try quick.await();
+    try {
+        fresh.await();
+    } catch (_: Cancelled) {
+    }
+    told("fresh", fresh.status());
+}

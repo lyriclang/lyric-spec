@@ -147,6 +147,16 @@ scheduler runs another task meanwhile. The functions this section names are `std
     `Running`; `Done(value)`; `Failed(error)`, the error an `Error`; `Cancelled`, when it ended
     with `Cancelled`; or `Panicked(info)` (§5), `info` a `PanicInfo` with the panic's `code`,
     `message` and `trace`.
+12. **A wait nothing can end is a panic** (`LYR-RT0018`; the review's M6-12). Where every task of
+    a thread waits, none of them sleeps, and no other thread of the program lives that could
+    wake one, no wait of that thread can end any more: one of its waiting tasks panics in its
+    wait — `deadlock: every task waits, and nothing can wake one`, with the frames of the call
+    that waits. It is the **oldest task that waits for something other than a task's end** — a
+    channel, a lock: the wait that is the reason, not an `await` of it —, and where each waits
+    for another, the oldest. It is that task's panic (§5): what awaits the task panics again
+    with its frames, and `main`'s ends the program. While another thread lives nothing is
+    proven and nothing is said — two threads whose tasks wait for each other wait —; once it
+    has ended, it is.
 
 ## 3. Cancellation
 
@@ -272,9 +282,12 @@ Threads run at the same time.
 1. **`Thread.spawn(body)`** starts a thread and runs `body` there as its first task. It gives
    that task's handle, a `Task<T> throws E` (§2 rule 8): `await()` on it waits from any thread,
    and `cancel()` cancels it from any thread (§3).
-2. A thread ends when its first task has ended, as the program ends with `main` (§2 rule 1): the
-   tasks still ready or asleep on it never run again. The program does not wait for a thread —
-   when `main` ends, the program ends.
+2. A thread's handle is done when its first task has ended. The thread then **cancels what
+   still lives on it** (§3; the review's M6-20b) — every task that has started and not ended,
+   and each that starts from then on, as it starts — and runs until all of it has ended: their
+   `defer`s run, their handles are done, and a task of another thread that awaits one of them
+   goes on. Only the program ends with its first task and leaves the rest where it stands (§2
+   rule 1): it does not wait for a thread either — when `main` ends, the program ends.
 3. A task that `spawn` starts runs on the thread of the task that started it.
 4. What a thread did before it started another happens before the new thread's first task (N7
    P1), and what a task did before it ended happens before `await()` on it returns, on any thread.
@@ -314,8 +327,9 @@ A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com
 1. **`Pool.new(n)`** starts `n` threads, one at least, each with a scheduler of its own (§9).
 2. **`pool.spawn(body)`** runs `body` as a task on one of the pool's threads, each in turn, and
    gives its handle (§2 rule 8): `await()` and `cancel()` work from any thread.
-3. **`pool.close()`** waits until every task given to the pool has ended, then ends its threads;
-   closing a closed pool waits for nothing. `close()` is a wait (§3). A pool is `Closeable`
+3. **`pool.close()`** waits until every task given to the pool has ended, then ends its threads
+   — each as a thread ends (§9 rule 2): what those tasks started there and left is cancelled, and
+   has ended when `close()` returns. Closing a closed pool waits for nothing. `close()` is a wait (§3). A pool is `Closeable`
    ([06 §7](06-errors.md)): under `using let pool = Pool.new(4);` no task of it outlives the block.
 4. A task given to a closed pool is a panic (`LYR-RT0008`).
 

@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | the defer ran
+//! | cancelled
+//! since: 5.0.0
+// 10 §11 rule 3: a task given to the pool started another and ended. 'close()' ends the pool's
+// threads as a thread ends (§9 rule 2): the task left behind is cancelled, and has ended when
+// 'close()' returns.
+import std.io { println };
+import std.task { spawn, Pool, Channel, Cancelled };
+
+fn waiter(never: Channel<int>): int throws Cancelled {
+    defer println("the defer ran");
+    let v = try never.recv();
+    return v ?? 0;
+}
+
+fn main(): void throws Error {
+    let never = Channel<int>.new();
+    let pool = Pool.new(1);
+    let given = pool.spawn(() => spawn(() => try waiter(never)));
+    let left = try given.await();
+    try pool.close();
+    println(match (left.status()) {
+        .Cancelled => "cancelled",
+        .Running => "running",
+        _ => "another status",
+    });
+}
