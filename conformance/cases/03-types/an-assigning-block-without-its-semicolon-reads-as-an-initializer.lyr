@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0011
+//! since: 5.0.0
+// 03 §8.2 rule 5: 'run { total = 5 }' holds 'name = value' and its closing brace — an
+// initializer of 'run', which is no type.
+import std.io { println };
+
+fn run(f: fn() -> void): void { f(); }
+
+fn main(): void {
+    var total = 0;
+    let unit = run { total = 5 };
+    println(f"{total}");
+}

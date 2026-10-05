@@ -526,6 +526,15 @@ Functions as values, and the lambdas that make them
    belong to loops inside the lambda (F5).
 4. Without a position that expects a function type, the parameters of a bare or trailing
    lambda have no type and are refused (`LYR-SEM0045`); the parenthesized form writes them.
+5. **A brace after a name alone** is an initializer's ([§2.4](#24-construction)) or a trailing
+   block's, and what it holds says which
+   ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)). An
+   initializer holds nothing, or begins `name = value` followed by a `,` or the closing brace;
+   anything else is a block — and a block may begin with an assignment: a **`;` behind that
+   first value** makes it a statement, `run { total = 5; }`. An assigning block without its `;`
+   therefore reads as an initializer of the name before it, and is refused where that name is
+   no type (`LYR-SEM0011`). An initializer begins no statement — its value would be dropped
+   (`LYR-PAR0055`) — and a call with a trailing block does.
 
 ### 8.3 Captures
 

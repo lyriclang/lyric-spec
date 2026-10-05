@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 5 10
+//! | 6
+//! | 3 7 1
+//! since: 5.0.0
+// 03 §8.2 rule 5: a brace after a name is a trailing block's when a ';' ends its first
+// 'name = value' — in a value position and at the start of a statement — and an initializer's
+// when a ',' or the closing brace does, whatever the value itself holds.
+import std.io { println };
+
+struct Point { x: int, y: int }
+struct One { x: int }
+struct Handler { run: fn() -> int, id: int }
+
+fn run(f: fn() -> void): void { f(); }
+fn compute(f: fn() -> int): int { return f(); }
+
+fn main(): void {
+    var total = 0;
+    let doubled = compute { total = 5; total * 2 };
+    println(f"{total} {doubled}");
+
+    run { total = total + 1; };
+    println(f"{total}");
+
+    let p = Point { x = 1, y = 2 };
+    let o = One { x = 7 };
+    let h = Handler { run = () => { let a = 1; a }, id = 1 };
+    println(f"{p.x + p.y} {o.x} {h.run() + h.id - 1}");
+}
