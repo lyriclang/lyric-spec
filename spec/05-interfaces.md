@@ -116,7 +116,11 @@ same. What is not written here yet is decided in the design documents, not here.
    interface, or holds a value of it (`LYR-SEM0123` otherwise). Every abstract member of the
    interface's chain that the type does not write itself is **forwarded** to the field, as if
    `fn walk(d) { this.legs.walk(d); }` were written. A generic member is not forwarded yet: the
-   type writes it (`LYR-SEM0020`).
+   type writes it (`LYR-SEM0020`). A forwarded `mut fn` writes the field as that function would:
+   a value in the field — a struct, an enum, a builtin — is written where it lies, so its field
+   is a `var` (`LYR-SEM0019`); a class, and a value of the interface, are written through. And
+   what the field's implementation throws leaves the forwarded member as it would leave that
+   function ([06](06-errors.md)).
 2. Own members win. The interface's defaults run on the outer type, as every default does, and
    reach the forwarded members through `this`. There is no passthrough of `this`: the field's
    implementation runs with the field as its receiver, never the outer value — a call on

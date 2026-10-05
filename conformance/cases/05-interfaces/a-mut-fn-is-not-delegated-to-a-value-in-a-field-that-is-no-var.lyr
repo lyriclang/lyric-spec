@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 05 §5 rule 1: forwarded, a 'mut fn' writes the field's value - a struct in the field is in a
+// 'var' field, as the forwarder written by hand would need it.
+interface Counter {
+    mut fn bump(): void;
+}
+
+struct Inner :: [Counter] {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+}
+
+struct Outer :: [Counter by inner] {
+    inner: Inner,
+}
+
+fn main(): void {
+}

@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | 0 1 | 2
+//! since: 5.0.0
+// 05 §2 rule 2, §5: a struct is copied into an interface value, and a delegated 'mut fn' called
+// through the value writes the field of that copy - the original stays, the copy counts. A field
+// that holds a value of the interface shares what it holds.
+import std.io { println };
+
+interface Counter {
+    mut fn bump(): void;
+    fn get(): int;
+}
+
+struct Inner :: [Counter] {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+    fn get(): int { return this.n; }
+}
+
+struct Outer :: [Counter by inner] {
+    var inner: Inner,
+}
+
+class Holder :: [Counter by held] {
+    var held: Counter,
+}
+
+fn main(): void {
+    let o = Outer { inner = Inner { n = 0 } };
+    var asValue: Counter = o;
+    asValue.bump();
+    let h = Holder { held = Inner { n = 0 } };
+    h.bump();
+    h.bump();
+    println(f"{o.inner.n} {asValue.get()} | {h.get()}");
+}
