@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 2 true 4 x
+//! since: 5.0.0
+// 03 §2.4 rule 1: a default is checked with its type's parameters in scope and evaluated for
+// the instance that is built - two instances in one function each get their own.
+import std.io { println };
+
+class Bag<T> {
+    items: List<T> = List<T>.new(),
+    label: ?T = null,
+    pick: fn(T) -> T = (x: T) => x,
+
+    fn add(item: T): int {
+        this.items.push(item);
+        return this.items.length();
+    }
+}
+
+fn main(): void {
+    let ints = Bag<int> { };
+    let words = Bag<string> { };
+    let one = ints.add(4);
+    words.add("a");
+    let two = words.add("b");
+    println(f"{one} {two} {ints.label == null} {ints.pick(4)} {words.pick("x")}");
+}

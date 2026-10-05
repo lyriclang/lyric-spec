@@ -223,7 +223,8 @@ Two forms of a composite type, chosen once at the type
    field without a default is given; one diagnostic names all that are missing
    (`LYR-SEM0106`). The written values are evaluated in the order they are written, then the
    defaults of the omitted fields in the order of their declaration. A default does not see
-   `this`.
+   `this`. It is checked with its type's parameters in scope —
+   `items: List<T> = List<T>.new()` — and evaluated for the instance that is built.
 2. A field of an optional type `?T` has the default `null` without saying so.
 3. There are **no constructors**. A type name in call position, `T(args)`, is the call
    `T.new(args)` of the type's `static fn new` — an ordinary static function, which may
@@ -480,6 +481,13 @@ Positional elements in one value
    twice in one type is refused.
 4. A tuple is taken apart by a pattern ([09 §2](09-patterns.md)) and by `let (a, b) = t;`.
    Equality, hashing and display come with the interfaces ([05](05-interfaces.md)).
+5. A tuple **literal** takes the types the position expects of its elements (T8): where a tuple
+   of its length is expected — a binding with a type, an assignment, an argument, a return, a
+   field — each element stands where its element type is expected, as a binding's value does:
+   `return (0, null);` for a `(int, ?int)`, `(1, [])` for a `(int, int[])`, `(.Red, 1)` for a
+   `(Color, int)`. An element that does not fit is the element's error (`LYR-SEM0001`). A tuple
+   that is no literal is one value of its type and is converted by nothing: an `(int, int)` is
+   no `(int, ?int)`.
 
 ## 7. Ranges
 
