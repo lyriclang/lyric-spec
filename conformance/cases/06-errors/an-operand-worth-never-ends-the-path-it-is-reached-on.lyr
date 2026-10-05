@@ -1,0 +1,16 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 06 §9 rule 2: … and where the path IS taken, the program ends at the operand.
+import std.io { println };
+
+fn twice(n: int): int { return n * 2; }
+
+fn branch(c: bool): int { return if (c) twice(panic("taken")) else 5; }
+
+fn main(): void {
+    println("before");
+    println(f"{branch(true)}");
+}

@@ -253,7 +253,11 @@ with M5. What is not written here yet is decided in the design documents, not he
    ([07 §1](07-statements.md#1-loop-and-the-jumps)), an `if` or `match` whose every branch is
    one, and an operator over one alone. It **fits every type** where a value is wanted,
    an operand included: `let n: int = found ?? unreachable();`, and `ok || fail("why")` is a
-   `bool`.
+   `bool`. Where it is reached, what holds it goes no further; and it ends **the path it stands
+   on and no other**: in `if (c) wrap(todo()) else 5` the branch is a call, typed as one, and
+   its argument ends that branch alone — with `c` false the expression is `5`. So for an arm
+   and its guard, the right of `??`, `&&` and `||` and of their assignments, the call behind
+   `?.`, and the operand of a `try` with clauses.
 3. `never` is written **only as a return type**: the whole return type of a function, a lambda or
    a function type, `fn fail(m: string): never`. Anywhere else — a parameter, a binding, a field,
    an element, an optional, a type argument, a thrown set, an alias — it would type a value that
