@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 2 | 1 10
+//! since: 5.0.0
+// 05 §5 rules 1, 3: through two delegations a 'mut fn' writes the innermost field; and the
+// field is read at each call - exchanged between two calls, the next one forwards to the new
+// value.
+import std.io { println };
+
+interface Counter {
+    mut fn bump(): void;
+    fn get(): int;
+}
+
+struct Inner :: [Counter] {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+    fn get(): int { return this.n; }
+}
+
+struct Outer :: [Counter by inner] {
+    var inner: Inner,
+}
+
+struct Outermost :: [Counter by outer] {
+    var outer: Outer,
+}
+
+fn main(): void {
+    var m = Outermost { outer = Outer { inner = Inner { n = 0 } } };
+    m.bump();
+    m.bump();
+    var o = Outer { inner = Inner { n = 0 } };
+    o.bump();
+    let before = o.get();
+    o.inner = Inner { n = 9 };
+    o.bump();
+    println(f"{m.outer.inner.n} | {before} {o.get()}");
+}

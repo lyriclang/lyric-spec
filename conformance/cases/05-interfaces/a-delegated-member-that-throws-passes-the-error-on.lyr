@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | 2 -1 -2 -3 | 4
+//! since: 5.0.0
+// 05 §5 rule 1, 06: what the field's implementation throws leaves the forwarded member as it
+// would leave the function written by hand - on the type, through a constraint, through a value
+// of the interface.
+import std.io { println };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+interface Loader {
+    fn load(n: int): int throws Oops;
+}
+
+struct Disk :: [Loader] {
+    k: int,
+    fn load(n: int): int throws Oops {
+        if (n < 0) {
+            throw Oops.Bad;
+        }
+        return n + this.k;
+    }
+}
+
+struct Cache :: [Loader by disk] {
+    disk: Disk,
+}
+
+fn through<L :: [Loader]>(l: L, n: int): int throws Oops { return try l.load(n); }
+
+fn main(): void {
+    let c = Cache { disk = Disk { k = 1 } };
+    let a = try c.load(1) catch (_: Oops) -1;
+    let b = try c.load(-1) catch (_: Oops) -1;
+    let d = try through(c, -5) catch (_: Oops) -2;
+    let asValue: Loader = c;
+    let e = try asValue.load(-1) catch (_: Oops) -3;
+    let f = try asValue.load(3) catch (_: Oops) -3;
+    println(f"{a} {b} {d} {e} | {f}");
+}
