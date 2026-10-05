@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | seven
+//! | 36
+//! since: 5.0.0
+// 08 §2 rule 4: a block arm that leaves by a 'break' or a 'continue' of the loop around the
+// 'match' contributes nothing, as one that returns does.
+import std.io { println };
+
+fn main(): void {
+    var total = 0;
+    for (i in 0..10) {
+        let v = match (i) {
+            3 => { continue; }
+            7 => { println("seven"); break; }
+            _ => i * 2,
+        };
+        total = total + v;
+    }
+    println(f"{total}");
+}

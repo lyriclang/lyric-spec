@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | big 2
+//! | big 3
+//! | some 4
+//! | none
+//! since: 5.0.0
+// 07 §3 rule 2: an 'if' without a final 'else', and one whose condition binds, are statements
+// also where they stand last — the lambda around them gives no value.
+import std.io { println };
+
+fn each(xs: int[], f: fn(int) -> void): void { for (x in xs) { f(x); } }
+fn given(v: ?int, f: fn(?int) -> void): void { f(v); }
+
+fn main(): void {
+    each([1, 2, 3]) { if (it > 1) { println(f"big {it}"); } };
+    given(4) { v =>
+        if (let n = v) { println(f"some {n}"); } else { println("none"); }
+    };
+    given(null) { v =>
+        if (let n = v) { println(f"some {n}"); } else { println("none"); }
+    };
+}

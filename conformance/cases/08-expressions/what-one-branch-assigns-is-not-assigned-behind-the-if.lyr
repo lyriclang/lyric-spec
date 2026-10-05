@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0018
+//! since: 5.0.0
+// 08 §2 rule 5: the branches of an 'if' expression are branches — what only one of them assigns
+// is not assigned behind it.
+import std.io { println };
+
+fn main(): void {
+    let c = true;
+    var x: int;
+    let y = if (c) { x = 1; 5 } else { 7 };
+    println(f"{x} {y}");
+}

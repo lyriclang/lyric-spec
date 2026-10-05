@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-PAR0016
+//! since: 5.0.0
+// 07 §3 rule 2: before the end of the block an 'if' is a statement, and its blocks are
+// statement blocks — a value without ';' in one is refused.
+import std.io { println };
+
+fn apply(v: int, f: fn(int) -> int): int { return f(v); }
+
+fn log(n: int): void { println(f"{n}"); }
+
+fn main(): void {
+    let r = apply(4) { n =>
+        if (n > 2) { log(1) } else { log(2); }
+        n
+    };
+    println(f"{r}");
+}

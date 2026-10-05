@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | in then
+//! | left then
+//! | after 5
+//! | after 6
+//! | 5 6
+//! since: 5.0.0
+// 07 §3 rule 4: a value block is a scope — its 'defer' runs when the block ends, after its
+// tail's value is taken.
+import std.io { println };
+
+fn scoped(c: bool): int {
+    let x = if (c) {
+        defer println("left then");
+        println("in then");
+        5
+    } else {
+        6
+    };
+    println(f"after {x}");
+    return x;
+}
+
+fn main(): void {
+    let a = scoped(true);
+    let b = scoped(false);
+    println(f"{a} {b}");
+}

@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 3 0 5
+//! since: 5.0.0
+// 08 §2 rule 2: a branch worth 'never' — it returns, or jumps in the loop around — contributes
+// nothing to the type of the 'if'.
+import std.io { println };
+
+fn seen(xs: int[]): int {
+    var total = 0;
+    for (x in xs) {
+        let v = if (x < 0) { continue; } else if (x > 100) { break; } else { x };
+        total = total + v;
+    }
+    return total;
+}
+
+fn next(v: ?int): int {
+    let n = if (v == null) { return 0; } else { v };
+    return n + 1;
+}
+
+fn main(): void {
+    println(f"{seen([1, -5, 2, 300, 4])} {next(null)} {next(4)}");
+}

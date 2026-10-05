@@ -103,3 +103,33 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    `continue` stays inside. The `close()` is a call of the loop's, marked by its head's `try`
    where it may throw (rule 6). Through a constraint that does not say `Closeable` the loop does
    not close.
+
+## 3. Value blocks
+
+1. A **value block** is a block that is worth a value, `{ …; v }`: statements, and last a
+   **tail** — written without a `;`. It stands where the grammar puts one and nowhere else
+   ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)): as the
+   body of a lambda, as a block arm of a `match`, as a clause of a `try` expression
+   ([06 §6](06-errors.md#6-the-expression-forms)), as a branch of an `if` expression and as the
+   right of `??` ([08 §2](08-expressions.md#2-if-and-match-as-values)). A brace anywhere else in
+   an expression is an initializer's or a trailing lambda's: there is no block expression as
+   such.
+2. The tail is an expression — or an **`if` with its `else`, a `match` or a `loop` standing
+   last**: there the three are worth what they are worth as expressions (the tail rule). Before
+   the end of the block, and in every block that is no value block — a function's body, a
+   loop's, the branches of an `if` statement — they are statements, and a value without `;` in a
+   statement block is refused (`LYR-PAR0016`). An `if` without a final `else` is a statement
+   wherever it stands, and so is one whose condition binds, `if (let …)`. The form without
+   braces, `if (c) a else b`, is an expression everywhere.
+3. A value block is **worth its tail's value**. Without a tail it gives no value: it is worth
+   `never` where every path through it leaves — by `return`, `throw`, `break`, `continue` or an
+   expression worth `never` ([06 §9](06-errors.md#9-panics-and-never)) — and **nothing** where
+   it runs to its end. A block worth nothing stands where nobody takes a value; where the
+   position wants one, or beside a branch or an arm that gives one, it is refused
+   (`LYR-SEM0033`, or the branches do not unify, `LYR-SEM0016`).
+4. A value block is a **scope**: its bindings end with it, and its `defer`s run when it ends —
+   after the tail's value is taken.
+5. A lambda's block is a value block in each of its forms: `(x) => { … }`, `x => { … }`, a
+   trailing `{ x => … }`, and a trailing block that holds statements, `{ let d = it * 2; d + 1 }`.
+   Its tail is the lambda's result, as `return tail;` at its end would be; a lambda nobody takes
+   a value from may end in a tail worth nothing.

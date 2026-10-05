@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | negative zero small big
+//! | 4 5
+//! since: 5.0.0
+// 08 §2 rule 1: a branch of an 'if' expression is an expression or a value block; the forms mix,
+// 'else if' goes on, and a block ends its branch — the '+ 3' takes the whole 'if'.
+import std.io { println };
+
+fn grade(n: int): string {
+    return if (n < 0) {
+        "negative"
+    } else if (n == 0) {
+        "zero"
+    } else {
+        let big = n > 100;
+        if (big) "big" else "small"
+    };
+}
+
+fn main(): void {
+    println(f"{grade(-1)} {grade(0)} {grade(7)} {grade(700)}");
+    let c = true;
+    let whole = if (c) { 1 } else { 2 } + 3;
+    let right = if (c) 5 else 2 + 3;
+    println(f"{whole} {right}");
+}
