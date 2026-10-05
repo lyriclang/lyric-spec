@@ -633,14 +633,26 @@ Type parameters, their inference, and what an instance is
 5. `_` stands only in a list of type arguments — of a call, of an initializer ([§9.3](#93-generic-types-in-an-initializer)),
    of an instantiated function ([§9.4](#94-instantiated-functions-as-values)). Anywhere else,
    `let p: Pair<_, int> = …` included, it is refused (`LYR-SEM0117`).
+6. A **static function of a generic type**, a **variant that takes values** and a static of a
+   generic block ([05 §13](05-interfaces.md)) may be called through the type's bare name —
+   `Cell.of(3)`, `Opt.Some(7)`, `Map.new()` —, and the call binds the type's parameters as it
+   binds its own (the review's M8a-2). For the type's parameters the **expected type comes
+   first**, as for an initializer ([§9.3](#93-generic-types-in-an-initializer)): in
+   `let a: Atomic<?int> = Atomic.new(1);` the `1` is checked as a `?int`; then the arguments
+   bind what is open. A parameter neither determines is refused (`LYR-SEM0060`), with the form
+   to write, `Cell<…>.none(…)`. Nothing else determines it — not a statement before, not a use
+   behind. Without a call the bare name of a generic type names no member (`LYR-SEM0063`).
 
 ### 9.3 Generic types in an initializer
 
 1. An initializer of a generic type takes its arguments from what is **written**,
    `Pair<int, string> { first = 1, second = "x" }`, else from the **context** — a binding with
-   a type, an argument, a return, a field — `let p: Pair<int, string> = Pair { first = 1, second = "x" };`.
-   Without either it is refused (`LYR-SEM0026`): the field values alone do not choose an
-   instance.
+   a type, an argument, a return, a field — `let p: Pair<int, string> = Pair { first = 1, second = "x" };`,
+   else from its **field values**, each binding the parameters in its field's type as an
+   argument binds a call's ([§9.2](#92-inference-at-a-call); the review's M8a-2):
+   `Pair { first = 1, second = "x" }` is a `Pair<int, string>`. The context comes before the
+   values — `let c: Cell<?int> = Cell { v = 3 };` is a `Cell<?int>`. A parameter no field value
+   determines is refused (`LYR-SEM0060`), with the form to write.
 2. A written list may hold placeholders: `Pair<_, string> { first = 3, second = "x" }`. A
    placeholder is filled from the context when the position names an instance, else from the
    **field values**, each checked with as much of its field's type as is known; a value that

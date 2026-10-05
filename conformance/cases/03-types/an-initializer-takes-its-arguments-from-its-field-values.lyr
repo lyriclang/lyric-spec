@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 x 3 2.5
+//! since: 5.0.0
+// 03 §9.3 rule 1: without a list and without a context an initializer takes its type arguments
+// from its field values, as a call from its arguments; the context comes before the values
+// ('Cell<?int>' from 'Cell { v = 3 }').
+import std.io { println };
+
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+
+struct Cell<T> {
+    v: T,
+}
+
+fn inner<T>(c: Cell<T>): T {
+    return c.v;
+}
+
+fn main(): void {
+    let p = Pair { first = 1, second = "x" };
+    let wide: Cell<?int> = Cell { v = 3 };
+    println(f"{p.first} {p.second} {wide.v ?? 0} {inner(Cell { v = 2.5 })}");
+}

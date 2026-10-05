@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.2 rule 6: 'Cell.none()' has no argument and stands where no type is expected - nothing
+// determines 'T', and it is written: 'Cell<int>.none()'.
+struct Cell<T> {
+    v: T,
+    static fn none(): ?Cell<T> {
+        return null;
+    }
+}
+
+fn main(): void {
+    let c = Cell.none();
+}
