@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0167
+//! since: 5.0.0
+// 04 §3 rule 10a: 'Sq' and 'Shape' are pub, so the conformance is - and 'area', which answers
+// it, says so itself: 'pub fn area'. Without the word it would be called through 'Shape' where
+// 'sq.area()' is refused.
+pub interface Shape {
+    fn area(): int;
+}
+
+pub struct Sq :: [Shape] {
+    pub s: int,
+    fn area(): int {
+        return this.s * this.s;
+    }
+}
+
+fn main(): void {
+}

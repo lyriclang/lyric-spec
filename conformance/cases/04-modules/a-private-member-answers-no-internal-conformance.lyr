@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0167
+//! since: 5.0.0
+// 04 §3 rule 10a: an internal type's conformance is the package's, and a private member is
+// its module's alone - narrower than what it answers.
+pub interface Shape {
+    fn area(): int;
+}
+
+struct Sq :: [Shape] {
+    s: int,
+    private fn area(): int {
+        return this.s * this.s;
+    }
+}
+
+fn main(): void {
+}
