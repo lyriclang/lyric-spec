@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0057
+//! since: 5.0.0
+// 03 §4.1 rule 1: the ';' ends the variants - a member behind a ',' is no variant, and is
+// said as that, once.
+enum Level {
+    Low, High,
+    static let fallback: Level = Level.Low;
+}
+
+fn main(): void { }

@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | low 2 2 high
+//! since: 5.0.0
+// 03 §4.1 rule 1: behind its variants an enum declares constants, 'static let', as a struct
+// does - read under the enum's name, filled before the entry runs (04 §1 rule 2), and of any
+// type: the enum's own, a number, an array of its variants.
+import std.io { println };
+
+enum Level {
+    Low, High;
+
+    static let fallback: Level = Level.Low;
+    static let count: int = 2;
+    static let all: Level[] = [Level.Low, Level.High];
+
+    fn name(): string {
+        return match (this) { .Low => "low", .High => "high" };
+    }
+}
+
+fn main(): void {
+    println(f"{Level.fallback.name()} {Level.count} {Level.all.length()} {Level.all[1].name()}");
+}

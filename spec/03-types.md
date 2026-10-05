@@ -331,7 +331,10 @@ One of several variants, each with a payload or none
    **tuple** variant with positional payload (`Num(int)`, `Tagged(string, Point)`) or a
    **struct** variant with named fields (`Rect { w: int, h: int }`). One enum may mix the
    three forms. After the variants, separated by `;`, an enum declares methods, `mut fn`
-   included, as a struct does ([§2.3](#23-methods-and-mut-fn)).
+   included, as a struct does ([§2.3](#23-methods-and-mut-fn)), and constants, `static let`,
+   which are the enum's under its name as a struct's are
+   ([04 §1](04-modules.md) rule 2): `Level.fallback`. The `;` is what ends the variants — a
+   member where the next variant's name is expected is refused (`LYR-PAR0057`).
 2. A value of the enum is exactly one variant with that variant's payload. A unit variant is
    written by its name, `Signal.Red`; a tuple variant is called, `Shape.Num(3)`; a struct
    variant is built with the initializer, `Shape.Rect { w = 1, h = 2 }`, under the rules of
