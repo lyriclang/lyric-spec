@@ -1,0 +1,7 @@
+import std.task { Cancelled };
+
+pub enum Color { Red, Green(string) }
+
+pub fn emitGreen(): void throws Cancelled {
+    yield Color.Green("from a");
+}

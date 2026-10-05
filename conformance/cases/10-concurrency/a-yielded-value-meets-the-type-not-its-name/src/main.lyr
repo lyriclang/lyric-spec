@@ -1,0 +1,23 @@
+//! run
+//! panic: LYR-RT0014
+//! since: 5.0.0
+// 10 §1.13: a yield outside a coroutine's body is checked against the running coroutine's yield
+// type at run time — the type, not its name. Two modules each declare a 'Color'; a function
+// yielding the one into a generator of the other panics, where reading the one as the other would
+// take a string for a number.
+import app.a;
+import app.b;
+
+fn colors(): Coroutine<b.Color> {
+    try a.emitGreen();
+    yield b.Color.Blue(1);
+}
+
+fn main(): int {
+    let g = colors();
+    let c = g.next();
+    if (c != null) {
+        return b.number(c);
+    }
+    return 0;
+}
