@@ -65,12 +65,19 @@ with M5. What is not written here yet is decided in the design documents, not he
    unseen (E1). A lambda's body is a function of its own: a `try` around the lambda does not mark
    what its body calls.
 2. `try` **covers everything to its right**: `try a + b` is `try (a + b)` and marks every call in
-   it ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)). It
-   therefore stands at the **start** of the expression it covers — a binding's value, an
-   argument, a `return`, the right of an `=` — and to the right of another operator it is
-   refused (`LYR-PAR0050`): `1 + try f()` is written `try 1 + f()`. The value and the type are
-   the expression's. A `try` no error reaches is warned about (`LYR-SEM0139`): nothing under it
-   throws, or a `try` inside it takes all of it.
+   it ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)). At the
+   **start** of an expression — a binding's value, an argument, a `return`, the right of an
+   `=`, what stands in parentheses, a branch — it covers all of it. The plain mark may also
+   stand **to the right of an operator**: there it covers from where it stands to the end of
+   that expression and changes nothing about how the expression is grouped — in
+   `a() + try b() * c()` the calls `b()` and `c()` are marked and `a()` is not, and a throwing
+   call left of the mark is refused as any unmarked one is (`LYR-SEM0138`). `try?`, `try!` and
+   a `try` with clauses are worth something else than what they cover, so they stand at its
+   start, and to the right of an operator they are refused (`LYR-PAR0050`). The value and the
+   type are the expression's. A `try` that marks nothing is warned about (`LYR-SEM0139`): no
+   error reaches it — nothing it covers throws, or a `try` inside it takes all of it — or what
+   it covers is **marked already**, by a `try` block or a `try` around it or by a mark to its
+   left in the same expression.
 3. Every type a site may throw — a marked call, or a `throw` — is **covered** (K8): by a `try?`
    or `try!` around the site, by a `catch` clause of a `try` around it
    ([§4](#4-the-try-block-and-its-clauses), [§6](#6-the-expression-forms)), or by the `throws` set

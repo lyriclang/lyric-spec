@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 06 §3.2: a mark covers what is to its right — the throwing call left of it is unmarked.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn plain(): int { return 3; }
+
+fn f(): int throws Oops { return one() + try two(); }
+fn main(): int { return plain(); }

@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 06 §3.2: … and no further than the expression it stands in: what stands in parentheses ends
+// there.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn plain(): int { return 3; }
+
+fn f(): int throws Oops { return (plain() + try one()) + two(); }
+fn main(): int { return plain(); }

@@ -15,9 +15,13 @@ fn throwing(): Coroutine<int> throws Fail {
     throw Fail {};
 }
 
+fn walk(): void throws Fail {
+    for (x in try throwing()) { println(f"{x}"); }
+}
+
 fn main(): int {
     try {
-        for (x in try throwing()) { println(f"{x}"); }
+        walk();
     } catch (e: Fail) {
         println(e.message());
     }
