@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 8 8 8 8 8
+//! since: 5.0.0
+// 03 §8.4 rule 1: a function of another module is a value by every name that reaches it - the
+// one a selective import binds, another it is given, the module's, and one passed on. And a
+// module's binding that holds a function is called by its imported name.
+import std.io { println };
+import app.util { twice };
+import app.util { twice as double };
+import app.util;
+import app.facade;
+import app.hooks { handler };
+
+fn apply(f: fn(int) -> int, n: int): int {
+    return f(n);
+}
+
+fn main(): void {
+    let held = double;
+    println(f"{apply(twice, 4)} {held(4)} {apply(util.twice, 4)} {apply(facade.twice, 4)} {handler(4)}");
+}

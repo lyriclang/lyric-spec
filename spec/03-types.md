@@ -563,7 +563,11 @@ Functions as values, and the lambdas that make them
 ### 8.4 Functions and methods as values
 
 1. A **free function** named without a call is a value of its type; a **static function**
-   named through its type, `Point.new`, likewise (F10). A generic function is not a value
+   named through its type, `Point.new`, likewise (F10). A function of another module is a value
+   by every name that reaches it ([04 §4](04-modules.md)): the name a selective import binds —
+   its own, or another, `import app.util { twice as double }` —, the module's, `util.twice`,
+   and those of a module that passes it on. A module's binding that holds a function value is
+   called by the name an import gives it, as the function is. A generic function is not a value
    until instantiated ([§9.4](#94-instantiated-functions-as-values)).
 2. `obj.method` without a call is a closure **bound** to `obj` (F10): it holds the object — a
    class shared, a struct copied at the binding — and calls the method on it; its type is the

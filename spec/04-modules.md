@@ -141,7 +141,8 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
     it hands out. A member counts as its own word narrowed to its type's.
 12. A member whose **written** word is wider than its type's — `pub x` in an `internal struct` — is
     allowed and warned (`LYR-SEM0152`): it is exported only once the type is (S3). A member
-    without a word follows its type and is not warned.
+    without a word follows its type and is not warned. The same holds in a block of rule 9: for
+    a member's own word, and for the block's — said once, at the block, for its members.
 
 ## 4. Imports
 
