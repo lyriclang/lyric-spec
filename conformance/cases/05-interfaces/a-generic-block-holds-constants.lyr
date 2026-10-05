@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 2 true 0
+//! since: 5.0.0
+// 05 §6 rule 2: a generic block's constant is one per instance of the block's parameters, read
+// on an instance the block reaches.
+import std.io { println };
+
+struct Pair<T> {
+    a: T,
+    b: T,
+}
+
+extend<T> Pair<T> {
+    static let size: int = 2;
+    static let none: ?T = null;
+}
+
+extend<T :: [Num]> Pair<T> {
+    static let start: T = T.zero;
+}
+
+fn main(): void {
+    let n: ?string = Pair<string>.none;
+    println(f"{Pair<int>.size} {n == null} {Pair<int>.start}");
+}

@@ -20,8 +20,9 @@ A `let` or a `var` at the top of a module
    module-level `let` or `var` is a declaration with an initializer.
 2. The module's bindings are filled **eagerly, before the entry runs**, in declaration order
    within the module (G2): a later binding may read an earlier one, and the initializer is an
-   ordinary expression — a call, an object, an array. A `static let` on a type is the same
-   mechanism under the type's name. *(The order across modules — imports first, a cycle an
+   ordinary expression — a call, an object, an array. A `static let` on a type that is generic
+   in nothing is the same mechanism under the type's name (rule 6 for a generic type's).
+   *(The order across modules — imports first, a cycle an
    error — is written with the modules, M7.)*
 3. A module-level **`var`** is written from any function that sees it, as a local is; a
    module-level `let` and a `static let` are not (`LYR-SEM0019`) (G5). What a `let` holds
@@ -31,6 +32,19 @@ A `let` or a `var` at the top of a module
    ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
 5. An initializer does not throw (G3) — with the errors ([06](06-errors.md)) — and there is no
    `init()` hook (G6). `Lazy<T>` is a library ([12](12-stdlib.md)).
+6. A **constant of a generic type** — a `static let` in the body of a generic struct, class or
+   enum, or in a generic block ([05 §6](05-interfaces.md) rule 2) — is **one per instance** (G2;
+   the review's M8a-3): `Crate<int>.empty` and `Crate<string>.empty` are two constants, each
+   with its instance's arguments for the type's parameters, `static let empty: ?T = null;`. It
+   is read on an instance (`LYR-SEM0063` on the bare name of the type); inside its type also by
+   its bare name, the constant of the instance the code runs for; and through a constraint,
+   where it answers an interface's ([05 §7](05-interfaces.md) rule 2). Its value is a
+   **constant**: a literal, `null`, an empty literal `[]`, another constant — `T.zero` under a
+   constraint, a unit variant —, a struct initializer of these. Nothing runs for it before the
+   entry, and such constants have **no order**: one may name another that stands later, and
+   none names itself. Anything else — a call, an operation, an object of a class — is refused
+   (`LYR-SEM0169`): a value that is computed is a `static fn`. *(Richer constant expressions
+   come with `comptime`.)*
 
 ## 2. Module names
 

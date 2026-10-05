@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 0 0
+//! since: 5.0.0
+// 05 §6 rule 2, §7 rule 2: a generic conformance block's constant answers the interface's
+// 'static let' for the instances the block reaches - through a constraint and on the instance.
+import std.io { println };
+
+interface Zeroed {
+    static let zero: Self;
+}
+
+struct Wrap<T> {
+    v: T,
+}
+
+extend<T :: [Num]> Wrap<T> :: [Zeroed] {
+    static let zero: Wrap<T> = Wrap<T> { v = T.zero };
+}
+
+fn zeroOf<Z :: [Zeroed]>(): Z { return Z.zero; }
+
+fn main(): void {
+    let w: Wrap<int> = zeroOf();
+    let direct = Wrap<int8>.zero;
+    println(f"{w.v} {direct.v}");
+}
