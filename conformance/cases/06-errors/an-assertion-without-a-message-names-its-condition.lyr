@@ -1,0 +1,10 @@
+//! run
+//! panic: LYR-RT0011
+//! stderr:
+//! | panic [LYR-RT0011]: assertion failed: xs.length() == 3
+//! since: 5.0.0
+// 06 §9 rule 1: without a message the word and the condition stand alone.
+fn main(): void {
+    let xs = [1, 2];
+    assert(xs.length() == 3);
+}

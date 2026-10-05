@@ -32,9 +32,10 @@ with M5. What is not written here yet is decided in the design documents, not he
 3. `throw e` throws `e`; it is a statement, or an expression of type `never` wherever an
    expression may stand (`x ?? throw NotFound { }`). `e` is throwable (`LYR-SEM0030`).
 4. **`Exception`** of `std.core` is the ready-made error for a message:
-   `throw Exception { text = "…" }`, with `inner` for the error it wraps — what its `cause()`
-   gives (12 E06). The field is `text`: a type's members share one name space, and `message` is
-   `Error`'s method.
+   `throw Exception("…")`, and `Exception("…", cause: e)` for the error it wraps — what its
+   `cause()` gives (12 E06; the review's M5-2). The call is its `new` ([08 §1.2](08-expressions.md)
+   rule 4); the fields behind it are `text` and `inner`, not `message` and `cause`: a type's
+   members share one name space, and those two are `Error`'s methods.
 
 ## 2. The `throws` set
 
@@ -259,11 +260,14 @@ with M5. What is not written here yet is decided in the design documents, not he
    its report and the exit code 101, and no `defer` and no `using` close runs past it (05 E8) —
    the report and the codes are the runtime's ([13 §1.4](13-abi.md#14-panics-and-crashes)).
    Besides the runtime's checks, a program panics through four functions of `std.core`, in scope
-   without an import: `panic(message): never` (`LYR-RT0008`); `assert(condition, message =
-   "assertion failed")`, which panics with `LYR-RT0011` when the condition is false — the message
-   an argument like any other, evaluated before the test; `unreachable(message = "entered
-   unreachable code"): never` (`LYR-RT0012`); and `todo(message = "not implemented yet"): never`
-   (`LYR-RT0013`).
+   without an import: `panic(message): never` (`LYR-RT0008`), which says the message as it is
+   written; `assert(condition, message = "")`, which panics with `LYR-RT0011` when the condition
+   is false — the message an argument like any other, evaluated before the test;
+   `unreachable(message = ""): never` (`LYR-RT0012`); and `todo(message = ""): never`
+   (`LYR-RT0013`). The last three say their **word first** (the review's M5-14) — `assertion
+   failed`, `unreachable`, `not implemented` — and the message behind it where one is given:
+   `not implemented: the parser`. An assertion names its **condition as it is written** between
+   the two: `assertion failed: n > 2: n is small`.
 2. **`never`** is the type of what gives no value (05 E12): a `throw`, a call of a function that
    returns `never` — `panic`, `unreachable`, `todo` among them — a `loop` no `break` leaves
    ([07 §1](07-statements.md#1-loop-and-the-jumps)), an `if` or `match` whose every branch is

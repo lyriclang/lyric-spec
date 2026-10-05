@@ -291,7 +291,8 @@ A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
   of arrays and views reach the list — a sort writes it; a push past the room moves the list to a
   new buffer, and an older view keeps the older one. A list is `Iterable` front to back
   ([10 I9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): a change of
-  its length while it is walked panics at the next pull.
+  its length while it is walked panics at the next pull (`LYR-RT0016`, as for a map, a set and a
+  deque).
 - **`Map<K :: [Hashable], V, H :: [Hasher] = DefaultHasher>`** (C4), a class: what it holds, in
   no order of its own, each key once. `Map<K, V>.new()` hashes with the process's key, so its
   order differs from run to run; `withHasher(seed)` takes a hasher, which is a value the map

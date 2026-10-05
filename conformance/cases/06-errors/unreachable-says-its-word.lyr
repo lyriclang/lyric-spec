@@ -1,0 +1,9 @@
+//! run
+//! panic: LYR-RT0012
+//! stderr:
+//! | panic [LYR-RT0012]: unreachable
+//! since: 5.0.0
+// 06 §9 rule 1: 'unreachable()' without a message says its word alone.
+fn main(): void {
+    unreachable();
+}

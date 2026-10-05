@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | P1
+//! since: 5.0.0
+// 05 §4 rule 1, 04 §4 rule 4: the interface of a qualified call is named as every name is -
+// the prelude's without an import.
+import std.io { println };
+
+struct P :: [Display] {
+    x: int,
+
+    fn show(): string {
+        return f"P{this.x}";
+    }
+}
+
+fn main(): void {
+    println(Display.show(P { x = 1 }));
+}

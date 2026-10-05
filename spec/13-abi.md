@@ -97,11 +97,12 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0008` | `panic(message)`: the program's own message, as written |
    | `LYR-RT0009` | `as char` of a value that is no Unicode scalar value ([03 §1.4](03-types.md)) |
    | `LYR-RT0010` | `try!` on an error: `'try!' on an error: <message>` ([06 §6](06-errors.md#6-the-expression-forms)) |
-   | `LYR-RT0011` | `assert(condition, message)` with a false condition: the message as given ([06 §9](06-errors.md#9-panics-and-never)) |
-   | `LYR-RT0012` | `unreachable(message)` reached: the message as given |
-   | `LYR-RT0013` | `todo(message)` reached: the message as given |
+   | `LYR-RT0011` | `assert(condition, message)` with a false condition: `assertion failed: `, the condition as written, then the message where one is given ([06 §9](06-errors.md#9-panics-and-never)) |
+   | `LYR-RT0012` | `unreachable(message)` reached: `unreachable`, then the message where one is given |
+   | `LYR-RT0013` | `todo(message)` reached: `not implemented`, then the message where one is given |
    | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7); random bytes ([12](12-stdlib.md)) |
+   | `LYR-RT0016` | a collection of the library changed while it was walked: `List: changed while it was walked` — a list, a map, a set, a deque ([12](12-stdlib.md)) |
    | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is

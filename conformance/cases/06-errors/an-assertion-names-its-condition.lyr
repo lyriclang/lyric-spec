@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0011
+//! stderr:
+//! | panic [LYR-RT0011]: assertion failed: n > 2: n is small
+//! since: 5.0.0
+// 06 §9 rule 1: a false 'assert' says its word, the condition as it is written, and the
+// program's message behind them.
+fn main(): void {
+    let n = 1;
+    assert(n > 2, "n is small");
+}
