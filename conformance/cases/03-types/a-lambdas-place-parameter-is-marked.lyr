@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0157
+//! since: 5.0.0
+// 03 §2.3a rule 5a: the mark is the lambda's to write - a parameter that is handed a place says
+// '&', the implicit 'it' takes none, and a marked parameter is handed no value.
+fn visit(&x: int, f: fn(&int) -> void): void { f(&x); }
+fn twice(x: int, f: fn(int) -> int): int { return f(f(x)); }
+
+fn main(): int {
+    var n = 1;
+    visit(&n) { v => v += 1; };
+    visit(&n) { it += 1; };
+    return twice(n) { &v => v + 1 };
+}

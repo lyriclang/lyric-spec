@@ -204,8 +204,16 @@ Two forms of a composite type, chosen once at the type
 5. A function type writes the mark at the parameter: `fn(&int, string) -> void` is a type of
    its own, not `fn(int, string) -> void`. An implementation of an interface member takes a
    place where the member does (`LYR-SEM0042`).
-6. A place is the call's: no lambda captures a place parameter, and a coroutine — whose body
-   runs after the call has returned — takes none (`LYR-SEM0158`).
+5a. A **lambda** takes a place as a function does, the mark before the parameter's name:
+   `(&n) => …`, `(&n: int) => …`, and in a trailing block's parameter list `{ &n => … }`
+   ([§8.2](#82-lambdas)); its type is `fn(&T) -> R`. The mark is the lambda's to write, as the
+   argument's is the call's: where the position hands a place over, the parameter is marked,
+   and where it hands a value, it is not (`LYR-SEM0157`) — so the implicit `it` takes no
+   place, and a block that is handed one names its parameter. The mark stands before a name,
+   not before a pattern (`LYR-PAR0058`), and not in the bare form `x => …`.
+6. A place is the call's: no lambda captures a place parameter — a function's or a lambda's
+   own — and a coroutine, whose body runs after the call has returned, takes none: neither a
+   coroutine function nor a generator lambda (`LYR-SEM0158`).
 7. Two places of one call may be the same place (`swap(&a, &a)`); what the function then reads
    after a write is not specified.
 
@@ -523,7 +531,8 @@ Functions as values, and the lambdas that make them
    alone, is the call's **last argument**, its one parameter the implicit `it`, or none when
    the position expects a function of none.
 2. A trailing block may name its parameters before `=>`: `fold(xs, 0) { acc, x => acc + x }`,
-   `{ (k, v) => v }` with a pattern (F2). The body is then the rest of the block.
+   `{ (k, v) => v }` with a pattern (F2), `{ &n => n += 1; }` with a place
+   ([§2.3a](#23a-place-parameters) rule 5a). The body is then the rest of the block.
 3. The body is an expression or a block; a block's last expression without `;` is its value
    (F3). `return` leaves the lambda, never the enclosing function; `break` and `continue`
    belong to loops inside the lambda (F5).

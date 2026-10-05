@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0158
+//! since: 5.0.0
+// 03 §2.3a rule 6: a generator's body runs after the call that handed the place over has
+// returned - a generator lambda takes none, as a coroutine function takes none.
+fn main(): int {
+    let count = (&from: int) => {
+        yield from;
+        from += 1;
+    };
+    return 0;
+}

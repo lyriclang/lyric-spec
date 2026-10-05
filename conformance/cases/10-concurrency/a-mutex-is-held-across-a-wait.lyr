@@ -10,21 +10,21 @@ import std.time { Duration };
 fn main(): void throws Error {
     let log = Mutex<string>.new("");
     let a = spawn(() => {
-        try log.lock {
-            it.set(it.get() + "a1 ");
+        try log.lock { &text =>
+            text = text + "a1 ";
             try sleep(Duration.ofMillis(5));
-            it.set(it.get() + "a2 ");
+            text = text + "a2 ";
         };
     });
     let b = spawn(() => {
-        try log.lock {
-            it.set(it.get() + "b1 ");
+        try log.lock { &text =>
+            text = text + "b1 ";
             try yieldNow();
-            it.set(it.get() + "b2");
+            text = text + "b2";
         };
     });
     try a.await();
     try b.await();
-    let text = try log.lock { it.get() };
+    let text = try log.lock { &held => held };
     println(text);
 }

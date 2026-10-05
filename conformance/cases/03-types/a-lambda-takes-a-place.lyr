@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 42 10 9 11
+//! since: 5.0.0
+// 03 §2.3a rule 5a: a lambda takes a place as a function does - '(&v) => …', '{ &v => … }' -
+// and what its body writes is written in the caller's variable, field or element.
+import std.io { println };
+
+struct Point { var x: int }
+
+fn visit(&x: int, f: fn(&int) -> void): void { f(&x); }
+
+fn main(): void {
+    var n = 1;
+    visit(&n) { &v => v += 41; };
+
+    var p = Point { x = 1 };
+    visit(&p.x, (&v) => { v = v * 10; });
+
+    var xs = [1, 2, 3];
+    visit(&xs[1]) { &v => v = 9; };
+
+    let add = (&total: int, by: int) => { total += by; };
+    var t = 0;
+    add(&t, 5);
+    add(&t, 6);
+
+    println(f"{n} {p.x} {xs[1]} {t}");
+}

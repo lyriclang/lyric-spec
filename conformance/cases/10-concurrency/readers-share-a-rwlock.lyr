@@ -30,7 +30,7 @@ fn main(): void throws Error {
     try r1.await();
     try r2.await();
     println(f"readers at once {most}");
-    try rw.write { it.set(9) };
+    try rw.write { &v => v = 9; };
     let value = try rw.read { it };
     println(f"written {value}");
 }
