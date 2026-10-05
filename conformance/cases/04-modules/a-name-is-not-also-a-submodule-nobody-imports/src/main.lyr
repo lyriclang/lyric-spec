@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-RES0012
+//! since: 5.0.0
+// 04 §4 rule 7: 'http' in app.net is also the module app.net.http, a file of the package - the
+// answer does not depend on who imported what.
+import app.net;
+
+fn main(): void {
+    let n = net.http();
+}

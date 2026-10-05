@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 6
+//! since: 5.0.0
+// 04 §2 rules 1a, 3: 'src/lib/' beside 'src/lib.lyr' holds the modules 'geo.lib.…' - a
+// directory is a namespace, whatever it is called.
+import std.io { println };
+import geo { Circle, area };
+import geo.lib.extra { twice };
+
+fn main(): void {
+    println(f"{twice(area(Circle { r = 1 }))}");
+}

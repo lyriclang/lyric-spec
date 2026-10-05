@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0003
+//! since: 5.0.0
+// 04 §2 rule 1a: the root module's file is 'lib.lyr', and its name is the package's - there is
+// no module 'geo.lib'.
+import geo.lib { area };
+
+fn main(): void {
+}

@@ -42,6 +42,8 @@ in `ProgramTests`.
    letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the
    package under `src/` (`LYR-PKG0002`, as for an entry that is no file and for two programs of
    one name; another key is `LYR-PKG0003`). Without any program, the package is a library (P2).
+   A package's **root module** is its `src/lib.lyr` ([04 §2](04-modules.md) rule 1a), what
+   `import geo { … }` names; it is no program, and a package may hold both.
    `lyric build` builds every program; `run` and `--emit` the one `--bin` names, else
    `src/main.lyr`'s, else the only one — of several, `--bin` names it (`LYR-CLI0007`).
 6. **`toolchain = "5.1"`** — or `">=5.1"` — in `[package]` is the least toolchain that builds the
