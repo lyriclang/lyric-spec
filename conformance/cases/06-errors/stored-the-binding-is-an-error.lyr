@@ -1,13 +1,15 @@
 //! check
 //! error: LYR-SEM0034
 //! since: 5.0.0
-// 06 §4.6: the set is the binding's alone - stored in another name the value is an 'Error', and
-// that is what throwing it throws.
+// 06 §4 rule 6: the set is the binding's alone - where several types reach the clause, the value
+// stored in another name is an 'Error', and that is what throwing it throws. (A binding one type
+// reaches is that type, stored too: 'a-catch-binding-of-one-type-is-that-type'.)
 enum NotFound :: [Error] { Gone; fn message(): string { return "gone"; } }
 enum Parse :: [Error] { Bad; fn message(): string { return "bad"; } }
-fn both(): int throws [NotFound, Parse] { return 1; }
-fn pass(): int throws Parse {
-    try { return both(); }
+enum Denied :: [Error] { No; fn message(): string { return "no"; } }
+fn all(): int throws [NotFound, Parse, Denied] { return 1; }
+fn pass(): int throws [Parse, Denied] {
+    try { return all(); }
     catch (_: NotFound) { return 0; }
     catch (e) { let kept = e; throw kept; }
 }

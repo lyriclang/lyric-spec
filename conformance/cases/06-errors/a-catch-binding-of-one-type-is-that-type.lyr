@@ -1,0 +1,129 @@
+//! run
+//! stdout:
+//! | empty
+//! | empty
+//! | 7
+//! | again: empty
+//! | stored: empty
+//! | empty | bad -3 | ok 5
+//! since: 5.0.0
+// 06 §4 rules 2, 6: where one type can arrive, the binding is that type - a set of one,
+// 'catch (e in A)', and a clause without a type that one type reaches. Its fields are there;
+// it is still an error where one is asked, and 'throw e' is the same error going on. An enum's
+// variants are there too: a match over the binding is the enum's own, with no default. Stored
+// in another name it is the type as well, and throwing that throws the type.
+import std.io { println };
+
+struct NotFound :: [Error] {
+    path: string,
+
+    fn message(): string {
+        return f"no {this.path}";
+    }
+}
+
+struct Denied :: [Error] {
+    code: int,
+
+    fn message(): string {
+        return f"denied {this.code}";
+    }
+}
+
+fn find(p: string): int throws NotFound {
+    if (p == "") {
+        throw NotFound { path = "empty" };
+    }
+    return 1;
+}
+
+fn open(p: string): int throws [NotFound, Denied] {
+    if (p == "x") {
+        throw Denied { code = 7 };
+    }
+    return try find(p);
+}
+
+enum ParseError :: [Error] {
+    Empty,
+    Bad(int);
+
+    fn message(): string {
+        return "parse";
+    }
+}
+
+fn parse(n: int): int throws ParseError {
+    if (n == 0) {
+        throw ParseError.Empty;
+    }
+    if (n < 0) {
+        throw ParseError.Bad(n);
+    }
+    return n;
+}
+
+fn classify(n: int): string {
+    try {
+        return f"ok {parse(n)}";
+    } catch (e) {
+        return match (e) {
+            .Empty => "empty",
+            .Bad(k) => f"bad {k}",
+        };
+    }
+}
+
+fn again(): int throws NotFound {
+    try {
+        return find("");
+    } catch (e) {
+        let boxed: Error = e;
+        if (boxed.message() == "") {
+            return 0;
+        }
+        throw e;
+    }
+}
+
+fn stored(): int throws NotFound {
+    try {
+        return find("");
+    } catch (e) {
+        let kept = e;
+        throw kept;
+    }
+}
+
+fn main(): void {
+    try {
+        println(f"{find("")}");
+    } catch (e) {
+        println(e.path);
+    }
+    try {
+        println(f"{open("")}");
+    } catch (e in NotFound) {
+        println(e.path);
+    } catch (e) {
+        println(f"{e.code}");
+    }
+    try {
+        println(f"{open("x")}");
+    } catch (e in NotFound) {
+        println(e.path);
+    } catch (e) {
+        println(f"{e.code}");
+    }
+    try {
+        println(f"{again()}");
+    } catch (e) {
+        println(f"again: {e.path}");
+    }
+    try {
+        println(f"{stored()}");
+    } catch (e) {
+        println(f"stored: {e.path}");
+    }
+    println(f"{classify(0)} | {classify(-3)} | {classify(5)}");
+}
