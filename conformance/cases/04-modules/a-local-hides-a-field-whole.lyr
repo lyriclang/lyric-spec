@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | local 2
+//! since: 5.0.0
+// 04 §5 rule 1: a local and a parameter hide the member of their name whole - in a call too,
+// where the field alone would have let the function outside through.
+import std.io { println };
+
+fn label(): string { return "outer"; }
+
+struct Tag {
+    label: string,
+    fn show(): string {
+        let label = () => "local";
+        return label();
+    }
+    fn plain(label: int): int { return label + 1; }
+}
+
+fn main(): void {
+    let t = Tag { label = "field" };
+    println(f"{t.show()} {t.plain(1)}");
+}

@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 04 §5 rules 3, 4: a field that holds a function is what the bare call means - before the
+// function outside - and a field is reached through its receiver: 'this.run()'.
+fn run(): string { return "outer"; }
+
+struct Hook {
+    run: fn() -> string,
+    fn go(): string { return run(); }
+}
+
+fn main(): void {
+    let hook = Hook { run = run };
+    let _ = hook.go();
+}

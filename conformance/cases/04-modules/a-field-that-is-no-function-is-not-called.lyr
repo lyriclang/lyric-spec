@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0013
+//! since: 5.0.0
+// 04 §5 rule 4: where a field that cannot be called is all the name means, the call is one of
+// something that is no function.
+struct Tag {
+    label: string,
+    fn show(): string { return label(); }
+}
+
+fn main(): void {
+    let _ = Tag { label = "field" }.show();
+}

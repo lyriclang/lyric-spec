@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 04 §5 rule 3: a field belongs to an instance and is read through it - 'this.x'; its bare
+// name is refused.
+struct Point {
+    x: int,
+    fn twice(): int { return x * 2; }
+}
+
+fn main(): void {
+    let _ = Point { x = 3 }.twice();
+}

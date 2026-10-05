@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | outer field
+//! since: 5.0.0
+// 04 §5 rule 4: in a call a field counts only when it can be called - 'label()' beside a
+// field 'label: string' is the function outside; the field is read through 'this'.
+import std.io { println };
+
+fn label(): string { return "outer"; }
+
+struct Tag {
+    label: string,
+    fn show(): string { return f"{label()} {this.label}"; }
+}
+
+fn main(): void {
+    println(Tag { label = "field" }.show());
+}
