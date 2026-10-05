@@ -1,0 +1,8 @@
+pub enum Color { Blue(int), Yellow(int) }
+
+pub fn number(c: Color): int {
+    return match (c) {
+        Color.Blue(n) => n,
+        Color.Yellow(n) => n,
+    };
+}

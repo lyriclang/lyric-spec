@@ -77,7 +77,8 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
     Coroutine<T>`, called with a trailing generator lambda — no syntax of its own.
 13. A `yield` outside a coroutine's own body — in a function a coroutine calls (06 §10a) —
     suspends the coroutine that runs, whoever called the function. Its value is typed as what it is
-    and meets that coroutine's `Y` at run time: a value of another type panics with `LYR-RT0014`,
+    and meets that coroutine's `Y` at run time: a value of another type — and two modules' types
+    of one name are two types (04 §2 rule 9) — panics with `LYR-RT0014`,
     as does such a yield where no generator runs — on a thread's own stack, or in a task (§2). It
     throws `Cancelled` at `close()` as a body's
     yield does (rule 9), so its function covers it — `throws Cancelled`, or a clause
