@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2 rule 4: a 'let' is no place to write, wherever the write stands — in the value of a
+// 'let' condition as in an argument.
+import std.io { println };
+
+struct P { var n: int }
+
+fn half(n: int): ?int {
+    if (n > 1) { return n / 2; }
+    return null;
+}
+
+fn main(): void {
+    let p = P { n = 1 };
+    if (let v = half(p.n = 2)) { println(f"{v} {p.n}"); }
+}

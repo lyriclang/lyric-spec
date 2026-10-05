@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 2
+//! since: 5.0.0
+// 03 §8.3 rule 1: a lambda uses the bindings around it wherever it reads them — the bound of a
+// view's open range included.
+import std.io { println };
+
+fn main(): void {
+    let xs = [1, 2, 3, 4, 5];
+    let lo = 2;
+    let hi = 4;
+    let rest = () => xs[lo..];
+    let middle = () => xs[lo..hi];
+    println(f"{rest().length()} {middle().length()}");
+}

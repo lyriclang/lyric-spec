@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: a 'loop' with no break of its own is worth 'never' — and a 'break' in it that names
+// the loop around it still leaves that one.
+fn climb(): int {
+    var n = 0;
+    outer: do {
+        loop {
+            n = n + 1;
+            if (n > 2) { break outer; }
+        }
+    } while (true);
+}
+
+fn main(): void {
+    climb();
+}

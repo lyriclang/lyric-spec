@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 03 §2.2 rule 4: … and in the operand of a type test.
+import std.io { println };
+
+struct P { var n: int }
+interface Shape { fn area(): int; }
+struct Square :: [Shape] { side: int, fn area(): int { return this.side * this.side; } }
+
+fn shape(n: int): Shape { return Square { side = n }; }
+
+fn main(): void {
+    let p = P { n = 1 };
+    if (shape(p.n = 2) is Square) { println(f"{p.n}"); }
+}

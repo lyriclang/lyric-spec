@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: a 'break' in an arm of a 'match' expression — part of a binding's value — leaves
+// the loop around the binding.
+fn find(xs: int[]): int {
+    var i = 0;
+    while (true) {
+        let v = match (xs[i]) {
+            3 => { if (i > 0) { break; } 1 }
+            _ => 2,
+        };
+        i = i + v;
+    }
+}
+
+fn main(): void {
+    find([1, 3]);
+}
