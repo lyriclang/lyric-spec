@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0166
+//! since: 5.0.0
+// 08 §1.1 rule 1: a spread is the rest - nothing follows it, and a call has one. Each is said
+// once, on the dots, and nothing more about the arguments they stand behind.
+fn sum(xs: int...): int { return xs.length(); }
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    return sum(xs..., 4) + sum(xs..., xs...);
+}

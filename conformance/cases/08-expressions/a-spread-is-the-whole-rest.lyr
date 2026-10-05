@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0166
+//! since: 5.0.0
+// 08 §1.1 rule 1: a spread argument is the rest, alone - no argument beside it in the rest, no
+// parameter that is not variadic.
+fn sum(base: int, xs: int...): int { return base + xs.length(); }
+fn plain(xs: int[]): int { return xs.length(); }
+
+fn main(): int {
+    let xs = [1, 2, 3];
+    return sum(0, 1, xs...) + plain(xs...);
+}

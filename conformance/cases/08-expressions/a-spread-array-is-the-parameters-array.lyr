@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 9 9 2 3
+//! | 0 0
+//! since: 5.0.0
+// 08 §1.1 rule 1: a spread array IS the variadic parameter - nothing is copied, so what the
+// function writes into it the caller sees; an empty array spreads to no arguments, and a
+// literal may be spread like any array.
+import std.io { println };
+
+fn first(xs: int...): int {
+    if (xs.length() == 0) { return 0; }
+    xs[0] = 9;
+    return xs[0];
+}
+
+fn main(): void {
+    let xs = [1, 2, 3];
+    let written = first(xs...);
+    println(f"{written} {xs[0]} {xs[1]} {xs[2]}");
+    let none: int[] = [];
+    println(f"{first(none...)} {first([]...)}");
+}
