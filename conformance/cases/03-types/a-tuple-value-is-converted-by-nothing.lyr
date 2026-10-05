@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §6 rule 5: the literal's elements take the expected types, a tuple that is no literal does
+// not - an '(int, int)' is one value of its type and no '(int, ?int)'.
+fn main(): void {
+    let a = (1, 2);
+    let b: (int, ?int) = a;
+}

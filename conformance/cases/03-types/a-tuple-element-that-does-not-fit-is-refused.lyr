@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §6 rule 5: an element stands where its element type is expected, and one that does not
+// fit is refused there - a 'string' where the tuple asks for a 'bool'.
+fn main(): void {
+    let t: (int, bool) = (1, "x");
+}

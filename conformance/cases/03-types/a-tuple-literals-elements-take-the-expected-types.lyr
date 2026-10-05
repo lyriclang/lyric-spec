@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 0 true | 1 x | true 0 | 5
+//! since: 5.0.0
+// 03 §6 rule 5: where a tuple is expected, each element of the literal stands where its element
+// type is - 'null' for a '?int', a 'string' for a '?string', an empty array for an 'int[]' - at
+// a return, a binding, an assignment and an argument.
+import std.io { println };
+
+fn pair(): (int, ?int) {
+    return (0, null);
+}
+
+fn sum(p: (int, ?int)): int {
+    return p.0 + (p.1 ?? 0);
+}
+
+fn main(): void {
+    let (a, b) = pair();
+    let t: (int, ?string) = (1, "x");
+    let held = t.1 ?? "?";
+    let u: (?int, int[]) = (null, []);
+    var w: (int, ?int) = (1, 2);
+    w = (5, null);
+    println(f"{a} {b == null} | {t.0} {held} | {u.0 == null} {u.1.length()} | {sum(w)}");
+}
