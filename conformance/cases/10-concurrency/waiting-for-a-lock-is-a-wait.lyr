@@ -10,13 +10,13 @@ import std.time { Duration };
 fn main(): void throws Error {
     let m = Mutex<int>.new(0);
     let holder = spawn(() => {
-        try m.lock {
+        try m.lock { &held =>
             try sleep(Duration.ofMillis(50));
         };
     });
     try yieldNow();
     let waiter = spawn(() => {
-        try m.lock { it.set(1) };
+        try m.lock { &n => n = 1; };
     });
     try yieldNow();
     waiter.cancel();

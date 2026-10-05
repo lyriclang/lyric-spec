@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0158
+//! since: 5.0.0
+// 10 §10 rule 1: the place a lock hands its body is the call's - a closure in the body would
+// hold it past the lock, and is refused.
+import std.task { spawn, Mutex };
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    try m.lock { &n =>
+        let late = spawn(() => { n = 1; });
+        late.cancel();
+    };
+}

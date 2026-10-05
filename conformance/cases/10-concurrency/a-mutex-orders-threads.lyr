@@ -8,7 +8,7 @@ import std.task { Thread, Mutex };
 
 fn add(m: Mutex<int>): void throws Error {
     for (_ in 0..500) {
-        try m.lock { it.set(it.get() + 1) };
+        try m.lock { &n => n += 1; };
     }
 }
 
@@ -22,6 +22,6 @@ fn main(): void throws Error {
     try b.await();
     try c.await();
     try d.await();
-    let total = try m.lock { it.get() };
+    let total = try m.lock { &n => n };
     println(f"{total}");
 }

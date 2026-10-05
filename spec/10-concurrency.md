@@ -280,12 +280,14 @@ another's scheduler (M7). A task that waits for a lock parks, as at every wait (
 tasks of its thread run meanwhile — a lock is needed on one thread too, wherever a body waits.
 
 1. **`Mutex<T>`**, made by `Mutex<T>.new(value)`: **`lock(body)`** runs `body` while the running
-   task holds the mutex alone, and gives what `body` gives. The body gets a **`LockGuard<T>`**:
-   `get()` gives the value, `set(v)` replaces it. A guard used after its body ended panics.
+   task holds the mutex alone, and gives what `body` gives. The body takes the value's **place**
+   ([03 §2.3a](03-types.md) rule 5a), `m.lock { &n => n += 1; }`: it reads and writes the value
+   itself. The place is the call's — it ends with the body, and no closure in the body holds it
+   (`LYR-SEM0158`) — so nothing reaches the value outside the lock.
 2. **`RwLock<T>`**, made by `RwLock<T>.new(value)`: **`read(body)`** runs `body` with the value
-   while no writer holds the lock — readers share it; **`write(body)`** runs `body` with a guard
-   (rule 1) while the task holds the lock alone. A writer that waits goes first: the readers that
-   come after it wait for it.
+   while no writer holds the lock — readers share it; **`write(body)`** runs `body` with the
+   value's place (rule 1) while the task holds the lock alone. A writer that waits goes first:
+   the readers that come after it wait for it.
 3. **`Once`**, made by `Once.new()`: **`run(body)`** runs `body` unless it has run to its end
    already; a call while another task runs it waits until that has ended. Where `body` throws, the
    error comes out of that call, and the next call runs `body` again.
