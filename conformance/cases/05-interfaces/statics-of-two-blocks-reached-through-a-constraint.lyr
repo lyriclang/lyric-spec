@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | named titled
+//! since: 5.0.0
+// 05 §3 rule 4, §7 rule 2: a static implemented separately per interface in two conformance
+// blocks is reached through a type parameter by the interface that bounds it.
+import std.io { println };
+
+interface Named {
+    static fn label(): string;
+}
+
+interface Titled {
+    static fn label(): string;
+}
+
+struct Person {
+    name: string,
+}
+
+extend Person :: [Named] {
+    static fn label(): string { return "named"; }
+}
+
+extend Person :: [Titled] {
+    static fn label(): string { return "titled"; }
+}
+
+fn n<T :: [Named]>(): string { return T.label(); }
+fn t<T :: [Titled]>(): string { return T.label(); }
+
+fn main(): void {
+    println(f"{n<Person>()} {t<Person>()}");
+}

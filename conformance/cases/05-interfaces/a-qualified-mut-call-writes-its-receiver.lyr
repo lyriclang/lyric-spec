@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 2 2 | 10 | 2
+//! since: 5.0.0
+// 05 §4 rule 1: 'Counter.bump(c)' is the member call 'c.bump()' - a 'mut fn' writes c itself,
+// a struct too; no copy stands in for it.
+import std.io { println };
+
+interface Counter {
+    mut fn bump(): void;
+    fn get(): int;
+    mut fn twice(): void { this.bump(); this.bump(); }
+}
+
+struct C :: [Counter] {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+    fn get(): int { return this.n; }
+}
+
+struct B {
+    var n: int,
+}
+
+extend B :: [Counter] {
+    mut fn bump(): void { this.n += 10; }
+    fn get(): int { return this.n; }
+}
+
+fn main(): void {
+    var c = C { n = 0 };
+    Counter.bump(c);
+    Counter.bump(c);
+    var b = B { n = 0 };
+    Counter.bump(b);
+    var d = C { n = 0 };
+    Counter.twice(d);
+    println(f"{c.n} {Counter.get(c)} | {b.n} | {d.n}");
+}

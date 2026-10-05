@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | hello hi | hello! hi?
+//! since: 5.0.0
+// 05 §3 rule 4: one name implemented separately per interface in two conformance blocks; each is
+// reached through a constraint that names its interface, and from that interface's default
+// calling it on 'this'.
+import std.io { println };
+
+interface Greeter {
+    fn greet(): string;
+    fn loud(): string { return f"{this.greet()}!"; }
+}
+
+interface Waver {
+    fn greet(): string;
+    fn soft(): string { return f"{this.greet()}?"; }
+}
+
+struct Person {
+    name: string,
+}
+
+extend Person :: [Greeter] {
+    fn greet(): string { return "hello"; }
+}
+
+extend Person :: [Waver] {
+    fn greet(): string { return "hi"; }
+}
+
+fn g<T :: [Greeter]>(t: T): string { return t.greet(); }
+fn w<T :: [Waver]>(t: T): string { return t.greet(); }
+
+fn main(): void {
+    let p = Person { name = "x" };
+    println(f"{g(p)} {w(p)} | {p.loud()} {p.soft()}");
+}

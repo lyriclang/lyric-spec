@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | hello hi | hello hi | hello hi
+//! since: 5.0.0
+// 05 §3 rule 4, §4: two conformance blocks of a builtin, and of a generic type, each give one
+// name; through a constraint and through the qualified call each is reached by its interface.
+import std.io { println };
+
+interface Greeter {
+    fn greet(): string;
+}
+
+interface Waver {
+    fn greet(): string;
+}
+
+extend int :: [Greeter] {
+    fn greet(): string { return "hello"; }
+}
+
+extend int :: [Waver] {
+    fn greet(): string { return "hi"; }
+}
+
+struct Crate<T> {
+    v: T,
+}
+
+extend<T> Crate<T> :: [Greeter] {
+    fn greet(): string { return "hello"; }
+}
+
+extend<T> Crate<T> :: [Waver] {
+    fn greet(): string { return "hi"; }
+}
+
+fn g<T :: [Greeter]>(t: T): string { return t.greet(); }
+fn w<T :: [Waver]>(t: T): string { return t.greet(); }
+
+fn main(): void {
+    let c = Crate<int> { v = 1 };
+    println(f"{g(3)} {w(3)} | {g(c)} {w(c)} | {Greeter.greet(c)} {Waver.greet(c)}");
+}

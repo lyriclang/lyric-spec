@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | hello 1 | hi 1
+//! since: 5.0.0
+// 05 §3 rule 4, §1 rule 5: a generic member implemented separately per interface in two
+// conformance blocks - no table holds it, and a constraint reaches the block of its interface.
+import std.io { println };
+
+interface Greeter {
+    fn greet<T :: [Display]>(x: T): string;
+}
+
+interface Waver {
+    fn greet<T :: [Display]>(x: T): string;
+}
+
+struct Person {
+    name: string,
+}
+
+extend Person :: [Greeter] {
+    fn greet<T :: [Display]>(x: T): string { return f"hello {x}"; }
+}
+
+extend Person :: [Waver] {
+    fn greet<T :: [Display]>(x: T): string { return f"hi {x}"; }
+}
+
+fn g<T :: [Greeter]>(t: T): string { return t.greet(1); }
+fn w<T :: [Waver]>(t: T): string { return t.greet(1); }
+
+fn main(): void {
+    let p = Person { name = "x" };
+    println(f"{g(p)} | {w(p)}");
+}
