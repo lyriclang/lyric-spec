@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 12 3
+//! since: 5.0.0
+// 04 §4 rules 2, 7: a root module passes on a name of a submodule, and a submodule as a
+// namespace - 'units' in 'geo' is the module 'geo.units', one meaning.
+import std.io { println };
+import geo { rect };
+import geo;
+
+fn main(): void {
+    println(f"{rect(3, 4)} {geo.units.three()}");
+}

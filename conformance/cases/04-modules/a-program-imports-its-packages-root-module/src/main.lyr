@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 04 §2 rule 1a: 'lib.lyr' and 'main.lyr' stand side by side, and the program imports its
+// package's root module by the package's name.
+import std.io { println };
+import app { answer };
+
+fn main(): void {
+    println(f"{answer()}");
+}

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-RES0012
+//! since: 5.0.0
+// 04 §4 rule 7: 'shapes' in the root module 'geo' is also the module 'geo.shapes' - which this
+// program never imports: the question is asked of the package's files.
+import geo { shapes };
+
+fn main(): void {
+    let n = shapes();
+}

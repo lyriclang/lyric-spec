@@ -47,6 +47,12 @@ toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
    package's name in front: `src/net/http.lyr` in the package `app` is `app.net.http` (M1). The
    package's own modules write the path the same way — there is no second, package-relative
    spelling.
+
+1a. One file is named apart: **`src/lib.lyr` is the package's root module**, and its path is the
+   package's name alone — `import geo { Circle }` (the review's M7-1). There is no module
+   `geo.lib` (`LYR-RES0003`), and a directory `src/lib/` is a namespace like any other (rule 3).
+   The package's own modules import the root module the same way, and it may stand beside
+   `src/main.lyr`.
 2. A file has **no `module` header**: one is refused (`LYR-RES0008`), and the name is the path's
    alone (M2).
 3. A **directory is a namespace, not a module**: `src/net.lyr` beside `src/net/` is the module
@@ -146,7 +152,9 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    under the name it was renamed to; a module imported qualified or aliased is passed on as a
    namespace (`facade.util.answer()`). It passes on what is `pub` and nothing narrower
    (`LYR-RES0010`). No other word stands before `import` (`LYR-PAR0053`); without `pub`, an
-   import is its module's own (§3 rule 4).
+   import is its module's own (§3 rule 4). A package's root module (§2 rule 1a) is where a
+   library passes on what its modules declare: `pub import geo.shapes { rect };` in `src/lib.lyr`
+   makes `import geo { rect }` of it.
 3. An import a module never uses is **warned**, in every form (`LYR-SEM0072`) (I5): a qualified
    import is used when its module is named, or one of its extension methods called. A `pub
    import` is used by being passed on.
@@ -166,7 +174,12 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
 6. A **builtin type's** name — `int`, `string`, `bool` … — is no declaration's (`LYR-RES0011`)
    (K5).
 7. A name a module declares or imports is **not also one of its submodules**: `app.net` declaring
-   `http` beside the module `app.net.http` is refused (`LYR-RES0012`) (K1, K3). `std` is the
+   `http` beside the module `app.net.http` is refused (`LYR-RES0012`) (K1, K3). The question is
+   asked of the package's files, not of what a program imports: a submodule nobody imported is
+   one all the same. The root module's names stand beside every module of its package —
+   `geo` declaring `shapes` beside `src/shapes.lyr` — but not beside its own file: there is no
+   module `geo.lib`. An import that binds a module under its own name — `pub import geo.shapes;`
+   in `geo` — is that module, and one meaning. `std` is the
    standard library's name: a single file `std.lyr` is refused (`LYR-RES0013`) (D1).
 
 ## 5. A type's members by their bare names

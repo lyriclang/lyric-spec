@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 12 3
+//! since: 5.0.0
+// 04 §2 rule 1a: 'src/lib.lyr' is the module of its package's name - imported selectively and
+// qualified, like any module.
+import std.io { println };
+import geo { Circle, area };
+import geo;
+
+fn main(): void {
+    println(f"{area(Circle { r = 2 })} {geo.area(geo.Circle { r = 1 })}");
+}

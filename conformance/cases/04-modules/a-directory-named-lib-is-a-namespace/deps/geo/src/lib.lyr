@@ -1,0 +1,7 @@
+pub struct Circle {
+    pub r: int,
+}
+
+pub fn area(c: Circle): int {
+    return 3 * c.r * c.r;
+}
