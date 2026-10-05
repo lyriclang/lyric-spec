@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.3 rules 1, 2: a value that fixes no type of its own determines none - 'Cell { v = null }'
+// without a context is refused, and the list is written.
+struct Cell<T> {
+    v: ?T,
+}
+
+fn main(): void {
+    let c = Cell { v = null };
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §9.2 rule 6: the expected type and the arguments determine a bare generic type's
+// parameters, and nothing else - 'Map.new()' behind a statement on a 'Map<string, int>' is no
+// map of that instance.
+fn main(): void {
+    let a: Map<string, int> = Map<string, int>.new();
+    a.insert("x", 1);
+    let b = Map.new();
+}

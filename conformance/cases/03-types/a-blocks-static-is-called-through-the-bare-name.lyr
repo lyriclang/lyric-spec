@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 1 1 2 0
+//! since: 5.0.0
+// 03 §9.2 rule 6: a static of a generic block - the library's 'Map.new()' and 'Set.new()' - is
+// called through the bare name too: the block's parameters are bound by the type the position
+// expects. A static of the type's body ('List.new()', 'List.of(…)') likewise.
+import std.io { println };
+
+fn main(): void {
+    let names: Map<string, int> = Map.new();
+    names.insert("a", 1);
+    let seen: Set<int> = Set.new();
+    seen.insert(3);
+    let xs = List.of([4, 5]);
+    let none: List<string> = List.new();
+    println(f"{names.length()} {seen.length()} {xs.length()} {none.length()}");
+}

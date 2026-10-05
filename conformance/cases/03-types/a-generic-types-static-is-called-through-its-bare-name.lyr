@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | 3 1 x true 4 ab
+//! since: 5.0.0
+// 03 §9.2 rule 6: a static function and a variant that takes values are called through the
+// type's bare name, and the call binds the type's parameters - from the arguments, from the type
+// the position expects first ('Cell<?int>' from 'Cell.of(4)'), and together with the function's
+// own ('turn<U>').
+import std.io { println };
+
+enum Opt<T> {
+    Some(T), None;
+
+    fn isSome(): bool {
+        return match (this) { .Some(_) => true, .None => false };
+    }
+}
+
+struct Cell<T> {
+    v: T,
+    static fn of(v: T): Cell<T> {
+        return Cell<T> { v = v };
+    }
+    static fn turn<U>(v: T, f: fn(T) -> U): Cell<U> {
+        return Cell<U> { v = f(v) };
+    }
+    fn get(): T {
+        return this.v;
+    }
+}
+
+struct Pair<A, B> {
+    first: A,
+    second: B,
+    static fn of(a: A, b: B): Pair<A, B> {
+        return Pair<A, B> { first = a, second = b };
+    }
+}
+
+fn main(): void {
+    let c = Cell.of(3);
+    let p = Pair.of(1, "x");
+    let some = Opt.Some(7);
+    let wide: Cell<?int> = Cell.of(4);
+    let turned = Cell.turn("a", (s: string) => f"{s}b");
+    println(f"{c.get()} {p.first} {p.second} {some.isSome()} {wide.get() ?? 0} {turned.get()}");
+}
