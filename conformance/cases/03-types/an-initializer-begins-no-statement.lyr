@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-PAR0055
+//! since: 5.0.0
+// 03 §8.2 rule 5: braces after a name that read as an initializer's begin no statement — one
+// message, whether the name is a type or the block of a call lost its ';'.
+import std.io { println };
+
+struct Point { x: int, y: int }
+
+fn run(f: fn() -> void): void { f(); }
+
+fn main(): void {
+    var total = 0;
+    Point { x = 1, y = 2 };
+    run { total = 5 };
+    println(f"{total}");
+}
