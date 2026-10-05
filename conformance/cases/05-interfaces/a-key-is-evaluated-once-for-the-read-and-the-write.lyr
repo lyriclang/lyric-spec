@@ -1,0 +1,73 @@
+//! run
+//! stdout:
+//! | 8 2 2
+//! | 1 12 3 | 2 2 | 4
+//! since: 5.0.0
+// 05 §12 rule 9: the key of a compound assignment is evaluated once, whatever its type - read
+// under one key and written under another is what twice would be - and so is the receiver.
+import std.io { println };
+
+class Counter {
+    var calls: int = 0,
+
+    mut fn next(): int {
+        this.calls += 1;
+        return this.calls - 1;
+    }
+}
+
+class Tally :: [IndexSet<string>] {
+    type Output = int;
+    var a: int = 0,
+    var b: int = 0,
+
+    fn index(k: string): int {
+        return if (k == "a") this.a else this.b;
+    }
+
+    mut fn setIndex(k: string, v: int): void {
+        if (k == "a") {
+            this.a = v;
+        } else {
+            this.b = v;
+        }
+    }
+}
+
+class Cells :: [IndexSet<int>] {
+    type Output = int;
+    items: int[],
+
+    fn index(k: int): int {
+        return this.items[k];
+    }
+
+    mut fn setIndex(k: int, v: int): void {
+        this.items[k] = v;
+    }
+}
+
+fn name(c: Counter): string {
+    return if (c.next() == 0) "a" else "b";
+}
+
+fn pick(c: Counter, a: Cells, b: Cells): Cells {
+    return if (c.next() == 0) a else b;
+}
+
+fn main(): void {
+    let t = Tally { };
+    let c = Counter { };
+    t[name(c)] += 2;
+    t[name(c)] += 3;
+    t["a"] *= 4;
+    t["b"]--;
+    println(f"{t.a} {t.b} {c.calls}");
+
+    let one = Cells { items = [1, 2, 3] };
+    let two = Cells { items = [1, 2, 3] };
+    let d = Counter { };
+    pick(d, one, two)[d.next()] += 10;
+    pick(d, one, two)[d.next() - 3]++;
+    println(f"{one.items[0]} {one.items[1]} {one.items[2]} | {two.items[0]} {two.items[1]} | {d.calls}");
+}

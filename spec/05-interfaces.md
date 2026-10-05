@@ -318,11 +318,16 @@ same. What is not written here yet is decided in the design documents, not here.
 9. **Indexing.** `x[k]` on a struct, a class or an enum is `x.index(k)` through
    `Index<K> { type Output; fn index(k: K): Self.Output; }`, and `x[k] = v` is `x.setIndex(k, v)`
    through `IndexSet<K> :: [Index<K>] { mut fn setIndex(k: K, v: Self.Output): void; }` — the
-   containers' `[i]` and `[k]` ([12](12-stdlib.md)). A type read and not written refuses the
-   assignment (`LYR-SEM0019`); a compound assignment through an index would read and write it,
-   evaluating `k` twice, and is written out (`LYR-SEM0003`). An element so read is a value, no
-   place: `x[k].f = v` is refused (03 §2.2). The index of an array, a view and an inline array is
-   built in ([03 §5](03-types.md)).
+   containers' `[i]` and `[k]` ([12](12-stdlib.md)). A type read and not written refuses every
+   form of the assignment (`LYR-SEM0019`). `setIndex` is a `mut fn`, so the receiver is a place
+   as for the call written out: a struct bound with `let`, or one an index handed out, is not
+   written through `[…]` (`LYR-SEM0019`). A **compound assignment** `x[k] op= v`, and `x[k]++`
+   and `x[k]--` on an integer element, evaluate `x` and `k` **once** and are
+   `x.setIndex(k, x.index(k) op v)` — read, compute, write, as on an array's element (the
+   review's M8a-1); `&&=`, `||=` and `??=` read once and write only when they assign. The order
+   and the value of an assignment are [08 §3](08-expressions.md)'s. An element so read is a
+   value, no place: `x[k].f = v` is refused (03 §2.2). The index of an array, a view and an
+   inline array is built in ([03 §5](03-types.md)).
 
 ## 13. Generic extends
 

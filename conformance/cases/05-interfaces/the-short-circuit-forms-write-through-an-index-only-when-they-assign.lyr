@@ -1,0 +1,48 @@
+//! run
+//! stdout:
+//! | 7 5 | 1 2 | true true | 3
+//! since: 5.0.0
+// 05 §12 rule 9: '??=', '&&=' and '||=' through an index read once and write only when they
+// assign; the right side runs only then. The log counts its reads and its writes.
+import std.io { println };
+import std.collections { List };
+
+class Counter {
+    var calls: int = 0,
+
+    mut fn next(): int {
+        this.calls += 1;
+        return this.calls - 1;
+    }
+}
+
+class Log :: [IndexSet<int>] {
+    type Output = ?int;
+    cells: (?int)[],
+    seen: Counter,
+    var writes: int = 0,
+
+    fn index(k: int): ?int {
+        this.seen.next();
+        return this.cells[k];
+    }
+
+    mut fn setIndex(k: int, v: ?int): void {
+        this.cells[k] = v;
+        this.writes += 1;
+    }
+}
+
+fn main(): void {
+    let log = Log { cells = [null, 5], seen = Counter { } };
+    let c = Counter { };
+    log[0] ??= c.next() + 7;
+    log[1] ??= c.next() + 9;
+    let reads = log.seen.calls;
+    let flags = List<bool>.of([true, false]);
+    flags[0] &&= c.next() == 1;
+    flags[1] &&= c.next() == 0;
+    flags[1] ||= c.next() == 2;
+    flags[0] ||= c.next() == 9;
+    println(f"{log[0] ?? -1} {log[1] ?? -1} | {log.writes} {reads} | {flags[0]} {flags[1]} | {c.calls}");
+}

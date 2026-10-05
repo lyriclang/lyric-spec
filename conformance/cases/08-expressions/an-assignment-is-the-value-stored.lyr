@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | -1 5 | circle circle | 6 6
+//! since: 5.0.0
+// 08 §3 rule 3, 05 §12 rule 9: the value takes the type of the place - 'null' and a bare value
+// into an optional element, a class into an interface - and the assignment is worth the value
+// stored, at that type; a compound one the new element.
+import std.io { println };
+import std.collections { List };
+
+interface Shape {
+    fn name(): string;
+}
+
+class Circle :: [Shape] {
+    fn name(): string {
+        return "circle";
+    }
+}
+
+class Square :: [Shape] {
+    fn name(): string {
+        return "square";
+    }
+}
+
+fn main(): void {
+    let xs = List<?int>.new();
+    xs.push(1);
+    xs.push(2);
+    xs[0] = null;
+    xs[1] = 5;
+    let shapes = List<Shape>.new();
+    shapes.push(Circle { });
+    shapes[0] = Square { };
+    let stored = (shapes[0] = Circle { });
+    let ns = List<int>.of([1]);
+    let sum = (ns[0] += 5);
+    println(f"{xs[0] ?? -1} {xs[1] ?? -1} | {shapes[0].name()} {stored.name()} | {sum} {ns[0]}");
+}

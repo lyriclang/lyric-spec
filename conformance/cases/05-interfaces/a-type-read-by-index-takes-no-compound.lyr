@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 05 §12 rule 9: a type that conforms to 'Index' and not to 'IndexSet' is read by index and not
+// written - by a compound assignment as little as by a plain one.
+
+class Fixed :: [Index<int>] {
+    type Output = int;
+
+    fn index(k: int): int {
+        return k;
+    }
+}
+
+fn main(): void {
+    let f = Fixed { };
+    f[0] += 1;
+}

@@ -92,3 +92,19 @@ A call names a function and gives it arguments
 5. **Definite assignment** ([07 §1](07-statements.md#1-loop-and-the-jumps) rule 5) treats the
    branches of an `if` expression as an `if` statement's: behind it a variable is assigned when
    every branch that completes assigned it.
+
+## 3. Assignment
+
+An assignment is an expression
+([04 D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md):
+left to right everywhere, the target before the value).
+
+1. **The target before the value.** What leads to the place — the receiver, then the index or
+   the key — is evaluated first, left to right and once; then the value; then the store.
+   `xs[next()] = next()` stores the second count at the first — in an array as through a type's
+   own index ([05 §12](05-interfaces.md) rule 9).
+2. **A compound assignment** `t op= v`, and `t++` and `t--`, evaluate what leads to the place
+   once, read it, compute, and write it: `xs[next()] += 1` calls `next` once.
+3. **Its value** is the value stored, at the type of the place: `o = v` where `o` holds a `?T`
+   or an interface is worth that `?T` or that interface. A compound assignment is worth the
+   new value; `t++` the old one, `++t` the new.
