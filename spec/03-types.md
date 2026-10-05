@@ -298,7 +298,10 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    the `then` of `if (x != null)`, in the body of `while (x != null)`, on the right of
    `x != null &&`, after `if (x == null) { return …; }` and the other forms that leave. A
    second test narrows again: a `??int` proven present is a `?int`, and proven present once
-   more an `int`.
+   more an `int`. A **negated** test proves what the test refutes and refutes what it proves:
+   `!(x == null)` narrows as `x != null` does, `if (!(x != null)) { return …; }` leaves `x`
+   present behind it, and a negation around `&&` or `||` follows from their own rules — where
+   `!(a != null && b != null)` is false, both are present.
 4. Narrowing belongs to the binding. An assignment to a `var` ends it: from there on the name
    has its declared type again. A module-level `var` and a place parameter (§2.3a) are not
    narrowed at all: a call — and for a place, a write through another name — may change them

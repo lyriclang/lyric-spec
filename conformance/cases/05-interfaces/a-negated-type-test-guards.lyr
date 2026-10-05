@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 2.0 -1.0
+//! since: 5.0.0
+// 05 §9 rule 4: a negated type test turns the two branches around - behind
+// 'if (!(s is Circle)) { return …; }' the name is a 'Circle'.
+import std.io { println };
+
+interface Shape {
+    fn area(): float;
+}
+
+class Circle :: [Shape] {
+    radius: float,
+
+    fn area(): float {
+        return 3.0 * this.radius * this.radius;
+    }
+}
+
+class Square :: [Shape] {
+    side: float,
+
+    fn area(): float {
+        return this.side * this.side;
+    }
+}
+
+fn radiusOf(s: Shape): float {
+    if (!(s is Circle)) {
+        return -1.0;
+    }
+    return s.radius;
+}
+
+fn main(): void {
+    let c = radiusOf(Circle { radius = 2.0 });
+    let s = radiusOf(Square { side = 1.0 });
+    println(f"{c} {s}");
+}

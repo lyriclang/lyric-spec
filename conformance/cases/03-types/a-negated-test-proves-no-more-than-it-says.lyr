@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §3.2 rule 3: in the branch a negated '!= null' guards, the value is absent - the name has
+// its optional type there.
+fn f(x: ?int): int {
+    if (!(x != null)) {
+        return x + 1;
+    }
+    return 0;
+}
+
+fn main(): void {
+}

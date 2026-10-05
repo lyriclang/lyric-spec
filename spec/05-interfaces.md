@@ -244,7 +244,10 @@ same. What is not written here yet is decided in the design documents, not here.
 4. **Narrowing.** In the branch `x is T` guards, the name `x` **is a `T`** — the smart cast,
    the mechanism of the null test ([03 §3.2](03-types.md#32-tests-and-narrowing)):
    `if (s is Circle) { s.r }`, `s is Circle && s.r > 0`. The branch's end ends it, as an
-   assignment to the name does; the other branch learns nothing. A read of the narrowed name
+   assignment to the name does; the other branch learns nothing. A **negated** test turns the
+   two around ([03 §3.2](03-types.md#32-tests-and-narrowing) rule 3): behind
+   `if (!(s is Circle)) { return; }` the name is a `Circle` — the guard form of a type test. A
+   read of the narrowed name
    takes the value out of the interface value: the object for a class, a **copy** for a struct
    or an enum (04 D12).
 5. **Type patterns.** `c: Circle` and `_: Circle` in a `match` over an interface value test
@@ -342,7 +345,9 @@ same. What is not written here yet is decided in the design documents, not here.
    on one instance adds to that instance alone (`LYR-SEM0012` elsewhere). A parameter the target
    does not name is bound where a **fixation** in another's constraint names it:
    `extend<I :: [Iterator<Item = T>], T :: [Num]> I` binds `I` to the receiver and `T` to its
-   `Item`, whose constraints then hold or the member is not there.
+   `Item`, whose constraints then hold or the member is not there. A parameter that neither the
+   target nor a fixation names is bound by nothing: the block reaches no type, and is refused
+   where the parameter stands (`LYR-SEM0170`).
 3. **Conditional conformance.** `extend<T :: [Display]> List<T> :: [Display] { … }` gives the
    conformance to every instance whose arguments satisfy the block's constraints and to no
    other: `List<int>` is a `Display`, `List<Foo>` is not (`LYR-SEM0001`) — the form the
