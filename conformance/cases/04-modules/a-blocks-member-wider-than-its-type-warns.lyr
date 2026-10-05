@@ -1,0 +1,18 @@
+//! check
+//! warning: LYR-SEM0152
+//! since: 5.0.0
+// 04 §3 rule 12: in an inherent block too, a member written wider than the type the block
+// extends is allowed and said.
+struct Wide {
+    n: int,
+}
+
+extend Wide {
+    pub fn twice(): int {
+        return this.n * 2;
+    }
+}
+
+fn main(): int {
+    return Wide { n = 1 }.twice();
+}
