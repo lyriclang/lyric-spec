@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | (a + 1) * 2 = 6
+//! | -(a + 1) = -3
+//! | (a + 1) = 3
+//! | half((a + 1) * 2) = 3
+//! since: 5.0.0
+// 11 §1 rule 3: the text the call wrote for the parameter, as it is written — with the
+// parentheses of an operand at its start, and with its own.
+import std.io { println };
+
+fn show(v: int, @callerExpr(v) written: string = ""): void {
+    println(f"{written} = {v}");
+}
+
+fn half(n: int): int { return n / 2; }
+
+fn main(): void {
+    let a = 2;
+    show((a + 1) * 2);
+    show(-(a + 1));
+    show((a + 1));
+    show(half((a + 1) * 2));
+}
