@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: the 'else' of a 'let … else' may break — the loop is then left, and the function
+// runs off its end.
+enum Step { More(int), Done }
+
+fn next(i: int): Step { return if (i < 3) Step.More(i) else Step.Done; }
+
+fn count(): int {
+    var i = 0;
+    while (true) {
+        let .More(v) = next(i) else { break; };
+        i = v + 1;
+    }
+}
+
+fn main(): void {
+    count();
+}

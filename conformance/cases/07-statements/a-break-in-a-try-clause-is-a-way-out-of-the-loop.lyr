@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: a 'break' in a clause of a 'try' expression leaves the loop around it.
+struct Bad :: [Error] { fn message(): string { return "bad"; } }
+
+fn risky(n: int): int throws Bad {
+    if (n == 2) { throw Bad { }; }
+    return n;
+}
+
+fn sum(): int {
+    var total = 0;
+    var i = 0;
+    while (true) {
+        let v = try risky(i) catch (_: Bad) { break; };
+        total = total + v;
+        i = i + 1;
+    }
+}
+
+fn main(): void {
+    sum();
+}

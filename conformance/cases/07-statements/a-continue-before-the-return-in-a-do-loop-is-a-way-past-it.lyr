@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: a 'continue' reaches the condition of its 'do' loop, and the condition may end it.
+fn pick(c: bool): int {
+    var n = 0;
+    do {
+        n = n + 1;
+        if (c && n < 3) { continue; }
+        return n;
+    } while (n < 2);
+}
+
+fn main(): void {
+    pick(true);
+}

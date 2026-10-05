@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0017
+//! since: 5.0.0
+// 07 §1.6: a 'do' loop's block that ends in a 'return' ends no path while a 'break' of the loop
+// stands before it.
+fn pick(c: bool): int {
+    do {
+        if (c) { break; }
+        return 1;
+    } while (true);
+}
+
+fn main(): void {
+    pick(true);
+}

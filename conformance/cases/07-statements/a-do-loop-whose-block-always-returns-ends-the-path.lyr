@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 2 3
+//! since: 5.0.0
+// 07 §1.6: the other side — a 'do' block that returns on every path, with no jump of the loop
+// in it, ends the function's path; and a 'continue' under a condition that is 'true' and that
+// nothing breaks can only come back.
+import std.io { println };
+
+fn either(c: bool): int {
+    do {
+        if (c) { return 1; } else { return 2; }
+    } while (c);
+}
+
+fn third(): int {
+    var n = 0;
+    do {
+        n = n + 1;
+        if (n < 3) { continue; }
+        return n;
+    } while (true);
+}
+
+fn main(): void {
+    println(f"{either(true)} {either(false)} {third()}");
+}

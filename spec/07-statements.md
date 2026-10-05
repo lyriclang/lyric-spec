@@ -43,6 +43,18 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    every `break`. A `while` and a `for` may not run their block at all: what is assigned after
    them is what was assigned before. A read of a variable that is not assigned on every way to it
    is refused (`LYR-SEM0018`).
+6. **The end of a body** follows the jumps too. A function that returns a value ends every path
+   in a `return`, a `throw` or an expression worth `never`
+   ([06 §9](06-errors.md#9-panics-and-never)); a body that can run off its end is refused
+   (`LYR-SEM0017`). A loop ends a path only when nothing leaves it: a `while (true)` or a
+   `do … while (true)` with no `break` of it, and a `do` loop whose block ends every path so and
+   holds no `break` and no `continue` of the loop — a `break` is a way past what follows it, and
+   a `continue` reaches the condition, which may end the loop. A jump is its loop's **wherever
+   it stands in the loop's block**: in a nested statement, in the `else` of a `let … else`, in
+   an arm of a `match` expression or a clause of a `try` expression that is part of a larger
+   expression — and, when it names the loop's label, in a loop nested in it, a `loop` worth
+   `never` included. Only a lambda's body is out of reach (rule 4). A statement no path reaches
+   is warned about (`LYR-SEM0073`); the statement behind a loop a jump leaves is reached.
 
 ## 2. `for`
 
