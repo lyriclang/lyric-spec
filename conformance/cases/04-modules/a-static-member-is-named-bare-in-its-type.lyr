@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 3 4
+//! since: 5.0.0
+// 04 §5 rule 2: in its type's body a static member is reached by its bare name - a function
+// and a constant, from a method and from another static.
+import std.io { println };
+
+struct Id {
+    n: int,
+    static let step: int = 2;
+    static fn of(n: int): Id { return Id { n = n }; }
+    static fn second(): Id { return of(step + step); }
+    fn next(): Id { return of(this.n + step); }
+}
+
+fn main(): void {
+    println(f"{Id.of(1).next().n} {Id.second().n}");
+}

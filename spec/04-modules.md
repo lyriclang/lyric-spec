@@ -1,7 +1,7 @@
 # Modules and packages
 
 > **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 to
-> §4 with **M7** (slices S1, S2a–S2c, S3a, S3b); the rest follows with M7, spec-first: each rule
+> §4 with **M7** (slices S1, S2a–S2c, S3a, S3b), §5 with the review of **M8a** (R3a); the rest follows with M7, spec-first: each rule
 > lands here with its conformance case before or with its implementation. Source of the decisions:
 > [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
@@ -168,3 +168,27 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
 7. A name a module declares or imports is **not also one of its submodules**: `app.net` declaring
    `http` beside the module `app.net.http` is refused (`LYR-RES0012`) (K1, K3). `std` is the
    standard library's name: a single file `std.lyr` is refused (`LYR-RES0013`) (D1).
+
+## 5. A type's members by their bare names
+
+What a bare name means between the braces of a type
+([07 V6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md), the review's M6-30).
+
+**Conformance.** `conformance/cases/04-modules/`.
+
+1. The body of a struct, a class, an enum or an interface is a **scope inside its module's**: in
+   the bodies of its methods a member's name hides a module's, an import's and the prelude's of
+   that name, and a local or a parameter hides the member, whole. An `extend` block is such a
+   scope for the members it declares itself; the members of the type's body are not named bare
+   there.
+2. A **static** member is reached by its bare name there — `of(2)`, `step` — as it is through
+   the type.
+3. A member **of an instance** — a field, a method that is not `static` — is reached through its
+   receiver: `this.label`, `this.size()`. Its bare name is refused (`LYR-SEM0055`). So is a
+   variant's, in its enum's own methods too: a variant is written `.Red` or `Color.Red`, as in a
+   pattern ([09](09-patterns.md)).
+4. In a **call**, `label(…)`, a field counts only when it can be called — when its type is a
+   function type, or an optional one: a field `label: string` does not hide the function `label`
+   there, and the call means the function. A field that can be called is what the call means
+   (rule 3). Where a field that cannot be called is all the name means, the call is refused as
+   one of something that is no function (`LYR-SEM0013`).

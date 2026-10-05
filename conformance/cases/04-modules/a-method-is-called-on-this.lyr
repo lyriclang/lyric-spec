@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 04 §5 rule 3: a method that is not static is called on a value - 'this.get()'; its bare name
+// is refused.
+struct Point {
+    x: int,
+    fn get(): int { return this.x; }
+    fn twice(): int { return get() * 2; }
+}
+
+fn main(): void {
+    let _ = Point { x = 3 }.twice();
+}
