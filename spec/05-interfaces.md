@@ -83,7 +83,8 @@ same. What is not written here yet is decided in the design documents, not here.
    a conformance block, an interface's default, a member delegated to a field (§5). A name two
    of these would give it is refused where the second is declared (`LYR-SEM0121`): an
    extension beside an own member, two extensions, an extension beside a default of a conformed
-   interface, a conformance block beside an own member.
+   interface, a conformance block beside an own member. A blanket block's member is none of
+   these: it stands behind them all ([§13](#13-generic-extends) rule 7).
 2. An **own member is the implementation** of every conformance's member of that name, and
    overrides a default. Two defaults of one name from two interfaces, which the type does not
    write itself, are the type's to settle: it writes the member, one function for both
@@ -368,8 +369,13 @@ same. What is not written here yet is decided in the design documents, not here.
 7. **Blanket blocks** (04 D15): a block whose target is its own parameter, `extend<T :: [I]> T
    { … }`, adds its members to **every type its constraints admit** — the receiver binds `T`,
    `this` is the receiver: `x.greeting()` on every `Named`. A member of the type's own, of
-   another block or of a default comes first; a blanket member of a name the type already has
-   is refused at the block (`LYR-SEM0121`), and one the receiver's type does not admit is not
+   another block or of a default comes first: a blanket member of a name the type already has
+   is **hidden for that type** (the review's A5) — a call on the type reaches the type's, while
+   generic code that reaches the name through the block's constraints calls the block's, for
+   that type too. They are two functions of one name, so the type's member is warned about
+   where it stands (`LYR-SEM0168`; at the type, for a default it inherits or a member it leaves
+   to a field). Two blanket blocks that give a type one name it does not have itself are
+   refused (`LYR-SEM0121`), and a member the receiver's type does not admit is not
    there (`LYR-SEM0012`). In a generic body a type parameter whose constraints imply the
    block's receives it too (D2 R4). A shape receives a blanket member where it satisfies the
    block's constraints (rule 6). A member with type parameters of its own, `fn mapped<U>(…)`,
