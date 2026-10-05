@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 05 §4 rule 1: the receiver of a qualified 'mut fn' call is written, so it is a place, as the
+// receiver of 'c.bump()' is - not a binding made with 'let'.
+interface Counter {
+    mut fn bump(): void;
+}
+
+struct C :: [Counter] {
+    var n: int,
+    mut fn bump(): void { this.n += 1; }
+}
+
+fn main(): void {
+    let c = C { n = 0 };
+    Counter.bump(c);
+}

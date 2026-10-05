@@ -94,7 +94,9 @@ same. What is not written here yet is decided in the design documents, not here.
    interface**, in separate conformance blocks — `extend C :: [I1] { fn greet() … }` beside
    `extend C :: [I2] { fn greet() … }`. The name then belongs to each block: the unqualified
    call `c.greet()` is refused and says how to qualify (`LYR-SEM0122`); through an interface
-   value of `I1` or `I2`, and through the qualified call (§4), each is reached. One block that
+   value of `I1` or `I2`, through a constraint that names one of them, from a default of that
+   interface calling the member on `this`, and through the qualified call (§4), each is
+   reached — a static member through the type parameter its interface bounds, `T.make(s)`. One block that
    holds a name at two counts holds an overload set ([08 §1.2](08-expressions.md)), not two
    scopes.
 
@@ -103,7 +105,9 @@ same. What is not written here yet is decided in the design documents, not here.
 1. `I.m(x, …)` calls the member `m` of the interface `I` with `x` as its receiver — the
    implementation `x`'s type has for `I` (D2 R5). The receiver conforms to `I` (`LYR-SEM0125`
    otherwise) and comes first (`LYR-SEM0014`). It is the form that names what the unqualified
-   call cannot (§3.4), and it is checked as the member call it is.
+   call cannot (§3.4), and it is checked as the member call it is: a `mut fn` writes `x`
+   itself — no copy of a struct stands in for it —, so `x` is a place as the receiver of
+   `x.m(…)` is (`LYR-SEM0019`).
 
 ## 5. Delegation
 

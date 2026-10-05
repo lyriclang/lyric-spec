@@ -1,0 +1,49 @@
+//! run
+//! stdout:
+//! | own default block | own default block | own default
+//! since: 5.0.0
+// 05 §4 rule 1, §3 rule 2: 'Walker.walk(x)' is the implementation x's type has for 'Walker' -
+// its own where it wrote one, in its body or in a block, the default where it wrote none; what
+// a call through a constraint reaches. On an instance of a generic type alike.
+import std.io { println };
+
+interface Walker {
+    fn walk(): string { return "default"; }
+}
+
+struct D :: [Walker] {
+    n: int,
+    fn walk(): string { return "own"; }
+}
+
+struct E :: [Walker] {
+    n: int,
+}
+
+struct F {
+    n: int,
+}
+
+extend F :: [Walker] {
+    fn walk(): string { return "block"; }
+}
+
+struct Crate<T> :: [Walker] {
+    v: T,
+    fn walk(): string { return "own"; }
+}
+
+struct Bare<T> :: [Walker] {
+    v: T,
+}
+
+fn through<W :: [Walker]>(w: W): string { return w.walk(); }
+
+fn main(): void {
+    let d = D { n = 0 };
+    let e = E { n = 0 };
+    let f = F { n = 0 };
+    let crate = Crate<int> { v = 1 };
+    let bare = Bare<int> { v = 1 };
+    println(f"{Walker.walk(d)} {Walker.walk(e)} {Walker.walk(f)} | {through(d)} {through(e)} {through(f)} | {Walker.walk(crate)} {Walker.walk(bare)}");
+}
