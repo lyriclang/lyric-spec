@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 1099511627776 1099511627776 8 16 | 4 133 true
+//! since: 5.0.0
+// 03 §1.6 rule 2: the left operand of a shift is what it would be without the shift - a literal
+// takes the type its position wants - a typed binding, a parameter, the other operand of an
+// operator -, or is an 'int'; it does not take the count's. '1 << n' with a 'uint8' count is an
+// 'int', and 2^40 fits it; 'flags & (1 << bit)' is the flags' type.
+import std.io { println };
+
+fn widen(x: uint64): uint64 {
+    return x;
+}
+
+fn main(): void {
+    let n: uint8 = 40;
+    let wide = 1 << n;
+    let mask: uint64 = 1 << n;
+    let small: int8 = 1;
+    let three: int = 3;
+    let kept: int8 = small << three;
+    let four: uint8 = 4;
+    let flags: uint8 = 5;
+    let bit: int = 2;
+    let both = flags & (1 << bit);
+    let more = (1 << 7) | flags;
+    let same = flags == 5 << (bit - 2);
+    println(f"{wide} {mask} {kept} {widen(1 << four)} | {both} {more} {same}");
+}

@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 8 50 1099511627776 8 -4
+//! | 4 20 3
+//! since: 5.0.0
+// 03 §1.6 rule 2: the count of a shift is an integer of any type, whatever the left operand's;
+// the result has the left operand's type. The compound forms too.
+import std.io { println };
+
+class Cell {
+    var bits: uint8 = 5,
+}
+
+fn main(): void {
+    let a: int8 = 1;
+    let n: int = 3;
+    let u: uint8 = 200;
+    let m: int8 = 2;
+    let w: uint64 = 1;
+    let k: int = 40;
+    let i: int = 1;
+    let c: uint8 = 3;
+    let low: int16 = -16;
+    let two: uint64 = 2;
+    println(f"{a << n} {u >> m} {w << k} {i << c} {low >> two}");
+
+    var b: int8 = 1;
+    b <<= n;
+    b >>= 1;
+    let cell = Cell { };
+    cell.bits <<= m;
+    let xs: uint16[] = [12];
+    xs[0] >>= c - 1;
+    println(f"{b} {cell.bits} {xs[0]}");
+}

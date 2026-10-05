@@ -1,0 +1,17 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 05 §12 rule 1, 03 §1.6 rule 2: through 'Shl' the count is the interface's 'int', and an
+// integer of the library shifts by it as it is - 259 on an 'int8' panics; it is not a shift
+// by 3.
+import std.io { println };
+import std.core { Shl };
+
+fn up<T :: [Shl<Out = T>]>(x: T, n: int): T {
+    return x << n;
+}
+
+fn main(): void {
+    let a: int8 = 1;
+    println(f"{up(a, 259)}");
+}

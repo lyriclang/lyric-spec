@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §1.6 rules 2 and 4: the count is an integer of any type - an integer; a float is none.
+fn main(): void {
+    let a: int = 1;
+    let x = a << 1.5;
+}
