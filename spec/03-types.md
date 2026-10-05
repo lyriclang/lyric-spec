@@ -91,8 +91,14 @@ The number tower, `bool` and `char`
    `/` rounds toward zero and `%` takes the sign of the dividend, as C does.
 2. `<<` and `>>` panic with `LYR-RT0002` when the count is negative or not below the width of
    the left operand's type. Otherwise bits shifted out are discarded, `>>` on a signed type
-   is arithmetic (the sign is kept) and on an unsigned type logical. Both operands have the
-   operator's type, as for every binary operator.
+   is arithmetic (the sign is kept) and on an unsigned type logical. The **count is an integer
+   of any type**, whatever the left operand's (the review's A9f): `a << n` with an `int8` and
+   an `int` is an `int8`, and the count is checked as it is, in its own type — 259 is not
+   below eight. The result has the left operand's type, and the left operand is what it would
+   be without the shift: a literal there takes the type its position wants, as a literal alone
+   does — a typed binding, a parameter, the other operand of an operator: `flags & (1 << bit)`
+   is the flags' type —, or is an `int`; it does not take the count's. The other binary
+   operators keep one type on both sides.
 3. The **wrap operators** `+%`, `-%`, `*%` (and the compounds `+%=`, `-%=`, `*%=`) compute the
    result modulo 2ᵂ of the type's width and never panic. They bind like `+`, `-` and `*`. They
    are defined on integer types only: a float or a `char` operand is an error

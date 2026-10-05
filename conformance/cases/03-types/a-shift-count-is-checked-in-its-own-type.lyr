@@ -1,0 +1,15 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 03 §1.6 rule 2: the count is checked as it is, in its own type - 259 is not below the eight
+// bits of an 'int8' (and is not the 3 an 'int8' would make of it).
+import std.io { println };
+
+fn count(): int {
+    return 259;
+}
+
+fn main(): void {
+    let a: int8 = 1;
+    println(f"{a << count()}");
+}
