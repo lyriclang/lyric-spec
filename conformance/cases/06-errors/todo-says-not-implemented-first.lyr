@@ -1,0 +1,9 @@
+//! run
+//! panic: LYR-RT0013
+//! stderr:
+//! | panic [LYR-RT0013]: not implemented: the parser
+//! since: 5.0.0
+// 06 §9 rule 1: 'todo(message)' says "not implemented" and the message behind it.
+fn main(): void {
+    todo("the parser");
+}

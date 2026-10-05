@@ -1,0 +1,16 @@
+//! run
+//! panic: LYR-RT0016
+//! stderr:
+//! | panic [LYR-RT0016]: Set: changed while it was walked
+//! since: 5.0.0
+// 12 (collections, I9), 13 §1.4: a collection changed while it is walked panics at the next
+// pull, with a code of its own - and under its own name, a set as a set.
+import std.collections { Set };
+
+fn main(): void {
+    let s = Set<int>.new();
+    s.insert(1);
+    for (x in s) {
+        s.insert(x + 10);
+    }
+}

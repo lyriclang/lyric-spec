@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | outer <- boom
+//! | plain <- none
+//! since: 5.0.0
+// 06 §1 rule 4: 'Exception("…")' and 'Exception("…", cause: e)' - the message, and the error it
+// wraps as what 'cause()' gives.
+import std.io { println };
+
+fn fail(n: int): int throws Exception {
+    if (n == 0) {
+        throw Exception("boom");
+    }
+    try {
+        return fail(n - 1);
+    } catch (e) {
+        throw Exception("outer", cause: e);
+    }
+}
+
+fn text(e: Error): string {
+    return f"{e.message()} <- {e.cause()?.message() ?? "none"}";
+}
+
+fn main(): void {
+    try {
+        println(f"{fail(1)}");
+    } catch (e) {
+        println(text(e));
+    }
+    println(text(Exception("plain")));
+}
