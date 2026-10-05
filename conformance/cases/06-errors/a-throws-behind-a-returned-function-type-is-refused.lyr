@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-PAR0056
+//! since: 5.0.0
+// 06 §8.1: 'fn make(): fn() -> int throws Negative' - the returned function's set, or make's?
+// Without parentheses it is refused.
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn fail(): int throws Negative { throw Negative { }; }
+
+fn make(): fn() -> int throws Negative {
+    return fail;
+}
+
+fn main(): void { }

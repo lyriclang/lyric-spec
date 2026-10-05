@@ -122,8 +122,12 @@ scheduler runs another task meanwhile. The functions this section names are `std
    type carries the error as a coroutine's carries what its pulls throw (05 E10); `Task<T>`
    throws nothing, and fits where a `Task<T> throws E` is expected, but not the reverse
    (`LYR-SEM0001`). `throws` after any other type than a coroutine or a task is refused
-   (`LYR-SEM0084`), and after a function's return type it is the function's own: a function
-   that returns a throwing task writes `(Task<T> throws E)`.
+   (`LYR-SEM0084`). After a **return type** that is a task or a coroutine — with a `?` before
+   it or without — a `throws` could be the type's or the function's, and without parentheses
+   it is refused (`LYR-SEM0165`): a function that returns a throwing task writes
+   `(Task<T> throws E)`, one that throws itself `(Task<T>) throws E`. So behind the return type
+   of a lambda and of a function type. A generator writes none: its clause is its coroutine's
+   (§1 rule 6).
 9. **`task.await()`** waits until the body has ended (06 T2) and gives its value, or throws its
    error: it throws what the handle's type says and, as every wait, `Cancelled` — marked and
    covered as any call that throws (`LYR-SEM0138`, `LYR-SEM0034`). The tasks waiting for one

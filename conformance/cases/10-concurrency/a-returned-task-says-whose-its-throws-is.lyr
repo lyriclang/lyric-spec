@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 7
+//! | refused
+//! since: 5.0.0
+// 10 §2 rule 8: '(Task<int> throws Oops)' returns a task that may end in the error - the call
+// throws nothing, the await does; '(Task<int>) throws Oops' throws itself, and returns a task
+// that cannot.
+import std.io { println };
+import std.task { spawn, Task };
+
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn risky(fail: bool): int throws Oops {
+    if (fail) { throw Oops.Bad; }
+    return 7;
+}
+
+fn launch(): (Task<int> throws Oops) {
+    return spawn(() => try risky(false));
+}
+
+fn start(ok: bool): (Task<int>) throws Oops {
+    if (!ok) { throw Oops.Bad; }
+    return spawn(() => 7);
+}
+
+fn main(): void {
+    let t = launch();
+    try { println(f"{t.await()}"); } catch (_: Error) { println("failed"); }
+    try {
+        let u = start(false);
+        println(f"{u.await()}");
+    } catch (_: Error) { println("refused"); }
+}

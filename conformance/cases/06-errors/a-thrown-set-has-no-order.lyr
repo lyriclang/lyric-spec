@@ -4,7 +4,7 @@
 class A :: [Error] { fn message(): string { return "a"; } }
 class B :: [Error] { fn message(): string { return "b"; } }
 
-fn reorder(f: fn() -> void throws [A, B]): fn() -> void throws [B, A] {
+fn reorder(f: fn() -> void throws [A, B]): (fn() -> void throws [B, A]) {
     return f;
 }
 

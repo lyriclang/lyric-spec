@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | made
+//! | caught negative
+//! | refused
+//! since: 5.0.0
+// 06 §8.1: behind a function type that is a return type, parentheses say whose a 'throws' is -
+// 'make' throws nothing and the function it returns does; 'pick' throws itself and returns a
+// function that does not.
+import std.io { println };
+
+class Negative :: [Error] { fn message(): string { return "negative"; } }
+
+fn fail(): int throws Negative { throw Negative { }; }
+fn seven(): int { return 7; }
+
+fn make(): (fn() -> int throws Negative) {
+    println("made");
+    return fail;
+}
+
+fn pick(ok: bool): (fn() -> int) throws Negative {
+    if (!ok) { throw Negative { }; }
+    return seven;
+}
+
+fn main(): void {
+    let f = make();
+    try { println(f"{f()}"); } catch (e: Negative) { println(f"caught {e.message()}"); }
+    try {
+        let g = pick(false);
+        println(f"{g()}");
+    } catch (_: Negative) { println("refused"); }
+}
