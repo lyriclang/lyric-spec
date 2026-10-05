@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §2 rule 2: a place parameter is an address, and no pointer crosses into C in stage 1 - the
+// declaration is refused, whether or not anything calls it.
+extern "C" fn poke(&at: int): void;
+
+fn main(): void {
+    var n = 1;
+    poke(&n);
+}

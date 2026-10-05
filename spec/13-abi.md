@@ -209,7 +209,8 @@ own tests (`tests/Lyric5.Tests`, `NativeTests`).
    body, no type parameters and no `throws` — a C function throws nothing (`LYR-SEM0099`).
 2. What crosses: `int8` to `int64` and `uint8` to `uint64` as the C integer of their width,
    `int`/`uint` as the 64-bit ones; `float32` as `float`, `float` as `double`; `bool` as C's
-   `bool`, 0 or 1; and `void` as a return. Every other type is refused, as a parameter and as a
+   `bool`, 0 or 1; and `void` as a return. Each by value: a place parameter (`&x: T`,
+   [03 §2.3a](03-types.md)) is an address and does not cross. Every other type is refused, as a parameter and as a
    result (`LYR-SEM0099`).
 3. A call is a direct call in the target platform's C ABI. A symbol nothing defines fails the link
    (exit 2, [14 §1.3](14-cli.md)).
