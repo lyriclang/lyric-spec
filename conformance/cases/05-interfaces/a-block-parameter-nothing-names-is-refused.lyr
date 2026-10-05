@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0170
+//! since: 5.0.0
+// 05 §13 rule 2: a block's parameter is bound by its target or by a fixation; 'U' is named by
+// neither, so the block reaches no type.
+struct Shelf<T> {
+    v: T,
+}
+
+extend<T, U> Shelf<T> {
+    fn one(): int {
+        return 1;
+    }
+}
+
+fn main(): void {
+}
