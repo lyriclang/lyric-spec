@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | meow | hello cat | hello dog | hello dog
+//! since: 5.0.0
+// 05 §13 rule 7: a blanket member of a name the type already has is hidden for that type - a call
+// on the type reaches the type's own, and generic code that reaches the name through the
+// block's constraints calls the block's, for that type too.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string { return f"hello {this.name()}"; }
+}
+
+struct Cat :: [Named] {
+    n: int,
+    fn name(): string { return "cat"; }
+    fn greeting(): string { return "meow"; }
+}
+
+struct Dog :: [Named] {
+    n: int,
+    fn name(): string { return "dog"; }
+}
+
+fn greet<T :: [Named]>(t: T): string { return t.greeting(); }
+
+fn main(): void {
+    let cat = Cat { n = 0 };
+    let dog = Dog { n = 0 };
+    println(f"{cat.greeting()} | {greet(cat)} | {dog.greeting()} | {greet(dog)}");
+}

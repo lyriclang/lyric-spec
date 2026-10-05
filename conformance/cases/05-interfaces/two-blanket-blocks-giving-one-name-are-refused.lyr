@@ -1,0 +1,38 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §13 rule 7: two blanket blocks that give a type one name it does not have itself are two
+// functions of a name, with nothing to choose between them.
+
+interface Named {
+    fn name(): string;
+}
+
+interface Seen {
+    fn seen(): bool;
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+extend<T :: [Seen]> T {
+    fn greeting(): string {
+        return "seen";
+    }
+}
+
+struct Cat :: [Named, Seen] {
+    fn name(): string {
+        return "cat";
+    }
+
+    fn seen(): bool {
+        return true;
+    }
+}
+
+fn main(): void {
+}
