@@ -1,0 +1,44 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 06 §4 rule 6: with a second type that can arrive, the binding is an 'Error' again - the
+// field of one of them is not there.
+import std.io { println };
+
+struct NotFound :: [Error] {
+    path: string,
+
+    fn message(): string {
+        return f"no {this.path}";
+    }
+}
+
+struct Denied :: [Error] {
+    code: int,
+
+    fn message(): string {
+        return f"denied {this.code}";
+    }
+}
+
+fn find(p: string): int throws NotFound {
+    if (p == "") {
+        throw NotFound { path = "empty" };
+    }
+    return 1;
+}
+
+fn open(p: string): int throws [NotFound, Denied] {
+    if (p == "x") {
+        throw Denied { code = 7 };
+    }
+    return try find(p);
+}
+
+fn main(): void {
+    try {
+        println(f"{open("")}");
+    } catch (e) {
+        println(e.path);
+    }
+}

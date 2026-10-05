@@ -99,9 +99,11 @@ with M5. What is not written here yet is decided in the design documents, not he
    enum's value, an interface value of the clause's interface — so its fields and its variants
    are there to read and match. The **set form** `catch (e in [A, B])` takes a value of any of its
    types — one alone without the brackets, `catch (e in A)`, several in them, the list rule
-   (`LYR-PAR0049`) — and `e` is an `Error` that carries the set (rule 6). `catch (e)` and
-   `catch (_)` take everything; `e` is an `Error`. A clause without a type stands last
-   (`LYR-SEM0035`). A clause's types conform to `Error` (`LYR-SEM0030`).
+   (`LYR-PAR0049`) — and `e` is an `Error` that carries the set (rule 6); a set of one is the
+   typed clause, `catch (e in A)` binds an `A`. `catch (e)` and `catch (_)` take everything
+   that reaches them; `e` is the one type that does, where it is one, and an `Error`
+   otherwise (rule 6). A clause without a type stands last (`LYR-SEM0035`). A clause's types
+   conform to `Error` (`LYR-SEM0030`).
 3. When no clause covers the value, it goes on as though the `try` were not there: to the
    clauses of a `try` around this one, or out of the function ([§5](#5-the-error-path)).
 4. A clause is not inside its own `try`: what it throws goes past its sister clauses to the next
@@ -122,7 +124,12 @@ with M5. What is not written here yet is decided in the design documents, not he
    (precise rethrow): `catch (_: NotFound) { … } catch (e) { throw e; }` in a function that
    declares `throws Parse` is covered when the body throws `[NotFound, Parse]`. A `match (e)`
    whose type patterns cover the set needs no default (`LYR-SEM0050` names a missing type). The
-   set is the binding's alone: stored elsewhere, the value is an `Error`.
+   set is the binding's alone: stored elsewhere, the value is an `Error`. Where the set is
+   **one type**, the binding is that type (the review's M5-6): its fields and its variants are
+   there, as in a typed clause, and it is an error wherever one is asked. A second type the body
+   comes to throw makes it an `Error` again. Where the set is **empty** although the body
+   throws — the clauses above cover every type of it — the clause is dead, and warned about
+   (`LYR-SEM0171`).
 7. *(Informative.)* Since the value travels with its type, the clause test is one comparison of
    the value's type descriptor, an interface clause a search of the type's short conformance
    list.
