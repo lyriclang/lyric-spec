@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0167
+//! since: 5.0.0
+// 04 §3 rule 10a: what an interface asks for is answered as visibly as the conformance, a
+// constant as a method - 'pub static let zero'.
+pub interface Zero {
+    static let zero: Self;
+}
+
+pub struct N :: [Zero] {
+    pub n: int,
+    static let zero: N = N { n = 0 };
+}
+
+fn main(): void {
+}

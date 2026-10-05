@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | cancelled, timed out, channel closed
+//! since: 5.0.0
+// 04 §3 rule 10a, in the library: 'Cancelled', 'TimedOut' and 'ChannelClosed' are pub and
+// conform to 'Error', so their 'message' is pub - read by its own name, not through 'Error'
+// alone.
+import std.io { println };
+import std.task { Cancelled, TimedOut, ChannelClosed };
+
+fn main(): void {
+    let a = Cancelled { };
+    let b = TimedOut { };
+    let c = ChannelClosed { };
+    println(f"{a.message()}, {b.message()}, {c.message()}");
+}

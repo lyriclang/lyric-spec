@@ -125,6 +125,14 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type and its
     interface are, its methods with it; a word on the block or on one of its methods is refused
     (`LYR-SEM0150`) (S5).
+
+10a. A member that **answers an interface** for its type from outside a conformance block — a
+    method, a static function or a constant in the type's body, or in a block of rule 9 — is
+    written at least as visible as the conformance, the narrower of its type's word and its
+    interface's (`LYR-SEM0167`; the review's M7-2): in `pub struct Sq :: [Shape]` with a `pub`
+    interface `Shape` it is `pub fn area()`; where the type or the interface is `internal`, no
+    word is enough, and `private` is not. A conformance cannot be narrowed (rule 10), so a member
+    written narrower would be called through the interface by code its own name refuses.
 11. A declaration is **no more visible than the types it names** (S2): a function's parameters,
     result, thrown types and constraints, a field's type, an alias's, a variant's payload, a
     module binding's or a `static let`'s type — written or inferred —, a type's constraints and an

@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | 9 4 5
+//! since: 5.0.0
+// 04 §3 rule 10a: the conformance is as visible as the narrower of the two - an internal type
+// or an internal interface makes it internal, and a member without a word is that. A private
+// type's member may be private.
+import std.io { println };
+
+pub interface Shape {
+    fn area(): int;
+}
+
+interface Quiet {
+    fn count(): int;
+}
+
+struct Sq :: [Shape] {
+    s: int,
+    fn area(): int {
+        return this.s * this.s;
+    }
+}
+
+pub struct Four :: [Quiet] {
+    fn count(): int {
+        return 4;
+    }
+}
+
+private struct Five :: [Shape] {
+    private fn area(): int {
+        return 5;
+    }
+}
+
+fn measure<T :: [Shape]>(shape: T): int {
+    return shape.area();
+}
+
+fn main(): void {
+    println(f"{measure(Sq { s = 3 })} {Four { }.count()} {measure(Five { })}");
+}
