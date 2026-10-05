@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | m one
+//! | m two
+//! | other
+//! since: 5.0.0
+// 08 §2 rule 4: a 'match' whose arms are all worth nothing is worth nothing — as a lambda's
+// expression body, and standing last in its block.
+import std.io { println };
+
+fn each(xs: int[], f: fn(int) -> void): void { for (x in xs) { f(x); } }
+
+fn main(): void {
+    each([1, 2, 3]) { x =>
+        match (x) {
+            1 => println("m one"),
+            2 => { println("m two"); }
+            _ => { }
+        }
+    };
+    let which = (k: int) => match (k) { 1 => println("one"), _ => println("other") };
+    which(2);
+}

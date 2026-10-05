@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 7 9 8 10
+//! since: 5.0.0
+// 07 §3 rule 5: a lambda's block is a value block in each of its forms, and its tail is the
+// lambda's result.
+import std.io { println };
+
+fn apply(v: int, f: fn(int) -> int): int { return f(v); }
+
+fn main(): void {
+    let parenthesized = (x: int) => { let d = x * 2; d + 1 };
+    let bare: fn(int) -> int = x => { let d = x * 3; d };
+    let named = apply(3) { n => let d = n * 2; d + 2 };
+    let implicit = apply(4) { let d = it * 2; d + 2 };
+    println(f"{parenthesized(3)} {bare(3)} {named} {implicit}");
+}

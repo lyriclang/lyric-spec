@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0033
+//! since: 5.0.0
+// 08 §2 rule 4: a block arm that runs to its end without a tail, beside an arm that gives a
+// value.
+import std.io { println };
+
+fn main(): void {
+    let n = 3;
+    let v = match (n) {
+        0 => { println("zero"); }
+        _ => n * 2,
+    };
+    println(f"{v}");
+}

@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0033
+//! since: 5.0.0
+// 07 §3 rule 3: a value block that runs to its end without a tail is worth nothing, and the
+// binding wants an int.
+import std.io { println };
+
+fn main(): void {
+    let c = true;
+    let x: int = if (c) { println("then"); } else { 2 };
+    println(f"{x}");
+}

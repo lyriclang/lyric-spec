@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | yes
+//! | no
+//! | one
+//! | two
+//! since: 5.0.0
+// 08 §2 rule 2: an 'if' whose branches are both worth nothing is worth nothing, and stands
+// where nobody takes a value — a lambda's expression body, the last statement of its block.
+import std.io { println };
+
+fn each(xs: int[], f: fn(int) -> void): void { for (x in xs) { f(x); } }
+
+fn main(): void {
+    let say = (c: bool) => if (c) println("yes") else println("no");
+    say(true);
+    say(false);
+    each([1, 2]) { x => if (x > 1) { println("two"); } else { println("one"); } };
+}

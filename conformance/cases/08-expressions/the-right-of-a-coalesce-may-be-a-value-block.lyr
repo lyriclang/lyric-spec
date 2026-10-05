@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 0 5 7 1
+//! since: 5.0.0
+// 08 §2 rule 3: the right of '??' may be a value block — one that leaves, one that gives the
+// value — evaluated only when the left is absent.
+import std.io { println };
+
+fn orZero(v: ?int): int {
+    let n = v ?? { return 0; };
+    return n + 1;
+}
+
+fn orSeven(v: ?int): int { return v ?? { let d = 3; d + 4 }; }
+
+fn main(): void {
+    println(f"{orZero(null)} {orZero(4)} {orSeven(null)} {orSeven(1)}");
+}
