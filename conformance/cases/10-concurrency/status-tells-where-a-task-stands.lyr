@@ -29,7 +29,7 @@ fn describe(s: TaskStatus<int>): string {
     };
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let good = spawn(() => 5);
     println(describe(good.status()));
     let bad = spawn(() => try failing());

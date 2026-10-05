@@ -11,7 +11,7 @@ import std.io { println };
 import std.task { spawn, spawnDetached, sleep, yieldNow, Cancelled };
 import std.time { Duration };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let shared = spawn(() => {
         try sleep(Duration.ofMillis(10));
         return 1;

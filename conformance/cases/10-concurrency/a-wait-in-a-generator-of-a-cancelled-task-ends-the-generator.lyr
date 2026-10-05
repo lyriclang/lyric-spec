@@ -18,7 +18,7 @@ fn ticks(): Coroutine<int> {
     yield 2;
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let t = spawn(() => {
         let g = ticks();
         while (let n = g.next()) {

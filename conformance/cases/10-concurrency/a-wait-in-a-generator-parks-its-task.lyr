@@ -17,7 +17,7 @@ fn numbers(): Coroutine<int> {
     yield 2;
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     spawnDetached(() => {
         try sleep(Duration.ofMillis(10));
         println("other");

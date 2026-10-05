@@ -11,7 +11,7 @@ import std.io { println };
 import std.task { sleep, yieldNow, spawnDetached, Cancelled };
 import std.time { Duration };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     spawnDetached(() => { println("a"); });
     spawnDetached(() => { println("b"); });
     spawnDetached(() => { println("c"); });

@@ -5,7 +5,7 @@
 // call is marked.
 import std.task { spawn, Cancelled };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let t = spawn(() => 5);
     let v = t.await();
 }

@@ -14,7 +14,7 @@ fn risky(fail: bool): int throws Oops {
     return 7;
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let t = spawn(() => try risky(true));
     let v = try t.await();
 }

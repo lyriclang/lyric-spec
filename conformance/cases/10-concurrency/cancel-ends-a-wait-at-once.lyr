@@ -9,7 +9,7 @@ import std.io { println };
 import std.task { spawn, sleep, yieldNow, Cancelled };
 import std.time { Duration };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let sleeper = spawn(() => {
         defer println("cleanup");
         try sleep(Duration.ofSecs(30));

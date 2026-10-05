@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | 1 2 | 0 | 1 2 | 7
+//! since: 5.0.0
+// 10 §1 rule 1: a function with a 'Coroutine<…>' result is a generator when it yields itself or
+// returns no value - one that yields through a helper only, one with an empty body, one that
+// leaves early with a bare 'return'. 'return numbers();' is a factory.
+import std.io { println };
+import std.task { Cancelled };
+
+fn emit(n: int): void throws Cancelled {
+    yield n;
+}
+
+fn numbers(): Coroutine<int> {
+    try emit(1);
+    try emit(2);
+}
+
+fn none(): Coroutine<int> {
+}
+
+fn make(): Coroutine<int> {
+    return numbers();
+}
+
+fn early(stop: bool): Coroutine<int> {
+    if (stop) {
+        return;
+    }
+    try emit(7);
+}
+
+fn text(co: Coroutine<int>): string {
+    var out = "";
+    for (x in co) {
+        out = if (out == "") f"{x}" else f"{out} {x}";
+    }
+    return if (out == "") "0" else out;
+}
+
+fn main(): void {
+    println(f"{text(numbers())} | {text(none())} | {text(make())} | {text(early(false))}");
+}

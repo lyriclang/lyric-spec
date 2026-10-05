@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0173
+//! since: 5.0.0
+// 03 §9.1 rule 7: 'void' may be written - it is a type with one value - but a name for that
+// value says nothing: a binding that holds it is warned about.
+fn nothing(): void {
+}
+
+fn main(): void {
+    let x = nothing();
+}

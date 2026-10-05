@@ -9,7 +9,7 @@ fn emit(): void throws Cancelled {
     yield 1;
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     try yieldNow();
     try emit();
 }
