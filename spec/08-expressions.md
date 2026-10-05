@@ -27,10 +27,15 @@ A call names a function and gives it arguments
    named ones it is refused like any other.
    A **variadic** parameter, `nums: int...`, takes the remaining positional arguments as an
    array of what it names, `int[]`, and is not named (F8). It stands last and has no default — a
-   call without its arguments passes the empty array; a single remaining argument of the array's
-   own type passes as the whole array, so that one variadic function hands its arguments on to
-   another, `fn logged(xs: int...): int { return sum(xs); }`. Lyric 4's `params xs: int[]` is
-   gone (`LYR-SEM0024`).
+   call without its arguments passes the empty array. Each remaining argument is **one
+   element**, an array too: `sum(xs)` with `xs: int[]` hands `sum` one argument that is no `int`
+   (`LYR-SEM0001`), and where the element type takes an array — `Any...`, a type parameter's
+   `T...` — the array is that one element. **`xs...`** spreads an array over the parameter
+   instead: the argument is the rest — the one argument the call spreads, alone in the rest,
+   of the parameter's array type, at a parameter that is variadic (`LYR-SEM0166`) — and the
+   parameter *is* that array, nothing is copied. So one variadic function hands its arguments
+   on to another, `fn logged(xs: int...): int { return sum(xs...); }`. Lyric 4's
+   `params xs: int[]` is gone (`LYR-SEM0024`).
 2. A parameter may carry a **default**, `fn connect(host: string, port: int = 80)`, at any
    position (F3): a call that leaves it out gets the default, and a default in the middle is
    left out by naming what follows. The default is evaluated **per call, in the function's

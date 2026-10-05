@@ -1,10 +1,11 @@
 //! run
 //! stdout:
-//! | 6 3 0 15 15 3 2
+//! | 6 3 0 15 15 3 1 2
 //! since: 5.0.0
 // 08 §1.1 rule 1: 'xs: int...' takes the remaining positional arguments as an int[]; none is the
-// empty array; one int[] passes as the whole array; the element may be a type parameter, bound
-// by the elements — or by a single array, which is the whole array there too.
+// empty array; 'xs...' spreads an array over the parameter, which hands the arguments of one
+// variadic function on to another. The element may be a type parameter, bound by the elements:
+// one array is one element there, and spread it is the elements.
 import std.io { println };
 
 fn sum(base: int, xs: int...): int {
@@ -13,11 +14,12 @@ fn sum(base: int, xs: int...): int {
     return s;
 }
 
-fn logged(xs: int...): int { return sum(0, xs); }
+fn logged(xs: int...): int { return sum(0, xs...); }
 
 fn count<T>(label: string, xs: T...): int { return xs.length(); }
 
 fn main(): int {
-    println(f"{sum(1, 2, 3)} {sum(3)} {sum(0)} {sum(0, 1, 2, 3, 4, 5)} {logged(1, 2, 3, 4, 5)} {count("x", "a", "b", "c")} {count("y", ["p", "q"])}");
+    let words = ["p", "q"];
+    println(f"{sum(1, 2, 3)} {sum(3)} {sum(0)} {sum(0, 1, 2, 3, 4, 5)} {logged(1, 2, 3, 4, 5)} {count("x", "a", "b", "c")} {count("y", words)} {count("y", words...)}");
     return 0;
 }
