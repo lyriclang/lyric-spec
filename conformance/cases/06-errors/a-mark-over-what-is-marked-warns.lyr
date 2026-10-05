@@ -1,0 +1,19 @@
+//! check
+//! warning: LYR-SEM0139
+//! since: 5.0.0
+// 06 §3.2: a mark that marks nothing new is warned about — behind a mark to its left in the
+// same expression, and in a 'try' block, which marks its whole body.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn plain(): int { return 3; }
+
+fn f(): int throws Oops { return plain() + try one() + try two(); }
+fn g(): int {
+    try {
+        return try one();
+    } catch (_: Oops) {
+        return 0;
+    }
+}
+fn main(): int throws Oops { return try f() + g(); }

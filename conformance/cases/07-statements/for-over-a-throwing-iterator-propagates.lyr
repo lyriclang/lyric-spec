@@ -36,14 +36,14 @@ fn sum(l: Lines): int throws Fail {
 
 fn main(): int {
     try {
-        let n = try sum(Lines { i = 0, stop = 3 });
+        let n = sum(Lines { i = 0, stop = 3 });
         println(f"{n}");
     } catch (e: Fail) {
         println(e.message());
     }
     try {
         var s = 0;
-        for (x in try Lines { i = 0, stop = 3 }) {
+        for (x in Lines { i = 0, stop = 3 }) {
             s = s + x;
             if (x == 2) { break; }
         }

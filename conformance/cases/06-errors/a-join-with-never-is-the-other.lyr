@@ -50,7 +50,7 @@ fn walk(log: Log): void throws Fail {
 fn main(): int {
     let log = Log { text = "" };
     try {
-        try walk(log);
+        walk(log);
     } catch (e: Fail) {
         log.text = log.text + e.message();
     }

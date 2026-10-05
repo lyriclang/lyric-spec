@@ -11,7 +11,7 @@ import std.time { Duration };
 fn main(): void throws Cancelled {
     let stubborn = spawn(() => {
         try {
-            try sleep(Duration.ofSecs(30));
+            sleep(Duration.ofSecs(30));
         } catch (_: Cancelled) {
             println("caught");
         }

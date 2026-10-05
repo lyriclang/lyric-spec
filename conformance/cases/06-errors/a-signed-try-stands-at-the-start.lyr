@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-PAR0050
+//! since: 5.0.0
+// 06 §3.2: 'try?' is worth something else than what it covers, so what it covers has to be
+// unmistakable: it stands at the start of it.
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn plain(): int { return 3; }
+
+fn f(v: ?int): ?int { return v ?? try? one(); }
+fn main(): int { return f(plain()) ?? 0; }

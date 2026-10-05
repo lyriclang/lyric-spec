@@ -90,8 +90,9 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
 6. An iterator that **may throw** — its `Error` is not `never` (design 10 B6 I5) — makes the
    loop's calls throw sites at its head, `iter()` once and `next()` at every pass: the head is
    marked, **`for (line in try lines)`**, the `try` covering the source and every pull
-   (`LYR-SEM0138` without it), and what they throw is covered as a call's is
-   ([06 §3](06-errors.md)) — by a `try` block around the loop or by the function's set. Through
+   (`LYR-SEM0138` without it) — in a `try` block the block is the mark, as for every call in
+   it, and one at the head is a second ([06 §3](06-errors.md) rule 2) — and what they throw is
+   covered as a call's is, by a `try` block around the loop or by the function's set. Through
    a constraint the `Error` is open: a loop over `A :: [Iterable]` throws `A.Iter.Error`, which
    the function declares, and a call where it is `never` throws nothing. A mark over a loop that
    cannot throw is warned about (`LYR-SEM0139`). Only the plain mark stands in a head

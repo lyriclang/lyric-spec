@@ -49,7 +49,7 @@ fn count<A :: [Iterable]>(a: A): int throws A.Iter.Error {
 fn main(): int {
     println(f"{count(Upto { cur = 0, end = 4 })} {count([1, 2])}");
     try {
-        let n = try count(Lines { i = 0, stop = 2 });
+        let n = count(Lines { i = 0, stop = 2 });
         println(f"{n}");
     } catch (e: Fail) {
         println(e.message());

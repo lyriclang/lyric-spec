@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 6 9 4 7
+//! since: 5.0.0
+// 06 §3.2: the plain mark may stand to the right of an operator; it covers from where it stands
+// to the end of the expression, and the expression is grouped as it is without the word.
+import std.io { println };
+
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+fn one(): int throws Oops { return 1; }
+fn two(): int throws Oops { return 2; }
+fn plain(): int { return 3; }
+
+fn orElse(v: ?int): int throws Oops { return v ?? try one() + plain(); }
+
+fn main(): void throws Oops {
+    let sum = plain() + try one() + two();
+    let grouped = plain() + try one() * two() * plain();
+    println(f"{sum} {grouped} {try orElse(null)} {try orElse(7)}");
+}
