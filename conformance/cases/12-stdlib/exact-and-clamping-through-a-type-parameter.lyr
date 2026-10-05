@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | true 100 | 0 32767 | 127 -128
+//! since: 5.0.0
+// 12 (Z4), 05 §7 rule 2: 'exact' and 'clamping' are members of 'Integer' - each integer type
+// answers them, and a type parameter bounded by 'Integer' reaches them.
+import std.io { println };
+
+fn narrow<U :: [Integer]>(v: int): ?U { return U.exact(v); }
+fn hold<U :: [Integer]>(v: int): U { return U.clamping(v); }
+fn across<T :: [Integer], U :: [Integer]>(v: T): U { return U.clamping(v); }
+
+fn main(): void {
+    let none: ?int8 = narrow(300);
+    let some: ?int8 = narrow(100);
+    let low: uint8 = hold(-5);
+    let high: int16 = hold(70000);
+    let wide: uint16 = 40000;
+    let up: int8 = across(wide);
+    let down: int8 = across(-40000);
+    println(f"{none == null} {some ?? 0} | {low} {high} | {up} {down}");
+}

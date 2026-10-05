@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | true 3 | 9
+//! since: 5.0.0
+// 05 §7 rule 2, §1 rule 5: a static member may be generic; through a type parameter it is the
+// conformer's own at the call's type arguments.
+import std.io { println };
+
+interface Narrow {
+    static fn from<T :: [Integer]>(v: T): ?Self;
+}
+
+struct Small :: [Narrow] {
+    n: int,
+    static fn from<T :: [Integer]>(v: T): ?Small {
+        let n = int.clamping(v);
+        if (n < 10) {
+            return Small { n = n };
+        }
+        return null;
+    }
+}
+
+fn make<N :: [Narrow]>(v: int): ?N { return N.from(v); }
+fn made<N :: [Narrow]>(v: int8): ?N { return N.from(v); }
+
+fn main(): void {
+    let small: ?Small = make(3);
+    let big: ?Small = make(30);
+    let nine: int8 = 9;
+    let third: ?Small = made(nine);
+    println(f"{big == null} {(small ?? Small { n = 0 }).n} | {(third ?? Small { n = 0 }).n}");
+}

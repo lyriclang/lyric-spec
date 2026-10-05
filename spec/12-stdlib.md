@@ -128,8 +128,9 @@ of two numbers:
 
 A narrowing that answers is a static of the target (Z4): `int8.exact(v)` is the `int8` an
 integer `v` of any type names, or `null` where it does not fit; `int8.clamping(v)` holds at
-`min` or `max` instead. Each integer type has them as its own statics; through a type
-parameter they are not reached.
+`min` or `max` instead. They are members of `Integer` (the review's M8a-7): each integer type
+answers them, and a type parameter bounded by `Integer` reaches them — `U.exact(v)`,
+`U.clamping(v)`.
 
 `x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
 between; `lo` above `hi` is the program's error and panics, and a value unordered with the bounds
