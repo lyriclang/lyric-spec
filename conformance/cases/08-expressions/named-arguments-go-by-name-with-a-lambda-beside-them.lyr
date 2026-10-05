@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 18 18 18
+//! since: 5.0.0
+// 08 §1.1 rule 1: the three ways to hand 'apply' its function - by position with a trailing
+// block, by position with a named lambda, all by name - are one call.
+import std.io { println };
+
+fn apply(a: int, b: int, f: fn(int) -> int): int { return f(a - b); }
+
+fn main(): void {
+    let x = apply(10, 1) { it * 2 };
+    let y = apply(10, 1, f: (v) => v * 2);
+    let z = apply(b: 1, a: 10, f: (v) => v * 2);
+    println(f"{x} {y} {z}");
+}
