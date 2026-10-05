@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | true true 2 2 | 0 1 | 0 -1 | 2
+//! since: 5.0.0
+// 04 §1 rule 6: a constant of a generic type is one per instance - 'Crate<int>.empty' is a
+// '?int', 'Crate<string>.empty' a '?string' -, its value a constant: a literal, 'null', another
+// constant ('T.zero' under a constraint; one that stands later), a struct of these.
+import std.io { println };
+
+struct Point {
+    x: int,
+    y: int,
+}
+
+struct Crate<T> {
+    v: T,
+    static let empty: ?T = null;
+    static let alias: int = count;
+    static let count: int = 2;
+    static let origin: Point = Point { x = 0, y = -1 };
+}
+
+struct Acc<T :: [Num]> {
+    v: T,
+    static let start: T = T.zero;
+    static let unit: T = T.one;
+}
+
+fn main(): void {
+    let a: ?int = Crate<int>.empty;
+    let b: ?string = Crate<string>.empty;
+    let start: int = Acc<int>.start;
+    let unit: int8 = Acc<int8>.unit;
+    let o = Crate<bool>.origin;
+    println(f"{a == null} {b == null} {Crate<int>.count} {Crate<bool>.count} | {start} {unit} | {o.x} {o.y} | {Crate<int>.alias}");
+}

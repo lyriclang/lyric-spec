@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 3 4
+//! since: 5.0.0
+// 04 §1 rules 2, 6: a type that is generic in nothing keeps the rule of a module binding - its
+// constant is filled before the entry runs, by an ordinary expression, in declaration order.
+import std.io { println };
+
+fn make(): int {
+    return 3;
+}
+
+struct Plain {
+    v: int,
+    static let made: int = make();
+    static let next: int = made + 1;
+}
+
+fn main(): void {
+    println(f"{Plain.made} {Plain.next}");
+}

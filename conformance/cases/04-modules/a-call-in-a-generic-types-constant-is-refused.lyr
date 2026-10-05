@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0169
+//! since: 5.0.0
+// 04 §1 rule 6: the value of a constant that is one per instance is a constant - nothing runs
+// for it. A call is refused, with the way out: a static function.
+fn make(): int {
+    return 3;
+}
+
+struct Crate<T> {
+    v: T,
+    static let made: int = make();
+}
+
+fn main(): void {
+}

@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 2 true 6 | 0 0
+//! since: 5.0.0
+// 04 §1 rule 6: inside its type a constant is the constant of the instance the code runs for -
+// by its bare name and through the type's -, and an interface's constant a generic type answers
+// is its instance's through a constraint.
+import std.io { println };
+
+struct Stack<T> {
+    items: T[],
+    static let limit: int = 8;
+    static let none: ?T = null;
+    fn top(): ?T {
+        if (this.items.length() == 0) {
+            return Stack<T>.none;
+        }
+        return this.items[this.items.length() - 1];
+    }
+    fn room(): int { return limit - this.items.length(); }
+}
+
+interface Zeroed {
+    static let zero: Self;
+}
+
+struct Wrap<T :: [Num]> :: [Zeroed] {
+    v: T,
+    static let zero: Wrap<T> = Wrap<T> { v = T.zero };
+}
+
+fn zeroOf<Z :: [Zeroed]>(): Z { return Z.zero; }
+
+fn main(): void {
+    let s = Stack<int> { items = [1, 2] };
+    let e = Stack<string> { items = [] };
+    let w: Wrap<int> = zeroOf();
+    let small: Wrap<int8> = zeroOf();
+    println(f"{s.top() ?? -1} {e.top() == null} {s.room()} | {w.v} {small.v}");
+}

@@ -141,8 +141,10 @@ same. What is not written here yet is decided in the design documents, not here.
    as one in the type's body is — `extend int { static let answer: int = 42; }` makes
    `int.answer` (10 N1: a constant is a static member). A type holds one member of a name: a
    block's constant repeating a member of the type or of another block is refused
-   (`LYR-SEM0121`). A generic block holds none (`LYR-SEM0159`): its constant would be one per
-   instance, which is not decided.
+   (`LYR-SEM0121`). A generic block's constant is one per instance of the block's parameters
+   ([04 §1](04-modules.md) rule 6), read on an instance the block reaches (`LYR-SEM0134` where
+   its constraints do not hold); in a conformance block it answers the interface's constant for
+   those instances ([§7](#7-self-and-static-members) rule 2).
 
 ## 7. `Self` and static members
 

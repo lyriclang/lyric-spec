@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0169
+//! since: 5.0.0
+// 04 §1 rule 6: constants that are one per instance have no order - one may name another that
+// stands later -, and so none names itself, directly or through another.
+struct Crate<T> {
+    v: T,
+    static let a: int = b;
+    static let b: int = a;
+}
+
+fn main(): void {
+}
