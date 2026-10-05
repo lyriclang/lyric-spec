@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0119
+//! since: 5.0.0
+// 08 §1.1 rule 1: a trailing block is a positional argument - after named ones it is refused,
+// and the names are not dropped for it ('apply(b: 1, a: 10) { … }' is no 'apply(1, 10) { … }').
+fn apply(a: int, b: int, f: fn(int) -> int): int { return f(a - b); }
+
+fn main(): int {
+    return apply(b: 1, a: 10) { it * 2 };
+}

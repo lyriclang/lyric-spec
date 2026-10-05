@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | (1 + 2) = 3
+//! | (1 + 2) = 3
+//! since: 5.0.0
+// 11 §1 rule 3: '@callerExpr' hands on the text as the call wrote it, parentheses included -
+// also where a trailing block follows the call's parentheses.
+import std.io { println };
+
+fn show(value: int, f: fn(int) -> int, @callerExpr(value) text: string = ""): string {
+    return f"{text} = {f(value)}";
+}
+
+fn main(): void {
+    println(show((1 + 2), (x) => x));
+    println(show((1 + 2)) { it });
+}

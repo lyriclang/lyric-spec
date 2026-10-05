@@ -23,6 +23,8 @@ A call names a function and gives it arguments
    part of the function's public form (D5 F5). Positional arguments come first, named ones after
    them in any order (F6); a positional argument after a named one, a name given twice or for a
    parameter already set positionally, and a name no parameter has are refused (`LYR-SEM0119`).
+   A trailing block ([03 §8.2](03-types.md)) is a positional argument, the call's last: behind
+   named ones it is refused like any other.
    A **variadic** parameter, `nums: int...`, takes the remaining positional arguments as an
    array of what it names, `int[]`, and is not named (F8). It stands last and has no default — a
    call without its arguments passes the empty array; a single remaining argument of the array's
