@@ -102,12 +102,13 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0013` | `todo(message)` reached: the message as given |
    | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7); random bytes ([12](12-stdlib.md)) |
+   | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
    cannot prevent the end: when it returns, the process exits with 101.
-6. A **crash** is not a panic: an invalid memory access, an illegal instruction, an arithmetic
-   fault or an abort. When the runtime installed its handlers (§1.5), it writes `crash: ` and a
+6. A **crash** is not a panic: an invalid memory access, an illegal instruction, a trap, an
+   arithmetic fault or an abort. When the runtime installed its handlers (§1.5), it writes `crash: ` and a
    description, then the frames from the faulting one outward, in the form of item 2; then the
    process ends the way the operating system ends it for that fault — not with 101.
 7. A stack overflow is a panic (`LYR-RT0006`), not a crash.
