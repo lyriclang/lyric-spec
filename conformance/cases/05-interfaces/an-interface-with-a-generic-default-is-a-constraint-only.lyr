@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3, §1 rule 5: a generic member makes its interface a constraint only, with a body
+// as without one - a table slot holds one function, and it is one per instantiation.
+interface Shower {
+    fn name(): string;
+    fn tag<T>(x: T): string { return this.name(); }
+}
+
+struct A :: [Shower] {
+    n: int,
+    fn name(): string { return "a"; }
+}
+
+fn main(): void {
+    let s: Shower = A { n = 0 };
+}

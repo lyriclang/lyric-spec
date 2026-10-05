@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0020
+//! since: 5.0.0
+// 05 §5 rule 1: a generic member is not forwarded to a field yet - the type writes it.
+interface Tagger {
+    fn tag<U>(u: U): string;
+}
+
+struct Inner :: [Tagger] {
+    n: int,
+    fn tag<U>(u: U): string { return "inner"; }
+}
+
+struct Outer :: [Tagger by inner] {
+    inner: Inner,
+}
+
+fn main(): void {
+}

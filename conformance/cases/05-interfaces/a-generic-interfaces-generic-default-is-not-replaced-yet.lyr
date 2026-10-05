@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0082
+//! since: 5.0.0
+// 05 §1 rule 5: a default of a generic interface is not replaced by a conformer's own yet.
+interface Source<T> {
+    fn get(): T;
+    fn pick<U>(u: U): U { return u; }
+}
+
+struct G :: [Source<int>] {
+    n: int,
+    fn get(): int { return this.n; }
+    fn pick<U>(u: U): U { return u; }
+}
+
+fn main(): void {
+}

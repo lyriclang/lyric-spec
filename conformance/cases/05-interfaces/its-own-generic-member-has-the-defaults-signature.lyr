@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §1 rule 5: what a conformer writes in place of a generic default has the default's
+// signature - as many type parameters, constrained alike, the same types.
+interface Shower {
+    fn name(): string;
+    fn tag<T>(x: T): string { return this.name(); }
+}
+
+struct B :: [Shower] {
+    n: int,
+    fn name(): string { return "b"; }
+    fn tag<T>(x: T): int { return 1; }
+}
+
+fn main(): void {
+}

@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | int:1 crate:2 | int:7 crate:7 | I!1 I!x | P!3 P!3 P!x P!x | I!4 I!4
+//! since: 5.0.0
+// 05 §1 rules 4, 5: a generic default runs as its conformer's own whatever the conformer is - a
+// builtin, an instance of a generic type -, and what the conformer wrote in its place is reached
+// from another default there too: a block's member of 'int8', a member of 'Pack<T>'.
+import std.io { println };
+
+interface Shower {
+    fn name(): string;
+    fn tag<T :: [Display]>(x: T): string { return f"{this.name()}:{x}"; }
+    fn twice<T :: [Display]>(x: T): string { return f"{this.tag(x)} {this.tag(x)}"; }
+}
+
+extend int :: [Shower] {
+    fn name(): string { return "int"; }
+}
+
+extend int8 :: [Shower] {
+    fn name(): string { return "int8"; }
+    fn tag<T :: [Display]>(x: T): string { return f"I!{x}"; }
+}
+
+struct Crate<T> :: [Shower] {
+    v: T,
+    fn name(): string { return "crate"; }
+}
+
+struct Pack<T> :: [Shower] {
+    v: T,
+    fn name(): string { return "pack"; }
+    fn tag<U :: [Display]>(x: U): string { return f"P!{x}"; }
+}
+
+fn through<S :: [Shower]>(s: S): string { return s.tag(7); }
+fn small<S :: [Shower]>(s: S): string { return s.tag("x"); }
+fn both<S :: [Shower]>(s: S): string { return s.twice("x"); }
+
+fn main(): void {
+    let three = 3;
+    let crate = Crate<bool> { v = true };
+    let other = Crate<int> { v = 1 };
+    let pack = Pack<bool> { v = true };
+    let n: int8 = 5;
+    println(f"{three.tag(1)} {crate.tag(2)} | {through(4)} {through(other)} | {n.tag(1)} {small(n)} | {pack.twice(3)} {both(pack)} | {n.twice(4)}");
+}

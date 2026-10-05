@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | crate 3 | crate 5 | 7
+//! since: 5.0.0
+// 05 §1 rule 5, §7 rule 2: what a generic type writes in its body answers an interface as what
+// a plain type writes does - its generic member and its static, through a constraint.
+import std.io { println };
+
+interface Tagger {
+    fn tag<U :: [Display]>(u: U): string;
+}
+
+interface Made {
+    static fn make(): Self;
+    fn n(): int;
+}
+
+struct Crate<T> :: [Tagger, Made] {
+    v: int,
+    fn tag<U :: [Display]>(u: U): string { return f"crate {u}"; }
+    static fn make(): Crate<T> { return Crate<T> { v = 7 }; }
+    fn n(): int { return this.v; }
+}
+
+fn through<G :: [Tagger]>(g: G): string { return g.tag(5); }
+fn fresh<M :: [Made]>(): M { return M.make(); }
+
+fn main(): void {
+    let c: Crate<string> = fresh();
+    println(f"{c.tag(3)} | {through(c)} | {c.n()}");
+}

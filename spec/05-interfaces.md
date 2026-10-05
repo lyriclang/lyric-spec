@@ -47,8 +47,13 @@ same. What is not written here yet is decided in the design documents, not here.
    conformer writes it with as many type parameters, constrained alike, at the same signature
    once its parameters are read as the interface's (`LYR-SEM0042`); a call through a constraint
    reaches the conformer's own at the call's type arguments — monomorphized, there is no table
-   slot for it — and the interface is a constraint only (§7 rule 3). A generic member with a
-   default is every conformer's: it is not overridden (`LYR-SEM0082`).
+   slot for it. With a **default**, it is the conformer's where the conformer writes none — the
+   default runs as that type's own, as every default does (rule 4) — and a conformer may write
+   its own in its place, at the default's signature (`LYR-SEM0042`): that one runs on the type,
+   through a constraint, and where another default of the interface calls the member on `this`
+   (the review's A8). With a body or without, a generic member makes its interface a constraint
+   only (§7 rule 3). A default of a **generic interface** is not replaced by a conformer's own
+   yet (`LYR-SEM0082`).
 
 ## 2. Interface values
 
@@ -106,7 +111,8 @@ same. What is not written here yet is decided in the design documents, not here.
    [Walker by legs] { var legs: Legs, … }` (D1). The field exists and conforms to the
    interface, or holds a value of it (`LYR-SEM0123` otherwise). Every abstract member of the
    interface's chain that the type does not write itself is **forwarded** to the field, as if
-   `fn walk(d) { this.legs.walk(d); }` were written.
+   `fn walk(d) { this.legs.walk(d); }` were written. A generic member is not forwarded yet: the
+   type writes it (`LYR-SEM0020`).
 2. Own members win. The interface's defaults run on the outer type, as every default does, and
    reach the forwarded members through `this`. There is no passthrough of `this`: the field's
    implementation runs with the field as its receiver, never the outer value — a call on
@@ -142,10 +148,12 @@ same. What is not written here yet is decided in the design documents, not here.
    interface writes, `Self` read as the conformer — `static let zero: int = 0;` in
    `extend int :: [Num]`. The member is reached through a type parameter alone, `T.parse(s)`,
    `T.zero` — the conformer's own static, a direct call or a read; of several of the name, the
-   one that answers the member. On a value of the parameter
+   one that answers the member. A static member may be generic (§1 rule 5),
+   `static fn exact<T :: [Integer]>(v: T): ?Self;`: `U.exact(v)` is the conformer's own at the
+   call's type arguments. On a value of the parameter
    it is not reached (`LYR-SEM0055`).
-3. An interface that names `Self` beyond the receiver, declares a static member or an abstract
-   generic one (§1 rule 5), is a **constraint only** (04 D9): no value of it arises — a table would hold no one function for
+3. An interface that names `Self` beyond the receiver, declares a static member or a generic
+   one — abstract or with a default (§1 rule 5) —, is a **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). An interface with neither is a
    value as [§2](#2-interface-values) says.
 
