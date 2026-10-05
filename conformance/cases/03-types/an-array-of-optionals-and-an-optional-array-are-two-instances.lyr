@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 3 true 2
+//! | 1 none 3
+//! since: 5.0.0
+// 03 §9.1: two argument lists that differ are two types - '(?int)[]' is an array of optionals,
+// '?int[]' an optional array, and a generic type that takes the one and the other has two
+// instances, each with its own layout.
+import std.io { println };
+
+struct Holder<T> { v: T }
+
+fn show(x: ?int): string { return if (x == null) "none" else f"{x}"; }
+
+fn main(): void {
+    let a = Holder<(?int)[]> { v = [1, null, 3] };
+    let b = Holder<?int[]> { v = null };
+    let c = Holder<?int[]> { v = [4, 5] };
+    println(f"{a.v.length()} {b.v == null} {(c.v ?? []).length()}");
+    println(f"{show(a.v[0])} {show(a.v[1])} {show(a.v[2])}");
+}
