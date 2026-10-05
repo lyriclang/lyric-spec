@@ -1,9 +1,9 @@
 //! check
-//! error: LYR-SEM0001
+//! error: LYR-SEM0165
 //! since: 5.0.0
-// 10 §2 rule 8: after a return type 'throws' is the function's own — 'launch' returns a plain
-// Task<int> and may throw Oops — so the throwing task it returns does not fit; '(Task<int>
-// throws Oops)' would.
+// 10 §2 rule 8: 'Task<int> throws Oops' as a return type - the task's error, or the function's
+// own? Without parentheses it is refused, and that is the one thing said: the body is not held
+// to either reading.
 import std.task { spawn, Task };
 
 enum Oops :: [Error] {

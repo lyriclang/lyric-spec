@@ -207,11 +207,13 @@ with M5. What is not written here yet is decided in the design documents, not he
    `fn() -> void throws [IoError, ParseError]`, the bare `throws` for `Error`
    ([03 T17](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
    Without it the type throws nothing. The set is part of the type, as a set: `throws [A, B]` and
-   `throws [B, A]` are one type, `fn() -> int` and `fn() -> int throws A` two. The **nearest**
-   function type takes the `throws` after it — `fn make(): fn() -> int throws E` returns a
-   throwing function and throws nothing itself — and a parenthesized return gives it to the outer
-   one, `fn make(): (fn() -> int) throws E`. After one type a comma ends the function type, as in a
-   parameter list; several are written in brackets.
+   `throws [B, A]` are one type, `fn() -> int` and `fn() -> int throws A` two. Where a function
+   type is itself a **return type** — of a function, of a lambda, of another function type — a
+   `throws` behind it could be its own or that of the one that returns it, and without
+   parentheses it is refused (`LYR-PAR0056`): `fn make(): (fn() -> int throws E)` returns a
+   throwing function and throws nothing itself, `fn make(): (fn() -> int) throws E` throws.
+   After one type a comma ends the function type, as in a parameter list; several are written
+   in brackets.
 2. A **call through a value** of such a type is a site like the call of a throwing function: it is
    marked ([§3](#3-the-try-mark-and-coverage) rule 1), and its set is covered (rule 3).
 3. A function value **coerces** to a function type that throws more: the same parameters and

@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0165
+//! since: 5.0.0
+// 10 §2 rule 8: a function that hands a coroutine on is no generator - its 'throws' behind
+// 'Coroutine<int>' could be the coroutine's or its own. A generator's is its coroutine's
+// (§1 rule 6), and 'numbers' is silent.
+enum Oops :: [Error] {
+    Bad;
+    fn message(): string { return "oops"; }
+}
+
+fn numbers(): Coroutine<int> throws Oops {
+    yield 1;
+    throw Oops.Bad;
+}
+
+fn pass(): Coroutine<int> throws Oops {
+    return numbers();
+}
+
+fn main(): void {
+}
