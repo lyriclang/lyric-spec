@@ -1,0 +1,6 @@
+[package]
+name = "square"
+version = "0.1.0"
+
+[dependencies]
+geo = { git = "{repos}/geo.git", tag = "v1.0.0" }

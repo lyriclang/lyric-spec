@@ -69,10 +69,15 @@ their own directories, and the git repositories they read as their versions
    ([11 P9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a `tag`, a `branch`, a commit — `rev`, its id or the first 7 to
    64 hexadecimal digits of it — or, naming none, the branch the repository's `HEAD` names. Its
    `git` is a URL — `https://`, `http://`, `ssh://`, `git://`, `file://` — or `user@host:path`
-   (`LYR-PKG0002`, as for two revisions, or a revision beside a `path`). A revision the
-   repository does not have, or a repository without a package at its root, is refused
-   (`LYR-PKG0006`); a repository that cannot be reached is the environment's failure
-   (`LYR-PKG0007`, exit 2, [14 §1.3](14-cli.md)).
+   (`LYR-PKG0002`, as for two revisions, or a revision beside a `path`). The URL is compared,
+   cached and locked in its **normal form** (the review's M7-10): a `/` and a `.git` at the end
+   dropped, the scheme and the host in lower case — `HTTPS://Example.com/org/geo.git/` and
+   `https://example.com/org/geo` are one repository; the rest keeps its case, and `https://` and
+   `ssh://` to one host stay two. A revision the repository does not have, or a repository
+   without a package at its root, is refused (`LYR-PKG0006`), and so is a tag that is a version
+   over a manifest that gives another — `v1.2.0` where the manifest says `version = "1.1.0"`:
+   the build chooses among versions by the tag. A repository that cannot be reached is the
+   environment's failure (`LYR-PKG0007`, exit 2, [14 §1.3](14-cli.md)).
 3. What is read from git is kept in the **user's cache**, not in the project: each repository
    once, each revision's package once, for every project that reads it (P9; 07 P10). A tag or a
    commit the cache holds is not fetched again; a branch, or no revision, is read where the lock
@@ -99,7 +104,9 @@ their own directories, and the git repositories they read as their versions
    (`LYR-PKG0005`), unless the root manifest's `[override] units = { path = "…" }` picks the one — read wherever the graph
    asks for `units`, and what it replaces is not read at all, not fetched either (07 P7). An
    override reads a directory (`LYR-PKG0003` for the git form); an override in another
-   package's manifest is not read.
+   package's manifest is not read. No package depends on itself, at once or through others: a
+   **cycle** is refused with its path, `app -> geo -> app` (`LYR-PKG0010`; the review's M7-6) — a
+   package's dependencies are built before it, and a cycle has no first one.
 7. A **library** — a package without `src/main.lyr` — builds as a check: every module of it
    through the compiler, nothing built ([07 B6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)); `lyric run` has no program there
    (`LYR-CLI0005`).
