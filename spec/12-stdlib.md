@@ -284,8 +284,10 @@ new string. A pattern `p` is a **`Pattern`** (design 10 S2) — a view or a stri
 a type of the program that conforms:
 `Pattern { fn matchAt(text: StringView, at: int): ?int; fn matchBefore(text: StringView, end: int): ?int; }`,
 the end of a match that begins at byte `at`, and the start of one that ends at byte `end` —
-`at` and `end` a character's first byte or the text's length. One signature per operation takes
-any of them:
+`at` and `end` a character's first byte or the text's length. A third member,
+`fn nextIn(text: StringView, from: int): ?int`, the first such byte at or after `from` where a
+match begins, has a default that tries `matchAt` at each; a pattern may give a faster one. One
+signature per operation takes any of them:
 
 - `length()`, the bytes, `O(1)`; `isEmpty()`; `charCount()`, the characters, `O(n)`; `chars()`,
   the characters decoded, an `Iterator` of `char`.
