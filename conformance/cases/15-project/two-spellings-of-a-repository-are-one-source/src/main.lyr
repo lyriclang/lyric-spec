@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 12 2
+//! since: 5.0.0
+// 15 §2 rule 2 (the review's M7-10): a git URL is compared in its normal form — a "/" and a
+// ".git" at the end dropped, the scheme and the host in lower case — so "{repos}/geo/" and
+// "{repos}/geo.git" are one repository, and geo one package.
+import std.io { println };
+import geo.shapes { area };
+import square.side { side };
+
+fn main(): void {
+    println(f"{area(3, 4)} {side()}");
+}

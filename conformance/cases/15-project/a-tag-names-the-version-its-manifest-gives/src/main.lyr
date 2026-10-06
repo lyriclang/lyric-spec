@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PKG0006
+//! since: 5.0.0
+// 15 §2 rule 2: a tag that is a version names the version the manifest there gives — v1.2.0
+// over a manifest saying 1.1.0 is refused; the build chooses among versions by the tag.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

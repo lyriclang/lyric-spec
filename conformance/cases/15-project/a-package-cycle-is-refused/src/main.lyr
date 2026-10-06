@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PKG0010
+//! since: 5.0.0
+// 15 §2 rule 6 (the review's M7-6): no package depends on itself, at once or through others —
+// app -> geo -> app is refused with its path.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

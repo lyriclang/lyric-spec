@@ -1,0 +1,3 @@
+pub fn side(): int {
+    return 2;
+}
