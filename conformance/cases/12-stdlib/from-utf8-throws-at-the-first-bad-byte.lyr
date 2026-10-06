@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 1 0 0 0 2
+//! since: 5.0.0
+// 12 §Strings (M8a S12): bytes that are no well-formed UTF-8 throw `Utf8Error` with the first byte
+// that is not — a lead byte before no continuation, a sequence cut short, a surrogate, an
+// overlong form, a byte that begins nothing.
+import std.core { Utf8Error };
+import std.io { println };
+
+fn offsetOf(bytes: uint8[]): int {
+    try {
+        let s = string.fromUtf8(bytes);
+        return -1 - s.length();
+    } catch (e: Utf8Error) {
+        return e.offset;
+    }
+}
+
+fn main(): void {
+    println(f"{offsetOf([97, 195, 40])} {offsetOf([226, 130])} {offsetOf([237, 160, 128])} {offsetOf([192, 128])} {offsetOf([97, 98, 255])}");
+}

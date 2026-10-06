@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | hö! 4 3 0
+//! since: 5.0.0
+// 12 §Strings (M8a S12): `string.fromUtf8` gives the text well-formed bytes are — "ö" is the two
+// bytes 195 182.
+import std.io { println };
+
+fn main(): void throws {
+    let bytes: uint8[] = [104, 195, 182, 33];
+    let s = try string.fromUtf8(bytes);
+    let none: uint8[] = [];
+    let empty = try string.fromUtf8(none);
+    println(f"{s} {s.length()} {s.charCount()} {empty.length()}");
+}
