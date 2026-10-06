@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | 1 x|y|z 2
+//! since: 5.0.0
+// 12 §Strings (M8a S12): a type of the program conforms to `Pattern` and every search takes it —
+// here a run of ASCII digits, found, split at and counted.
+import std.core { Pattern };
+import std.io { println };
+
+struct Digits :: [Pattern] {
+    fn matchAt(text: StringView, at: int): ?int {
+        var end = at;
+        while (end < text.length() && isDigit(text[end])) {
+            end = end + 1;
+        }
+        return if (end > at) end else null;
+    }
+
+    fn matchBefore(text: StringView, end: int): ?int {
+        var start = end;
+        while (start > 0 && isDigit(text[start - 1])) {
+            start = start - 1;
+        }
+        return if (start < end) start else null;
+    }
+}
+
+fn isDigit(c: char): bool {
+    return c >= '0' && c <= '9';
+}
+
+fn main(): void {
+    let s = "x12y345z";
+    var out = "";
+    var first = true;
+    for (part in s.split(Digits {})) {
+        if (!first) {
+            out = out + "|";
+        }
+        first = false;
+        out = out + part.toString();
+    }
+    println(f"{s.find(Digits {}) ?? -1} {out} {s.count(Digits {})}");
+}

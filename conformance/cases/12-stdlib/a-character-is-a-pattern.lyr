@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 4 10 2 true false
+//! | größe|maß grösse/mass größe/ma
+//! since: 5.0.0
+// 12 §Strings (M8a S12): a `char` is a pattern — over characters of more than one byte, "ö" and
+// "ß" two each: "größe/maß" is twelve bytes, the first "ß" at 4, the last at 10.
+import std.io { println };
+
+fn main(): void {
+    let s = "größe/maß";
+    println(f"{s.find('ß') ?? -1} {s.rfind('ß') ?? -1} {s.count('ß')} {s.endsWith('ß')} {s.startsWith('ß')}");
+    let (a, b) = s.splitOnce('/')!;
+    println(f"{a}|{b} {s.replace('ß', "ss")} {s.stripSuffix('ß') ?? "none"}");
+}

@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | [a,b,c] [a|b,c] [a|b|c] [] a;b,c a;b;c
+//! since: 5.0.0
+// 12 §Strings (M8a S12): `splitN` gives at most n parts, the last the rest, none for 0;
+// `replaceN` the first n, all where n is negative.
+import std.io { println };
+
+fn parts(s: string, n: int): string {
+    var out = "";
+    var first = true;
+    for (part in s.splitN(',', n)) {
+        if (!first) {
+            out = out + "|";
+        }
+        first = false;
+        out = out + part.toString();
+    }
+    return f"[{out}]";
+}
+
+fn main(): void {
+    let s = "a,b,c";
+    println(f"{parts(s, 1)} {parts(s, 2)} {parts(s, 9)} {parts(s, 0)} {s.replaceN(',', ";", 1)} {s.replaceN(",", ";", -1)}");
+}
