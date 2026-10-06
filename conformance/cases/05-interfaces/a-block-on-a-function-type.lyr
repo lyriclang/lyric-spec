@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | 5 hi!! 4
+//! since: 5.0.0
+// 05 §13 rule 6 (M8a S12): a function type is a shape — a block on it adds members to every
+// function value of the type, `this` the function; a generic block binds its parameter from the
+// value's type.
+import std.io { println };
+
+extend<T> fn(T) -> T {
+    fn twice(x: T): T {
+        return this(this(x));
+    }
+}
+
+extend fn(int) -> bool {
+    fn countIn(xs: int[]): int {
+        var n = 0;
+        for (x in xs) {
+            if (this(x)) {
+                n = n + 1;
+            }
+        }
+        return n;
+    }
+}
+
+fn main(): void {
+    let inc = (x: int): int => x + 1;
+    let shout = (s: string): string => s + "!";
+    let even = (x: int): bool => x % 2 == 0;
+    println(f"{inc.twice(3)} {shout.twice("hi")} {even.countIn([1, 2, 3, 4, 6, 7, 8])}");
+}

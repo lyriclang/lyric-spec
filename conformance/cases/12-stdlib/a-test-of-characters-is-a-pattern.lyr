@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 2 5 0 true
+//! | [x][y][][z] größ_  trim
+//! since: 5.0.0
+// 12 §Strings (M8a S12): a test of characters, `fn(char) -> bool`, is a pattern — a lambda or a
+// named function; it matches one character where it holds.
+import std.io { println };
+
+fn isVowel(c: char): bool {
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
+fn main(): void {
+    let digit = (c: char): bool => c >= '0' && c <= '9';
+    let s = "ab12cd345";
+    println(f"{s.find(digit) ?? -1} {s.count(digit)} {s.rfind(isVowel) ?? -1} {s.startsWith(isVowel)}");
+    var parts = "";
+    for (part in "x1y22z".split(digit)) {
+        parts = parts + f"[{part}]";
+    }
+    println(f"{parts} {"größe".replace(isVowel, "_")} {"  trim".stripPrefix((c: char): bool => c == ' ') ?? "none"}");
+}

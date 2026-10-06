@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 05 §13 rule 6 (M8a S12): a function type is a shape, and a shape conforms through a block that
+// names the interface, no other way — no block makes a function value a Display.
+fn shown<T :: [Display]>(x: T): string {
+    return f"{x}";
+}
+
+fn main(): int {
+    let inc = (x: int): int => x + 1;
+    return shown(inc).length();
+}
