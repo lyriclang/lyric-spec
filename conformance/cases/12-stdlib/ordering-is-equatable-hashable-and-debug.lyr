@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | true false Ordering.Less Ordering.Greater true false
+//! since: 5.0.0
+// 05 §… rule 6, 12 §Comparison: Ordering is Equatable, Hashable and Debug (the review's
+// M8a-10), so an answer of compare() can be compared, keyed and printed.
+import std.hash { FixedHasher };
+import std.io { println };
+
+fn hashOf<T :: [Hashable]>(x: T): uint64 {
+    var h = FixedHasher.new();
+    x.hash(&h);
+    return h.finish();
+}
+
+fn main(): void {
+    let one = 1;
+    let two = 2;
+    let a = one.totalCompare(two);
+    let b = two.totalCompare(one);
+    println(f"{a == Ordering.Less} {a == b} {a:?} {b:?} {hashOf(a) == hashOf(Ordering.Less)} {hashOf(a) == hashOf(b)}");
+}
