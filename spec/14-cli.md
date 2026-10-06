@@ -26,8 +26,9 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    its `[[bin]]` programs ([15 §1](15-project.md)); `--bin <name>` names one, and a file is a
    program by itself. `lyric run [<file.lyr>] [-- args…]` builds the same way and then
    runs the binary with the arguments after `--`, on the caller's own console. `--` belongs to
-   `run`: `build` refuses it. `lyric update [<package>…]` reads the packages from git anew and
-   writes the lock ([15 §3](15-project.md)); it takes `-C` and `--offline`.
+   `run`: `build` refuses it. `lyric update [<package>…]` reads the packages from git anew,
+   raises a tag that is a version to the newest of its line in the manifest, and writes the lock
+   ([15 §3](15-project.md)); it takes `-C` and `--offline`.
 2. Options take a value as `--name value` or `--name=value`
    ([11 C3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
    `--profile <name>` — a profile built in or the manifest's ([15 §4](15-project.md)); without

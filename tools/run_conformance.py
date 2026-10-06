@@ -25,7 +25,8 @@ PROGRAM_TIMEOUT = 60
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
-            "errors": [], "warnings": [], "since": None, "until": None, "bin": None, "options": []}
+            "errors": [], "warnings": [], "since": None, "until": None, "bin": None, "options": [],
+            "update": False}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = None
     for line in lines:
@@ -60,6 +61,8 @@ def parse_header(path):
             spec["bin"] = body[4:].strip()
         elif body.startswith("option:"):
             spec["options"].append(body[7:].strip())
+        elif body == "update":
+            spec["update"] = True
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -154,6 +157,11 @@ def run_case(case, spec, lyric5, profile, workdir):
     front_end_only = spec["mode"] == "check"
     if front_end_only:
         command += ["--emit", "ir"]
+    if spec["update"]:
+        # 'lyric5 update' in the package first: what it writes is what the build reads
+        updated = subprocess.run([str(lyric5), "update"], capture_output=True, text=True, cwd=cwd, env=env)
+        if updated.returncode != 0:
+            return fail(f"'lyric5 update' failed (exit {updated.returncode}):\n{updated.stderr}")
     compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd, env=env)
     diagnostics = compiled.stderr
 

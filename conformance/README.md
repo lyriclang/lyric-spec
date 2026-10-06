@@ -28,6 +28,7 @@ The header is the leading block of lines starting `//!`. Directives:
 //! bin: tool                a package case's program, one its [[bin]] names: built with
 //!                          --bin and run (default: the package's src/main.lyr)
 //! option: --locked         an option the build is given, after the runner's own (repeatable)
+//! update                   a package case: 'lyric update' runs in the package before the build
 ```
 
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)
