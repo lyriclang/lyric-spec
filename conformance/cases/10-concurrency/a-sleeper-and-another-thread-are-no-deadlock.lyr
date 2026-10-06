@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 1 2
+//! since: 5.0.0
+// 10 §2 rule 12: where something can still wake a task, nothing is said - a task of the thread
+// that sleeps, and another thread that lives.
+import std.io { println };
+import std.task { spawn, sleep, Thread, Channel };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let ch = Channel<int>.new();
+    let later = spawn(() => {
+        try sleep(Duration.ofMillis(50));
+        try ch.send(1);
+    });
+    let one = try ch.recv();
+    let far = Thread.spawn(() => {
+        try sleep(Duration.ofMillis(50));
+        try ch.send(2);
+    });
+    let two = try ch.recv();
+    try later.await();
+    try far.await();
+    println(f"{one ?? 0} {two ?? 0}");
+}

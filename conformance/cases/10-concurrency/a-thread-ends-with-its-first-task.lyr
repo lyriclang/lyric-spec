@@ -2,8 +2,9 @@
 //! stdout:
 //! | ended
 //! since: 5.0.0
-// 10 §9 rule 2: a thread ends when its first task has ended — a task it started that still sleeps
-// is not waited for.
+// 10 §9 rule 2: a thread's handle is done when its first task has ended — a task it started that
+// still sleeps is not waited for; the thread cancels it and ends it itself, while the program
+// goes on and ends with main.
 import std.io { println };
 import std.task { sleep, spawnDetached, Thread };
 import std.time { Duration };

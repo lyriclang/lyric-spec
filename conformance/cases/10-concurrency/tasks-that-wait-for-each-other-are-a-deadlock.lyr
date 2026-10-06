@@ -1,0 +1,27 @@
+//! run
+//! panic: LYR-RT0018
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 10 §2 rule 12: two tasks each wait for what the other would send, and main waits for them:
+// every task waits. The oldest that waits for something other than a task - the first - panics
+// in its receive; main, which awaits it, panics again and takes the program along.
+import std.io { println };
+import std.task { spawn, Channel };
+
+fn main(): void throws Error {
+    let a = Channel<int>.new();
+    let b = Channel<int>.new();
+    let first = spawn(() => {
+        let v = try a.recv();
+        try b.send(v ?? 0);
+    });
+    let second = spawn(() => {
+        let v = try b.recv();
+        try a.send(v ?? 0);
+    });
+    println("before");
+    try first.await();
+    try second.await();
+    println("not reached");
+}

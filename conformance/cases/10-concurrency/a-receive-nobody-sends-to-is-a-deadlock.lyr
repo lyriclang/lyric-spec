@@ -1,0 +1,18 @@
+//! run
+//! panic: LYR-RT0018
+//! stdout:
+//! | before
+//! stderr:
+//! | panic [LYR-RT0018]: deadlock: every task waits, and nothing can wake one
+//! since: 5.0.0
+// 10 §2 rule 12: the program's one task waits for a value nobody can send - no task is ready,
+// none sleeps, no other thread lives. The wait panics.
+import std.io { println };
+import std.task { Channel };
+
+fn main(): void {
+    let ch = Channel<int>.new();
+    println("before");
+    let v = try ch.recv();
+    println(f"not reached {v ?? 0}");
+}

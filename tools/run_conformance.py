@@ -19,6 +19,10 @@ import sys
 import tempfile
 import tomllib
 
+# How long a case's program may run. The suite's programs end within a second; the limit is for
+# the one that does not end at all (10 §2 rule 12: a deadlock is a panic).
+PROGRAM_TIMEOUT = 60
+
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
             "errors": [], "warnings": [], "since": None, "until": None, "bin": None}
@@ -182,7 +186,11 @@ def run_case(case, spec, lyric5, profile, workdir):
                 if p.is_file() and p.name in (name, name + ".exe")]
     if not binaries:
         return fail(f"no binary '{name}' under {cwd / 'out' / profile}")
-    executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd)
+    try:
+        executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd,
+                                  timeout=PROGRAM_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return fail(f"the program did not end within {PROGRAM_TIMEOUT} s")
     expected_exit = 101 if spec["panic"] else spec["exit"]
     if executed.returncode != expected_exit:
         return fail(f"exit {executed.returncode}, expected {expected_exit};"
