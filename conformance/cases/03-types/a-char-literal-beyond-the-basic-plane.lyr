@@ -9,6 +9,6 @@ import std.io { println };
 fn main(): int {
     let c = '😀';
     let s = f"{c}";
-    println(f"{c.toUint32()} {s.charCount()} {s.length()}");
+    println(f"{c as uint32} {s.charCount()} {s.length()}");
     return 0;
 }

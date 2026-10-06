@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 03 §1.4, 12 §Comparison (the review's A9e): a char's code point is `c as uint32`; the method
+// that said the same, `toUint32()`, is gone.
+fn main(): int {
+    let c = 'A';
+    return c.toUint32() as int;
+}

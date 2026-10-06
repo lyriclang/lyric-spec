@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 2 4 | 1 3 | a b | x y
+//! since: 5.0.0
+// 12 §Iteration: every iterator type's name ends in `Iter` (the review's A9g) — the adapters
+// (MapIter, FilterIter, …), the string's (CharsIter, SplitIter, LinesIter) and the map's
+// (MapKeysIter …); `Map<K, V>` alone is the collection. Named here as the types they are —
+// std.core's, imported: the prelude carries the interfaces, not the adapters.
+import std.core { MapIter, FilterIter, CharsIter, SplitIter, SliceIter };
+import std.io { println };
+
+fn main(): void {
+    let doubled: MapIter<SliceIter<int>, int> = [1, 2].iter().map((x: int) => x * 2);
+    let odd: FilterIter<SliceIter<int>> = [1, 2, 3].iter().filter((x: int) => x % 2 == 1);
+    let chars: CharsIter = "ab".chars();
+    let parts: SplitIter = "x,y".split(",");
+    var out = "";
+    for (d in doubled) { out = out + f"{d} "; }
+    out = out + "|";
+    for (o in odd.take(2)) { out = out + f" {o}"; }
+    out = out + " |";
+    for (c in chars) { out = out + f" {c}"; }
+    out = out + " |";
+    for (p in parts) { out = out + f" {p}"; }
+    println(out);
+}

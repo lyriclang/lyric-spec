@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 0 0 1 2 3 4 5 8 8 9
+//! since: 5.0.0
+// 12 §Collections: a Heap gives the least value first (the review's A1) — peek, then pop until
+// it is empty.
+import std.collections { Heap };
+import std.io { println };
+
+fn main(): void {
+    let h = Heap<int>.new();
+    for (v in [5, 1, 8, 3, 9, 2, 4, 0, 8]) {
+        h.push(v);
+    }
+    var out = f"{h.peek() ?? -1}";
+    while (let v = h.pop()) {
+        out = out + f" {v}";
+    }
+    println(out);
+}

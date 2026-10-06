@@ -134,7 +134,8 @@ answers them, and a type parameter bounded by `Integer` reaches them — `U.exac
 
 `x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
 between; `lo` above `hi` is the program's error and panics, and a value unordered with the bounds
-comes back as it is. A `char`'s code point is `c.toUint32()`, and `char.fromUint32(n): ?char` is
+comes back as it is. A `char`'s code point is `c as uint32` (the review's A9e: the method that
+said the same is gone), and `char.fromUint32(n): ?char` is
 `null` for a surrogate or beyond `0x10FFFF` (Z8), where `n as char` panics
 ([03 §1.4](03-types.md)).
 
@@ -165,8 +166,11 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its
   stack unwinds and its defers run.
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
-  its own — monomorphized, nothing allocated: `it.map(f)` gives a `Mapped<I, U>` (`Map` is the
-  collection's), `it.filter(p)` a `Filter<I>`. They pull lazily, one value at a time, and their
+  its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U>` (`Map` is the
+  collection's), `it.filter(p)` a `FilterIter<I>`. Every iterator type's name ends in `Iter`
+  (the review's A9g): the adapters (`TakeIter`, `ZipIter`, …), the string's (`CharsIter`,
+  `SplitIter`, `LinesIter`), the map's (`MapEntriesIter`, `MapKeysIter`, `MapValuesIter`), the
+  slice's and the list's (`SliceIter`, `ListIter`). They pull lazily, one value at a time, and their
   `Error` is the inner iterator's. Of one source besides: `take(n)` and `skip(n)`;
   `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
   value and then every `n`th, `n` below 1 a panic; `enumerate()`, each value with its position
@@ -320,7 +324,8 @@ A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
   `popFront()` and `popBack()` (the value or `null`), `peekFront()`, `peekBack()`, `length()`,
   `isEmpty()`; `[i]` from the front, panicking outside `0 ≤ i < length()` (`LYR-RT0003`);
   `Iterable` front to back, a change while it is walked panicking at the next pull (I9).
-- **`Heap<T :: [TotalOrder]>`** (C1), a binary heap over a list, **the greatest value first**:
+- **`Heap<T :: [TotalOrder]>`** (C1), a binary heap over a list, **the least value first** (the
+  review's A1; the greatest first is a heap of a type whose order is reversed):
   `new()`, `push(v)`, `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
   *(Informative.)*
 

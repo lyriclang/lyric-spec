@@ -308,7 +308,8 @@ same. What is not written here yet is decided in the design documents, not here.
    and the scalars compare natively. Without the conformance `==` is refused (`LYR-SEM0059`).
 6. **Ordering.** `<`, `<=`, `>` and `>=` read `a.compare(b)` through
    `Ordered :: [Equatable] { fn compare(o: Self): ?Ordering; }` with
-   `enum Ordering { Less, Equal, Greater }`: `<` is `.Less`, `>` is `.Greater`, `<=` is not
+   `enum Ordering :: [Equatable, Hashable, Debug] { Less, Equal, Greater }` (the review's
+   M8a-10: an answer can be compared, keyed and printed): `<` is `.Less`, `>` is `.Greater`, `<=` is not
    `.Greater`, `>=` is not `.Less`; **`null`** — the two are not ordered, as `float` with NaN —
    makes all four **false**. `TotalOrder :: [Ordered] { fn totalCompare(o: Self): Ordering; }`
    is what sorting and keys ask; `float` has none. Without `Ordered` an ordering is refused
