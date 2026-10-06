@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | cancelled
+//! | held 1
+//! since: 5.0.0
+// 10 §10 rule 6: an error in the body - 'Cancelled' among them - unwinds: the body's 'defer'
+// releases the lock, and nothing is poisoned.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.time { Duration };
+
+fn said(s: TaskStatus<void>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        .Cancelled => "cancelled",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    let t = spawn(() => {
+        try m.lock { &n =>
+            n = 1;
+            try sleep(Duration.ofSecs(30));
+            n = 2;
+        };
+    });
+    try yieldNow();
+    t.cancel();
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(said(t.status()));
+    let v = try m.lock { &n => n };
+    println(f"held {v}");
+}

@@ -1,0 +1,31 @@
+//! run
+//! panic: LYR-RT0019
+//! stdout:
+//! | panicked LYR-RT0008
+//! since: 5.0.0
+// 10 §10 rule 6: a reader that panics would have held its share for ever; the share comes free
+// and the lock is poisoned - the writer that comes next panics.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.time { Duration };
+
+fn said(s: TaskStatus<void>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        .Cancelled => "cancelled",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let rw = RwLock<int>.new(1);
+    let t = spawn(() => {
+        try rw.read { v => panic("inside"); };
+    });
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(said(t.status()));
+    try rw.write { &v => v = 2; };
+    println("not reached");
+}

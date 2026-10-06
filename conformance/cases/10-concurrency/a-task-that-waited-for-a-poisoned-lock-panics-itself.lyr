@@ -1,0 +1,34 @@
+//! run
+//! panic: LYR-RT0019
+//! stdout:
+//! | waiting
+//! stderr:
+//! | panic [LYR-RT0019]: lock poisoned by a panic: LYR-RT0008: inside
+//! since: 5.0.0
+// 10 §10 rule 6: a task already parked for the lock when its holder panics is woken by the
+// release, sees the poison, and panics itself - this is not a deadlock (§2 rule 12).
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.time { Duration };
+
+fn said(s: TaskStatus<void>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        .Cancelled => "cancelled",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    let holder = spawn(() => {
+        try m.lock { &n =>
+            try yieldNow();
+            panic("inside");
+        };
+    });
+    try yieldNow();
+    println("waiting");
+    let v = try m.lock { &n => n };
+    println(f"not reached {v}");
+}
