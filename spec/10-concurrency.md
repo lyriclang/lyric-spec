@@ -341,7 +341,9 @@ A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com
    — each as a thread ends (§9 rule 2): what those tasks started there and left is cancelled, and
    has ended when `close()` returns. Closing a closed pool waits for nothing. `close()` is a wait (§3). A pool is `Closeable`
    ([06 §7](06-errors.md)): under `using let pool = Pool.new(4);` no task of it outlives the block.
-4. A task given to a closed pool is a panic (`LYR-RT0008`).
+4. A task given to a closed pool is a panic (`LYR-RT0008`). A task given **while** the pool
+   closes is run or refused so — the check against the close and the hand-over to a thread are
+   one step (the review's M6-27) —; none is left on a thread that has ended.
 
 ## 12. Signals
 
@@ -358,8 +360,9 @@ signal handler.
    channel. Each comes to every channel that asked for it.
 3. A signal is no counter: two that come before the first went out may arrive as one, and one that
    finds a channel's buffer full — sixteen — is lost for that channel.
-4. Closing the channel ends its subscription with the next signal that would come to it; a signal
-   no channel asks for any more is the system's again.
+4. Closing the channel ends its subscription **at once** (the review's M6-28): a signal no
+   channel asks for any more is the system's again from the close on — not from the next one,
+   which was swallowed.
 5. `KILL` and `STOP` never come — the system does not deliver them — and neither do the faults
    (`SEGV`, `BUS`, `FPE`, `ILL`, `ABRT`), which end the program with a crash report, nor `PIPE`,
    `CHLD` and `ALRM`, which the runtime keeps. A runtime that a host starts without signal
