@@ -280,8 +280,9 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
 `StringView`** (below), which a string reaches through a view of all of itself (rule 4); `length()`
 and `isEmpty()` it has itself. What cuts gives a **view** of the text, no copy; what builds gives a
-new string. A pattern `p` is a **`Pattern`** (design 10 S2) — a view or a string, a `char`, or
-a type of the program that conforms:
+new string. A pattern `p` is a **`Pattern`** (design 10 S2) — a view or a string, a `char`, a test
+of characters `fn(char) -> bool` (through the block on its function type, [05 §13](05-interfaces.md)
+rule 6), or a type of the program that conforms:
 `Pattern { fn matchAt(text: StringView, at: int): ?int; fn matchBefore(text: StringView, end: int): ?int; }`,
 the end of a match that begins at byte `at`, and the start of one that ends at byte `end` —
 `at` and `end` a character's first byte or the text's length. A third member,

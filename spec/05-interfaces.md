@@ -338,7 +338,7 @@ same. What is not written here yet is decided in the design documents, not here.
 1. An extend block may carry **type parameters** of its own, `extend<T> List<T> { … }`
    (03 T7 X1), with constraints as a function's: `extend<T :: [Display]> List<T> { … }`. The
    target is a named type at the block's parameters, or one instance of it, `extend Box<int> { … }`,
-   or a **built-in constructor** (X2, rule 6); a function type is no target (`LYR-SEM0047`).
+   or a **built-in constructor** (X2, rule 6) — a function type among them (M8a S12).
    In the block, `this` is the target as written; `Self` stands for a plain target only.
 2. A member of such a block is reached on every receiver the target **matches**: the receiver
    binds the parameters — `List<int>.first()` is an `int` — and the block's constraints must
@@ -366,8 +366,11 @@ same. What is not written here yet is decided in the design documents, not here.
    a generic type is; a table row for a conformance a block gives is built for the instances
    the program uses it on.
 6. **The built-in constructors** (X2): `extend<T> T[] { … }`, `extend<T> ?T { … }`,
-   `extend<T> Slice<T> { … }`, a tuple of fixed arity `extend<A, B> (A, B) { … }`, and the
-   same at one element type, `extend int[] { … }`. The members are reached on every value of
+   `extend<T> Slice<T> { … }`, a tuple of fixed arity `extend<A, B> (A, B) { … }`, a function
+   type `extend<T> fn(T) -> T { … }` (design 10 S2; M8a S12: `this` is the function, `this(x)`
+   calls it), and the same at fixed types, `extend int[] { … }`, `extend fn(char) -> bool { … }`.
+   A function type's shape is its parameters, their places, its return and its set, matched as
+   written. The members are reached on every value of
    that **shape**, the shape binding the parameters as rule 2 says, the constraints checked
    the same way (`LYR-SEM0134`); `this` is the shape, so `this[0]` and `this.length()` stand
    in an array's block, `this == null` and `this!` in an optional's, `let (a, _) = this;` in a
