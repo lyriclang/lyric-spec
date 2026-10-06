@@ -104,6 +104,9 @@ def make_repos(case, home):
                     shutil.rmtree(child) if child.is_dir() else child.unlink()
             shutil.copytree(version, repo, dirs_exist_ok=True)
             write_repos(repo, url)
+            # every file hashed anew: the index's stat data cannot tell a file of the same size
+            # copied in the same second from the last version's (CI's git compares seconds)
+            git(repo, "read-tree", "--empty")
             git(repo, "add", "-A")
             git(repo, "commit", "-q", "-m", f"v{version.name}", when=f"2026-01-01T00:00:{i:02d}Z")
             git(repo, "tag", f"v{version.name}")
