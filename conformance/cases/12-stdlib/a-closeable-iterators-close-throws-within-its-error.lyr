@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0174
+//! since: 5.0.0
+// 12 §Iteration: a type that is an Iterator and Closeable throws in close() only what its Error
+// allows - here nothing, since Error is 'never' - so a loop that closes it is covered by the
+// clause that covers its pulls.
+class First :: [Error] { fn message(): string { return "first"; } }
+
+struct Bad :: [Iterator, Closeable] {
+    type Item = int;
+    var n: int = 0,
+
+    mut fn next(): ?int {
+        return null;
+    }
+
+    fn close(): void throws First {
+    }
+}
+
+fn main(): void {
+}

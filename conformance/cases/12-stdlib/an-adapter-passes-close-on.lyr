@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | closed
+//! | left map
+//! | closed
+//! | other closed
+//! | left zip
+//! since: 5.0.0
+// 12 §Iteration: an adapter over a Closeable iterator is Closeable and passes close() on - a loop
+// that leaves 'gen().map(f)' early closes the generator; 'zip' closes both of its sources.
+import std.io { println };
+
+fn gen(): Coroutine<int> {
+    defer println("closed");
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+fn other(): Coroutine<int> {
+    defer println("other closed");
+    yield 10;
+    yield 20;
+}
+
+fn main(): void {
+    for (x in gen().map(y => y * 2).take(5)) {
+        break;
+    }
+    println("left map");
+    for (p in gen().zip(other())) {
+        break;
+    }
+    println("left zip");
+}

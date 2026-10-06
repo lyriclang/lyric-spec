@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | close threw first
+//! | 1
+//! since: 5.0.0
+// 10 §1 rule 9: close() unwinds the body with Cancelled and drops it - but not what the body's
+// defers threw on the way out, which were suppressed into it: the first of those comes out of
+// close(). (The defer registered last runs first.)
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+fn first(): void throws First { throw First { }; }
+fn second(): void throws Second { throw Second { }; }
+
+fn gen(): Coroutine<int> throws [First, Second] {
+    defer try second();
+    defer try first();
+    yield 1;
+    yield 2;
+}
+
+fn main(): void throws Error {
+    let c = gen();
+    let a = try c.next();
+    try {
+        c.close();
+        println("closed quietly");
+    } catch (e) {
+        println(f"close threw {e.message()}");
+    }
+    println(f"{a ?? 0}");
+}
