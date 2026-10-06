@@ -102,8 +102,12 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    **closes** it on every way out but a panic (design 10 B6 I6, 05 E7 R7), as a `using` binding
    closes what it binds: at its end, at `break`, at `return`, and when something in it throws;
    `continue` stays inside. The `close()` is a call of the loop's, marked by its head's `try`
-   where it may throw (rule 6). Through a constraint that does not say `Closeable` the loop does
-   not close.
+   where it may throw (rule 6). Where the iterator's type names a type parameter whose
+   constraints do not say `Closeable`, the **instance** decides (the review's M8a-4): each
+   monomorphized loop closes where the concrete iterator is `Closeable`, and does nothing where
+   it is not. That close throws what the loop's `next()` throws — the iterator's `Error`, which
+   is all a Closeable iterator's `close()` may throw ([12 §Iteration](12-stdlib.md),
+   `LYR-SEM0174`) —, so the head's `try` and the clause that covers the pulls cover it.
 
 ## 3. Value blocks
 

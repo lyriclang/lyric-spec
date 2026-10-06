@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | closed
+//! | first 1
+//! | plain 6
+//! since: 5.0.0
+// 07 §2 rule 7: the loop's iterator is a type parameter that says nothing of Closeable - the
+// INSTANCE decides. Over a generator the loop closes it where it returns early (its defer runs
+// before 'first 1' is printed); over a slice's iterator it closes nothing.
+import std.io { println };
+
+fn gen(): Coroutine<int> {
+    defer println("closed");
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+fn firstOf<I :: [Iterator<Item = int>]>(it: I): int throws I.Error {
+    for (x in try it) {
+        return x;
+    }
+    return -1;
+}
+
+fn sum<I :: [Iterator<Item = int>]>(it: I): int throws I.Error {
+    var s = 0;
+    for (x in try it) {
+        s += x;
+    }
+    return s;
+}
+
+fn main(): void throws Error {
+    println(f"first {try firstOf(gen())}");
+    println(f"plain {try sum([1, 2, 3].iter())}");
+}

@@ -147,7 +147,10 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   Self.Error; fn sizeHint(): (int, ?int) }`**: `next()` gives the next value, and `null` at the
   end. A walk that can fail answers its `Error`, which `next()` throws; by default it throws
   nothing ([07 §2](07-statements.md) rule 6). `sizeHint()` says how many values are left, at
-  least and at most where that is known; the default says `(0, null)`.
+  least and at most where that is known; the default says `(0, null)`. A type that is an
+  `Iterator` **and** `Closeable` throws in `close()` only what its `Error` allows
+  (`LYR-SEM0174`; the review's M8a-4): a loop that closes the iterator is covered by the
+  clause that covers its pulls ([07 §2](07-statements.md) rule 7).
 - **`Iterable { type Iter :: [Iterator]; fn iter(): Self.Iter; }`**: what `for` walks. Every
   iterator is iterable as itself, `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]`.
 - **`DoubleEnded :: [Iterator] { mut fn nextBack(): ?Self.Item; }`**: the last value not yet
@@ -170,6 +173,9 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through. Of two
   sources: `zip(other)`, each value beside the other's as long as both have one, the other an
   `Iterable`; `chain(other)`, the values and then the other's, an iterator of the same items.
+  An adapter over a `Closeable` iterator is `Closeable` itself and passes `close()` on (the
+  review's M8a-4), so a loop that leaves `gen().map(f)` early closes the generator; `zip` and
+  `chain` close both of theirs, the first error winning.
   Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
   one type where both are one, the other where one is `never`, the root `Error` where they
   differ — reduced once both are known; open, it covers each of its parts.

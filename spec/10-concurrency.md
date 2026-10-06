@@ -60,7 +60,10 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
    running anything. One suspended at a `yield` of its body is continued to be unwound: that
    `yield` throws **`Cancelled`** — `std.task`'s, an `Error` — so the body's `defer`s and `using`s
    run on the way out ([06 §5](06-errors.md#5-the-error-path)). The `Cancelled` ends at the
-   close: `close()` does not throw it on. A body that catches it may still end with a result, but
+   close: `close()` does not throw it on. What a `defer` threw on the way out was suppressed into
+   it ([06 §7](06-errors.md)); `close()` throws the **first** of those, the rest suppressed into
+   it (the review's M6-10) — dropped with the `Cancelled`, they were lost in silence. A body
+   that catches it may still end with a result, but
    a `yield` after it panics with `LYR-RT0014`. What else escapes the body comes out of `close()`,
    which belongs to the coroutine's `throws` clause like its pulls: the `close()` of a throwing
    coroutine is marked (`LYR-SEM0138`). The coroutine is done afterwards; closing a coroutine that
