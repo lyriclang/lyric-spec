@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 7 8 3 4 5
+//! | 1 2 1 2 3 4
+//! | 3 4 5 6 5 6
+//! since: 5.0.0
+// 12 §Arrays and views (the review's B16b): copyInto moves the elements into a view at least as
+// long — a longer one keeps its rest —, and the two may overlap either way.
+import std.io { println };
+
+fn main(): int {
+    let from = [7, 8];
+    let into = [1, 2, 3, 4, 5];
+    from[..].copyInto(into[..]);
+    println(into[..].join(" "));
+    let up = [1, 2, 3, 4, 5, 6];
+    up[0..4].copyInto(up[2..6]);
+    println(up[..].join(" "));
+    let down = [1, 2, 3, 4, 5, 6];
+    down[2..6].copyInto(down[0..4]);
+    println(down[..].join(" "));
+    return 0;
+}

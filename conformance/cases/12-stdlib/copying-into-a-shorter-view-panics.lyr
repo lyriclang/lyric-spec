@@ -1,0 +1,18 @@
+//! run
+//! panic: LYR-RT0003
+//! stdout:
+//! | fits
+//! since: 5.0.0
+// 12 §Arrays and views (the review's B16b): a view shorter than the one copied is a panic, the
+// index panic — the elements would not fit.
+import std.io { println };
+
+fn main(): int {
+    let three = [1, 2, 3];
+    let two = [0, 0];
+    three[..1].copyInto(two[..]);
+    println("fits");
+    three[..].copyInto(two[..]);
+    println("not reached");
+    return 0;
+}

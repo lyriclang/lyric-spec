@@ -235,6 +235,10 @@ through one reaches the array. `length()` and the index are the primitives
   where there is no element.
 - `swap(i, j)`, an index outside panicking as `[i]` does; `reverse()` in place; `reversed()`, a
   new array.
+- `copyInto(into)`: the elements into the view `into`, which is at least as long — a shorter
+  one panics as an index outside does (`LYR-RT0003`), a longer one keeps its rest; the two may
+  overlap either way (the review's B16). One copy, not an element at a time: what the
+  collections grow and shift with.
 - Of an `Equatable` element: `contains(x)`, through which `T[]` and `Slice<T>` are
   `Contains<T>` (10 C12), and `indexOf(x)`, the first index or `null`.
 - Of a `Clone` element: `fill(v)`, every element a clone of `v` — no object shared into several
