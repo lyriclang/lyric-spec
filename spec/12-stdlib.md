@@ -54,7 +54,7 @@ language, without locale, checked where it is written
    and a `Display` type fill, alignment and width, on the text `show()` gives; `?` takes fill,
    alignment and width, on the text `debug()` gives, for every type. A spec that is no format,
    or a part that does not apply to the hole's type, is refused (`LYR-SEM0164`). A type with
-   formats of its own conforms to `Format { fn format(spec: string, &out: StringBuilder): void; }`
+   formats of its own conforms to `Format { fn format(spec: StringView, &out: StringBuilder): void; }`
    and reads the spec as written, unchecked — `?` stays `Debug`.
 3. **Defaults**: a number right-aligned, the rest left-aligned. A float without a type or a
    precision is its shortest text ([03 §1.7](03-types.md)); with a precision and no type it is
@@ -204,7 +204,7 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
 
 ### Parsing
 
-A type read from a text conforms to **`Parse`**, `static fn parse(s: string): Self throws
+A type read from a text conforms to **`Parse`**, `static fn parse(s: StringView): Self throws
 ParseError` (design 10 B4, B5 Z6): every number type through `Num`, and `bool`. The text is
 taken whole — no whitespace, nothing after the value — and what is wrong with it is thrown,
 never panicked (10 B3): a **`ParseError`**, whose `kind` is a **`ParseErrorKind`** — `Empty` for
@@ -276,26 +276,30 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 
 ## Strings
 
-A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
+A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
+`StringView`** (below), which a string reaches through a view of all of itself (rule 4); `length()`
+and `isEmpty()` it has itself. What cuts gives a **view** of the text, no copy; what builds gives a
+new string. A pattern `p` is a view, which a string stands for:
 
 - `length()`, the bytes, `O(1)`; `isEmpty()`; `charCount()`, the characters, `O(n)`; `chars()`,
   the characters decoded, an `Iterator` of `char`.
 - `string` is `Ordered` and `TotalOrder` byte by byte, which is the order of the code points.
-- The search over a string pattern: `contains(p)`, `startsWith(p)`, `endsWith(p)`; `find(p)` and
-  `rfind(p)`, the byte index of the first and the last `p` or `null` — an empty `p` stands at 0
-  and at the length; `count(p)`, the occurrences none overlapping another, an empty `p` between
-  every two characters and at both ends.
-- `split(sep)`, the parts between the separators in order, empty ones kept — an empty separator
-  panics; `splitOnce(sep)`, the parts before and after the first, or `null`; `lines()`, split at
-  `\n` with a `\r` before it taken off and no empty line after a last `\n`.
-- `trim()`, `trimStart()`, `trimEnd()`, without the white space (ASCII's: space, tab, the line
-  breaks, vertical tab, form feed); `stripPrefix(p)` and `stripSuffix(p)`, the rest, or `null`
-  where `p` is not there.
-- `replace(p, with)`, every `p` replaced, none overlapping — an empty `p` panics;
-  `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, the width in characters.
-- **`StringBuilder`** (`std.string`, a class): `appendStr(s)`, `appendChar(c)`, `append(v)` of a
-  `Display`, `length()` in bytes, `clear()`, `toString()` — in a buffer that doubles, no chain of
-  concatenations.
+- The search: `contains(p)`, `startsWith(p)`, `endsWith(p)`; `find(p)` and `rfind(p)`, the byte
+  index of the first and the last `p` or `null` — an empty `p` stands at 0 and at the length;
+  `count(p)`, the occurrences none overlapping another, an empty `p` between every two characters
+  and at both ends.
+- `split(sep)`, the parts between the separators in order, views, empty ones kept — an empty
+  separator panics; `splitOnce(sep)`, the views before and after the first, or `null`; `lines()`,
+  views split at `\n` with a `\r` before it taken off and no empty line after a last `\n`.
+- `trim()`, `trimStart()`, `trimEnd()`, the view without the white space (ASCII's: space, tab,
+  the line breaks, vertical tab, form feed); `stripPrefix(p)` and `stripSuffix(p)`, the view of
+  the rest, or `null` where `p` is not there.
+- `replace(p, with)`, a new string with every `p` replaced, none overlapping — an empty `p`
+  panics; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
+  in characters.
+- **`StringBuilder`** (`std.string`, a class): `appendStr(s)` of a string or a view,
+  `appendChar(c)`, `append(v)` of a `Display`, `length()` in bytes, `clear()`, `toString()` — in a
+  buffer that doubles, no chain of concatenations.
 
 **`StringView`** is the view of a string's bytes (design 10 S1, 03 A2), a primitive of `std.core`
 visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
@@ -317,7 +321,10 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
    that asks for it takes them.
 4. At a coercion site a string stands where a view is expected and gives a view of all of
    itself; a view never stands where a string is expected (`LYR-SEM0001`) — `toString()` copies
-   its bytes into a string of their own.
+   its bytes into a string of their own. A **receiver** is such a site, as an array's is for the
+   members written on `Slice<T>` ([03 §5.2](03-types.md) rule 4): where the string's own blocks
+   give no member of the name, `s.m()` is the view's member, called on a view of all of `s`. A
+   view matched against a string literal compares its bytes ([09 §2](09-patterns.md) rule 3).
 5. A view has `length()`, its bytes, built in as a slice's is, `isEmpty()` and `toString()`. It
    is `Equatable`, `Hashable`, `Ordered` and `TotalOrder` by its bytes, as a string is — it
    hashes as the string of its bytes —, `Display`, its text, and `Debug`, quoted. `==`, `!=` and

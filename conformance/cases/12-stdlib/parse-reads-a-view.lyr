@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 43 2.5 true
+//! since: 5.0.0
+// 12 §Parsing (M8a S12): `parse` reads a view (10 B4) — the numbers cut out of a text, no copy.
+import std.io { println };
+
+fn main(): void throws {
+    let text = "n=42;x=2.5;ok=true";
+    println(f"{(try int.parse(text[2..4])) + 1} {try float.parse(text[7..10])} {try bool.parse(text[14..])}");
+}
