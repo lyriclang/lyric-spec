@@ -1,0 +1,14 @@
+//! run
+//! update
+//! stdout:
+//! | 13
+//! since: 5.0.0
+// 15 §3 rule 3 (the review's M7-8): 'lyric update' raises a tag that is a version to the newest
+// tag of its line — v1.0.0 to v1.1.0, not to v2.0.0, another major — in the manifest, then reads
+// it: the area of 1.1.0.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

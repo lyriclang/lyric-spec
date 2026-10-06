@@ -135,9 +135,12 @@ the toolchain's own tests (`tests/Lyric5.Tests`, `LockTests`).
    is not one is refused (`LYR-PKG0001`, `LYR-PKG0002`).
 3. **`lyric update [<package>…]`** reads every package from git anew — or those it names, the
    others staying at their commits —, fetching their repositories first, and writes the lock: a
-   branch moves to its head, a moved tag to its commit. A version moves only with a manifest that
-   asks for it — the selection is the manifests' (07 P4). A name that no package read from git
-   has is refused (`LYR-CLI0003`).
+   branch moves to its head, a moved tag to its commit. A tag of the root manifest that is a
+   version is first **raised to the newest tag of its line** the repository has (the review's
+   M7-8) — never another major version; below 1, never another minor; a pre-release only for a
+   pre-release — and written on its line of `lyric.toml`, the rest of the file as it was; a
+   dependency's own manifest is its own, and a branch, a commit or a tag that is no version stays.
+   A name that no package read from git has is refused (`LYR-CLI0003`).
 4. Under **`--locked`** (the review's M7-9), `build`, `run` and `test` take the lock **as it
    is** and write nothing: a revision the graph reads that the lock does not hold is refused
    before anything is fetched, and so is a lock that holds what the graph does not read, or no
