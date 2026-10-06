@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 12 §Strings, StringView rule 4: a view never stands where a string is expected — `toString()`
+// copies it.
+fn takes(s: string): int {
+    return s.length();
+}
+
+fn main(): int {
+    return takes("abc"[1..]);
+}

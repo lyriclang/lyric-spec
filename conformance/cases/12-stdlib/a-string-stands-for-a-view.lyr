@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | hi! 3 abc
+//! since: 5.0.0
+// 12 §Strings, StringView rule 4: at a coercion site — an argument, a binding's type, a returned
+// value — a string stands where a view is expected, a view of all of itself.
+import std.io { println };
+
+fn shout(v: StringView): string {
+    return f"{v}!";
+}
+
+fn whole(s: string): StringView {
+    return s;
+}
+
+fn main(): void {
+    let w: StringView = "abc";
+    println(f"{shout("hi")} {whole("xyz").length()} {w}");
+}

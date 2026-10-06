@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | wörld|hello|wörl|ö
+//! | 6 true wörld
+//! since: 5.0.0
+// 12 §Strings, StringView rules 1–2 (M8a S12): `s[a..b]` is the view of the bytes from a up to
+// b, in a view's forms — open ends, `^n` as a bound —, and a view of a view views the same
+// string. "ö" is two bytes: "hello, wörld" is thirteen.
+import std.io { println };
+
+fn main(): void {
+    let s = "hello, wörld";
+    let v = s[7..];
+    println(f"{v}|{s[..5]}|{s[^6..^1]}|{v[1..3]}");
+    println(f"{v.length()} {s[3..3].isEmpty()} {v.toString()}");
+}

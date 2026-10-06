@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0003
+//! stdout:
+//! | hel
+//! since: 5.0.0
+// 12 §Strings, StringView rule 2: bounds outside 0 ≤ a ≤ b ≤ length() panic, as a view's do.
+import std.io { println };
+
+fn main(): void {
+    let s = "hello";
+    println(f"{s[..3]}");
+    println(f"{s[2..9]}");
+}

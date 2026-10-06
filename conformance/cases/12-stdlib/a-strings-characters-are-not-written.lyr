@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 12 §Strings, StringView rule 3: the characters are read through the index, never written.
+fn main(): void {
+    var s = "abc";
+    s[0] = "x"[0];
+}
