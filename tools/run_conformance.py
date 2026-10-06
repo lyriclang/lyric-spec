@@ -25,7 +25,7 @@ PROGRAM_TIMEOUT = 60
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
-            "errors": [], "warnings": [], "since": None, "until": None, "bin": None}
+            "errors": [], "warnings": [], "since": None, "until": None, "bin": None, "options": []}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = None
     for line in lines:
@@ -58,6 +58,8 @@ def parse_header(path):
             spec["until"] = tuple(int(p) for p in body[6:].strip().split("."))
         elif body.startswith("bin:"):
             spec["bin"] = body[4:].strip()
+        elif body.startswith("option:"):
+            spec["options"].append(body[7:].strip())
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -148,6 +150,7 @@ def run_case(case, spec, lyric5, profile, workdir):
         command = [str(lyric5), "build", str(source), "--profile", profile]
     if spec["bin"]:
         command += ["--bin", spec["bin"]]
+    command += spec["options"]
     front_end_only = spec["mode"] == "check"
     if front_end_only:
         command += ["--emit", "ir"]

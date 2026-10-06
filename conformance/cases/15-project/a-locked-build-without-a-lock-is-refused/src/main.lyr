@@ -1,0 +1,12 @@
+//! check
+//! option: --locked
+//! error: LYR-PKG0011
+//! since: 5.0.0
+// 15 §3 rule 4 (the review's M7-9): under --locked a program that reads from git needs its lock
+// — none is refused, and nothing is fetched or written.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

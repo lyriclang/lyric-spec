@@ -27,6 +27,7 @@ The header is the leading block of lines starting `//!`. Directives:
 //!                          runner given an older --toolchain-version skips it
 //! bin: tool                a package case's program, one its [[bin]] names: built with
 //!                          --bin and run (default: the package's src/main.lyr)
+//! option: --locked         an option the build is given, after the runner's own (repeatable)
 ```
 
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)
