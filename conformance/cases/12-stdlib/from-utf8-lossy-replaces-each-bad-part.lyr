@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | [ 97 65533 98] [ 65533 99] [ 65533 65533] [ 104 246]
+//! since: 5.0.0
+// 12 §Strings (M8a S12): `string.fromUtf8Lossy` replaces each maximal part of a sequence that is
+// not well-formed by U+FFFD (65533) — "E2 82" is the start of one, cut short: one replacement; "F0"
+// before "80" begins nothing it could finish, and "80" alone begins nothing: two.
+import std.io { println };
+
+fn codes(bytes: uint8[]): string {
+    var out = "";
+    for (c in string.fromUtf8Lossy(bytes).chars()) {
+        out = out + f" {c as uint32}";
+    }
+    return out;
+}
+
+fn main(): void {
+    println(f"[{codes([97, 255, 98])}] [{codes([226, 130, 99])}] [{codes([240, 128])}] [{codes([104, 195, 182])}]");
+}

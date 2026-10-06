@@ -309,6 +309,12 @@ signature per operation takes any of them:
   the empty text panics; `replaceN(p, with, n)`, the first `n` replaced, all of them where `n` is
   negative; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
   in characters.
+- **Bytes to text** (design 10 S3): `string.fromUtf8(bytes)`, the text the bytes of a
+  `Slice<uint8>` are, copied — bytes that are no well-formed UTF-8 (an overlong form, a surrogate,
+  beyond U+10FFFF, a byte that begins nothing, a sequence cut short) throw a **`Utf8Error`**
+  (`std.core`) whose `offset` is the first byte that is not, as the data's fault (10 B3);
+  `string.fromUtf8Lossy(bytes)`, the text with each maximal part of a sequence that is not
+  well-formed replaced by U+FFFD — the Unicode Standard's recommended practice (3.9).
 - **`StringBuilder`** (`std.string`, a class): `appendStr(s)` of a string or a view,
   `appendChar(c)`, `append(v)` of a `Display`, `length()` in bytes, `clear()`, `toString()` — in a
   buffer that doubles, no chain of concatenations.
