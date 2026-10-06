@@ -318,6 +318,13 @@ tasks of its thread run meanwhile — a lock is needed on one thread too, wherev
    They throw what their body throws.
 5. A lock orders (N7 P1): what a body did happens before what the next body that holds the lock
    does — the value one leaves is the value the next finds.
+6. **A panic in a body poisons the lock** (the review's M6-21). A panic unwinds nothing (§5
+   rule 1), so the body's lock would stay held: the scheduler releases what the panicked task
+   held — newest first — and poisons it. From then on every `lock`, `read`, `write` and `run`
+   on it is a panic, `LYR-RT0019`, `lock poisoned by a panic: <code>: <message>`, naming the
+   first panic; a task that already waits for the lock wakes with the release and panics the
+   same way. A `Once` whose body panicked is poisoned too. An error in a body — `Cancelled`
+   among them — unwinds, the body's `defer` releases, and nothing is poisoned (rule 4).
 
 ## 11. Pools
 

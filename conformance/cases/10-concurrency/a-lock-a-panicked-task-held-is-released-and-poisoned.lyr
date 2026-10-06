@@ -1,0 +1,36 @@
+//! run
+//! panic: LYR-RT0019
+//! stdout:
+//! | panicked LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0019]: lock poisoned by a panic: LYR-RT0008: inside
+//! since: 5.0.0
+// 10 §10 rule 6: a panic in the body unwinds nothing, so the lock would stay held. The scheduler
+// releases it and poisons it: the next 'lock' panics, naming the first panic.
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.time { Duration };
+
+fn said(s: TaskStatus<void>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        .Cancelled => "cancelled",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let m = Mutex<int>.new(0);
+    let t = spawn(() => {
+        try m.lock { &n =>
+            n = 1;
+            panic("inside");
+        };
+    });
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(said(t.status()));
+    let v = try m.lock { &n => n };
+    println(f"not reached {v}");
+}

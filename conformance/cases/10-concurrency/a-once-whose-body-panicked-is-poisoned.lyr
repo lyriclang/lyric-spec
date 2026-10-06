@@ -1,0 +1,35 @@
+//! run
+//! panic: LYR-RT0019
+//! stdout:
+//! | panicked LYR-RT0008
+//! since: 5.0.0
+// 10 §10 rule 6: a 'Once' whose body panicked is poisoned too - its 'run' panics from then on.
+// (A body that THROWS leaves the work to the next call, rule 3.)
+import std.io { println };
+import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.time { Duration };
+
+fn said(s: TaskStatus<void>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        .Cancelled => "cancelled",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let once = Once.new();
+    let t = spawn(() => {
+        try once.run {
+            panic("inside");
+        };
+    });
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(said(t.status()));
+    try once.run {
+        println("ran again");
+    };
+    println("not reached");
+}
