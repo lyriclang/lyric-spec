@@ -175,7 +175,8 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U>` (`Map` is the
   collection's), `it.filter(p)` a `FilterIter<I>`. Every iterator type's name ends in `Iter`
   (the review's A9g): the adapters (`TakeIter`, `ZipIter`, …), the string's (`CharsIter`,
-  `SplitIter`, `LinesIter`), the map's (`MapEntriesIter`, `MapKeysIter`, `MapValuesIter`), the
+  `SplitIter<P>`, `MatchesIter<P>`, `LinesIter`), the map's (`MapEntriesIter`, `MapKeysIter`,
+  `MapValuesIter`), the
   slice's and the list's (`SliceIter`, `ListIter`). They pull lazily, one value at a time, and their
   `Error` is the inner iterator's. Of one source besides: `take(n)` and `skip(n)`;
   `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
@@ -279,7 +280,14 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
 `StringView`** (below), which a string reaches through a view of all of itself (rule 4); `length()`
 and `isEmpty()` it has itself. What cuts gives a **view** of the text, no copy; what builds gives a
-new string. A pattern `p` is a view, which a string stands for:
+new string. A pattern `p` is a **`Pattern`** (design 10 S2) — a view or a string, a `char`, or
+a type of the program that conforms:
+`Pattern { fn matchAt(text: StringView, at: int): ?int; fn matchBefore(text: StringView, end: int): ?int; }`,
+the end of a match that begins at byte `at`, and the start of one that ends at byte `end` —
+`at` and `end` a character's first byte or the text's length. A third member,
+`fn nextIn(text: StringView, from: int): ?int`, the first such byte at or after `from` where a
+match begins, has a default that tries `matchAt` at each; a pattern may give a faster one. One
+signature per operation takes any of them:
 
 - `length()`, the bytes, `O(1)`; `isEmpty()`; `charCount()`, the characters, `O(n)`; `chars()`,
   the characters decoded, an `Iterator` of `char`.
@@ -288,14 +296,17 @@ new string. A pattern `p` is a view, which a string stands for:
   index of the first and the last `p` or `null` — an empty `p` stands at 0 and at the length;
   `count(p)`, the occurrences none overlapping another, an empty `p` between every two characters
   and at both ends.
-- `split(sep)`, the parts between the separators in order, views, empty ones kept — an empty
-  separator panics; `splitOnce(sep)`, the views before and after the first, or `null`; `lines()`,
-  views split at `\n` with a `\r` before it taken off and no empty line after a last `\n`.
+- `split(sep)`, the parts between the separators in order, views, empty ones kept — a separator
+  that matches the empty text panics; `splitN(sep, n)`, at most `n` parts, the last one the rest,
+  none for `n` of 0; `splitOnce(sep)`, the views before and after the first, or `null`;
+  `matches(p)`, the matches in order, views, none overlapping another; `lines()`, views split at
+  `\n` with a `\r` before it taken off and no empty line after a last `\n`.
 - `trim()`, `trimStart()`, `trimEnd()`, the view without the white space (ASCII's: space, tab,
   the line breaks, vertical tab, form feed); `stripPrefix(p)` and `stripSuffix(p)`, the view of
   the rest, or `null` where `p` is not there.
-- `replace(p, with)`, a new string with every `p` replaced, none overlapping — an empty `p`
-  panics; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
+- `replace(p, with)`, a new string with every `p` replaced, none overlapping — a `p` that matches
+  the empty text panics; `replaceN(p, with, n)`, the first `n` replaced, all of them where `n` is
+  negative; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
   in characters.
 - **`StringBuilder`** (`std.string`, a class): `appendStr(s)` of a string or a view,
   `appendChar(c)`, `append(v)` of a `Display`, `length()` in bytes, `clear()`, `toString()` — in a

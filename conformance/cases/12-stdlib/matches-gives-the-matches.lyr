@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | an an | a a a | 0
+//! since: 5.0.0
+// 12 §Strings (M8a S12): `matches(p)` gives the matches in order, views, none overlapping another.
+import std.io { println };
+
+fn main(): void {
+    var out = "";
+    for (m in "banana".matches("an")) {
+        out = out + f"{m} ";
+    }
+    out = out + "|";
+    for (m in "banana".matches('a')) {
+        out = out + f" {m}";
+    }
+    var none = 0;
+    for (m in "banana".matches("x")) {
+        none = none + m.length() + 1;
+    }
+    println(f"{out} | {none}");
+}

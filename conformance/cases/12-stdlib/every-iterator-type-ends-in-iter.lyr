@@ -13,7 +13,7 @@ fn main(): void {
     let doubled: MapIter<SliceIter<int>, int> = [1, 2].iter().map((x: int) => x * 2);
     let odd: FilterIter<SliceIter<int>> = [1, 2, 3].iter().filter((x: int) => x % 2 == 1);
     let chars: CharsIter = "ab".chars();
-    let parts: SplitIter = "x,y".split(",");
+    let parts: SplitIter<string> = "x,y".split(",");
     var out = "";
     for (d in doubled) { out = out + f"{d} "; }
     out = out + "|";
