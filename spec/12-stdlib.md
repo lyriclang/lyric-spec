@@ -22,12 +22,13 @@ the same functions.
 | `fromInt(value: int): string` | the decimal digits, `-` when negative ([03 §1.7](03-types.md)) |
 | `fromUint(value: uint): string` | the decimal digits |
 | `fromFloat(value: float): string` | the shortest text that reads back as the value, `1.0` for an integral one; `inf`, `-inf`, `nan` ([03 §1.7](03-types.md)) |
+| `fromFloat32(value: float32): string` | the shortest text that reads back as the same `float32` — `0.1`, not the `float`'s `0.10000000149011612` (the review's M8a-9) |
 | `fromBool(value: bool): string` | `true` or `false` |
 | `fromChar(value: char): string` | the character, UTF-8 |
 
-A narrower integer or a `float32` in a hole widens to the converter's parameter type first
-([03 §1.3](03-types.md)): `f"{x}"` with `x: int8` is `fromInt(x)`, with `x: float32` it is
-`fromFloat(x)`.
+A narrower integer in a hole widens to the converter's parameter type first
+([03 §1.3](03-types.md)): `f"{x}"` with `x: int8` is `fromInt(x)`. A `float32` has a converter of
+its own: with `x: float32` it is `fromFloat32(x)`.
 
 ## 2. The format language
 
@@ -40,7 +41,10 @@ language, without locale, checked where it is written
    (left), `>` (right) or `^` (centred, the odd fill after), the fill any character before it, a
    space without; `sign` is `+` (a sign on every number) or `-` (on a negative one only, as
    without); `#` writes a radix's prefix, `0b`, `0o`, `0x`, `0X`; `0` pads with zeros between the
-   sign and prefix and the digits; `width` is the least number of **characters**, not bytes;
+   sign and prefix and the digits — with a grouping, the zeros are grouped with the digits and
+   the width counts the separators, a minimum that no separator leads (the review's A4):
+   `{1234:010,}` is `00,001,234`, `{1234:08_}` is `0_001_234`; `width` is the least number of
+   **characters**, not bytes;
    `grouping` is `,` or `_` between each three decimal digits, `_` between each four of another
    radix; `precision` is the digits after a float's point or the most characters of a string;
    `type` is `b`, `o`, `x`, `X` (an integer's radix), `e`, `E`, `f`, `%` (a float's form) or `?`
@@ -56,9 +60,11 @@ language, without locale, checked where it is written
    precision is its shortest text ([03 §1.7](03-types.md)); with a precision and no type it is
    fixed, `{2.5:.3}` is `2.500`; `e`, `E`, `f` and `%` take six digits without a precision; `%`
    writes the value a hundredfold, fixed, with `%` after; an exponent carries its sign and two
-   digits at least, `{1234.5:e}` is `1.234500e+03`. The fixed and the exponent forms round to
-   nearest on the value's exact binary digits: `{2.675:.2f}` is `2.67`. `nan`, `inf` and `-inf`
-   keep their words, `NAN` and `INF` under `E`.
+   digits at least, `{1234.5:e}` is `1.234500e+03`. The fixed, the exponent and the percent
+   forms round **half away from zero** on the value's exact binary digits — the language's one
+   rounding rule, `round()`'s (the review's M8a-8), the same on every host: `{0.125:.2f}` is
+   `0.13`, `{2.5:.0f}` is `3`, and `{2.675:.2f}` is `2.67`, the double nearest 2.675 lying below
+   the half. `nan`, `inf` and `-inf` keep their words, `NAN` and `INF` under `E`.
 4. **Binding**: `{x:spec}` compiles to `std.core`'s `formatted(x, "spec")` for a `Format` type —
    the scalars conform —, to `padded(x, "spec")` for another `Display` type, and to
    `debugged(x, "spec")` under `?`; a program need not import them, as with the converters
