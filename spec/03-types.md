@@ -127,8 +127,9 @@ What an f-string hole and the converters of `std.string` write ([12 §1](12-stdl
    -4 up to below 16, an integral value with `.0` — `1.0`, `-0.0`, `100.0`,
    `1000000000000000.0` —, and with an exponent beyond, its sign always and two digits at
    least: `1e+16`, `1e+21`, `1.5e-07`, `5e-324`. `inf`, `-inf` and `nan` stand for the values
-   that are no number. A `float32` is written as the `float` it widens to: `0.1` as a
-   `float32` prints `0.10000000149011612`.
+   that are no number. A `float32` is written as its own shortest text — the one that reads
+   back as the same `float32` (the review's M8a-9): `0.1` as a `float32` prints `0.1`; widened
+   to a `float` it prints `0.10000000149011612`, the value it holds.
 3. `bool` is `true` or `false`; `char` is the character itself, UTF-8 encoded.
 
 ## 2. Structs and classes

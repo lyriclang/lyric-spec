@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 00,001,234 -0,001,234 0_001_234 0,001,234.5 0x000_00ff
+//! since: 5.0.0
+// 12 §2 rule 1 (the review's A4): under `0` with a grouping the zeros are grouped with the
+// digits; the width counts the separators and is a minimum — no separator leads.
+import std.io { println };
+
+fn main(): int {
+    println(f"{1234:010,} {-1234:010,} {1234:08_} {1234.5:010,.1f} {255:#010_x}");
+    return 0;
+}

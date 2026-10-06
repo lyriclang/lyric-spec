@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 0.1 0.3 0.10000000149011612 0.100
+//! since: 5.0.0
+// 03 §1.7 (the review's M8a-9): a float32 is written as its own shortest text — the one that
+// reads back as the same float32 —, not as the float it widens to; widened, it shows the value
+// it holds. A precision formats the exact value, the same for both widths.
+import std.io { println };
+
+fn add(a: float32, b: float32): float32 { return a + b; }
+
+fn main(): int {
+    let tenth: float32 = 0.1;
+    println(f"{tenth} {add(tenth, 0.2)} {tenth as float} {tenth:.3f}");
+    return 0;
+}
