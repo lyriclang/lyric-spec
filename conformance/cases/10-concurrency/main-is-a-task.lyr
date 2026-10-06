@@ -8,7 +8,7 @@ import std.io { println };
 import std.task { sleep, Cancelled };
 import std.time { Duration };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     println("before");
     try sleep(Duration.ofMillis(1));
     println("after");

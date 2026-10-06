@@ -8,7 +8,7 @@ import std.io { println };
 import std.task { sleep, yieldNow, spawnDetached, Cancelled };
 import std.time { Duration };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     spawnDetached(() => {
         defer println("deferred");
         try sleep(Duration.ofSecs(30));

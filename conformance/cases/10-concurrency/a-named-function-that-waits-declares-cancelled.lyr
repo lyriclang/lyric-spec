@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 10 §2 rule 7: only 'main' covers 'Cancelled' itself; a named function that waits says so.
+import std.task { Task };
+
+fn wait(t: Task<int>): int {
+    return try t.await();
+}
+
+fn main(): void {
+}

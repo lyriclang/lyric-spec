@@ -9,7 +9,7 @@
 import std.io { println };
 import std.task { spawn, Cancelled };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let five = spawn(() => 5);
     let quiet = spawn(() => { println("body"); });
     println(f"{five.isDone()}");

@@ -22,7 +22,7 @@ fn describe(s: TaskStatus<int>): string {
     };
 }
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let puller = spawn(() => {
         let g = numbers();
         while (let n = g.next()) {

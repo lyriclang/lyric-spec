@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 2 0
+//! since: 5.0.0
+// 10 §1 rule 1: a generator holds its receiver as a call holds an argument - a struct is copied
+// into it, and what a 'mut fn' generator writes to 'this' the caller does not see.
+import std.io { println };
+
+struct Counter {
+    var n: int,
+
+    mut fn count(): Coroutine<int> {
+        this.n += 1;
+        yield this.n;
+        this.n += 1;
+        yield this.n;
+    }
+}
+
+fn main(): void {
+    var c = Counter { n = 0 };
+    var out = "";
+    for (x in c.count()) {
+        out = f"{out}{x} ";
+    }
+    println(f"{out}{c.n}");
+}

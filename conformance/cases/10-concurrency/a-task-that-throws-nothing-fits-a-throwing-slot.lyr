@@ -16,7 +16,7 @@ fn risky(fail: bool): int throws Oops {
     return 7;
 }
 
-fn main(): void throws [Oops, Cancelled] {
+fn main(): void throws Oops {
     let plain: Task<int> = spawn(() => 3);
     var either: Task<int> throws Oops = plain;
     let a = try either.await();

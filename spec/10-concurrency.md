@@ -11,13 +11,20 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
 ## 1. Coroutines and generators
 
 1. A function whose declared result is **`Coroutine<Y, R>`** and whose body has a `yield` of its
-   own — one outside every lambda in it — is a **coroutine function** (08 D11);
-   `Coroutine<Y>` is `Coroutine<Y, void>` (06 A1). A call of it runs nothing of its body: it
-   returns a **coroutine**, suspended before the body's first statement and holding the call's
-   arguments — a method's receiver among them. A coroutine runs only when it is pulled. A
-   coroutine function may be a method and may be generic; an instance is instantiated as any
-   generic function is. A function that returns a coroutine without yielding is an ordinary
-   function: it returns a coroutine value as it returns any value.
+   own — one outside every lambda in it — **or returns no value** is a **coroutine function**
+   (08 D11; the review's M6-3): a body that yields through helpers only is one, and an empty
+   body is the empty one. "Returns no value" is said of the body as it is written — no
+   `return v;` and no value at its end —, not of where it can arrive: a body that only throws
+   is one too, and its error arrives at the first pull, as every error of a coroutine function's
+   body does. `Coroutine<Y>` is `Coroutine<Y, void>` (06 A1). A call of it runs
+   nothing of its body: it returns a **coroutine**, suspended before the body's first statement
+   and holding the call's arguments — a method's receiver among them, **as an argument is
+   held**: a struct or an enum is a copy, and what a `mut fn` coroutine function writes to
+   `this` stays in it (allowed, and warned about where it is declared, `LYR-SEM0172`; M6-1). A
+   coroutine runs only when it is pulled. A coroutine function may be a method and may be
+   generic; an instance is instantiated as any generic function is. A function that **returns a
+   value** — `return make();` — is an ordinary function, a factory: it returns a coroutine
+   value as it returns any value.
 2. **`yield v;`** hands `v` to the puller and suspends the body until the next pull; `v` is
    checked against `Y` (`LYR-SEM0001`). `yield;` without a value belongs to a `Coroutine<void>`
    and is refused in any other coroutine (`LYR-SEM0038`). The body's locals live across its
@@ -115,7 +122,10 @@ scheduler runs another task meanwhile. The functions this section names are `std
    again, the generator goes on where it waited and yields to its puller as before.
 7. The waits — `sleep`, `yieldNow`, `await` — **throw `Cancelled`** where their task is
    cancelled (06 N9 X1): a function that waits covers it, with `throws Cancelled` or a clause
-   (`LYR-SEM0034`).
+   (`LYR-SEM0034`). **`main` covers it itself**, as a coroutine function's body does (the
+   review's M6-4): nobody above `main` answers a cancellation, so it says no `throws Cancelled`
+   — the call that waits keeps its `try`, and a `Cancelled` that leaves `main` is reported as
+   any error that leaves it is ([06 §5](06-errors.md#5-the-error-path)).
 8. **`spawn(body)`** makes `body` a task of the running thread, ready behind the tasks ready
    before it, and gives its **handle**, a `Task<T> throws E` (06 T1): `T` is what the body
    returns — `void` too ([03 §9.1](03-types.md) rule 7) — and `E` what it throws. The handle's

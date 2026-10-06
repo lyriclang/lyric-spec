@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 10 §2 rule 7: 'main' covers 'Cancelled' itself, as a generator's body does - it says no
+// 'throws Cancelled'; the call that waits keeps its 'try'.
+import std.io { println };
+import std.task { spawn };
+
+fn main(): void {
+    let t = spawn(() => 41 + 1);
+    println(f"{try t.await()}");
+}

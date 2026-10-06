@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1 2 3
+//! since: 5.0.0
+// 04 §4 rule 4: 'sequence' is the prelude's - named without an import.
+import std.io { println };
+
+fn main(): void {
+    let s = sequence {
+        yield 1;
+        yield 2;
+        yield 3;
+    };
+    var out = "";
+    for (x in s) {
+        out = if (out == "") f"{x}" else f"{out} {x}";
+    }
+    println(out);
+}

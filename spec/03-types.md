@@ -641,7 +641,11 @@ Type parameters, their inference, and what an instance is
    `run(() => { println("x"); })`. A value of type `void` is nothing: a parameter, a local, a
    field or an element of that type holds nothing, a `?void` holds only whether one was given,
    and a call of a function that returns nothing gives that value wherever one is expected —
-   passed, stored, wrapped, returned. *(Informative: such a place costs one byte.)*
+   passed, stored, wrapped, returned. *(Informative: such a place costs one byte.)* Written,
+   `void` is a type like any other — `?void`, `void[]` — but a **name** for its one value says
+   nothing: a binding that holds a `void` and a parameter written with it are warned about
+   (`LYR-SEM0173`; the review's M6-5). In generic code there is no warning: the binding is a
+   `T`.
 
 ### 9.2 Inference at a call
 

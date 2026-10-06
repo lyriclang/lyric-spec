@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | made
+//! | oops
+//! since: 5.0.0
+// 10 §1 rule 1: "returns no value" is said of the body as it is written - one that only throws
+// is a coroutine function too. Its call runs nothing; the error arrives at the first pull.
+import std.io { println };
+
+enum Oops :: [Error] {
+    Bad;
+
+    fn message(): string {
+        return "oops";
+    }
+}
+
+fn refuse(): Coroutine<int> throws Oops {
+    throw Oops.Bad;
+}
+
+fn main(): void {
+    let c = refuse();
+    println("made");
+    try {
+        let v = c.next() ?? 0;
+        println(f"not reached {v}");
+    } catch (e) {
+        println(e.message());
+    }
+}

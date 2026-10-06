@@ -8,7 +8,7 @@
 import std.io { println };
 import std.task { spawn, yieldNow, Cancelled };
 
-fn main(): void throws Cancelled {
+fn main(): void {
     let bad = spawn(() => {
         panic("boom");
     });
