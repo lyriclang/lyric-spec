@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | none lost
+//! since: 5.0.0
+// 10 §11 rules 3, 4: a task given while the pool closes is run or refused — never left on a
+// thread that has ended. Thirty rounds of a thread that gives tasks in bursts while main closes
+// the pool; a task lost would leave its receiver waiting for ever, and the round would never end.
+import std.io { println };
+import std.task { sleep, yieldNow, Thread, Pool, Channel };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    for (round in 0..30) {
+        let pool = Pool.new(1);
+        let giver = Thread.spawn(() => {
+            let results = Channel<int>.new(16);
+            var given = 0;
+            while (given < 100000) {
+                for (_ in 0..8) {
+                    pool.spawn(() => {
+                        try results.send(1);
+                    });
+                }
+                var got = 0;
+                while (got < 8) {
+                    let v = try results.recv();
+                    got += v ?? 0;
+                }
+                given += got;
+            }
+            return given;
+        });
+        try sleep(Duration.ofMicros((round % 5) * 40));
+        try pool.close();
+        while (!giver.isDone()) {
+            try yieldNow();
+        }
+    }
+    println("none lost");
+}
