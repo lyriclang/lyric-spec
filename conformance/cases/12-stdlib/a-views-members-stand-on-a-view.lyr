@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | [key] [value] 3 true
+//! | 1101 3 a;b;;c a!
+//! since: 5.0.0
+// 12 §Strings (M8a S12): the members stand on the view — a string reaches them, and a view has
+// them itself; what cuts gives a view, what builds a string; the builder appends a view.
+import std.io { println };
+import std.string { StringBuilder };
+
+fn main(): void {
+    let line = "  key = value  ";
+    let (k, v) = line.trim().splitOnce("=")!;
+    println(f"[{k.trim()}] [{v.trim()}] {k.trim().length()} {line.trim().startsWith("key")}");
+    let inner = "[a,b,,c]"[1..^1];
+    var lengths = "";
+    for (part in inner.split(",")) {
+        lengths = lengths + f"{part.length()}";
+    }
+    let b = StringBuilder.new();
+    b.appendStr(inner[..1]);
+    b.appendStr("!");
+    println(f"{lengths} {inner.count(",")} {inner.replace(",", ";")} {b.toString()}");
+}

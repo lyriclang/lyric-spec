@@ -2,7 +2,8 @@
 //! stdout:
 //! | 77.0°F 25.0°C Celsius { degrees = 25.0 }
 //! since: 5.0.0
-// 12 §2 rule 2: a Format type reads its spec as written, unchecked; '?' stays Debug.
+// 12 §2 rule 2: a Format type reads its spec as written, unchecked — a view (10 A3; M8a S12);
+// '?' stays Debug.
 import std.core { Format };
 import std.io { println };
 import std.string { StringBuilder };
@@ -10,7 +11,7 @@ import std.string { StringBuilder };
 struct Celsius :: [Format] {
     degrees: float,
 
-    fn format(spec: string, &out: StringBuilder): void {
+    fn format(spec: StringView, &out: StringBuilder): void {
         if (spec == "F") {
             out.appendStr(f"{this.degrees * 1.8 + 32.0}°F");
         } else {

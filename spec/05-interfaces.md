@@ -152,7 +152,7 @@ same. What is not written here yet is decided in the design documents, not here.
    implementation writes its own type where the interface writes `Self` (`LYR-SEM0042`
    otherwise); through a constraint `T :: [I]`, `Self` is `T`. In a struct, a class or an enum,
    `Self` is the type itself — a generic one at its own parameters.
-2. An interface may declare **static members** — `static fn parse(s: string): Self;` and
+2. An interface may declare **static members** — `static fn parse(s: StringView): Self;` and
    `static let zero: Self;` — without a body or a value (`LYR-SEM0127`): every conforming type
    implements one with a static member of its own, in its body or in its conformance block
    (`LYR-SEM0042`; `LYR-SEM0020` where it has none). A `static let` answers with the type the

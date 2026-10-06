@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | read write other
+//! since: 5.0.0
+// 12 §Strings, StringView rule 4 (M8a S12): a view matched against a string literal compares its
+// bytes — the verb of a request line, cut out of it.
+import std.io { println };
+
+fn kind(line: string): string {
+    let verb = line[..line.find(" ")!];
+    return match (verb) {
+        "GET" => "read",
+        "PUT" => "write",
+        _ => "other",
+    };
+}
+
+fn main(): void {
+    println(f"{kind("GET /a")} {kind("PUT /b")} {kind("HEAD /c")}");
+}

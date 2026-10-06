@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 12 §Strings (M8a S12): `trim()` gives a view of the text, and a view never stands where a string
+// is expected — `toString()` copies it.
+fn takes(s: string): int {
+    return s.length();
+}
+
+fn main(): int {
+    return takes(" a ".trim());
+}
