@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | w ö r d
+//! since: 5.0.0
+// 12 §Strings, StringView rule 3: `s[i]` is the character that begins at byte i, of a string or
+// of a view — "ö" begins at byte 1 of "wörld" and takes two, so byte 2 of the view from 1 is
+// the "r".
+import std.io { println };
+
+fn main(): void {
+    let s = "wörld";
+    let v = s[1..];
+    println(f"{s[0]} {s[1]} {v[2]} {s[5]}");
+}

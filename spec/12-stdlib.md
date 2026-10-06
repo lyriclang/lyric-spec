@@ -297,6 +297,32 @@ A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s:
   `Display`, `length()` in bytes, `clear()`, `toString()` — in a buffer that doubles, no chain of
   concatenations.
 
+**`StringView`** is the view of a string's bytes (design 10 S1, 03 A2), a primitive of `std.core`
+visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
+
+1. A view is a pointer into a string's bytes and a length, two words, copied by a binding; it
+   reads the bytes and never writes them. There is no lifetime: the string lives as long as any
+   view of it does ([03 §5.2](03-types.md) rule 5).
+2. `s[a..b]` on a string or a view is the view of the bytes from `a` up to but not including `b`,
+   in the forms of [03 §5.2](03-types.md) rule 2 — `s[a..=b]`, an open end, `^n` as a bound. The
+   bounds satisfy `0 ≤ a ≤ b ≤ length()`, and neither falls inside a character — on a byte that
+   continues one —, or the expression **panics** with `LYR-RT0003`, in every profile. A view of a
+   view is a view of the same string.
+3. `s[i]` on a string or a view is the **character** that begins at byte `i`, `i` an `int` as an
+   array's index is ([03 §5.1](03-types.md)): outside `0 ≤ i < length()`, or at a byte that
+   continues a character, a panic (`LYR-RT0003`). Counted from the end a byte is rarely where a
+   character begins: `^n` stands as a bound of a range only (`LYR-SEM0114`). The characters are
+   read and never written through the index (`LYR-SEM0019`). A string and a view conform to
+   `Index<int>` with `Output = char` ([05 §12](05-interfaces.md) rule 9), so a type parameter
+   that asks for it takes them.
+4. At a coercion site a string stands where a view is expected and gives a view of all of
+   itself; a view never stands where a string is expected (`LYR-SEM0001`) — `toString()` copies
+   its bytes into a string of their own.
+5. A view has `length()`, its bytes, built in as a slice's is, `isEmpty()` and `toString()`. It
+   is `Equatable`, `Hashable`, `Ordered` and `TotalOrder` by its bytes, as a string is — it
+   hashes as the string of its bytes —, `Display`, its text, and `Debug`, quoted. `==`, `!=` and
+   the orderings between a string and a view compare the two as views: `"abc"[1..] == "bc"`.
+
 ## Collections
 
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11).

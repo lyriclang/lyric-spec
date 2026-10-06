@@ -1,0 +1,14 @@
+//! run
+//! panic: LYR-RT0003
+//! stdout:
+//! | wö
+//! since: 5.0.0
+// 12 §Strings, StringView rule 2: a bound on a byte that continues a character panics — "ö" is
+// the bytes 1 and 2 of "wörld", and 0..2 ends inside it.
+import std.io { println };
+
+fn main(): void {
+    let s = "wörld";
+    println(f"{s[0..3]}");
+    println(f"{s[0..2]}");
+}

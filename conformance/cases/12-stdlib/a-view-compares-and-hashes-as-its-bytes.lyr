@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true true true true false true
+//! | 1 -1 bc "bc"
+//! since: 5.0.0
+// 12 §Strings, StringView rule 5: a view compares, orders and hashes by its bytes — equal to a
+// string of the same bytes, either way round, and found in a map by one —, shows its text and
+// debugs quoted.
+import std.collections { Map };
+import std.io { println };
+
+fn main(): void {
+    let v = "abc"[1..];
+    println(f"{v == "bc"} {"bc" == v} {v != "bd"} {v < "bd"} {"c" < v} {v >= "ba"}");
+    let m = Map<StringView, int>.new();
+    m.insert("key=1"[..3], 1);
+    println(f"{m.get("key") ?? -1} {m.get("kez") ?? -1} {v} {v:?}");
+}

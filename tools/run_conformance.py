@@ -159,10 +159,13 @@ def run_case(case, spec, lyric5, profile, workdir):
         command += ["--emit", "ir"]
     if spec["update"]:
         # 'lyric5 update' in the package first: what it writes is what the build reads
-        updated = subprocess.run([str(lyric5), "update"], capture_output=True, text=True, cwd=cwd, env=env)
+        updated = subprocess.run([str(lyric5), "update"], capture_output=True, text=True, cwd=cwd, env=env,
+                                 encoding="utf-8", errors="replace")
         if updated.returncode != 0:
             return fail(f"'lyric5 update' failed (exit {updated.returncode}):\n{updated.stderr}")
-    compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd, env=env)
+    # Decoded with replacement: bytes that are no UTF-8 fail the case, they do not end the run.
+    compiled = subprocess.run(command, capture_output=True, text=True, cwd=cwd, env=env,
+                              encoding="utf-8", errors="replace")
     diagnostics = compiled.stderr
 
     if spec["errors"]:
@@ -202,7 +205,7 @@ def run_case(case, spec, lyric5, profile, workdir):
         return fail(f"no binary '{name}' under {cwd / 'out' / profile}")
     try:
         executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd,
-                                  timeout=PROGRAM_TIMEOUT)
+                                  timeout=PROGRAM_TIMEOUT, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         return fail(f"the program did not end within {PROGRAM_TIMEOUT} s")
     expected_exit = 101 if spec["panic"] else spec["exit"]

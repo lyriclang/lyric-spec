@@ -1,0 +1,14 @@
+//! run
+//! panic: LYR-RT0003
+//! stdout:
+//! | ö
+//! since: 5.0.0
+// 12 §Strings, StringView rule 3: an index at a byte that continues a character panics — byte 2
+// of "wörld" is the second of "ö".
+import std.io { println };
+
+fn main(): void {
+    let s = "wörld";
+    println(f"{s[1]}");
+    println(f"{s[2]}");
+}

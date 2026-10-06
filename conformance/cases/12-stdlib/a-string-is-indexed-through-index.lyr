@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | w ö
+//! since: 5.0.0
+// 12 §Strings, StringView rule 3: a string and a view conform to `Index<int>` with
+// `Output = char`, so a type parameter that asks for it takes either.
+import std.io { println };
+
+fn firstOf<T :: [Index<int>]>(x: T): T.Output {
+    return x[0];
+}
+
+fn main(): void {
+    println(f"{firstOf("wörld")} {firstOf("wörld"[1..])}");
+}
