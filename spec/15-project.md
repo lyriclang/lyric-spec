@@ -154,7 +154,7 @@ How a program is built — the compiler's settings, not the program
 
 **Conformance.** `conformance/cases/15-project/`, package cases whose manifest changes the
 built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric5.Tests`,
-`ProfileTests`).
+`ProfileTests`, `LtoTests`).
 
 1. **`debug`, `release`, `asan` and `tsan`** are built in. `[profile.<name>]` changes a built-in
    profile, or names one of the manifest's own — a lowercase letter, then letters, digits, `_`
@@ -175,6 +175,10 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
    error says why the build failed (`LYR-CLI0006`).
 5. **`fastMath = true`** lets the C compiler treat the program's floating point as not
    IEEE-exact ([03 §1.6](03-types.md)); the runtime's stays exact.
+6. **`lto = true`** lets the C compiler optimize across the program, the native parts
+   ([§5](#5-the-native-part)) and the runtime as they are linked — ThinLTO. A target whose linker
+   takes none — macOS, with the toolchain's C compiler — is built without it, not refused. What a
+   program does is the same either way.
 
 ## 5. The native part
 
