@@ -1,0 +1,13 @@
+//! run
+//! option: --locked
+//! stdout:
+//! | 12
+//! since: 5.0.0
+// 15 §3 rule 4 (the review's M7-9): under --locked the build takes the lock as it is — the
+// branch moved on to 1.1.0 in the repository, and the locked commit, 1.0.0, is read.
+import std.io { println };
+import geo.shapes { area };
+
+fn main(): void {
+    println(f"{area(3, 4)}");
+}

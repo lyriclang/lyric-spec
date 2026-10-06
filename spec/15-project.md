@@ -138,6 +138,11 @@ the toolchain's own tests (`tests/Lyric5.Tests`, `LockTests`).
    branch moves to its head, a moved tag to its commit. A version moves only with a manifest that
    asks for it — the selection is the manifests' (07 P4). A name that no package read from git
    has is refused (`LYR-CLI0003`).
+4. Under **`--locked`** (the review's M7-9), `build`, `run` and `test` take the lock **as it
+   is** and write nothing: a revision the graph reads that the lock does not hold is refused
+   before anything is fetched, and so is a lock that holds what the graph does not read, or no
+   lock where the program reads from git (`LYR-PKG0011`, exit 1). A program that reads nothing
+   from git needs none. Without the flag a build writes the lock on (rule 1).
 
 ## 4. Profiles
 
