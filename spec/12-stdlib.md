@@ -151,8 +151,8 @@ said the same is gone), and `char.fromUint32(n): ?char` is
 
 ## Iteration
 
-The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Iterator` and
-`Iterable` on.
+The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Iterator`,
+`Iterable` and `FromIterator` on.
 
 - **`Iterator { type Item; type Error :: [Error] = never; mut fn next(): ?Self.Item throws
   Self.Error; fn sizeHint(): (int, ?int) }`**: `next()` gives the next value, and `null` at the
@@ -198,7 +198,15 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
-  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`.
+  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`, in one pass.
+- **`FromIterator<T> { static fn fromIter<I :: [Iterator<Item = T>]>(it: I): Self throws
+  I.Error; }`** is what **`collect<C :: [FromIterator<Item>]>()`** builds (design 10 B6, I4;
+  M8a S15): the values in a `C`, the type the call's position expects —
+  `let names: Set<string> = words.iter().collect();` —, throwing what the iterator throws. `T[]`
+  is a `FromIterator<T>`, and so are `List<T>`, `Deque<T>`, `Set<T>`, `Heap<T>` and
+  `Map<K, V>` of `(K, V)` (§Collections) — a set's and a map's keys once, a later value of a key
+  replacing the earlier one. `toSet()`, of a `Hashable` element, is `collect()` into a `Set`, as
+  `toList()` is into a `List` and `toArray()` into an array.
 - The terminators **of an element kind** stand on the iterators whose `Item` admits them
   ([05 §13](05-interfaces.md) rule 2): `sum()` and `product()` of a `Num`, zero and one where there
   is no value; `min()` and `max()` of an `Ordered`, `null` without a value, the first of equal

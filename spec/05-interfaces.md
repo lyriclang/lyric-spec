@@ -209,7 +209,9 @@ collections. What is not written here yet is decided in the design documents, no
    associated type as it reaches a type parameter ([§13](#13-generic-extends)): bounded by
    `Iterator`, it is `Iterable` and has `iter()`.
 5. A constraint may **fix** an associated type: `T :: [Iterator<Item = int>]`. Inside the
-   declaration `T.Item` is `int`; an argument whose answer is another type does not satisfy
+   declaration `T.Item` is `int`, wherever it stands — a `T.Item[]` is an `int[]`, a
+   `List<T.Item>` a `List<int>`, an instance a constraint asks for, `FromIterator<T.Item>`, a
+   `FromIterator<int>` (M8a S15); an argument whose answer is another type does not satisfy
    the constraint (`LYR-SEM0028`); a name no associated type of the interface carries is
    refused (`LYR-SEM0128`).
 6. An interface declaring an associated type is a **constraint only** for now

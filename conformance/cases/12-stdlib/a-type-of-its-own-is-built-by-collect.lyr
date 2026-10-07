@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 3 values, the last 30
+//! since: 5.0.0
+// 12 §Iteration (M8a S15): FromIterator is the prelude's; a type of the program's conforms, and
+// collect() builds it where its type is expected — a static reached through the constraint.
+import std.io { println };
+
+class Tally :: [FromIterator<int>] {
+    count: int,
+    last: int,
+
+    static fn fromIter<I :: [Iterator<Item = int>]>(it: I): Tally throws I.Error {
+        var walk = it;
+        var count = 0;
+        var last = 0;
+        var x = try walk.next();
+        while (x != null) {
+            count = count + 1;
+            last = x;
+            x = try walk.next();
+        }
+        return Tally { count = count, last = last };
+    }
+}
+
+fn main(): void {
+    let t: Tally = [10, 20, 30].iter().collect();
+    println(f"{t.count} values, the last {t.last}");
+}
