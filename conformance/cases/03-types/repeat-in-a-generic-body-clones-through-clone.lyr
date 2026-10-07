@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 5 1
+//! | 7 7 7
+//! since: 5.0.0
+// 03 §5.1.2 (M8a S16): under 'T :: [Clone]' a generic repetition clones an object into every slot
+// and copies a value.
+import std.io { println };
+
+class Cell :: [Clone] {
+    var v: int,
+
+    fn clone(): Cell {
+        return Cell { v = this.v };
+    }
+}
+
+fn copies<T :: [Clone]>(x: T, n: int): T[] {
+    return [x] * n;
+}
+
+fn main(): void {
+    let cells = copies(Cell { v = 1 }, 2);
+    cells[0].v = 5;
+    let ints = copies(7, 3);
+    println(f"{cells[0].v} {cells[1].v}");
+    println(f"{ints[0]} {ints[1]} {ints[2]}");
+}
