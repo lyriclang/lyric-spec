@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | true true false true false true true
+//! | [1, 2, 3] [1, 2, 3] ["a", "b"] [2, 3] [[1], [2, 3]] [] [  [1, 2]]
+//! since: 5.0.0
+// 12 §Arrays and views (M8a S14, 10 C9): an array and a view of Equatable elements compare element
+// by element; of Debug elements they print their debug text, a string quoted, in a hole with or
+// without '?', and a width pads it.
+import std.io { println };
+
+fn main(): void {
+    let a = [1, 2, 3];
+    let b = [1, 2, 3];
+    let empty: int[] = [];
+    println(f"{a == b} {a != [1, 2]} {a == [1, 2, 4]} {a[1..] == b[1..]} {a[..1] == b[1..2]} {empty == []} {[] == empty}");
+    println(f"{a} {a:?} {["a", "b"]} {a[1..]} {[[1], [2, 3]]} {empty} [{[1, 2]:>8}]");
+}

@@ -253,6 +253,13 @@ through one reaches the array. `length()` and the index are the primitives
   element, `binarySearch(x)`: the index of an element equal to `x` in sorted elements, any of
   several equal ones, or `null`.
 - Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two.
+- **Equality and display** (10 C9; M8a S14): of an `Equatable` element, `T[]` and `Slice<T>` are
+  `Equatable`, element by element in order — `[1, 2] == [1, 2]`, `xs[1..] == ys[1..]`. Of a
+  `Debug` element they are `Debug` and `Display` alike: `[1, 2, 3]`, each element in its debug
+  text — a string quoted, `["a", "b"]`, where unquoted its bounds would be lost — so `{xs}` and
+  `{xs:?}` print the same, and a width pads it as a `Display` value's text. An array literal
+  beside `==` or `!=` takes the other side's type, `xs == []`; `[] == []` fixes none
+  (`LYR-SEM0060`).
 - The **sorts** (10 C10): `sortBy(cmp)` puts the elements in the order `cmp` gives, and
   `sortByKey(key)` in the order of a `TotalOrder` key; of a `TotalOrder` element, `sort()` in
   ascending order. All three are **stable** — equal elements keep their order — and take a buffer
@@ -393,6 +400,14 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
   review's A1; the greatest first is a heap of a type whose order is reversed):
   `new()`, `push(v)`, `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
   *(Informative.)*
+
+**Equality and display** (10 C9; M8a S14). A `List` and a `Deque` are `Equatable` where their
+elements are, element by element in order; a `Set` by its values and a `Map` by its entries —
+the same keys, equal values, where `V` is `Equatable` — in any order. Each is `Debug` and
+`Display` alike where its elements, a map's keys and values, are `Debug`: `[1, 2]` for a list
+and a deque, `{1, 2}` for a set, `{"a": 1}` for a map, `{}` for an empty set or map, a set's and
+a map's in the order they are walked. A `Heap` is `Debug`, its values in brackets in an order of
+its own that no program may rely on. None is `Hashable` (10 C8).
 
 A value that hashes is **`Hashable`**, `fn hash<H :: [Hasher]>(&h: H): void`, a child of
 `Equatable`: it writes its parts into the hasher, and equal values write the same — nothing checks

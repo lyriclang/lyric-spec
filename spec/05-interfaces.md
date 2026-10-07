@@ -352,16 +352,16 @@ same. What is not written here yet is decided in the design documents, not here.
    `Item`, whose constraints then hold or the member is not there. A parameter that neither the
    target nor a fixation names is bound by nothing: the block reaches no type, and is refused
    where the parameter stands (`LYR-SEM0170`).
-3. **Conditional conformance.** `extend<T :: [Display]> List<T> :: [Display] { … }` gives the
+3. **Conditional conformance.** `extend<T :: [Display]> Bag<T> :: [Display] { … }` gives the
    conformance to every instance whose arguments satisfy the block's constraints and to no
-   other: `List<int>` is a `Display`, `List<Foo>` is not (`LYR-SEM0001`) — the form the
-   library's containers take. A block on one instance conforms that instance alone. The
-   signatures are checked at the block's target (`List<T>` with the block's `T`), as
-   [§1](#1-interfaces-and-conformance) checks them at the type.
+   other: `Bag<int>` is a `Display`, `Bag<Foo>` is not (`LYR-SEM0001`) — the form the
+   library's containers take ([12](12-stdlib.md), 10 C9). A block on one instance conforms that
+   instance alone. The signatures are checked at the block's target (`Bag<T>` with the block's
+   `T`), as [§1](#1-interfaces-and-conformance) checks them at the type.
 4. **Coherence** (X3, X4): one conformance per **type instance and interface instance** in the
    whole program, from whichever site — the type's own list, a block, a generic block. Two sites
    that could meet on one instance are refused where the second stands (`LYR-SEM0133`):
-   `extend List<int> :: [Display]` beside `extend<T :: [Display]> List<T> :: [Display]`, a block
+   `extend Bag<int> :: [Display]` beside `extend<T :: [Display]> Bag<T> :: [Display]`, a block
    beside the type's own declaration, two generic blocks over the same target. There is **no
    specialization**; two blocks on instances that never meet (`Box<int>`, `Box<string>`) stand.
    There is no orphan rule: a block may stand in any module.
@@ -379,12 +379,15 @@ same. What is not written here yet is decided in the design documents, not here.
    in an array's block, `this == null` and `this!` in an optional's, `let (a, _) = this;` in a
    tuple's. `length()` stays the primitive ([03 §5](03-types.md)). An element of a tuple comes
    first, a block's member after. A shape **conforms** through a block that names the interface,
-   `extend<T :: [Display]> T[] :: [Display] { … }` — every shape the block's constraints admit
+   `extend<T :: [Describe]> T[] :: [Describe] { … }` — every shape the block's constraints admit
    (rule 3), with the signatures checked at the shape, `Self` read as it (`LYR-SEM0020`,
    `LYR-SEM0042`). That is the one way a shape satisfies a constraint (`LYR-SEM0028`
    otherwise), and a member called through the constraint is the block's. Two blocks on
    overlapping shapes giving one interface — of either's chain — are two conformances
-   (`LYR-SEM0133`). A value of the interface is not made from a shape yet (`LYR-SEM0047`).
+   (`LYR-SEM0133`). A shape that conforms to `Equatable` so compares with `==` and `!=`
+   through its block's `equals`, and one that conforms to `Display` or `Debug` renders in an
+   f-string hole, as a named type does — std.core's arrays and views do (10 C9; M8a S14). A
+   value of the interface is not made from a shape yet (`LYR-SEM0047`).
 7. **Blanket blocks** (04 D15): a block whose target is its own parameter, `extend<T :: [I]> T
    { … }`, adds its members to **every type its constraints admit** — the receiver binds `T`,
    `this` is the receiver: `x.greeting()` on every `Named`. A member of the type's own, of
@@ -452,7 +455,9 @@ same. What is not written here yet is decided in the design documents, not here.
    `Slice<T>` or a function to `clone`, a function to `default`, an array or a view to `hash`
    (10 C8) — is
    `LYR-SEM0135` with the field's type, and the member is written by hand.
-7. **`Debug` is given unasked** to every struct, class and enum that writes none, **where the
+7. **`Debug` is given unasked** to every struct, class and enum that writes none — in its
+   declaration or in a block, a block under a constraint included, as std's containers write
+   theirs —, **where the
    fields allow it**: a type holding an interface value, a function, or a type that has no
    `debug()` of its own gets none, silently — there was nothing asked and nothing to report —
    and `x.debug()` on it is `LYR-SEM0012`. Listing `Debug` asks, and then rule 6 names the

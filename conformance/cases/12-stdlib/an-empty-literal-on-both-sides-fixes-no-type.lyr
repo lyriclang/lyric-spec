@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 12 §Arrays and views (M8a S14): an array literal beside '==' takes the other side's type, and
+// '[]' on both sides gives neither one.
+fn main(): void {
+    let same = [] == [];
+}
