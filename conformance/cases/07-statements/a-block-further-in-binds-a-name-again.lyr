@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 2 1 5 3
+//! since: 5.0.0
+// 07 §4.2: a block further in may bind a name of an outer block, or a parameter, again; its
+// binding hides the outer one until the block ends.
+import std.io { println };
+
+fn f(x: int): int {
+    if (x > 0) {
+        let x = 2;
+        return x;
+    }
+    return x;
+}
+
+fn main(): void {
+    let y = 1;
+    var inner = 0;
+    if (true) {
+        let y = 5;
+        inner = y;
+    }
+    let g = (x: int) => {
+        if (x > 1) {
+            let x = 3;
+            return x;
+        }
+        return x;
+    };
+    println(f"{f(1)} {y} {inner} {g(4)}");
+}

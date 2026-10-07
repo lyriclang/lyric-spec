@@ -368,6 +368,10 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
    hashes as the string of its bytes —, `Display`, its text, and `Debug`, quoted. `==`, `!=` and
    the orderings between a string and a view compare the two as views: `"abc"[1..] == "bc"`.
 
+**Repetition** (design 10 C7): `s * n` is the text `s` `n` times over — `""` for `n` of 0 — and a
+negative `n` panics with `LYR-RT0007`, as `[x] * n` does; `n * s` is refused, the one order of
+[03 §5.1](03-types.md).
+
 ## Collections
 
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11). An

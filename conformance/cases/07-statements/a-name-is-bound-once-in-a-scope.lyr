@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0176
+//! since: 5.0.0
+// 07 §4.2: a second binding of a name in one block is refused — it used to bind nothing, and the
+// name went on meaning the first.
+fn main(): void {
+    let x = 1;
+    let x = "two";
+}

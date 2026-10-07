@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 7 7
+//! since: 5.0.0
+// 03 §10.1: an alias and the type it names are one type, both ways.
+import std.io { println };
+
+type Score = int;
+
+fn twice(s: Score): int {
+    return s * 2;
+}
+
+fn main(): void {
+    let s: Score = 7;
+    let i: int = s;
+    println(f"{i} {twice(3) + 1}");
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 12 Strings, repetition: the count stands right — n * s is refused, the one order of [x] * n.
+fn main(): void {
+    let s = 3 * "x";
+}

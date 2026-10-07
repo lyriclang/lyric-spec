@@ -1,0 +1,21 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | one
+//! stderr:
+//! | panic [LYR-RT0008]: a task given to a closed scope
+//! since: 5.0.0
+// 10 §4.5 (the review's M6-27): once close() has returned, the scope takes no task.
+import std.io { println };
+import std.task { TaskScope };
+
+fn main(): void throws Error {
+    let scope = TaskScope.new();
+    let first = scope.spawn(() => {
+        println("one");
+    });
+    try scope.close();
+    let second = scope.spawn(() => {
+        println("two");
+    });
+}

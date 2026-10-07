@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | made
+//! | made too
+//! since: 5.0.0
+// 10 §1.1, 12 (a coroutine is Closeable): a generator that never yields — an empty body, a body that
+// only throws — is a coroutine like any, and 'using' closes it.
+import std.io { println };
+
+class Stop :: [Error] {
+    fn message(): string {
+        return "stop";
+    }
+}
+
+fn none(): Coroutine<int> {
+}
+
+fn refuses(): Coroutine<int> throws Stop {
+    throw Stop { };
+}
+
+fn main(): void throws Stop {
+    using let a = none();
+    println("made");
+    using let b = refuses();
+    println("made too");
+}

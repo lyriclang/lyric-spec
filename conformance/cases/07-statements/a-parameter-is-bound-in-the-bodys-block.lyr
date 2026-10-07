@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0176
+//! since: 5.0.0
+// 07 §4.2: a parameter counts as bound in the body's own block; a let of its name there is refused.
+fn f(x: int): int {
+    let x = 2;
+    return x;
+}
+
+fn main(): void {
+    let y = f(1);
+}

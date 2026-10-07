@@ -711,3 +711,13 @@ Type parameters, their inference, and what an instance is
 4. The arguments of the value form follow [§9.1](#91-type-parameters-and-instances) rule 3 —
    their number, also for a function that is not generic (`plain<int>`), and their
    constraints.
+
+## 10. Aliases
+
+A **type alias** names a type ([03 T15](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+
+1. `type Name = T;` names `T`: the alias and `T` are one type — a value of either is a value of the
+   other —, and the alias is as visible as its word says ([04](04-modules.md)).
+2. **`opaque type` is refused** (`LYR-SEM0175`; the audit of 2026-10-07 found it taken in silence).
+   A struct of one field takes its place: it has the layout of its field (03 T15), and its
+   conformances, `with` and the field reach what an opaque type reached through `as` twice.

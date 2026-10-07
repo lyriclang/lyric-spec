@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0175
+//! since: 5.0.0
+// 03 §10.2: 'opaque type' is no form of Lyric 5 — a struct of one field takes its place.
+opaque type Meters = float;
+
+fn main(): void {
+}
