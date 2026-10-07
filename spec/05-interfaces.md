@@ -478,7 +478,16 @@ collections. What is not written here yet is decided in the design documents, no
    field. `Display` is never automatic ([§12](#12-the-operator-interfaces) rule 8). `Debug` is
    `{ fn debug(): string; fn debugTo(&out: StringBuilder): void; }`, `debugTo` by default
    appending `debug()`, as `Display`'s `showTo` appends `show()`; `{x:?}` calls `debugTo`.
-8. *(Informative.)* The synthesized member stands in an `extend` block of the type's own
+8. **`Identity`** (02 M10, 04 D7; N2b) is an object's: `class Node :: [Identity]` is given
+   `Equatable` and `Hashable` **by the object** — `equals` is `same(this, o)`, `hash` writes the
+   object's address, which holds while it lives (nothing moves, 01 L1) — so a `Map<Node, X>`
+   keys by the object and two objects of equal fields are two keys. Listed beside it,
+   `Equatable` and `Hashable` are those two; a generic class asks nothing of its parameters.
+   A struct or an enum is a value and has no identity, and an `equals` or a `hash` the class
+   writes beside `Identity` would be a second answer to its question: both are refused
+   (`LYR-SEM0135`), a conformance a block writes by hand as one a list does. The prelude
+   passes `Identity` on beside `Equatable` and `Hashable`.
+9. *(Informative.)* The synthesized member stands in an `extend` block of the type's own
    module, generated as source and compiled like one written; it is reached, overridden and
    qualified exactly as a block's member is. Hints about its style are nobody's to act on and
    are not reported.

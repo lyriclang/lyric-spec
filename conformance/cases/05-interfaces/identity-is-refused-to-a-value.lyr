@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0135
+//! since: 5.0.0
+// 05 §14.8: a struct or an enum is a value and has no identity — in its list, or in a block by hand.
+struct Point :: [Identity] {
+    x: int,
+}
+
+enum Side :: [Identity] { Left, Right }
+
+struct Size {
+    w: int,
+}
+
+extend Size :: [Identity] { }
+
+fn main(): void {
+}

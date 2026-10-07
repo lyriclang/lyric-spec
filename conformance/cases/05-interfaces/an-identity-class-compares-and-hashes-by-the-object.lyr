@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | true false true
+//! | 2 3 2
+//! | 1 true
+//! since: 5.0.0
+// 05 §14.8: a class listing Identity compares by the object and hashes its address — two objects
+// of equal fields are two keys; a generic class asks nothing of its parameter, a function included;
+// a constraint names Identity without an import.
+import std.io { println };
+import std.collections { Map, Set };
+
+class Node :: [Identity] {
+    name: string,
+}
+
+class Cell<T> :: [Identity] {
+    v: T,
+}
+
+fn identical<T :: [Identity]>(a: T, b: T): bool {
+    return a == b;
+}
+
+fn main(): void {
+    let a = Node { name = "x" };
+    let b = Node { name = "x" };
+    println(f"{a == a} {a == b} {a != b}");
+    let seen = Map<Node, int>.new();
+    seen.insert(a, 1);
+    seen.insert(b, 2);
+    seen.insert(a, 3);
+    println(f"{seen.length()} {seen.get(a) ?? 0} {seen.get(b) ?? 0}");
+    let cells = Set<Cell<fn() -> int>>.new();
+    let c = Cell<fn() -> int> { v = () => 1 };
+    cells.insert(c);
+    cells.insert(c);
+    println(f"{cells.length()} {identical(c, c)}");
+}

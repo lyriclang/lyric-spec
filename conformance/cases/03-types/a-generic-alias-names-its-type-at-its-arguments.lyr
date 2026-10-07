@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 2 1 c
+//! | 1 3 42
+//! | 2.5 1
+//! since: 5.0.0
+// 03 §10.3: a generic alias names its type at the arguments of the use — a tuple, a map with a
+// default for its second parameter, a function type; in a generic signature and field, inside
+// another alias, and inside its own argument.
+import std.io { println };
+import std.collections { Map };
+
+type Pair<T> = (T, T);
+type Table<K, V = int> = Map<K, V>;
+type Op<T> = fn(T) -> T;
+type Rows<T> = List<Pair<T>>;
+
+struct Holder<T> {
+    inner: Pair<T>,
+}
+
+fn swap<T>(p: Pair<T>): Pair<T> {
+    return (p.1, p.0);
+}
+
+fn main(): void {
+    let q = swap((1, 2));
+    let nested: Pair<Pair<string>> = (("a", "b"), ("c", "d"));
+    println(f"{q.0} {q.1} {nested.1.0}");
+    let t: Table<string> = Map.new();
+    t.insert("x", 3);
+    let double: Op<int> = (x) => x * 2;
+    println(f"{t.length()} {t.get("x") ?? 0} {double(21)}");
+    let h = Holder<float> { inner = (1.5, 2.5) };
+    let rows: Rows<int> = List.new();
+    rows.push((7, 8));
+    println(f"{h.inner.1} {rows.length()}");
+}

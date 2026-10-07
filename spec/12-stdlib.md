@@ -446,3 +446,5 @@ it. An integer writes its word (`writeInt`, `writeUint` for the unsigned), a `bo
 `char` its code point as a word, a `string` its bytes and then 255, which no UTF-8 text holds. A
 `float` is none (10 SL-26); an array, a view, a `List`, a `Map` and a `Set` are none either (10
 C8): their slots can be written. A type's own hash is synthesized ([05 §14](05-interfaces.md)).
+An object hashes by its address where its class is `Identity` ([05 §14](05-interfaces.md) rule
+8): `hashIdentityInto(o, &h)` writes it as `writeInt` does.
