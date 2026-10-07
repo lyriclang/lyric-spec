@@ -5,7 +5,7 @@
 // 10 §8 rule 4, §9: four threads add to one atomic; each addition is one step.
 import std.io { println };
 import std.sync { Atomic };
-import std.task { Thread };
+import std.thread { Thread };
 
 fn count(total: Atomic<int>): void {
     for (_ in 0..1000) {

@@ -4,7 +4,7 @@
 //! since: 5.0.0
 // 10 §9 rule 1: Thread.spawn runs the body as the first task of a new thread and gives its handle.
 import std.io { println };
-import std.task { Thread };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     let answer = Thread.spawn(() => 6 * 7);

@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | available 0
+//! | acquired
+//! | tryAcquire false true
+//! | available 0
+//! since: 5.0.0
+// 10 §10.7 (M8b S1): a release wakes the task that waits in acquire — given by a task that holds no
+// permit —; tryAcquire never waits. main yields first, so the waiter waits before the release.
+import std.io { println };
+import std.sync { Semaphore };
+import std.task { spawn, yieldNow, Cancelled };
+
+fn main(): void throws Cancelled {
+    let sem = Semaphore.new(0);
+    let waiter = spawn(() => {
+        try sem.acquire();
+        println("acquired");
+    });
+    try yieldNow();
+    println(f"available {sem.available()}");
+    sem.release();
+    try waiter.await();
+    let none = sem.tryAcquire();
+    sem.release();
+    let one = sem.tryAcquire();
+    println(f"tryAcquire {none} {one}");
+    println(f"available {sem.available()}");
+}

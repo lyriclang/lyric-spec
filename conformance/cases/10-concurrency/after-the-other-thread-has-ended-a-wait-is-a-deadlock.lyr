@@ -6,7 +6,8 @@
 // 10 §2 rule 12: while the other thread lives, nothing is proven. It ends without having sent:
 // from then on the wait of the main thread's task can never end, and it panics.
 import std.io { println };
-import std.task { sleep, Thread, Channel };
+import std.task { sleep, Channel };
+import std.thread { Thread };
 import std.time { Duration };
 
 fn main(): void throws Error {

@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §10 rule 1: a body that waits keeps the mutex — the other task of the thread waits for it.
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex };
+import std.task { spawn, sleep, yieldNow };
+import std.sync { Mutex };
 import std.time { Duration };
 
 fn main(): void throws Error {

@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §10 rule 4: a task that waits for a lock throws Cancelled when it is cancelled.
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, Cancelled };
+import std.task { spawn, sleep, yieldNow, Cancelled };
+import std.sync { Mutex };
 import std.time { Duration };
 
 fn main(): void throws Error {

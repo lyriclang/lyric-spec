@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0008]: Semaphore.new: a negative count -1
+//! since: 5.0.0
+// 10 §10.7 (M8b S1): permits are a count.
+import std.sync { Semaphore };
+
+fn main(): void {
+    let sem = Semaphore.new(-1);
+}

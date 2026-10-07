@@ -6,7 +6,8 @@
 // it done.
 import std.io { println };
 import std.sync { Atomic };
-import std.task { Thread, Once };
+import std.sync { Once };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     let once = Once.new();

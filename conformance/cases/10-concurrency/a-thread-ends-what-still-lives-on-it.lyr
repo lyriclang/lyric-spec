@@ -9,7 +9,8 @@
 // parked in a wait, or not yet started. The thread cancels it and runs until it has ended: its
 // 'defer' runs, its handle is done, and the main thread, which awaits it, goes on.
 import std.io { println };
-import std.task { spawn, sleep, Thread, Channel, Cancelled, TaskStatus };
+import std.task { spawn, sleep, Channel, Cancelled, TaskStatus };
+import std.thread { Thread };
 import std.time { Duration };
 
 fn waiter(name: string, never: Channel<int>): int throws Cancelled {

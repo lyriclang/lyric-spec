@@ -6,7 +6,8 @@
 // still sleeps is not waited for; the thread cancels it and ends it itself, while the program
 // goes on and ends with main.
 import std.io { println };
-import std.task { sleep, spawnDetached, Thread };
+import std.task { sleep, spawnDetached };
+import std.thread { Thread };
 import std.time { Duration };
 
 fn main(): void throws Error {

@@ -6,7 +6,8 @@
 // 10 §10 rule 6: a 'Once' whose body panicked is poisoned too - its 'run' panics from then on.
 // (A body that THROWS leaves the work to the next call, rule 3.)
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.task { spawn, sleep, yieldNow, TaskStatus };
+import std.sync { Mutex, RwLock, Once };
 import std.time { Duration };
 
 fn said(s: TaskStatus<void>): string {

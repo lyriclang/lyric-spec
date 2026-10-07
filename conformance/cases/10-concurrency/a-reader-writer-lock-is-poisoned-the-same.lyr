@@ -6,7 +6,8 @@
 // 10 §10 rule 6: a reader that panics would have held its share for ever; the share comes free
 // and the lock is poisoned - the writer that comes next panics.
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.task { spawn, sleep, yieldNow, TaskStatus };
+import std.sync { Mutex, RwLock, Once };
 import std.time { Duration };
 
 fn said(s: TaskStatus<void>): string {

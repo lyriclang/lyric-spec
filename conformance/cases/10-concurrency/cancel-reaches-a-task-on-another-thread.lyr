@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §9 rule 1: cancel() on a thread's task ends its wait there (§3).
 import std.io { println };
-import std.task { sleep, Thread, Cancelled };
+import std.task { sleep, Cancelled };
+import std.thread { Thread };
 import std.time { Duration };
 
 fn main(): void throws Error {

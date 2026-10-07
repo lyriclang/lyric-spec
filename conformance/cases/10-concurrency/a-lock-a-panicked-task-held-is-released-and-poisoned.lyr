@@ -8,7 +8,8 @@
 // 10 §10 rule 6: a panic in the body unwinds nothing, so the lock would stay held. The scheduler
 // releases it and poisons it: the next 'lock' panics, naming the first panic.
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.task { spawn, sleep, yieldNow, TaskStatus };
+import std.sync { Mutex, RwLock, Once };
 import std.time { Duration };
 
 fn said(s: TaskStatus<void>): string {

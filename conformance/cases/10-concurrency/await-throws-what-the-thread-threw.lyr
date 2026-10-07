@@ -4,7 +4,7 @@
 //! since: 5.0.0
 // 10 §9 rule 1: await() on a thread's task throws what its body threw (§2 rule 9).
 import std.io { println };
-import std.task { Thread };
+import std.thread { Thread };
 
 class Oops :: [Error] {
     fn message(): string { return "oops"; }

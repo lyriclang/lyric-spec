@@ -5,7 +5,8 @@
 //! since: 5.0.0
 // 10 §11 rules 1-2: a pool runs the tasks given to it on its threads and gives their handles.
 import std.io { println };
-import std.task { Channel, Pool };
+import std.task { Channel };
+import std.thread { Pool };
 
 fn main(): void throws Error {
     let pool = Pool.new(3);

@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+//! | [] [7]
+//! | 1000 499500 true
+//! since: 5.0.0
+// 10 §11.5 (M8b S1): parallelMap gives f of each element in the elements' order, whichever thread
+// computed it — an empty view and a single element too.
+import std.io { println };
+import std.core { arrayOf };
+import std.task { Cancelled };
+import std.thread { parallelMap };
+
+fn main(): void throws Cancelled {
+    let squares = try parallelMap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (x: int) => x * x);
+    let none: int[] = [];
+    let empty = try parallelMap(none, (x: int) => x);
+    let one = try parallelMap([7], (x: int) => x);
+    let many = try parallelMap(arrayOf(1000, (i: int) => i), (x: int) => x);
+    var sum = 0;
+    var inOrder = true;
+    for (i in 0..many.length()) {
+        if (many[i] != i) {
+            inOrder = false;
+        }
+        sum += many[i];
+    }
+    println(f"{squares}");
+    println(f"{empty} {one}");
+    println(f"{many.length()} {sum} {inOrder}");
+}
