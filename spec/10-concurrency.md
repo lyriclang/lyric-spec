@@ -280,7 +280,7 @@ values of their types.
 
 A program runs on the threads it starts ([06 G1–G3, N7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). Each has a scheduler of
 its own, which runs that thread's tasks as §2 says, and a task never moves to another thread.
-Threads run at the same time.
+Threads run at the same time. `Thread` is `std.thread`'s (10 Q10; the module cut, M8b S1).
 
 1. **`Thread.spawn(body)`** starts a thread and runs `body` there as its first task. It gives
    that task's handle, a `Task<T> throws E` (§2 rule 8): `await()` on it waits from any thread,
@@ -301,8 +301,7 @@ Threads run at the same time.
 ## 10. Locks
 
 A lock hands a value to one task at a time ([06 G4, K6, N10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). The types are
-`std.task`'s — `std.sync`'s by the module cut (10 Q10), which they join once a module can reach
-another's scheduler (M7). A task that waits for a lock parks, as at every wait (§2): the other
+`std.sync`'s (10 Q10; the module cut, M8b S1). A task that waits for a lock parks, as at every wait (§2): the other
 tasks of its thread run meanwhile — a lock is needed on one thread too, wherever a body waits.
 
 1. **`Mutex<T>`**, made by `Mutex<T>.new(value)`: **`lock(body)`** runs `body` while the running
@@ -328,11 +327,19 @@ tasks of its thread run meanwhile — a lock is needed on one thread too, wherev
    first panic; a task that already waits for the lock wakes with the release and panics the
    same way. A `Once` whose body panicked is poisoned too. An error in a body — `Cancelled`
    among them — unwinds, the body's `defer` releases, and nothing is poisoned (rule 4).
+7. **`Semaphore`**, made by `Semaphore.new(n)` with `n` permits — a negative `n` panics
+   (`LYR-RT0008`) —, is a waker ([06 K4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md), the review's M6-31). **`acquire()`** takes a
+   permit, waiting while none is left — a wait (rule 4). **`tryAcquire()`** takes one where one is
+   left, says whether it did, and never waits. **`release()`** gives one back and wakes the tasks
+   that wait: any task may, on any thread, and none needs to hold a permit. **`available()`** is
+   the count now. A release orders as a lock does (rule 5): what a task did before `release()`
+   happens before what a task does after the `acquire()` that takes that permit. A permit is no
+   hold: a panic poisons no semaphore (rule 6).
 
 ## 11. Pools
 
-A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). `Pool` is `std.task`'s —
-`std.thread`'s by the module cut (10 Q10), which it joins with M7.
+A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)). `Pool` is
+`std.thread`'s (10 Q10; the module cut, M8b S1).
 
 1. **`Pool.new(n)`** starts `n` threads, one at least, each with a scheduler of its own (§9).
 2. **`pool.spawn(body)`** runs `body` as a task on one of the pool's threads, each in turn, and
@@ -344,13 +351,19 @@ A pool spreads tasks over threads of its own ([06 G2, T1, P5](https://github.com
 4. A task given to a closed pool is a panic (`LYR-RT0008`). A task given **while** the pool
    closes is run or refused so — the check against the close and the hand-over to a thread are
    one step (the review's M6-27) —; none is left on a thread that has ended.
+5. **`parallelMap(xs, f)`** ([06 P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)) gives an array of `f(x)` for each element `x` of the
+   view `xs`, in the elements' order. The calls run on the program's own pool — a thread for each
+   processor, started at the first call, there until the program ends —, the first element's on
+   the caller's thread. Where calls throw, `parallelMap` throws, once every call it started has
+   ended, the error of the **first element in order** whose call throws: every element before it
+   was called once, a later one perhaps not. It is a wait (§3): a cancelled caller cancels the
+   calls it started and throws `Cancelled`.
 
 ## 12. Signals
 
 A program learns of the system's signals through a channel ([06 K5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md),
-[10 Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)). `Signal` and `signals` are `std.task`'s — `std.os`'s by the module
-cut, which they join once modules can reach the scheduler (M7, M8b). No Lyric code runs in a
-signal handler.
+[10 Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)). `Signal` and `signals` are `std.os`'s (10 Q9, Q10; the
+module cut, M8b S1). No Lyric code runs in a signal handler.
 
 1. A **`Signal`** names a signal abstractly: `Interrupt`, `Terminate`, `Hangup`, `Quit`, `User1`,
    `User2`, `WindowChange`, or `Other(n)` — the system's number `n`. Windows knows `Interrupt`

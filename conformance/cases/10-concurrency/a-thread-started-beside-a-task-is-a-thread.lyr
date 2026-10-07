@@ -8,7 +8,8 @@
 // thread a task - that one prints 'false' instead of never ending.
 import std.io { println };
 import std.sync { Atomic };
-import std.task { spawn, Thread };
+import std.task { spawn };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     let started = Atomic<int>.new(0);

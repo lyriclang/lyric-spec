@@ -4,7 +4,7 @@
 //! since: 5.0.0
 // 10 §9 rule 4: what a task did before it ended happens before await() on it returns.
 import std.io { println };
-import std.task { Thread };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     var seen = 0;

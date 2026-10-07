@@ -6,7 +6,8 @@
 // 10 §10 rule 6: an error in the body - 'Cancelled' among them - unwinds: the body's 'defer'
 // releases the lock, and nothing is poisoned.
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.task { spawn, sleep, yieldNow, TaskStatus };
+import std.sync { Mutex, RwLock, Once };
 import std.time { Duration };
 
 fn said(s: TaskStatus<void>): string {

@@ -7,7 +7,8 @@
 // threads as a thread ends (§9 rule 2): the task left behind is cancelled, and has ended when
 // 'close()' returns.
 import std.io { println };
-import std.task { spawn, Pool, Channel, Cancelled };
+import std.task { spawn, Channel, Cancelled };
+import std.thread { Pool };
 
 fn waiter(never: Channel<int>): int throws Cancelled {
     defer println("the defer ran");

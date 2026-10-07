@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | failed at 5
+//! | failed at 1
+//! since: 5.0.0
+// 10 §11.5 (M8b S1): of the elements whose call throws, the first in order gives the error — the
+// first element's own included, whose call runs on the caller's thread.
+import std.io { println };
+import std.task { Cancelled };
+import std.thread { parallelMap };
+
+class Odd :: [Error] {
+    n: int,
+
+    fn message(): string {
+        return f"odd {this.n}";
+    }
+}
+
+fn checked(x: int): int throws Odd {
+    if (x % 2 == 1) {
+        throw Odd { n = x };
+    }
+    return x;
+}
+
+fn main(): void throws Cancelled {
+    for (xs in [[2, 4, 5, 6, 7, 9, 11, 13], [1, 2, 3]]) {
+        try {
+            let all = parallelMap(xs, (x: int) => try checked(x));
+            println(f"no failure {all}");
+        } catch (e: Odd) {
+            println(f"failed at {e.n}");
+        }
+    }
+}

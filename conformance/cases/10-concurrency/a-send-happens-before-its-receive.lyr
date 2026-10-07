@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §6 rule 1, §9 rule 5: what a thread did before a send, the receiver of its value sees.
 import std.io { println };
-import std.task { Thread, Channel };
+import std.task { Channel };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     var shared = 0;

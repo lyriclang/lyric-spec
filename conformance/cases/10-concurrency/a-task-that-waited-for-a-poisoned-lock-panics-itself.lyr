@@ -8,7 +8,8 @@
 // 10 §10 rule 6: a task already parked for the lock when its holder panics is woken by the
 // release, sees the poison, and panics itself - this is not a deadlock (§2 rule 12).
 import std.io { println };
-import std.task { spawn, sleep, yieldNow, Mutex, RwLock, Once, TaskStatus };
+import std.task { spawn, sleep, yieldNow, TaskStatus };
+import std.sync { Mutex, RwLock, Once };
 import std.time { Duration };
 
 fn said(s: TaskStatus<void>): string {

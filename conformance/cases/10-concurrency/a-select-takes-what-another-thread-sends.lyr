@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §7 rule 2: a select waits on channels that other threads send to.
 import std.io { println };
-import std.task { Thread, Channel, Select };
+import std.task { Channel, Select };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     let first = Channel<int>.new();

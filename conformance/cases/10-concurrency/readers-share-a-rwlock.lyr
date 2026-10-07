@@ -5,7 +5,8 @@
 //! since: 5.0.0
 // 10 §10 rule 2: readers share a reader-writer lock; a writer holds it alone.
 import std.io { println };
-import std.task { spawn, yieldNow, RwLock };
+import std.task { spawn, yieldNow };
+import std.sync { RwLock };
 
 fn main(): void throws Error {
     let rw = RwLock<int>.new(1);

@@ -5,7 +5,7 @@
 //! since: 5.0.0
 // 10 §12 rule 1: a Signal names a signal abstractly, or by the system's number.
 import std.io { println };
-import std.task { Signal };
+import std.os { Signal };
 
 fn name(s: Signal): string {
     return match (s) {

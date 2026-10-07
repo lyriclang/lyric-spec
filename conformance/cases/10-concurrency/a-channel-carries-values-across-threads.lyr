@@ -7,7 +7,8 @@
 //! since: 5.0.0
 // 10 §6 rule 1: a channel carries values between threads, in the order they were sent.
 import std.io { println };
-import std.task { Thread, Channel, ChannelClosed };
+import std.task { Channel, ChannelClosed };
+import std.thread { Thread };
 
 fn main(): void throws Error {
     let ping = Channel<int>.new();

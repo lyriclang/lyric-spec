@@ -4,7 +4,8 @@
 //! since: 5.0.0
 // 10 §10 rules 1, 5: four threads add under one mutex; each body finds what the last one left.
 import std.io { println };
-import std.task { Thread, Mutex };
+import std.sync { Mutex };
+import std.thread { Thread };
 
 fn add(m: Mutex<int>): void throws Error {
     for (_ in 0..500) {

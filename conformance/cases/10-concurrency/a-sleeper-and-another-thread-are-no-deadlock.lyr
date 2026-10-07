@@ -5,7 +5,8 @@
 // 10 §2 rule 12: where something can still wake a task, nothing is said - a task of the thread
 // that sleeps, and another thread that lives.
 import std.io { println };
-import std.task { spawn, sleep, Thread, Channel };
+import std.task { spawn, sleep, Channel };
+import std.thread { Thread };
 import std.time { Duration };
 
 fn main(): void throws Error {

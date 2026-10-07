@@ -6,7 +6,8 @@
 // arguments are the same too. The task 'spawn' made is this thread's: it has not run before
 // this thread waits, however long that takes.
 import std.io { println };
-import std.task { spawn, Thread };
+import std.task { spawn };
+import std.thread { Thread };
 
 fn work(n: int): int {
     var sum = 0;

@@ -5,7 +5,7 @@
 //! since: 5.0.0
 // 10 §11 rule 4: a task given to a closed pool is a panic.
 import std.io { println };
-import std.task { Pool };
+import std.thread { Pool };
 
 fn main(): void throws Error {
     let pool = Pool.new(1);

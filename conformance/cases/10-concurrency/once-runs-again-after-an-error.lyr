@@ -5,7 +5,7 @@
 //! since: 5.0.0
 // 10 §10 rule 3: a run whose body throws leaves the work to the next call.
 import std.io { println };
-import std.task { Once };
+import std.sync { Once };
 
 class Oops :: [Error] {
     fn message(): string { return "oops"; }

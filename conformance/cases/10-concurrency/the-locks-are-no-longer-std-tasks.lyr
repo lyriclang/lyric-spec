@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-RES0004
+//! since: 5.0.0
+// 10 §10 (M8b S1): by the module cut (10 Q10) the locks are std.sync's; std.task names none.
+import std.task { Mutex };
+
+fn main(): void {
+}

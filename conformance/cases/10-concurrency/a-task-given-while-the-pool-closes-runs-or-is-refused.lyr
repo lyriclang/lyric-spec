@@ -6,7 +6,8 @@
 // thread that has ended. Thirty rounds of a thread that gives tasks in bursts while main closes
 // the pool; a task lost would leave its receiver waiting for ever, and the round would never end.
 import std.io { println };
-import std.task { sleep, yieldNow, Thread, Pool, Channel };
+import std.task { sleep, yieldNow, Channel };
+import std.thread { Thread, Pool };
 import std.time { Duration };
 
 fn main(): void throws Error {

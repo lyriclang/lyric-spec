@@ -5,7 +5,8 @@
 // 10 §11 rule 3: under `using`, a pool's tasks end before the block does.
 import std.io { println };
 import std.sync { Atomic };
-import std.task { sleep, Pool };
+import std.task { sleep };
+import std.thread { Pool };
 import std.time { Duration };
 
 fn count(total: Atomic<int>): void throws Error {
