@@ -395,7 +395,10 @@ collections. What is not written here yet is decided in the design documents, no
    `LYR-SEM0042`). That is the one way a shape satisfies a constraint (`LYR-SEM0028`
    otherwise), and a member called through the constraint is the block's. Two blocks on
    overlapping shapes giving one interface — of either's chain — are two conformances
-   (`LYR-SEM0133`). A shape that conforms to `Equatable` so compares with `==` and `!=`
+   (`LYR-SEM0133`), except a **parent** another block on the same shape gives under constraints
+   this block's entail: a block giving `Hashable` to `(A, B)` of `Hashable` elements leaves
+   `Equatable` to the block that gives it to `(A, B)` of `Equatable` ones, whose `equals` answers
+   — each interface under its own condition, as 04 D7 synthesizes them (N2a). A shape that conforms to `Equatable` so compares with `==` and `!=`
    through its block's `equals`, and one that conforms to `Display` or `Debug` renders in an
    f-string hole, as a named type does — std.core's arrays and views do (10 C9; M8a S14). A
    value of the interface is not made from a shape yet (`LYR-SEM0047`).

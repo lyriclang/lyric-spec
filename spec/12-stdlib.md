@@ -262,6 +262,8 @@ through one reaches the array. `length()` and the index are the primitives
   element, `binarySearch(x)`: the index of an element equal to `x` in sorted elements, any of
   several equal ones, or `null`.
 - Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two.
+- **Clone** (10 K5; N2a): of a `Clone` element, `T[]` is `Clone` — `clone()` is a new array of the
+  elements' clones, and `[xs] * n` repeats such an array by `clone` ([03 §5.1](03-types.md)).
 - **Equality and display** (10 C9; M8a S14): of an `Equatable` element, `T[]` and `Slice<T>` are
   `Equatable`, element by element in order — `[1, 2] == [1, 2]`, `xs[1..] == ys[1..]`. Of a
   `Debug` element they are `Debug` and `Display` alike: `[1, 2, 3]`, each element in its debug
@@ -425,6 +427,10 @@ element is whatever a container's bounds admit, an object included, and every sl
 what `x in xs` asks ([05 §12](05-interfaces.md) rule 10). A **`Range<T>`** and a
 **`RangeInclusive<T>`** of an `Ordered` `T` are `Contains<T>` too: `start <= x && x < end`, the
 inclusive one with `x <= end`.
+
+**Clone** (10 K5; N2a). A `List`, a `Deque`, a `Set`, a `Map` and a `Heap` are `Clone` where their
+elements — a map's keys and values — are: `clone()` is a new container of the elements' clones, as
+deep as the element type owns; a map keeps its hasher, a heap and a deque their order.
 
 **Equality and display** (10 C9; M8a S14). A `List` and a `Deque` are `Equatable` where their
 elements are, element by element in order; a `Set` by its values and a `Map` by its entries —

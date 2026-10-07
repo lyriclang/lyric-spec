@@ -335,6 +335,11 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    arguments only when `a` holds a value.
 5. Nothing is assigned through `?.`: `a?.f = v` is refused (`LYR-SEM0019`). Narrow first.
 
+### 3.4 Equality and hashing
+
+1. An optional is `Equatable` and `Hashable` where its value's type is (N2a): `null` equals only
+   `null`, and a `?int` is a set's element.
+
 ## 4. Enums
 
 One of several variants, each with a payload or none
@@ -501,7 +506,7 @@ Positional elements in one value
    seen through the type of the binding it was written on, not through another's. A label
    twice in one type is refused.
 4. A tuple is taken apart by a pattern ([09 §2](09-patterns.md)) and by `let (a, b) = t;`.
-   Equality, hashing and display come with the interfaces ([05](05-interfaces.md)).
+   Equality, hashing and display: rule 6.
 5. A tuple **literal** takes the types the position expects of its elements (T8): where a tuple
    of its length is expected — a binding with a type, an assignment, an argument, a return, a
    field — each element stands where its element type is expected, as a binding's value does:
@@ -509,6 +514,12 @@ Positional elements in one value
    `(Color, int)`. An element that does not fit is the element's error (`LYR-SEM0001`). A tuple
    that is no literal is one value of its type and is converted by nothing: an `(int, int)` is
    no `(int, ?int)`.
+6. A tuple of **two to eight** elements is `Equatable`, `Hashable`, `Debug` and `Display` where
+   each of its elements is (04 D7, T16; the audit of 2026-10-07 found none built): `==` compares
+   the elements in order, `hash` feeds them in order, `{t:?}` writes `(1, "x")` and `{t}`
+   `(1, x)` — so `(1.5, 2) == (1.5, 2)` holds and `(int, string)` is a set's element. std.core
+   gives them through blocks, each under its own condition ([05 §13](05-interfaces.md) rule 6); a
+   longer tuple has none of them.
 
 ## 7. Ranges
 

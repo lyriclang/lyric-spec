@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 2 true false
+//! since: 5.0.0
+// 03 §3.4: an optional is Equatable and Hashable where its value's type is — a set of '?int' holds
+// null once.
+import std.io { println };
+import std.collections { Set };
+
+fn same<T :: [Equatable]>(a: T, b: T): bool {
+    return a == b;
+}
+
+fn main(): void {
+    let s = Set<?int>.new();
+    s.insert(null);
+    s.insert(1);
+    s.insert(null);
+    let none: ?int = null;
+    println(f"{s.length()} {same(none, none)} {same(none, 1)}");
+}

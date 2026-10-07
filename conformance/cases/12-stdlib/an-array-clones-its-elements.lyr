@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | [1, 2] true
+//! | [[9, 2], [1, 2]]
+//! since: 5.0.0
+// 12 Arrays and views (10 K5): of a Clone element an array is Clone, and a repetition of an array
+// clones it into every slot.
+import std.io { println };
+
+fn main(): void {
+    let xs = [1, 2];
+    let ys = xs.clone();
+    println(f"{ys} {xs == ys}");
+    let rows = [[1, 2]] * 2;
+    rows[0][0] = 9;
+    println(f"{rows}");
+}

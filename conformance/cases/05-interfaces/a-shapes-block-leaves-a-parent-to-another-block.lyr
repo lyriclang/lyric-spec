@@ -1,0 +1,58 @@
+//! run
+//! stdout:
+//! | t+t #t/#t
+//! | n+t
+//! since: 5.0.0
+// 05 §13.6 (N2a): a shape's block for a child may leave the parent to another block on the same shape
+// whose constraints its own entail — through the child's constraint, the parent's member is that
+// block's; a pair of plain Named elements still gets the parent.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Tagged :: [Named] {
+    fn tag(): string;
+}
+
+extend<A :: [Named], B :: [Named]> (A, B) :: [Named] {
+    fn name(): string {
+        return f"{this.0.name()}+{this.1.name()}";
+    }
+}
+
+extend<A :: [Tagged], B :: [Tagged]> (A, B) :: [Tagged] {
+    fn tag(): string {
+        return f"{this.0.tag()}/{this.1.tag()}";
+    }
+}
+
+struct N :: [Named] {
+    fn name(): string {
+        return "n";
+    }
+}
+
+struct T :: [Tagged] {
+    fn name(): string {
+        return "t";
+    }
+
+    fn tag(): string {
+        return "#t";
+    }
+}
+
+fn both<X :: [Tagged]>(x: X): string {
+    return f"{x.name()} {x.tag()}";
+}
+
+fn named<X :: [Named]>(x: X): string {
+    return x.name();
+}
+
+fn main(): void {
+    println(both((T { }, T { })));
+    println(named((N { }, T { })));
+}
