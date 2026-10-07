@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0059
+//! since: 5.0.0
+// 08 §4.2: '==' has no associativity — 'a == b == c' is refused, though it would type.
+fn main(): void {
+    let a = 1;
+    let t = a == a == true;
+}

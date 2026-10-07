@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0004
+//! since: 5.0.0
+// 07 §5.1: an 'if' and a 'while' test a bool, not a number.
+fn main(): void {
+    let n = 1;
+    if (n) { }
+    while (n) { }
+}

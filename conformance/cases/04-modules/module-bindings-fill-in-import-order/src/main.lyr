@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | a.first
+//! | a.second
+//! | main.mine
+//! | main 3
+//! since: 5.0.0
+// 04 §1.2: an imported module's bindings are filled before the importer's, each module's in
+// declaration order — so 'mine' reads what 'a' declares.
+import app.a;
+import std.io { println };
+
+let mine = a.trace("main.mine", a.second + 1);
+
+fn main(): void {
+    println(f"main {mine}");
+}

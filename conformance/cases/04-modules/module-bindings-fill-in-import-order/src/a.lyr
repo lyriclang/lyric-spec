@@ -1,0 +1,9 @@
+import std.io { println };
+
+pub fn trace(tag: string, v: int): int {
+    println(tag);
+    return v;
+}
+
+pub let first = trace("a.first", 1);
+pub let second = trace("a.second", first + 1);

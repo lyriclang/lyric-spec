@@ -216,7 +216,7 @@ collections. What is not written here yet is decided in the design documents, no
    refused (`LYR-SEM0128`).
 6. An interface declaring an associated type is a **constraint only** for now
    ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`): the value form, the interface
-   with its answer fixed as a fat pointer, comes with the iterators of M8a and is not written
+   with its answer fixed as a fat pointer, comes with M8c (design 03 M4-1) and is not written
    here.
 7. An interface's **parent list** is a constraint on `Self` and may **fix** a parent's
    associated type the same way: `interface Num :: [Add<Out = Self>] { … }`. Every conformer

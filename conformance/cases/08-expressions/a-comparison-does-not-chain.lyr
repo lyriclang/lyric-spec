@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0059
+//! since: 5.0.0
+// 08 §4.2: the comparisons have no associativity — 'a < b < c' is refused, once.
+fn main(): void {
+    let a = 1;
+    let b = 2;
+    let c = 3;
+    let t = a < b < c;
+}
