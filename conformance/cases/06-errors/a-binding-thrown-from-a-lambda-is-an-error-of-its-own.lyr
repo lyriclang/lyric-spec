@@ -1,0 +1,44 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | middle saw first
+//! | outer saw first
+//! stderr:
+//! | error: first
+//! since: 5.0.0
+// 06 §4.4: only a clause's own binding thrown in the clause goes on as the same error; thrown from
+// a lambda it starts an error of its own — what was suppressed into the first stays behind (the
+// twin of a-rethrown-binding-is-the-same-error, whose report names 'second').
+import std.io { println };
+
+class First :: [Error] { fn message(): string { return "first"; } }
+class Second :: [Error] { fn message(): string { return "second"; } }
+
+fn fail(what: int): void throws [First, Second] {
+    if (what == 1) { throw First { }; }
+    if (what == 2) { throw Second { }; }
+}
+
+fn inner(): void throws [First, Second] {
+    defer try fail(2);
+    try fail(1);
+}
+
+fn middle(): void throws Error {
+    try { inner(); } catch (e) {
+        println(f"middle saw {e.message()}");
+        let again = () => { throw e; };
+        try again();
+    }
+}
+
+fn outer(): void throws Error {
+    try { middle(); } catch (e: First) {
+        println(f"outer saw {e.message()}");
+        throw e;
+    }
+}
+
+fn main(): void throws Error {
+    try outer();
+}

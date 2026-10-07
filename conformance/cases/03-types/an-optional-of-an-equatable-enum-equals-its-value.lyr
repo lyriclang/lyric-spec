@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | true false false true true
+//! since: 5.0.0
+// 03 §3 (O6): an optional and a value of its type compare through the value — an enum's too, either
+// side; null equals no value.
+import std.io { println };
+
+enum Color :: [Equatable] { Red, Green }
+
+fn main(): void {
+    let o: ?Color = .Red;
+    let n: ?Color = null;
+    println(f"{o == Color.Red} {o == Color.Green} {n == Color.Red} {Color.Red == o} {o != Color.Green}");
+}
