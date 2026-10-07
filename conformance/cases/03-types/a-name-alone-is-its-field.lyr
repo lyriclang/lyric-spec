@@ -1,0 +1,62 @@
+//! run
+//! stdout:
+//! | 3 4 9 7 7
+//! | 30 30 7 14 6 12
+//! since: 5.0.0
+// 03 §2.4.4, §8.2.5: 'S { x, y }' is 'S { x = x, y = y }', mixed with written fields, after type
+// arguments, for a struct variant qualified and implicit; one name alone after a type is the
+// shorthand and after a function a trailing block; names before '=>' stay a block's parameters.
+import std.io { println };
+
+struct Point {
+    x: int,
+    y: int,
+}
+
+struct Cell<T> {
+    v: T,
+}
+
+struct One {
+    v: int,
+}
+
+enum Shape {
+    Rect { w: int, h: int },
+    Dot,
+}
+
+fn area(s: Shape): int {
+    return match (s) {
+        .Rect { w, h } => w * h,
+        .Dot => 0,
+    };
+}
+
+fn run(f: fn() -> int): int {
+    return f();
+}
+
+fn combine(f: fn(int, int) -> int): int {
+    return f(3, 4);
+}
+
+fn main(): void {
+    let x = 3;
+    let y = 4;
+    let w = 5;
+    let h = 6;
+    let v = 7;
+    let p = Point { x, y };
+    let q = Point { x, y = 9 };
+    let c = Cell<int> { v };
+    let o = One { v };
+    println(f"{p.x} {p.y} {q.y} {c.v} {o.v}");
+    let r = Shape.Rect { w, h };
+    let s: Shape = .Rect { w, h };
+    let a = run { v };
+    let b = run { 2 * v };
+    let sum = [1, 2, 3].iter().fold(0) { acc, n => acc + n };
+    let product = combine { left, right => left * right };
+    println(f"{area(r)} {area(s)} {a} {b} {sum} {product}");
+}

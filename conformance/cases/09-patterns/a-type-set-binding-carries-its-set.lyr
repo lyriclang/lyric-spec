@@ -1,0 +1,64 @@
+//! run
+//! stdout:
+//! | io
+//! | parse
+//! since: 5.0.0
+// 09 §2.13: the binding of a set carries it — a throw of it throws the set, which the function
+// declares; a match over it is exhaustive with an arm per type.
+import std.io { println };
+
+class Parse :: [Error] {
+    fn message(): string { return "parse"; }
+}
+
+class Io :: [Error] {
+    fn message(): string { return "io"; }
+}
+
+class Other :: [Error] {
+    fn message(): string { return "other"; }
+}
+
+fn fail(n: int): void throws [Parse, Io, Other] {
+    if (n == 0) { throw Parse { }; }
+    if (n == 1) { throw Io { }; }
+    throw Other { };
+}
+
+fn again(n: int): string throws [Parse, Io] {
+    try {
+        fail(n);
+    } catch (e) {
+        match (e) {
+            x in [Parse, Io] => { throw x; }
+            _: Other => { return "other"; }
+        }
+    }
+    return "none";
+}
+
+fn name(n: int): string {
+    try {
+        fail(n);
+    } catch (e) {
+        match (e) {
+            x in [Parse, Io] => {
+                return match (x) {
+                    _: Parse => "parse",
+                    _: Io => "io",
+                };
+            }
+            _ => { return "rest"; }
+        }
+    }
+    return "none";
+}
+
+fn main(): void {
+    try {
+        let r = again(1);
+    } catch (e) {
+        println(e.message());
+    }
+    println(name(0));
+}

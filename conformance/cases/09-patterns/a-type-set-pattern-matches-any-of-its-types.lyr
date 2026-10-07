@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | circle rect three
+//! | circle 2 else 3
+//! since: 5.0.0
+// 09 §2.13: 's in [A, B]' matches a value of either type and binds the interface value; one type
+// bare binds as that type; it stands inside a tuple pattern; over a sealed interface an arm per
+// conformer, sets included, makes the match exhaustive.
+import std.io { println };
+
+sealed interface Shape {
+    fn name(): string;
+}
+
+struct Circle :: [Shape] {
+    fn name(): string { return "circle"; }
+}
+
+struct Rect :: [Shape] {
+    fn name(): string { return "rect"; }
+}
+
+struct Tri :: [Shape] {
+    fn name(): string { return "tri"; }
+}
+
+fn kind(s: Shape): string {
+    return match (s) {
+        x in [Circle, Rect] => x.name(),
+        _ in Tri => "three",
+    };
+}
+
+fn pair(p: (Shape, int)): string {
+    return match (p) {
+        (s in Circle, n) => f"{s.name()} {n}",
+        (_, n) => f"else {n}",
+    };
+}
+
+fn main(): void {
+    println(f"{kind(Circle { })} {kind(Rect { })} {kind(Tri { })}");
+    println(f"{pair((Circle { }, 2))} {pair((Tri { }, 3))}");
+}

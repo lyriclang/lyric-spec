@@ -237,6 +237,9 @@ Two forms of a composite type, chosen once at the type
    `T.new(args)` of the type's `static fn new` — an ordinary static function, which may
    validate, answer any type, and hand out an object that exists already. A type that declares
    no `static fn new` is not callable (`LYR-SEM0013`).
+4. **A name alone is its field** (02 I3; N2c): `Point { x, y }` is `Point { x = x, y = y }`, the
+   value the read of the binding of that name, and the two forms mix, `Point { x, y = 0 }`. A
+   struct variant's initializer takes it too, `Shape.Rect { w, h }` and `.Rect { w, h }`.
 
 ### 2.5 `with`
 
@@ -581,8 +584,14 @@ Functions as values, and the lambdas that make them
 5. **A brace after a name alone** is an initializer's ([§2.4](#24-construction)) or a trailing
    block's, and what it holds says which
    ([08 Y4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)). An
-   initializer holds nothing, or begins `name = value` followed by a `,` or the closing brace;
-   anything else is a block — and a block may begin with an assignment: a **`;` behind that
+   initializer holds nothing, or begins `name = value` followed by a `,` or the closing brace,
+   or is a **list of names** ([§2.4](#24-construction) rule 4), `{ x, y }`, `{ x, y = 0 }`,
+   that no `=>` ends — the names before a `=>` are a trailing block's parameters,
+   `{ acc, x => … }`. **One name alone**, `S { v }`, is the shorthand initializer where `S`
+   names a struct, a class or a struct variant — a type takes no trailing block, its factory is
+   called with parentheses — and a trailing block's everywhere else, `run { v }`; after type
+   arguments, `Box<int> { v }`, it is an initializer.
+   Anything else is a block — and a block may begin with an assignment: a **`;` behind that
    first value** makes it a statement, `run { total = 5; }`. An assigning block without its `;`
    therefore reads as an initializer of the name before it, and is refused where that name is
    no type (`LYR-SEM0011`). An initializer begins no statement — its value would be dropped

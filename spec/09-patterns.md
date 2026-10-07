@@ -76,14 +76,20 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
     against its pattern; `let (a, b) = t;` binds through the same pattern, and a nested tuple
     is taken apart in place: `((a, b), c)`. The arity is the type's, or the pattern is refused
     (`LYR-SEM0029`).
-12. The type patterns `c: Circle` and `s in [Circle, Rect]` are written with the interfaces
-    ([05](05-interfaces.md), M4).
-
 12. **Type.** `c: Circle` and `_: Circle` stand against an **interface value** and match when
     it holds a value of that type ([05 §9](05-interfaces.md#9-any-type-tests-and-type-patterns));
     `c` binds that value **as that type** — the object for a class, a copy for a struct or an
     enum. On a scrutinee whose type is no interface the pattern is refused (`LYR-SEM0131`):
     the static type answers already.
+13. **Type set** (08 Y6; N2c). `s in [Circle, Rect]` and `_ in [Circle, Rect]` stand against an
+    interface value and match when it holds a value of **one of the types**, tested in order —
+    the form of `catch (e in [A, B])` ([06 §4](06-errors.md#4-the-try-block-and-its-clauses)),
+    under the same list rule: one type bare, `s in Circle`, several in brackets, an empty list
+    refused (`LYR-PAR0049`). `s` binds as the one type of a set of one, as `s: Circle` does; of
+    a larger set it binds the **interface value** itself, which **carries the set** as a catch
+    binding does (05 K7): a `match` over a `let` binding of it is exhaustive with an arm per
+    type, and a `throw` of it throws the set. On a scrutinee whose type is no interface the
+    pattern is refused (`LYR-SEM0131`).
 
 ## 3. Exhaustiveness
 
@@ -104,7 +110,7 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
 4. A scrutinee of type `?E` admits `null` and the variants of `E` in one `match`; presence is
    established before a variant is examined, and the arms are still tried in order.
 
-A type pattern covers one conformer. Over an open interface the set of conformers is open, so a
+A type pattern covers one conformer, a type-set pattern each of its types. Over an open interface the set of conformers is open, so a
 match of type patterns needs `_` (`LYR-SEM0050`); over a **sealed** interface
 ([05 §10](05-interfaces.md#10-sealed-interfaces)) the set is closed, and unguarded type
 patterns for every conformer make the match exhaustive — the diagnostic names the conformer
