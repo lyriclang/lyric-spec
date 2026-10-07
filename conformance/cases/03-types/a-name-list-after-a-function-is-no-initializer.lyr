@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0011
+//! since: 5.0.0
+// 03 §8.2.5: '{ a, b }' after a name reads as an initializer's names; after a function it is
+// refused — a trailing block names its parameters before '=>'.
+fn run(f: fn() -> int): int {
+    return f();
+}
+
+fn main(): void {
+    let a = 1;
+    let b = 2;
+    let r = run { a, b };
+}

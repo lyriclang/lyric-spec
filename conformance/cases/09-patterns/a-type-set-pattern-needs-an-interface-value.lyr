@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0131
+//! since: 5.0.0
+// 09 §2.13: on a scrutinee that is no interface value the static type answers already.
+fn main(): void {
+    let n = 5;
+    let m = match (n) {
+        x in [int, string] => 1,
+        _ => 2,
+    };
+}
