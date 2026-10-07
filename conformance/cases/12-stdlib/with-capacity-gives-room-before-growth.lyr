@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 9 16 1
+//! | [0, 1, 2, 3] 100 42 {} 0
+//! since: 5.0.0
+// 12 §Collections (M8a S14, 10 N3): a list with room for twenty does not move while it holds
+// sixteen, so a view taken at the first push sees the later write; a list without it moved at its
+// ninth, and the older view kept the older buffer. Every container takes a capacity.
+import std.io { println };
+import std.collections { Deque, Heap, List, Map, Set };
+
+fn main(): void {
+    let xs = List<int>.withCapacity(20);
+    xs.push(1);
+    let v = xs.asSlice();
+    for (i in 0..15) {
+        xs.push(i);
+    }
+    xs[0] = 9;
+    let ys = List<int>.new();
+    ys.push(1);
+    let w = ys.asSlice();
+    for (i in 0..15) {
+        ys.push(i);
+    }
+    ys[0] = 9;
+    println(f"{v[0]} {xs.length()} {w[0]}");
+    let d = Deque<int>.withCapacity(3);
+    d.pushBack(1);
+    d.pushBack(2);
+    d.pushFront(0);
+    d.pushBack(3);
+    let m = Map<string, int>.withCapacity(100);
+    for (i in 0..100) {
+        m.insert(f"k{i}", i);
+    }
+    println(f"{d} {m.length()} {m.get("k42") ?? -1} {Set<int>.withCapacity(0)} {Heap<int>.withCapacity(5).length()}");
+}

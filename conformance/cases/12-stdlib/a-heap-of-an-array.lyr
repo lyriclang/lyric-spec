@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1 2 2 3 5 8 9 0 7
+//! since: 5.0.0
+// 12 §Collections (M8a S14): 'Heap.of' builds the heap of an array's values — copied, the array
+// unchanged —, the least first as every heap.
+import std.io { println };
+import std.collections { Heap };
+
+fn main(): void {
+    let values = [5, 3, 8, 1, 9, 2, 2];
+    let h = Heap<int>.of(values);
+    var out = "";
+    while (let top = h.pop()) {
+        out = out + f"{top} ";
+    }
+    let none: int[] = [];
+    println(f"{out}{Heap<int>.of(none).length()} {values[0] + values[1] - 1}");
+}

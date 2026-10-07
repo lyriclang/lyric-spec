@@ -13,9 +13,8 @@ Declaring an interface and a conformance, the interface value, how a call resolv
 M4 S1, S3, S4, S4b, S5a, S5b, S6, S7a and S7b; the chapter grows with the milestone's slices —
 synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
 `Iterator<Item = int>` is not written yet; of the operators (D6,
-[§12](#12-the-operator-interfaces)) `in`, `[]` and the conversions `From`/`Into` wait for the
-collections; a conformance of a built-in constructor (`T[] :: [Display]`, X2) waits for the
-same. What is not written here yet is decided in the design documents, not here.
+[§12](#12-the-operator-interfaces)) `in` and the conversions `From`/`Into` wait for the
+collections. What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 

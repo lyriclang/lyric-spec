@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0008]: List.withCapacity: a negative capacity -1
+//! since: 5.0.0
+// 12 §Collections (M8a S14): a capacity is a count; a negative one panics.
+import std.collections { List };
+
+fn main(): void {
+    let n = 2 - 3;
+    let xs = List<int>.withCapacity(n);
+    xs.push(1);
+}
