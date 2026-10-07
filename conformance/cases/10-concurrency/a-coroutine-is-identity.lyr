@@ -1,0 +1,52 @@
+//! run
+//! stdout:
+//! | true false true false
+//! | 2 7
+//! | true false false 2
+//! since: 5.0.0
+// 10 §1.14: a coroutine compares by itself and hashes its address — in a set, as a map's key,
+// through a constraint, and whatever its pulls throw.
+import std.io { println };
+import std.collections { Map, Set };
+
+class Boom :: [Error] {
+    fn message(): string { return "boom"; }
+}
+
+fn count(): Coroutine<int> {
+    yield 1;
+}
+
+fn risky(): Coroutine<int> throws Boom {
+    yield 1;
+}
+
+fn names(): Coroutine<string, int> {
+    yield "a";
+    return 3;
+}
+
+fn identical<T :: [Identity]>(a: T, b: T): bool {
+    return a == b;
+}
+
+fn main(): void {
+    let a = count();
+    let b = count();
+    println(f"{a == a} {a == b} {a != b} {identical(a, b)}");
+    let s = Set<Coroutine<int>>.new();
+    s.insert(a);
+    s.insert(b);
+    s.insert(a);
+    let m = Map<Coroutine<string, int>, int>.new();
+    let n = names();
+    m.insert(n, 7);
+    println(f"{s.length()} {m.get(n) ?? 0}");
+    let r = risky();
+    let q = risky();
+    let rs = Set<Coroutine<int> throws Boom>.new();
+    rs.insert(r);
+    rs.insert(q);
+    rs.insert(r);
+    println(f"{r == r} {r == q} {r.equals(q)} {rs.length()}");
+}

@@ -384,7 +384,9 @@ collections. What is not written here yet is decided in the design documents, no
    type `extend<T> fn(T) -> T { … }` (design 10 S2; M8a S12: `this` is the function, `this(x)`
    calls it), and the same at fixed types, `extend int[] { … }`, `extend fn(char) -> bool { … }`.
    A function type's shape is its parameters, their places, its return and its set, matched as
-   written. The members are reached on every value of
+   written. A coroutine's shape is what it yields and what it returns, `extend<Y, R> Coroutine<Y,
+   R> { … }` (N2d); what its pulls throw is no part of it — the block reaches every coroutine of
+   those, and where a member names the target, it names the receiver. The members are reached on every value of
    that **shape**, the shape binding the parameters as rule 2 says, the constraints checked
    the same way (`LYR-SEM0134`); `this` is the shape, so `this[0]` and `this.length()` stand
    in an array's block, `this == null` and `this!` in an optional's, `let (a, _) = this;` in a
