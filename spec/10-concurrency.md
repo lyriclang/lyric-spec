@@ -95,6 +95,10 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
     (`LYR-SEM0034`) — and a coroutine's body covers it for the functions it calls, as it does for
     its own yields. A yield in a lambda is not of this kind: it makes the lambda a generator
     (rule 11).
+14. A coroutine is **`Identity`** (06 A7; N2d): `==` is `same`, and its hash is its address
+    ([05 §14](05-interfaces.md#14-conformance-synthesis) rule 8) — a `Set` or a `Map` of
+    coroutines finds the same one twice, whatever its pulls throw. `std.core` gives it through
+    one block on `Coroutine<Y, R>` ([05 §13](05-interfaces.md#13-generic-extends) rule 6).
 
 ## 2. Tasks
 
