@@ -364,7 +364,9 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11).
 
 - **`List<T>`** (C3), a class: its elements in order, at the front of a buffer that doubles when
-  full. `new()`, `of(xs)` (a copy of the array). `xs[i]` and `xs[i] = v` through `IndexSet<int>`
+  full. `new()`, `of(xs)` (a copy of the array), `withCapacity(n)` — room for `n` elements before
+  it grows, taken at the first push, since a list holds no value it was not given (10 N3; M8a S14);
+  every container's `withCapacity(n)` panics on a negative `n`. `xs[i]` and `xs[i] = v` through `IndexSet<int>`
   ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`); `get(i)`,
   `null` there. `push(v)`, `pushAll(xs)`, `pop()` (`null` for none), `insert(i, v)`, `removeAt(i)`,
   `removeWhere(p)` (how many went), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
@@ -377,7 +379,8 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
   deque).
 - **`Map<K :: [Hashable], V, H :: [Hasher] = DefaultHasher>`** (C4), a class: what it holds, in
   no order of its own, each key once. `Map<K, V>.new()` hashes with the process's key, so its
-  order differs from run to run; `withHasher(seed)` takes a hasher, which is a value the map
+  order differs from run to run, and `withCapacity(n)` is the same with room for `n` keys before
+  it grows; `withHasher(seed)` takes a hasher, which is a value the map
   copies fresh for every key — `FixedHasher.new()` hashes alike in every run. `insert(k, v)`
   answers the value it replaces or `null`; `get(k)` the value or `null`; `containsKey(k)`;
   `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`; `getOr(k, d)`;
@@ -388,17 +391,18 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
   A Swiss table: groups of eight slots under a control word, the hash's seven low bits compared
   a group at a time, at most seven of eight slots filled.
 - **`Set<T :: [Hashable], H :: [Hasher] = DefaultHasher>`** (C5), a class over a map's keys:
-  `new()`, `withHasher(seed)`, `insert(v)` (whether it was not there), `contains(v)`, `remove(v)`
+  `new()`, `withCapacity(n)`, `withHasher(seed)`, `insert(v)` (whether it was not there), `contains(v)`, `remove(v)`
   (whether it was there), `length()`, `isEmpty()`, `clear()`; `Iterable` over its values, in no
   order of its own.
 - Every iterator's **`toList()`** collects what it gives into a `List` (I4).
-- **`Deque<T>`** (C6), a class over a ring buffer: `new()`, `pushFront(v)`, `pushBack(v)`,
+- **`Deque<T>`** (C6), a class over a ring buffer: `new()`, `withCapacity(n)`, `pushFront(v)`, `pushBack(v)`,
   `popFront()` and `popBack()` (the value or `null`), `peekFront()`, `peekBack()`, `length()`,
   `isEmpty()`; `[i]` from the front, panicking outside `0 ≤ i < length()` (`LYR-RT0003`);
   `Iterable` front to back, a change while it is walked panicking at the next pull (I9).
 - **`Heap<T :: [TotalOrder]>`** (C1), a binary heap over a list, **the least value first** (the
   review's A1; the greatest first is a heap of a type whose order is reversed):
-  `new()`, `push(v)`, `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
+  `new()`, `withCapacity(n)`, `of(xs)` — the array's values, copied, in linear time —, `push(v)`,
+  `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
   *(Informative.)*
 
 **Equality and display** (10 C9; M8a S14). A `List` and a `Deque` are `Equatable` where their
