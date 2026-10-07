@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 2 1
+//! | [10] [10, 20]
+//! | [1, 2] 1 2
+//! since: 5.0.0
+// 12 Collections (10 K5): a container is Clone where its elements are — as deep as they own: the
+// clone's lists are lists of their own; a deque keeps its order, a heap its least, a set its keys.
+import std.io { println };
+import std.collections { Deque, Heap, List, Map, Set };
+
+class Cell :: [Clone] {
+    var v: int,
+
+    fn clone(): Cell {
+        return Cell { v = this.v };
+    }
+}
+
+fn main(): void {
+    let cells = List<Cell>.new();
+    cells.push(Cell { v = 1 });
+    let copy = cells.clone();
+    copy.get(0)!.v = 2;
+    println(f"{copy.get(0)!.v} {cells.get(0)!.v}");
+    let m = Map<string, List<int>>.new();
+    m.insert("a", List<int>.of([10]));
+    let m2 = m.clone();
+    m2.get("a")!.push(20);
+    println(f"{m.get("a")!} {m2.get("a")!}");
+    let d = Deque<int>.new();
+    d.pushBack(1);
+    d.pushBack(2);
+    let h = Heap<int>.new();
+    h.push(2);
+    h.push(1);
+    let s = Set<int>.new();
+    s.insert(1);
+    s.insert(2);
+    println(f"{d.clone()} {h.clone().peek() ?? 0} {s.clone().length()}");
+}
