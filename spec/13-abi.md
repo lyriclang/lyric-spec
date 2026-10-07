@@ -75,7 +75,10 @@ The first element sits at offset 16, aligned to 16 bytes.
 2. The report's first line is `panic [CODE]: message`. The lines after it are the frames of the
    panicking thread, innermost first, each starting with `    at ` (four spaces). A frame names
    its function and, where the debug information has it, its source position:
-   `    at function (file:line)`. The runtime's own frames on the way to the report are not shown,
+   `    at function (file:line)`. In the release profile a frame may be missing: that of a function
+   inlined into its caller, and that of a function whose last act is a call, which hands its frame
+   to the callee; the debug profile shows every frame (design 01, review 2026-10-07). The
+   runtime's own frames on the way to the report are not shown,
    and neither is anything below the program's entry. *(Informative: consecutive equal frames are
    shown once, followed by `    ... the frame above repeats N more times`; a trace cut at its depth
    limit ends with `    ... deeper frames not shown`.)*

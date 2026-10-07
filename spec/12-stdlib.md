@@ -370,7 +370,9 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
 
 ## Collections
 
-`std.collections` holds the containers (design 10 B7); none is safe across threads (C11).
+`std.collections` holds the containers (design 10 B7); none is safe across threads (C11). An
+element is whatever a container's bounds admit, an object included, and every slot holds its own
+(M8a S16).
 
 - **`List<T>`** (C3), a class: its elements in order, at the front of a buffer that doubles when
   full. `new()`, `of(xs)` (a copy of the array), `withCapacity(n)` — room for `n` elements before

@@ -407,7 +407,10 @@ Elements in a row: behind a reference, through a view, or as a value
    interface value, directly or inside a struct, an enum, a tuple, an optional or an inline
    array — is repeated by **`clone`** ([05 §14](05-interfaces.md)), never shared into every slot:
    its type conforms to `Clone`, or the repetition is refused with `arrayOf` as the way out
-   (`LYR-SEM0136`). A string is shared; nobody can tell.
+   (`LYR-SEM0136`). A string is shared; nobody can tell. In a generic body an element whose type
+   a type parameter or an associated type decides counts as one that holds an object: `[x] * n`
+   with `x: T` repeats by `clone` under `T :: [Clone]` and is refused without it, whatever the
+   instances are — the body is checked once ([§9](#9-generics); M8a S16).
 3. `xs.length()` is the length, a **call** with its parentheses like every length in the
    language ([10 N8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md));
    the bare name is refused (`LYR-SEM0012`). The length and the index are the two primitives of

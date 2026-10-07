@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 40 7 38
+//! | 20 19
+//! | 3 99 1
+//! since: 5.0.0
+// 12 Collections (M8a S16): a container's elements may be objects, every slot its own — a map past
+// its first table, a deque past its capacity, a list's copy into an array, which holds the list's
+// objects, not clones of them.
+import std.io { println };
+import std.collections { Deque, List, Map };
+
+class Cell {
+    var v: int,
+}
+
+fn main(): void {
+    let m = Map<int, Cell>.new();
+    let d = Deque<Cell>.withCapacity(2);
+    let l = List<Cell>.new();
+    var i = 0;
+    while (i < 40) {
+        m.insert(i, Cell { v = i });
+        if (i < 20) {
+            d.pushBack(Cell { v = i });
+        }
+        if (i < 3) {
+            l.push(Cell { v = i });
+        }
+        i = i + 1;
+    }
+    let last = m.get(39)!;
+    last.v = 7;
+    println(f"{m.length()} {m.get(39)!.v} {m.get(38)!.v}");
+    println(f"{d.length()} {d.peekBack()!.v}");
+    let a = l.toArray();
+    a[0].v = 99;
+    println(f"{a.length()} {l.get(0)!.v} {a[1].v}");
+}

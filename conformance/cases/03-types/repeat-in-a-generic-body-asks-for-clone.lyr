@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0136
+//! since: 5.0.0
+// 03 §5.1.2 (M8a S16): in a generic body a type parameter decides the element, and the body is
+// checked once — '[x] * n' over a 'T' without 'Clone' is refused, though the one instance here is
+// a value.
+fn copies<T>(x: T, n: int): T[] {
+    return [x] * n;
+}
+
+fn main(): void {
+    let xs = copies(1, 3);
+}
