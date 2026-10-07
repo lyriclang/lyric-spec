@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | array receiver
+//! | array argument
+//! | list receiver
+//! | list argument
+//! | 1 7
+//! since: 5.0.0
+// 08 §1.1.5 (M8a S15): the receiver first, then the arguments — 'get' of a view, a block's member,
+// as 'get' of a list, the type's own.
+import std.io { println };
+import std.collections { List };
+
+fn traced(label: string, xs: int[]): int[] {
+    println(label);
+    return xs;
+}
+
+fn index(label: string, i: int): int {
+    println(label);
+    return i;
+}
+
+fn listed(label: string): List<int> {
+    println(label);
+    return List<int>.of([7]);
+}
+
+fn main(): void {
+    let a = traced("array receiver", [1, 2]).get(index("array argument", 0));
+    let b = listed("list receiver").get(index("list argument", 0));
+    println(f"{a ?? -1} {b ?? -1}");
+}

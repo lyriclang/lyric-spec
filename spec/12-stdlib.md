@@ -253,7 +253,8 @@ through one reaches the array. `length()` and the index are the primitives
   overlap either way (the review's B16). One copy, not an element at a time: what the
   collections grow and shift with.
 - Of an `Equatable` element: `contains(x)`, through which `T[]` and `Slice<T>` are
-  `Contains<T>` (10 C12), and `indexOf(x)`, the first index or `null`.
+  `Contains<T>` (10 C12) — what `x in xs` asks ([05 §12](05-interfaces.md) rule 10) — and
+  `indexOf(x)`, the first index or `null`.
 - Of a `Clone` element: `fill(v)`, every element a clone of `v` — no object shared into several
   slots, as `[x] * n` shares none ([03 §5.1](03-types.md)).
 - `partitionPoint(p)`: the first index whose element fails `p`, for elements `p` partitions —
@@ -412,6 +413,12 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
   `new()`, `withCapacity(n)`, `of(xs)` — the array's values, copied, in linear time —, `push(v)`,
   `pop()` and `peek()` (the value or `null`), `length()`, `isEmpty()`.
   *(Informative.)*
+
+**Membership** (10 C12; M8a S15): a `List` of an `Equatable` element is a `Contains<T>` through
+`contains(x)`, a `Set` through its own, a `Map` of its keys, `contains(k)` being `containsKey(k)` —
+what `x in xs` asks ([05 §12](05-interfaces.md) rule 10). A **`Range<T>`** and a
+**`RangeInclusive<T>`** of an `Ordered` `T` are `Contains<T>` too: `start <= x && x < end`, the
+inclusive one with `x <= end`.
 
 **Equality and display** (10 C9; M8a S14). A `List` and a `Deque` are `Equatable` where their
 elements are, element by element in order; a `Set` by its values and a `Map` by its entries —

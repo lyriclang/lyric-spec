@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | true true true true true false
+//! | true false true true
+//! | true false true true true
+//! | value
+//! | container
+//! | true true false
+//! since: 5.0.0
+// 05 §12.10 (M8a S15): 'x in xs' is 'xs.contains(x)' through Contains<T> — an array, a range, a list,
+// a set, a map's keys; on a text any Pattern — and '!in' its negation; a literal adapts to the
+// element; the value is evaluated before the container; '!in' is one token, 'x! in' an unwrap.
+import std.io { println };
+import std.collections { List, Map, Set };
+
+fn noisy(label: string, v: int): int {
+    println(label);
+    return v;
+}
+
+fn bag(label: string): Set<int> {
+    println(label);
+    let s = Set<int>.new();
+    s.insert(2);
+    return s;
+}
+
+fn main(): void {
+    let xs = [1, 2, 3];
+    let bytes: uint8[] = [100, 200];
+    println(f"{3 in xs} {5 !in xs} {200 in bytes} {'b' in "abc"} {"bc" in "abc"} {"x" in "abc"}");
+    println(f"{2 in 0..3} {3 in 0..3} {3 in 0..=3} {1.5 in 1.0..2.0}");
+    let l = List<int>.of([4, 5]);
+    let s = Set<string>.new();
+    s.insert("k");
+    let m = Map<string, int>.new();
+    m.insert("a", 1);
+    println(f"{5 in l} {6 in l} {"k" in s} {"a" in m} {"b" !in m}");
+    let first = noisy("value", 2) in bag("container");
+    let o: ?int = 2;
+    let inside = true;
+    println(f"{first} {o! in xs} {!inside}");
+}
