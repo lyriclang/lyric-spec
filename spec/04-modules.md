@@ -185,7 +185,7 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`, `sequence`; `Error`, `Exception`, `Box`,
    `Ordering`, `Range`, `RangeInclusive`, `RangeFrom`, `RangeTo`, `RangeFull`; `Equatable`,
    `Hashable`, `Ordered`, `TotalOrder`, `Display`, `Debug`, `Default`, `Clone`, `Closeable`,
-   `Num`, `Integer`, `Float`, `Iterator`, `Iterable`, `Index`, `IndexSet`; `List`, `Map`, `Set`,
+   `Num`, `Integer`, `Float`, `Iterator`, `Iterable`, `FromIterator`, `Index`, `IndexSet`; `List`, `Map`, `Set`,
    the collections' vocabulary — what signatures and the language need, not effects: `println`
    is `std.io`'s. The rest of the
    standard library is imported, `std.core`'s operator interfaces (`Add` …) and `Any`

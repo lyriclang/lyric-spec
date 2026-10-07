@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | [1, 2] [3]
+//! since: 5.0.0
+// 05 §8.5 (M8a S15): in a block of 'I :: [Iterator<Item = T>]' the associated type is 'T' wherever
+// it stands — an 'I.Item[]' is a 'T[]', a 'List<I.Item>' a 'List<T>'.
+import std.io { println };
+import std.collections { List };
+
+extend<I :: [Iterator<Item = T>], T> I {
+    fn firstTwo(): T[] throws I.Error {
+        let all: I.Item[] = try this.toArray();
+        let kept: T[] = all[..2].reversed().reversed();
+        return kept;
+    }
+
+    fn rest(): List<T> throws I.Error {
+        return try this.skip(2).toList();
+    }
+}
+
+fn main(): void {
+    println(f"{[1, 2, 3].iter().firstTwo()} {[1, 2, 3].iter().rest()}");
+}

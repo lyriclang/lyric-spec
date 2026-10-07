@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | [3, 1, 2] 20 19 ["a", "b"] 2 2 3 3
+//! | 2 [0, 1, 4, 9, 16]
+//! since: 5.0.0
+// 12 §Iteration (M8a S15, 10 B6, I4): collect() builds the type the position expects through its
+// FromIterator — an array, each container —, a map's later value of a key replacing the earlier;
+// toSet() and toArray() are collect() into a set and an array.
+import std.io { println };
+import std.collections { Deque, Heap, List, Map, Set };
+
+fn main(): void {
+    let xs: List<int> = [3, 1, 2].iter().collect();
+    let arr: int[] = (0..20).collect();
+    let d: Deque<string> = ["a", "b"].iter().collect();
+    let s: Set<int> = [1, 2, 1].iter().collect();
+    let m: Map<string, int> = [("a", 1), ("b", 2), ("a", 3)].iter().collect();
+    let h: Heap<int> = [5, 3, 4].iter().collect();
+    println(f"{xs} {arr.length()} {arr[19]} {d} {s.length()} {m.length()} {m.get("a") ?? -1} {h.pop() ?? -1}");
+    println(f"{[1, 2, 2].iter().toSet().length()} {(0..5).map((i: int) => i * i).toArray()}");
+}
