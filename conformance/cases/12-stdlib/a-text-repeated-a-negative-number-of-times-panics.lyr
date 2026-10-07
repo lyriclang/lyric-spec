@@ -1,0 +1,12 @@
+//! run
+//! panic: LYR-RT0007
+//! stderr:
+//! | panic [LYR-RT0007]: repeat count -1 is negative
+//! since: 5.0.0
+// 12 Strings, repetition: a negative count panics as [x] * n does.
+import std.io { println };
+
+fn main(): void {
+    let n = -1;
+    println("x" * n);
+}

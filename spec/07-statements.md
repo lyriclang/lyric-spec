@@ -138,3 +138,13 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    trailing `{ x => … }`, and a trailing block that holds statements, `{ let d = it * 2; d + 1 }`.
    Its tail is the lambda's result, as `return tail;` at its end would be; a lambda nobody takes
    a value from may end in a tail worth nothing.
+
+## 4. Bindings
+
+1. **`let`** and **`var`** bind a name in the scope of the block they stand in, from their
+   statement to the end of the block; a `let` keeps its value, a `var` may be assigned.
+2. A name is **bound once in a scope** (decided 2026-10-07): a second `let` or `var` of a name in
+   the same block is refused (`LYR-SEM0176`). A **parameter** counts as bound in the body's own
+   block, as in C#, Java and Go: a `let` of its name there is refused too — a lambda's parameter
+   likewise. A block further in may bind the name again; its binding hides the outer one until
+   that block ends.

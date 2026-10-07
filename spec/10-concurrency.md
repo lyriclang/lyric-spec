@@ -196,6 +196,9 @@ concurrency.
 3. **`scope.cancel()`** cancels every task of the scope that has not ended.
 4. A task cancelled while it waits in `close()` cancels the scope's tasks and still waits for
    them to end; then `close()` returns or throws as before.
+5. **A closed scope takes no task** ([06 M6-27](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)): `scope.spawn` once `close()` has returned
+   or thrown is a panic (`LYR-RT0008`) — no `close()` would wait for it. A task given while
+   `close()` waits is a task of the scope like any, and the wait takes it in.
 
 ## 5. Panics in tasks
 

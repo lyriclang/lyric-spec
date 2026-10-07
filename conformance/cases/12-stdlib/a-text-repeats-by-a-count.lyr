@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | [ababab] [] [ée ée ]
+//! since: 5.0.0
+// 12 Strings, repetition: s * n is s n times over, "" for none — a character of several bytes too.
+import std.io { println };
+
+fn main(): void {
+    let n = 0;
+    println(f"[{"ab" * 3}] [{"ab" * n}] [{"ée " * 2}]");
+}
