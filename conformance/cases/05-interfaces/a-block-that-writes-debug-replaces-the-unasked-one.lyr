@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | Bag of 2 Plain { n = 1 }
+//! since: 5.0.0
+// 05 §14.7 (M8a S14): a type that writes its Debug in a block — under a constraint — has written
+// one, and the one given unasked stands back; a type without such a block keeps the unasked one.
+import std.io { println };
+
+class Bag<T> {
+    items: T[],
+}
+
+struct Plain {
+    n: int,
+}
+
+extend<T :: [Display]> Bag<T> :: [Debug] {
+    fn debug(): string {
+        return f"Bag of {this.items.length()}";
+    }
+}
+
+fn main(): void {
+    let b = Bag<int> { items = [1, 2] };
+    let c = Plain { n = 1 };
+    println(f"{b:?} {c:?}");
+}
