@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 05 §12.10 (M8a S15): the container gives the element its type, and '[]' has none.
+fn main(): void {
+    let found = 1 in [];
+}

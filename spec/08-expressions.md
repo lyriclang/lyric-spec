@@ -48,6 +48,9 @@ A call names a function and gives it arguments
 4. **`&x`** marks the argument of a place parameter ([03 §2.3a](03-types.md)): the place `x`,
    not its value. The mark covers the whole argument and stands at an argument and nowhere else
    (`LYR-PAR0054`).
+5. **The order.** A call through a receiver evaluates the receiver first, then the arguments
+   (04 D6: left to right everywhere) — for a member a block gives as for a type's own (M8a S15:
+   a block's evaluated its arguments first).
 
 ### 1.2 One name, several counts
 

@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 05 §12.10 (M8a S15): 'in' asks the right operand for Contains<T>; a struct with none has no
+// membership, a method 'contains' alone included — nominal, as '==' is.
+struct Bag {
+    n: int,
+
+    fn contains(x: int): bool {
+        return x == this.n;
+    }
+}
+
+fn main(): void {
+    let b = Bag { n = 1 };
+    let found = 1 in b;
+}

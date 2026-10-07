@@ -13,7 +13,7 @@ Declaring an interface and a conformance, the interface value, how a call resolv
 M4 S1, S3, S4, S4b, S5a, S5b, S6, S7a and S7b; the chapter grows with the milestone's slices —
 synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
 `Iterator<Item = int>` is not written yet; of the operators (D6,
-[§12](#12-the-operator-interfaces)) `in` and the conversions `From`/`Into` wait for the
+[§12](#12-the-operator-interfaces)) the conversions `From`/`Into` wait for the
 collections. What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
@@ -336,6 +336,16 @@ collections. What is not written here yet is decided in the design documents, no
    and the value of an assignment are [08 §3](08-expressions.md)'s. An element so read is a
    value, no place: `x[k].f = v` is refused (03 §2.2). The index of an array, a view and an
    inline array is built in ([03 §5](03-types.md)).
+10. **Membership.** `x in xs` is `xs.contains(x)` through `Contains<T> { fn contains(x: T): bool; }`
+    (04 D6, design 10 C12) — a range, an array, a view, a list, a set and a map's keys conform
+    ([12](12-stdlib.md)) — and `x !in xs` its negation. The conformance is the **right operand's**,
+    and `x` adapts to its `T` as a literal does: `200 in bytes` with `bytes: uint8[]`. On a `string`
+    or a `StringView` the left operand is any `Pattern` and the text's own `contains` answers —
+    `'a' in s`, `"ab" in s`. The operands are evaluated **left to right**, `x` before `xs`, though
+    the call is the container's. `in` and `!in` bind as the comparisons do; `!in` is one token,
+    `!` written against `in` (`x! in xs` unwraps `x` first). Without the conformance `in` is refused
+    (`LYR-SEM0059`), a method `contains` alone included; `[]` beside it fixes no element
+    (`LYR-SEM0060`).
 
 ## 13. Generic extends
 
