@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | C:\path\n
+//! | say "hi"
+//! since: 5.0.0
+// 01 §4.4: 'r"…"' keeps the backslash; with hashes it holds quotes.
+import std.io { println };
+
+fn main(): void {
+    println(r"C:\path\n");
+    println(r#"say "hi""#);
+}

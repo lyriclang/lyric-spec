@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-LEX0015
+//! since: 5.0.0
+// 01 §4.4: every line takes the closing line's indentation.
+fn main(): void {
+    let text = """
+      short
+        """;
+}

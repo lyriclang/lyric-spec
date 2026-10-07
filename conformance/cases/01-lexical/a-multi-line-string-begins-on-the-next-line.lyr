@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0014
+//! since: 5.0.0
+// 01 §4.4: the opening '"""' ends its own line.
+fn main(): void {
+    let text = """first
+        """;
+}

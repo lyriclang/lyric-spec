@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | ok
+//! since: 5.0.0
+// 01 §2: '/* … */' nests; '///' and '//!' (this header's) are doc comments and change nothing.
+import std.io { println };
+
+/// What main does.
+fn main(): void {
+    /* outer /* inner */ still the comment */
+    println("ok");
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0012
+//! since: 5.0.0
+// 01 §4.5: a character beyond ASCII has no one byte, and '\u{…}' names a character.
+fn main(): void {
+    let a = b"é";
+    let b = b"\u{41}";
+}

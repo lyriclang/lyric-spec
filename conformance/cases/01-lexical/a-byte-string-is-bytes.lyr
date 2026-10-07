@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 5 65 67 10 255
+//! | 0
+//! since: 5.0.0
+// 01 §4.5: 'b"…"' is a uint8[] — ASCII, the escapes, '\xNN' any byte; a new array each time.
+import std.io { println };
+
+fn fresh(): uint8[] {
+    return b"";
+}
+
+fn main(): void {
+    let bytes = b"AB\x43\n\xFF";
+    println(f"{bytes.length()} {bytes[0]} {bytes[2]} {bytes[3]} {bytes[4]}");
+    let empty = fresh();
+    println(f"{empty.length()}");
+}

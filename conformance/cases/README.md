@@ -6,6 +6,7 @@ carries `//! since: 5.0.0` or later; the 4.x suite lives on the `script` branch.
 
 | Directory | Chapter | Written with |
 |---|---|---|
+| `01-lexical/` | [01 Lexical structure](../../spec/01-lexical.md) | N2e (the catch-up block, 2026-10-07) |
 | `03-types/` | [03 Types and values](../../spec/03-types.md) | M3 S1–S8, and on |
 | `04-modules/` | [04 Modules and packages](../../spec/04-modules.md) §1 module-level bindings, §2 module names | M3 S6, M7 S1 |
 | `05-interfaces/` | [05 Interfaces and conformance](../../spec/05-interfaces.md) | M4 |
