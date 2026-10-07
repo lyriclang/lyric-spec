@@ -1,0 +1,25 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 06 §4.6 (the review's M5-13): where two arguments could bind one E, the first binding stands and
+// an argument that throws beyond it is refused there — no join of the two sets.
+class A :: [Error] {
+    fn message(): string { return "a"; }
+}
+
+class B :: [Error] {
+    fn message(): string { return "b"; }
+}
+
+fn both<E :: [Error]>(f: fn() -> void throws E, g: fn() -> void throws E): void throws E {
+    try f();
+    try g();
+}
+
+fn a(): void throws A { throw A { }; }
+
+fn b(): void throws B { throw B { }; }
+
+fn main(): void throws Error {
+    try both(a, b);
+}
