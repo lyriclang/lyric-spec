@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0026
+//! since: 5.0.0
+// 03 §10.3: a use names as many arguments as the alias has parameters — without a default, none
+// is left out.
+type Pair<T> = (T, T);
+
+fn main(): void {
+    let a: Pair<int, int> = (1, 2);
+    let b: Pair = (1, 2);
+}

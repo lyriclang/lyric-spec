@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 03 §10.3: an alias's argument satisfies its parameter's constraints, at the use.
+import std.collections { Set };
+
+type Keyed<T :: [Hashable]> = Set<T>;
+
+struct Plain {
+    v: int,
+}
+
+fn count(s: Keyed<Plain>): int {
+    return 0;
+}
+
+fn main(): void {
+}

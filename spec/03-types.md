@@ -626,7 +626,8 @@ Type parameters, their inference, and what an instance is
 
 ### 9.1 Type parameters and instances
 
-1. A function, a struct, a class, an enum and an interface may declare **type parameters**,
+1. A function, a struct, a class, an enum, an interface and a type alias ([§10](#10-aliases))
+   may declare **type parameters**,
    `fn ident<T>(x: T): T`, `struct Pair<A, B> { … }`; a parameter may carry **constraints**,
    `<T :: [Show, Eq<T>]>`, the interfaces an argument must satisfy ([05](05-interfaces.md)).
    Inside the declaration a value of type `T` has the members its constraints give it and no
@@ -732,3 +733,9 @@ A **type alias** names a type ([03 T15](https://github.com/lyriclang/lyric/blob/
 2. **`opaque type` is refused** (`LYR-SEM0175`; the audit of 2026-10-07 found it taken in silence).
    A struct of one field takes its place: it has the layout of its field (03 T15), and its
    conformances, `with` and the field reach what an opaque type reached through `as` twice.
+3. An alias may take **type parameters**, `type Pair<T> = (T, T);` (03 T15; N2b): a use names
+   the arguments, and `Pair<int>` is `(int, int)`. They follow [§9.1](#91-type-parameters-and-instances)
+   — as many as the alias has parameters (`LYR-SEM0026`), a default for the trailing ones, the
+   constraints checked at the use (`LYR-SEM0028`). An alias has no associated type of its own,
+   so a named argument fixes nothing (`LYR-SEM0128`). An alias defined through itself is
+   refused (`LYR-SEM0064`); `Pair<Pair<int>>` is none — the argument is expanded first.
