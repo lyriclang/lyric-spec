@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | [<to>] [<to>  ] [  <to>] [<to>|<to>] [debugTo] [  debugTo] [<to>]
+//! since: 5.0.0
+// 12 §2 rule 4, 05 §12 rule 8 (M8a S13): an f-string writes a Display type through showTo — with a
+// width too, and from an interface value — and `?` through debugTo; StringBuilder.append calls
+// showTo. A type whose members disagree shows which one is called, a style no one should copy.
+import std.io { println };
+import std.string { StringBuilder };
+
+struct Tag :: [Display, Debug] {
+    name: string,
+
+    fn show(): string {
+        return "<show>";
+    }
+
+    fn showTo(&out: StringBuilder): void {
+        out.appendStr("<to>");
+    }
+
+    fn debug(): string {
+        return "debug";
+    }
+
+    fn debugTo(&out: StringBuilder): void {
+        out.appendStr("debugTo");
+    }
+}
+
+fn twice(d: Display): string {
+    return f"{d}|{d}";
+}
+
+fn main(): void {
+    let t = Tag { name = "t" };
+    let b = StringBuilder.new();
+    b.append(t);
+    println(f"[{t}] [{t:6}] [{t:>6}] [{twice(t)}] [{t:?}] [{t:>9?}] [{b.toString()}]");
+}

@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | P1|P { x = 1 }|42|-7|255|2.5|true|c|text|view
+//! since: 5.0.0
+// 05 §11 rule 7, §12 rule 8 (M8a S13): showTo appends show() and debugTo debug() where a type
+// writes neither — the synthesized debug() too —; the scalars, a string and a view have their own.
+import std.io { println };
+import std.string { StringBuilder };
+
+struct P :: [Display] {
+    x: int,
+
+    fn show(): string {
+        return f"P{this.x}";
+    }
+}
+
+fn main(): void {
+    let p = P { x = 1 };
+    let n = 42;
+    let small: int8 = -7;
+    let byte: uint8 = 255;
+    let f = 2.5;
+    let yes = true;
+    let c = 'c';
+    var b = StringBuilder.new();
+    p.showTo(&b);
+    b.appendChar('|');
+    p.debugTo(&b);
+    b.appendChar('|');
+    n.showTo(&b);
+    b.appendChar('|');
+    small.showTo(&b);
+    b.appendChar('|');
+    byte.showTo(&b);
+    b.appendChar('|');
+    f.showTo(&b);
+    b.appendChar('|');
+    yes.showTo(&b);
+    b.appendChar('|');
+    c.showTo(&b);
+    b.appendChar('|');
+    "text".showTo(&b);
+    b.appendChar('|');
+    "a view"[2..].showTo(&b);
+    println(b.toString());
+}

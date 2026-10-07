@@ -317,8 +317,11 @@ same. What is not written here yet is decided in the design documents, not here.
 7. A generic body sees the answer the constraint fixes: `fn sum<T :: [Add<Out = T>]>(a: T, b: T): T`
    adds; under `T :: [Add]` alone `a + b` is a `T.Out`, which is not a `T`
    ([§8](#8-associated-types) rule 5).
-8. `{x}` in an f-string renders through `Display { fn show(): string; }`; the scalars render
-   natively and conform besides.
+8. `{x}` in an f-string renders through
+   `Display { fn show(): string; fn showTo(&out: StringBuilder): void; }`: the f-string calls
+   `showTo`, which by default appends `show()`, so a type that can write itself into the buffer
+   does (design 10 S6); `StringBuilder.append(v)` calls it too. The scalars render natively and
+   conform besides.
 9. **Indexing.** `x[k]` on a struct, a class or an enum is `x.index(k)` through
    `Index<K> { type Output; fn index(k: K): Self.Output; }`, and `x[k] = v` is `x.setIndex(k, v)`
    through `IndexSet<K> :: [Index<K>] { mut fn setIndex(k: K, v: Self.Output): void; }` — the
@@ -453,7 +456,9 @@ same. What is not written here yet is decided in the design documents, not here.
    fields allow it**: a type holding an interface value, a function, or a type that has no
    `debug()` of its own gets none, silently — there was nothing asked and nothing to report —
    and `x.debug()` on it is `LYR-SEM0012`. Listing `Debug` asks, and then rule 6 names the
-   field. `Display` is never automatic ([§12](#12-the-operator-interfaces) rule 8).
+   field. `Display` is never automatic ([§12](#12-the-operator-interfaces) rule 8). `Debug` is
+   `{ fn debug(): string; fn debugTo(&out: StringBuilder): void; }`, `debugTo` by default
+   appending `debug()`, as `Display`'s `showTo` appends `show()`; `{x:?}` calls `debugTo`.
 8. *(Informative.)* The synthesized member stands in an `extend` block of the type's own
    module, generated as source and compiled like one written; it is reached, overridden and
    qualified exactly as a block's member is. Hints about its style are nobody's to act on and

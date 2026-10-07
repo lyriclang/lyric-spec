@@ -9,12 +9,13 @@
 
 What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law.
 
-## 1. The converters the compiler binds
+## 1. The converters
 
-The functions of `std.string` an f-string hole and `+` on strings compile to, by name
+The functions of `std.string` that give a scalar's text — the text an f-string hole writes
+([§2](#2-the-format-language) rule 4) — and the one `+` on strings compiles to, by name
 ([10 S-series](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): a
-program need not import them for an f-string to work, and a program that imports them gets
-the same functions.
+program need not import `concat` for `+` to work, and a program that imports them gets the
+same functions.
 
 | Function | Text |
 |---|---|
@@ -26,9 +27,9 @@ the same functions.
 | `fromBool(value: bool): string` | `true` or `false` |
 | `fromChar(value: char): string` | the character, UTF-8 |
 
-A narrower integer in a hole widens to the converter's parameter type first
-([03 §1.3](03-types.md)): `f"{x}"` with `x: int8` is `fromInt(x)`. A `float32` has a converter of
-its own: with `x: float32` it is `fromFloat32(x)`.
+A narrower integer in a hole writes its value's text, widened ([03 §1.3](03-types.md)):
+`f"{x}"` with `x: int8` writes what `fromInt(x)` gives. A `float32` has a converter of its own:
+with `x: float32` the hole writes what `fromFloat32(x)` gives.
 
 ## 2. The format language
 
@@ -51,8 +52,9 @@ language, without locale, checked where it is written
    (`Debug`).
 2. **What applies**: an integer takes all but a precision and a float's type; a float all but `#`
    and an integer's type; a `string` fill, alignment, width and precision; a `char`, a `bool`
-   and a `Display` type fill, alignment and width, on the text `show()` gives; `?` takes fill,
-   alignment and width, on the text `debug()` gives, for every type. A spec that is no format,
+   and a `Display` type fill, alignment and width, on its text — for a `Display` type, what
+   `showTo` writes; `?` takes fill, alignment and width, on what `debugTo` writes, for every
+   type. A spec that is no format,
    or a part that does not apply to the hole's type, is refused (`LYR-SEM0164`). A type with
    formats of its own conforms to `Format { fn format(spec: StringView, &out: StringBuilder): void; }`
    and reads the spec as written, unchecked — `?` stays `Debug`.
@@ -65,10 +67,12 @@ language, without locale, checked where it is written
    rounding rule, `round()`'s (the review's M8a-8), the same on every host: `{0.125:.2f}` is
    `0.13`, `{2.5:.0f}` is `3`, and `{2.675:.2f}` is `2.67`, the double nearest 2.675 lying below
    the half. `nan`, `inf` and `-inf` keep their words, `NAN` and `INF` under `E`.
-4. **Binding**: `{x:spec}` compiles to `std.core`'s `formatted(x, "spec")` for a `Format` type —
-   the scalars conform —, to `padded(x, "spec")` for another `Display` type, and to
-   `debugged(x, "spec")` under `?`; a program need not import them, as with the converters
-   (§1).
+4. **Binding**: an f-string writes its text into one `StringBuilder`, piece by
+   piece in order (design 10 S6) — no string per hole and no chain of joins: a scalar's hole
+   its text (§1), another `Display` type's through `showTo`; `{x:spec}` through
+   `format(spec, &out)` for a `Format` type — the scalars conform —, through the padding of what
+   `showTo` writes for another `Display` type, and through `debugTo` under `?`. The calls are
+   `std.core`'s, bound by the compiler: a program need not import anything for an f-string.
 
 ## Numbers
 
