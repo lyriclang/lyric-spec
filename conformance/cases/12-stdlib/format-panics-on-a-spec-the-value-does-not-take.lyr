@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0008
+//! since: 5.0.0
+// 12 §2 rules 2, 5: a precision on an integer is refused in an f-string; read at run time, it
+// panics.
+import std.fmt { format };
+import std.io { println };
+
+fn main(): void {
+    println(format("{:.2}", 5));
+}

@@ -1,0 +1,10 @@
+//! run
+//! panic: LYR-RT0008
+//! since: 5.0.0
+// 12 §2 rule 5: a hole that names a value the call does not give panics.
+import std.fmt { format };
+import std.io { println };
+
+fn main(): void {
+    println(format("{} {2}", 1, 2));
+}
