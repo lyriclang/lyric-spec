@@ -297,6 +297,40 @@ holds three:
 Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ([13](13-abi.md)).
 
+## Input and output
+
+The core of `std.io` ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S2). The
+buffers and the text, the files, the console's streams and the network follow with M8b's later
+slices.
+
+1. **`IoError`** is the one error that input and output throw (O3), a struct: `kind:
+   IoErrorKind`, `path: ?string`, `detail: string` and `inner: ?Error` — the field O3 calls
+   `cause`, named so because `Error` asks for a method `cause()` and a type's members do not share
+   a name (as `Exception`'s `inner`). Its `message()` is the kind in words, then the path and the
+   detail where there are any: `not found: data.txt (opened to read)`. `IoErrorKind` names O3's
+   kinds, and `Other { code }` a system's code no kind names. *(Informative.)* O3 marks the kinds
+   `@NonExhaustive`, which comes with the compiler's attributes (M9a).
+2. **`Reader`** has `read(into: Slice<uint8>): int`: it fills the slice from the front and answers
+   how many bytes it put there — **0 only at the end**, and at once for an empty slice; fewer than
+   the slice holds is no end. **`Writer`** has `write(from: Slice<uint8>): int`: it takes from the
+   front and may take **fewer** bytes than it is handed. **`Seek`** has `seek(to: SeekFrom): int`,
+   `SeekFrom.Start(n)`, `.End(n)` or `.Current(n)`, and answers the position counted from the
+   start. All three throw `IoError`, and all three are `mut fn`s.
+3. **The defaults** (O1), on every reader: `readExact(into)` fills the slice whole or throws
+   `UnexpectedEof`; `readToEnd()` is everything to the end in a new array; `readToString()` the
+   same as UTF-8 — bytes that are no UTF-8 throw `InvalidData`, the decoder's `Utf8Error` as the
+   cause. On every writer: `writeAll(from)` writes until all of it is taken — a writer that takes
+   no byte of a slice that has some throws `Other { code: 0 }` rather than being asked forever —
+   and `writeString(s)` writes the text's UTF-8.
+4. **`copy(r, w): int`** copies everything `r` holds into `w` and answers how many bytes. The two
+   are used as the values handed in: a class is itself, and a reader that is a struct is read
+   through a copy, its position unmoved for the caller.
+5. **The streams over memory** (O2): `ByteReader.new(bytes)` reads a `Slice<uint8>` from the
+   front and seeks — a position past the end reads nothing, one before the start panics;
+   `ByteBuffer.new()` appends what is written and reads from the front what was written and not
+   yet read, with `length()` and `toArray()` of what it holds. Both are classes, say
+   `throws IoError` and throw nothing.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

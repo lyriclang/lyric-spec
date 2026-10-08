@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 5 5 5
+//! since: 5.0.0
+// 12 §Input and output, rule 4: 'copy' moves everything a reader holds into a writer and answers
+// the count.
+import std.io { println, ByteBuffer, ByteReader, copy };
+
+fn main(): void {
+    let data: uint8[] = [1u8, 2u8, 3u8, 4u8, 5u8];
+    let from = ByteReader.new(data[..]);
+    let into = ByteBuffer.new();
+    let n = try! copy(from, into);
+    println(f"{n} {into.length()} {from.position()}");
+}

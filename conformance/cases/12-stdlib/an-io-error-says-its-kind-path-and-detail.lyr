@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | not found: data.txt (opened to read)
+//! | closed
+//! | system error 13
+//! since: 5.0.0
+// 12 §Input and output, rule 1: the message is the kind in words, the path and the detail where
+// there are any; 'Other' carries a system's code.
+import std.io { println, IoError };
+
+fn main(): void {
+    println(IoError { kind = .NotFound, path = "data.txt", detail = "opened to read" }.message());
+    println(IoError { kind = .Closed }.message());
+    println(IoError { kind = .Other { code = 13 } }.message());
+}

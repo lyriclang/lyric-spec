@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | héllo
+//! | true invalid data (the bytes are no UTF-8) true
+//! since: 5.0.0
+// 12 §Input and output, rule 3: 'readToString' decodes UTF-8; bytes that are none throw InvalidData,
+// the decoder's error as the cause.
+import std.io { println, ByteBuffer, ByteReader, IoError };
+
+fn main(): void {
+    let b = ByteBuffer.new();
+    try! b.writeString("héllo");
+    println(try! b.readToString());
+    let bad: uint8[] = [0x66u8, 0xFFu8];
+    try {
+        let s = ByteReader.new(bad[..]).readToString();
+        println(s);
+    } catch (e: IoError) {
+        println(f"{e.kind == .InvalidData} {e.message()} {e.cause() != null}");
+    }
+}
