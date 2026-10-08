@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | ../../x/y . ../../b b null null
+//! since: 5.0.0
+// 12 §Paths, rule 4: Go's Rel — up from the base and down to the target, '.' for the same place;
+// null where no relative path exists: a base that climbs above the target, one absolute and the
+// other not.
+import std.io { println };
+import std.path;
+
+/// The path with '/' for the system's separator: one output on every system.
+fn show(p: string): string {
+    return p.replace(path.separator, "/");
+}
+
+fn rel(base: string, target: string): string {
+    if (let r = path.relative(base, target)) {
+        return show(r);
+    }
+    return "null";
+}
+
+fn main(): void {
+    let absolute = path.join(if (path.separator == "/") "/" else "C:\\", "a");
+    println(f"{rel("a/b/c", "a/x/y")} {rel("a", "a")} {rel("a", "../b")} {rel("a", "a/b")} {rel("../a", "b")} {rel("a", absolute)}");
+}

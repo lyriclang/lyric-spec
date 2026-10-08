@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | ["a", "b", "c", ".."] [] false true true
+//! since: 5.0.0
+// 12 §Paths, rules 1, 4 and 5: the components without empty elements and '.'; a relative path is
+// relative everywhere, the root with its volume absolute; the separator is the system's.
+import std.io { println };
+import std.path;
+
+fn main(): void {
+    let root = if (path.separator == "/") "/" else "C:\\";
+    let parts = path.components("a//b/./c/..");
+    println(f"{parts} {path.components("")} {path.isAbsolute("a/b")} {path.isAbsolute(root + "a")} {path.separator == "/" || path.separator == "\\"}");
+}

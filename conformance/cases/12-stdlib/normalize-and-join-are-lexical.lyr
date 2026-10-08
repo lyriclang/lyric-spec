@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | a/c a/c ../../b a a/b . ..
+//! | a/b/c ../xyz a []
+//! since: 5.0.0
+// 12 §Paths, rule 2: Go's Clean — separators run together, '.' dropped, '..' taking the element
+// before it away and kept where there is none —, and join, the empty parts left out.
+import std.io { println };
+import std.path;
+
+/// The path with '/' for the system's separator: one output on every system.
+fn show(p: string): string {
+    return p.replace(path.separator, "/");
+}
+
+fn main(): void {
+    var line = "";
+    for (p in ["a//c", "a/c/b/..", "../a/../../b", "./a", "a/./b/", "", "a/../.."]) {
+        line = if (line.isEmpty()) show(path.normalize(p)) else f"{line} {show(path.normalize(p))}";
+    }
+    println(line);
+    println(f"{show(path.join("a", "b", "c"))} {show(path.join("a/b", "../../../xyz"))} {show(path.join("", "a"))} [{path.join()}]");
+}
