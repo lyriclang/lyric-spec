@@ -1,0 +1,22 @@
+//! run
+//! exit: 1
+//! stdout:
+//! | before the error 2
+//! stderr:
+//! | error: gone
+//! since: 5.0.0
+// 12 §The console, rule 2: what the output holds is written before an error that leaves main is
+// reported.
+import std.io { print, println };
+
+struct Gone :: [Error] {
+    fn message(): string {
+        return "gone";
+    }
+}
+
+fn main(): void throws Error {
+    print("before the error ");
+    println(2);
+    throw Gone { };
+}

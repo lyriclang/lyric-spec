@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | a12.5
+//! | true
+//! | c
+//! | P(3)
+//! | 42 left
+//! since: 5.0.0
+// 12 §The console, rule 1: print and println take any Display — a string, a number, a bool, a
+// char, a struct's own — and an f-string formats more.
+import std.io { print, println };
+
+struct P :: [Display] {
+    x: int,
+
+    fn show(): string {
+        return f"P({this.x})";
+    }
+}
+
+fn main(): void {
+    print("a");
+    print(1);
+    println(2.5);
+    println(true);
+    println('c');
+    println(P { x = 3 });
+    println(f"{40 + 2} left");
+}

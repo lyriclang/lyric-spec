@@ -579,6 +579,23 @@ their entries, and what is put together from them. Each call of the system's run
    Each name is made where nothing was, so it is the program's alone. Neither is removed by
    itself.
 
+## The console
+
+`std.io` ([design 10 O9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S8a): the program's standard output and standard
+error. `stdin()` and the two streams as a `Reader` and `Writer`s follow with S8b.
+
+1. **`print(v)`** writes `v`'s text — what its `Display` shows — on the standard output, and
+   **`println(v)`** the same followed by a newline; **`eprint(v)`** and **`eprintln(v)`** write
+   on the standard error. Each takes one argument of any type that is `Display`; an f-string
+   formats more.
+2. **Each stream is buffered**: a line at a time where it is a terminal, a block at a time
+   otherwise. **`flush()`** writes what both hold, the output's first. What they hold is written
+   at every end of the program: when `main` returns, before a panic's report, and before an error
+   that leaves `main` is reported. These functions drop a failed write.
+3. *(Informative.)* Through one pipe the two streams show the mode: blocks come at the end, the
+   output's first. A program another reads while it runs — a line someone waits for — flushes, as
+   a C program does.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
