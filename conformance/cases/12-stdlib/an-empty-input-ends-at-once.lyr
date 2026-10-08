@@ -1,0 +1,19 @@
+//! run
+//! stdin:
+//! stdout:
+//! | <end> 0 0
+//! since: 5.0.0
+// 12 §The console, rule 4: an input with nothing in it — the first line is null, no lines come,
+// a read gives 0.
+import std.io { println, stdin };
+
+fn main(): void throws Error {
+    let input = stdin();
+    let first = try input.readLine();
+    var n = 0;
+    for (_ in try input.lines()) {
+        n = n + 1;
+    }
+    let one: uint8[] = [0u8];
+    println(f"{first ?? "<end>"} {n} {try input.read(one[..])}");
+}

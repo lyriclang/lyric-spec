@@ -20,6 +20,8 @@ The header is the leading block of lines starting `//!`. Directives:
 //! stderr:                  the error stream begins with these lines (a debug trace may follow):
 //! | error: first
 //! |   suppressed: second
+//! stdin:                   the program's standard input: each line that follows, with its
+//! | a line                 newline; without the directive the input is empty
 //! check                    compile only; expect acceptance in silence
 //! error: LYR-SEM0001       compile only; expect rejection with exactly these codes (repeatable)
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)

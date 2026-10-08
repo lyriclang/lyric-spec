@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | written and printed
+//! | 2 written
+//! stderr:
+//! | to err
+//! since: 5.0.0
+// 12 §The console, rule 5: stdout() and stderr() are Writers over print's buffers — what both
+// write keeps its order.
+import std.io { println, stderr, stdout };
+
+fn main(): void throws Error {
+    let out = stdout();
+    try out.writeString("written ");
+    println("and printed");
+    try out.writeString(f"{1 + 1} written\n");
+    let err = stderr();
+    try err.writeString("to err\n");
+    try out.flush();
+    try err.flush();
+}
