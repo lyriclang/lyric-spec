@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §5.1 rule 2: an operand of '+' gives '[]' no element type — the conformance is chosen by the
+// operand's type (05 §12 rule 2), and '[]' has none; only '==' and '!=' pass the other side's on.
+fn main(): int {
+    let n: int[] = [1] + [];
+    return n.length();
+}

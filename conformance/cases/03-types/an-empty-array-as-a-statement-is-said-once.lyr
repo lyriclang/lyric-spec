@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0022
+//! since: 5.0.0
+// 03 §5.1 rule 2, 07: '[];' has no effect, which is its error; that it has no type is the same
+// mistake and not said again.
+fn main(): int {
+    [];
+    return 0;
+}
