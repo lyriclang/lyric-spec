@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 7073383317559915 1459222431250320 4750294481672478 2635660072816917
+//! | true true false false false true false false
+//! | 147 246 231 49 54 183 247 96 110 29 237
+//! since: 5.0.0
+// 12 §Random numbers, rule 2: a float from the high 53 bits of a draw — times 2^53 they come back
+// whole —, a bool from its high bit,
+// bytes eight to a draw, the low one first, a tail from one more draw.
+import std.core { arrayOf };
+import std.io { println };
+import std.random { Random };
+
+fn line(xs: string[]): string {
+    var out = "";
+    for (x in xs) {
+        out = if (out.isEmpty()) x else f"{out} {x}";
+    }
+    return out;
+}
+
+fn main(): void {
+    let r = Random.seeded(21);
+    println(line(arrayOf(4, (i) => f"{(r.nextFloat() * 9007199254740992.0) as int}")));
+    println(line(arrayOf(8, (i) => f"{r.nextBool()}")));
+    let bytes: uint8[] = [0u8] * 11;
+    r.nextBytes(bytes[..]);
+    println(line(arrayOf(11, (i) => f"{bytes[i]}")));
+}

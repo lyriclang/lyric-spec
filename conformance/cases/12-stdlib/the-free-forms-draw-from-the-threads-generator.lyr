@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | true true 10
+//! since: 5.0.0
+// 12 §Random numbers, rule 4: the free forms draw from the running thread's generator, keyed from
+// the system — values in their ranges, a shuffle that keeps the elements.
+import std.io { println };
+import std.random;
+
+fn main(): void {
+    var inRange = true;
+    var inUnit = true;
+    for (_ in 0..1000) {
+        let n = random.nextInRange(10..20);
+        inRange = inRange && n >= 10 && n < 20;
+        let f = random.nextFloat();
+        inUnit = inUnit && f >= 0.0 && f < 1.0;
+    }
+    let xs: int[] = [1, 2, 3, 4];
+    random.shuffle(xs[..]);
+    println(f"{inRange} {inUnit} {xs[0] + xs[1] + xs[2] + xs[3]}");
+}

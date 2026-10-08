@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0008]: a number from the empty range 4..4
+//! since: 5.0.0
+// 12 §Random numbers, rule 2: an empty range has no integer to draw.
+import std.io { println };
+import std.random { Random };
+
+fn main(): void {
+    let r = Random.seeded(1);
+    println(f"{r.nextInRange(4..4)}");
+}

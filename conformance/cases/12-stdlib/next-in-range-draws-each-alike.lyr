@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 3 1 2 5 3 3 2 1 5 2 6 2
+//! | -495940300899962547 -747159999282261919 -146921502702636019 -4687808625138817917 119959491658611097 2737417191696613023
+//! | 3192928694849931527 413646854545440538 -6449572774746238618
+//! since: 5.0.0
+// 12 §Random numbers, rule 2: nextInRange takes a draw at or above 2^64 modulo the range's length
+// and draws again below it — over int.min..2^62 (length 3·2^62) a quarter of the draws; nextInt
+// is the draw as an int.
+import std.core { arrayOf };
+import std.io { println };
+import std.random { Random };
+
+fn line(xs: int[]): string {
+    var out = "";
+    for (x in xs) {
+        out = if (out.isEmpty()) f"{x}" else f"{out} {x}";
+    }
+    return out;
+}
+
+fn main(): void {
+    let r = Random.seeded(9);
+    println(line(arrayOf(12, (i) => r.nextInRange(1..7))));
+    let w = Random.seeded(13);
+    println(line(arrayOf(6, (i) => w.nextInRange(int.min..4611686018427387904))));
+    let n = Random.seeded(12345);
+    println(line(arrayOf(3, (i) => n.nextInt())));
+}
