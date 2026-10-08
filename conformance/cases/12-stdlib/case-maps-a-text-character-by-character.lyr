@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | STRAßE ǆemal σασ
+//! since: 5.0.0
+// 12 §Strings: a text's case is its characters' simple mappings — 'ß' keeps itself, and a final
+// sigma is no context.
+import std.io { println };
+
+fn main(): void {
+    let street = "straße";
+    let dz = "Ǆemal";
+    let sigmas = "ΣΑΣ";
+    println(f"{street.toUpper()} {dz.toLower()} {sigmas.toLower()}");
+}

@@ -387,7 +387,7 @@ space: `Base64.encode(bytes)`.
    or the highest. `Slice<uint8>` has `getUint16LE(at)`, `getUint16BE`, the same for `Uint32`,
    `Uint64`, `Int16`, `Int32` and `Int64`: the width at the byte offset `at`. They are members of
    the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
-   are reached through `std.io`'s `ByteBuffer` until `toBytes` (M8c).
+   are `toBytes()` (§Strings).
 
 ## Cryptography
 
@@ -766,7 +766,9 @@ match begins, has a default that tries `matchAt` at each; a pattern may give a f
 signature per operation takes any of them:
 
 - `length()`, the bytes, `O(1)`; `isEmpty()`; `charCount()`, the characters, `O(n)`; `chars()`,
-  the characters decoded, an `Iterator` of `char`.
+  the characters decoded, an `Iterator` of `char` that is `DoubleEnded` — `nextBack()` takes them
+  from the end, and the two ends meet; `charIndices()`, each character with the byte index it
+  begins at, an `Iterator` of `(int, char)`.
 - `string` is `Ordered` and `TotalOrder` byte by byte, which is the order of the code points.
 - The search: `contains(p)`, `startsWith(p)`, `endsWith(p)`; `find(p)` and `rfind(p)`, the byte
   index of the first and the last `p` or `null` — an empty `p` stands at 0 and at the length;
@@ -777,9 +779,18 @@ signature per operation takes any of them:
   none for `n` of 0; `splitOnce(sep)`, the views before and after the first, or `null`;
   `matches(p)`, the matches in order, views, none overlapping another; `lines()`, views split at
   `\n` with a `\r` before it taken off and no empty line after a last `\n`.
-- `trim()`, `trimStart()`, `trimEnd()`, the view without the white space (ASCII's: space, tab,
-  the line breaks, vertical tab, form feed); `stripPrefix(p)` and `stripSuffix(p)`, the view of
-  the rest, or `null` where `p` is not there.
+- `trim()`, `trimStart()`, `trimEnd()`, the view without the white space — the characters with
+  the property White_Space (§Characters); `trimMatches(p)`, `trimStartMatches(p)`,
+  `trimEndMatches(p)`, the view without the matches of `p` at the ends, again and again — a match
+  of the empty text takes nothing; `isBlank()`, whether it holds nothing but white space, the
+  empty text too; `stripPrefix(p)` and `stripSuffix(p)`, the view of the rest, or `null` where
+  `p` is not there.
+- `toUpper()`, `toLower()`, a new string, each character by its simple case mapping
+  (§Characters rule 3): `"straße".toUpper()` is `"STRAßE"`, and a final sigma is no context.
+- `toBytes()`, the bytes, a new `uint8[]` — a copy, since a string does not change (design 10
+  S12d); `string.fromChars(chars)`, the text of an iterator's characters in order, throwing what
+  the iterator throws; `parse<T :: [Parse]>()`, `T.parse(s)` with `T` from where the result goes
+  — `let n: int = try s.parse();`.
 - `replace(p, with)`, a new string with every `p` replaced, none overlapping — a `p` that matches
   the empty text panics; `replaceN(p, with, n)`, the first `n` replaced, all of them where `n` is
   negative; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
@@ -822,6 +833,12 @@ visible without an import, as `Slice<T>` is ([03 §5.2](03-types.md) rule 6):
    is `Equatable`, `Hashable`, `Ordered` and `TotalOrder` by its bytes, as a string is — it
    hashes as the string of its bytes —, `Display`, its text, and `Debug`, quoted. `==`, `!=` and
    the orderings between a string and a view compare the two as views: `"abc"[1..] == "bc"`.
+
+**Debug of text** (design 10 S14) writes a string, a view or a `char` as it would be written: between
+`"` — a `char` between `'` —, with `\\`, the quote, `\n`, `\r`, `\t` and `\0` escaped, and a character of
+the categories Cc, Cf, Cs, Co, Cn, Zl, Zp, or a space separator other than the space, as `\u{…}`,
+its scalar value in lowercase hex. A container's `Debug` and `Display` take it (§Collections),
+so `["a\"b", "c"]` shows as it is written.
 
 **Repetition** (design 10 C7): `s * n` is the text `s` `n` times over — `""` for `n` of 0 — and a
 negative `n` panics with `LYR-RT0007`, as `[x] * n` does; `n * s` is refused, the one order of

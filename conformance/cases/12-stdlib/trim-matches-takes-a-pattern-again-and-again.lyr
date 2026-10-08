@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | [a] [-ab] [ab-] [abc] []
+//! | true true false
+//! since: 5.0.0
+// 12 §Strings: trimMatches takes the matches of any pattern at the ends, again and again; isBlank
+// is nothing but white space, the empty text too.
+import std.io { println };
+
+fn main(): void {
+    let xs = "xxaxx";
+    let abs = "abab-ab";
+    let tail = "ab-abab";
+    let digits = "123abc456";
+    let aaa = "aaa";
+    let isDigit = (c: char) => c.isAsciiDigit();
+    let x = 'x';
+    let ab = "ab";
+    let a = 'a';
+    println(f"[{xs.trimMatches(x)}] [{abs.trimStartMatches(ab)}] [{tail.trimEndMatches(ab)}] [{digits.trimMatches(isDigit)}] [{aaa.trimMatches(a)}]");
+    let empty = "";
+    let blank = " \t\u{3000}\n";
+    let word = " a ";
+    println(f"{empty.isBlank()} {blank.isBlank()} {word.isBlank()}");
+}

@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 43 2.5
+//! since: 5.0.0
+// 12 §Strings: parse<T>() is T.parse(s), T from the binding's type.
+import std.core { ParseError };
+import std.io { println };
+
+fn main(): void throws ParseError {
+    let n: int = try "42".parse();
+    let padded = " 2.5";
+    let x: float = try padded.trim().parse();
+    println(f"{n + 1} {x}");
+}

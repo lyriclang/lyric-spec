@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | [98, 195, 169] aé
+//! since: 5.0.0
+// 12 §Strings: toBytes copies — a write into the bytes leaves the text as it was.
+import std.io { println };
+
+fn main(): void {
+    let s = "aé";
+    let bytes = s.toBytes();
+    bytes[0] = 98u8;
+    println(f"{bytes} {s}");
+}
