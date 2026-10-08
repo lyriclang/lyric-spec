@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 15 §8 rule 3: compileC's source is compiled with cFlags's flags and linked into the program.
+import std.io { println };
+
+extern "C" fn twice_of(n: int): int;
+
+fn main(): void {
+    println(f"{twice_of(21)}");
+}

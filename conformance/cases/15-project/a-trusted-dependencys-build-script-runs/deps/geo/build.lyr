@@ -1,0 +1,7 @@
+import std.build;
+import std.fs;
+import std.path;
+
+fn main(): void throws Error {
+    try fs.writeText(path.join(build.genDir(), "pi.lyr"), "pub let pi = 3;\n");
+}

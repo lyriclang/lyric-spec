@@ -1,0 +1,11 @@
+import std.build;
+import std.fs;
+import std.path;
+import build.words { quoted };
+
+fn main(): void throws Error {
+    let word = (try fs.readText("greeting.txt")).trim().toString();
+    try fs.writeText(path.join(build.genDir(), "greeting.lyr"),
+        f"pub fn greeting(): string {{ return {quoted(word + " from gen")}; }}\n");
+    build.rerunIfChanged("greeting.txt");
+}
