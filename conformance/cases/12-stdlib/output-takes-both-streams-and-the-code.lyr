@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | out | err | 3 false
+//! since: 5.0.0
+// 12 §Processes, rule 5: output() takes the child's output and its errors at once, and its code.
+import std.io { println };
+import std.process { Command };
+
+fn main(): void throws Error {
+    let done = try Command { program = "sh", args = ["-c", "echo out; echo err >&2; exit 3"] }.output();
+    let out = string.fromUtf8Lossy(done.stdout[..]).trimEnd();
+    let err = string.fromUtf8Lossy(done.stderr[..]).trimEnd();
+    println(f"{out} | {err} | {done.status.code() ?? -1} {done.status.success()}");
+}

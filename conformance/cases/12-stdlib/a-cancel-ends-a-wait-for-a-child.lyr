@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | timed out
+//! | killed: signal 9
+//! since: 5.0.0
+// 12 §Processes, rules 3–4: a wait for a child that runs on is a wait — withTimeout's cancel ends it
+// —, and a kill ends the child.
+import std.io { println };
+import std.process { Command };
+import std.task { TimedOut, withTimeout };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    var slow = try Command { program = "sleep", args = ["10"] }.spawn();
+    try {
+        let _ = withTimeout(Duration.ofMillis(50), () => try slow.wait());
+        println("ended");
+    } catch (_: TimedOut) {
+        println("timed out");
+    }
+    try slow.kill();
+    println(f"killed: {try slow.wait()}");
+}

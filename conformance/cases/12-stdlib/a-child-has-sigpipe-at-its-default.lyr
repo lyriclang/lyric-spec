@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | signal 13
+//! since: 5.0.0
+// 12 §Processes, rule 6: the program ignores SIGPIPE (10 Q9), its child does not — a shell that
+// sends itself the signal ends by it.
+import std.io { println };
+import std.process { Command };
+
+fn main(): void throws Error {
+    let done = try Command { program = "sh", args = ["-c", "kill -PIPE $$; echo survived"] }.output();
+    println(f"{done.status}");
+}
