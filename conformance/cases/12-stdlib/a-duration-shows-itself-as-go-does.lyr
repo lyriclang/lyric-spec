@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 0s 7ns 1.5µs 250µs 1.234567ms 1.5s 1m30s 1h0m0s 26h3m0.5s -1.5s
+//! | -2562047h47m16.854775808s
+//! since: 5.0.0
+// 12 §Time, rule 2: Go's text of a duration — one unit under a second, hours, minutes and seconds
+// from a second on, the trailing zeros of the fraction dropped.
+import std.io { println };
+import std.time { Duration };
+
+fn main(): void {
+    let spans = [Duration.ofNanos(0), Duration.ofNanos(7), Duration.ofNanos(1500), Duration.ofMicros(250),
+        Duration.ofNanos(1234567), Duration.ofMillis(1500), Duration.ofSecs(90), Duration.ofSecs(3600),
+        Duration.ofHours(26) + Duration.ofMinutes(3) + Duration.ofMillis(500), Duration.ofMillis(-1500)];
+    var line = "";
+    for (d in spans) {
+        line = if (line.isEmpty()) f"{d}" else f"{line} {d}";
+    }
+    println(line);
+    println(f"{Duration.ofNanos(-9223372036854775807 - 1)}");
+}

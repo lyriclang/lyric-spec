@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 5400000000000 5400000000000 300000000 -123000000000 5000 1000 1000 500000000 0 3661001001001
+//! | Empty Invalid Invalid Invalid Invalid Overflow Overflow
+//! | true
+//! since: 5.0.0
+// 12 §Time, rule 3: Go's form of a duration read — numbers with units, fractions, a sign, "0"
+// alone; an empty text, a missing or unknown unit, a span beyond the range said apart; a
+// duration's text reads back to it.
+import std.core { ParseError };
+import std.io { println };
+import std.time { Duration };
+
+fn read(s: string): string {
+    try {
+        return f"{Duration.parse(s).nanos()}";
+    } catch (e: ParseError) {
+        return if (e.kind == .Empty) "Empty" else if (e.kind == .Invalid) "Invalid" else "Overflow";
+    }
+}
+
+fn main(): void {
+    var line = "";
+    for (s in ["1h30m", "1.5h", "300ms", "-2m3s", "+5us", "1µs", "1μs", ".5s", "0", "1h1m1s1ms1us1ns"]) {
+        line = if (line.isEmpty()) read(s) else f"{line} {read(s)}";
+    }
+    println(line);
+    line = "";
+    for (s in ["", "1", "1x", "1.", "1h 30m", "9999999999h", "9223372036854775808ns"]) {
+        line = if (line.isEmpty()) read(s) else f"{line} {read(s)}";
+    }
+    println(line);
+    var back = true;
+    for (d in [Duration.ofNanos(1500), Duration.ofMillis(-1500), Duration.ofNanos(93784005006007)]) {
+        back = back && read(f"{d}") == f"{d.nanos()}";
+    }
+    println(f"{back}");
+}

@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 1.5s -2s 12s 3.5s true true 2.5
+//! since: 5.0.0
+// 12 §Time, rule 1: spans add and subtract, scale by an integer, order as their lengths.
+import std.io { println };
+import std.time { Duration };
+
+fn main(): void {
+    let a = Duration.ofSecs(1) + Duration.ofMillis(500);
+    let b = Duration.ofSecs(1) - Duration.ofSecs(3);
+    println(f"{a} {b} {Duration.ofSecs(3) * 4} {Duration.ofSecs(7) / 2} {b < Duration.ofNanos(0)} {a == Duration.ofMillis(1500)} {Duration.ofMillis(2500).asSecsFloat()}");
+}

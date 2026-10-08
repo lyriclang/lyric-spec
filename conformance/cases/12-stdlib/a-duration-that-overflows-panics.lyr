@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 12 §Time, rule 1: arithmetic that leaves the range of a duration panics with an overflow.
+import std.io { println };
+import std.time { Duration };
+
+fn main(): void {
+    let big = Duration.ofHours(2000000);
+    println(f"{big * 2}");
+}
