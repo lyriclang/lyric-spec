@@ -1,0 +1,4 @@
+/// A module of the script's own (15 §8 rule 2).
+pub fn quoted(s: string): string {
+    return "\"" + s + "\"";
+}

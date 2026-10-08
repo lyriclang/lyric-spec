@@ -1,0 +1,5 @@
+import geo.gen.pi { pi };
+
+pub fn circle(r: int): int {
+    return pi * r * r;
+}

@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | hi!
+//! since: 5.0.0
+// 15 §8 rule 2: the build script imports from its [build-dependencies]; the program imports what the
+// script wrote, and none of the script's dependencies.
+import app.gen.said { said };
+import std.io { println };
+
+fn main(): void {
+    println(said);
+}

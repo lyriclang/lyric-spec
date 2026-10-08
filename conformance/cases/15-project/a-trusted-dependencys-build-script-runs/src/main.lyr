@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 12
+//! since: 5.0.0
+// 15 §8 rules 4 and 6: trusted, the dependency's script writes its own gen/ — geo.gen.pi —, which
+// the dependency imports.
+import geo { circle };
+import std.io { println };
+
+fn main(): void {
+    println(f"{circle(2)}");
+}

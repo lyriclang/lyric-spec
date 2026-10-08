@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | hello from gen
+//! since: 5.0.0
+// 15 §8 rules 1–4: the build script runs before the compile, reads a file of the package, writes a
+// module into gen/ with a module of its own, and the package imports it as app.gen.greeting.
+import app.gen.greeting { greeting };
+import std.io { println };
+
+fn main(): void {
+    println(greeting());
+}

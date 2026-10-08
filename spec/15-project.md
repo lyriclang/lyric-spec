@@ -34,9 +34,9 @@ in `ProgramTests`.
    type).
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
-   `[profile]` is §4's, `[native]` §5's. The other parts of a manifest
-   ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — lints, the trust rule — are refused the same way until this
-   chapter writes them.
+   `[profile]` is §4's, `[native]` §5's, `[build-dependencies]` and `[trust]` §8's. The other parts
+   of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — lints — are refused the same way until this chapter
+   writes them.
 5. A package's **programs** are its `src/main.lyr`, whose binary is named after the package
    ([14 §1.2](14-cli.md)), and each `[[bin]]`: `name = "tool"` — a lowercase letter, then
    letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the
@@ -230,3 +230,32 @@ each operating system from any host — compared byte for byte.
    lie both under `src/tests/` and under `tests/` is refused (`LYR-RES0015`).
 2. Only `lyric test` compiles `tests/` ([14 §3](14-cli.md)): no program's build reaches it, and a
    package's content (§2) leaves it out.
+
+## 8. The build script
+
+([11 W3 BS1–BS6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md); M8b S13.)
+
+1. A package's **`build.lyr`**, at its root, is a program that runs before the package compiles.
+   It does things — writes modules into `gen/`, names C to compile and libraries to link — and
+   defines nothing: what the package is, the manifest says (§1).
+2. It is **a program of its own**: its module is `build`, a file `build/x.lyr` beside it the
+   module `build.x`, and it imports from `std` and from the packages of the manifest's
+   **`[build-dependencies]`**, a graph of its own (§2), read at the commits the same lock holds and
+   held in it beside the program's (§3). Nothing of it is compiled into the package, and the
+   package's program sees none of its dependencies; `build` names no package of that graph. It runs
+   on the host, with the package's root as its working directory, whatever the build's target.
+3. **`std.build`** is its view of the build: `target()` and `profile()`, the build's; `outDir()`,
+   the package's `out/`; `genDir()`; `rerunIfChanged(paths…)`, `linkLib(name)`,
+   `cFlags(flags…)`, `compileC(sources…)` — paths from the package's root —, and `warn(message)`,
+   which the build shows (`LYR-BLD0003`). Outside a build script they panic.
+4. **`gen/`**, which the toolchain makes before the script runs, is a module space of the
+   package: `gen/schema.lyr` in `app` is `app.gen.schema`, as `tests/` is §7's. It is no part of
+   the package's content (§2).
+5. **When it runs**: before the compile, where the script changed — `build.lyr`, `build/`, its
+   dependencies, the toolchain, the target, the profile —, where a file it named with `rerunIfChanged` changed, or
+   where `gen/` is not as it left it; else what its last run asked stands. A script that does not
+   compile, or that ends with an exit other than 0, stops the build (`LYR-BLD0002`), with what it
+   wrote.
+6. **Trust**: the root package's script always runs; a dependency's only where the root
+   manifest's **`[trust] build-scripts = ["geo"]`** names the package. Else the build stops before
+   anything runs (`LYR-PKG0012`), at the line that declares the dependency.

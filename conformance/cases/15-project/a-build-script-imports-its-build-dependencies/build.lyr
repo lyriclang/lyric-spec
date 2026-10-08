@@ -1,0 +1,8 @@
+import std.build;
+import std.fs;
+import std.path;
+import tools { shout };
+
+fn main(): void throws Error {
+    try fs.writeText(path.join(build.genDir(), "said.lyr"), f"pub let said = \"{shout("hi")}\";\n");
+}
