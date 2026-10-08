@@ -28,6 +28,12 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    (`LYR-SEM0078`). A conformance implements every abstract member of the interface's chain with
    an exact signature — arity, parameter types, return type, `mut` (`LYR-SEM0020`,
    `LYR-SEM0042`); a default may be left as it is, and an own member of the name overrides it.
+   A **generic** member answers a plain one where its own type parameters bind — its parameter
+   and return types unified with the member's — and their constraints hold for what they bound
+   (design 13 M8c S9): `contains<P :: [Pattern]>(p: P): bool` answers
+   `Contains<char>.contains(x: char)` at `P = char`; where they do not, `LYR-SEM0042`. A `string`
+   takes such a witness from its view, as a call on a string reaches the view's members
+   ([12](12-stdlib.md)); a call through the constraint runs the witness at that binding.
 3. An interface may name **parents**, `interface Labeled :: [Named]`: conforming to the child
    conforms to every parent, a parent's defaults are inherited, a parent constraint is satisfied
    by the child. The list holds interfaces only and no cycle (`LYR-SEM0078`), and a name stays

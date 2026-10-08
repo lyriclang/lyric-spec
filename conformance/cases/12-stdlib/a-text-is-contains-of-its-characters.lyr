@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | true true false true true
+//! since: 5.0.0
+// 12 §Collections, membership: a string and a view are Contains<char>, through the view's generic
+// contains; the same member still finds a text.
+import std.core { Contains };
+import std.io { println };
+
+fn has<C :: [Contains<char>]>(c: C, x: char): bool {
+    return c.contains(x);
+}
+
+fn main(): void {
+    let b = 'b';
+    println(f"{b in "abc"} {has("abc", 'c')} {has("abc"[1..], 'a')} {has("abc"[1..], 'b')} {"abc".contains("bc")}");
+}

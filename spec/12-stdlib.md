@@ -974,7 +974,9 @@ order — and `Map<K, V>` is one of `(K, V)`, a later value of a key replacing t
 `contains(x)`, a `Set` through its own, a `Map` of its keys, `contains(k)` being `containsKey(k)` —
 what `x in xs` asks ([05 §12](05-interfaces.md) rule 10). A **`Range<T>`** and a
 **`RangeInclusive<T>`** of an `Ordered` `T` are `Contains<T>` too: `start <= x && x < end`, the
-inclusive one with `x <= end`.
+inclusive one with `x <= end`. A `string` and a `StringView` are `Contains<char>`: `'b' in "abc"`,
+through the view's `contains<P :: [Pattern]>` at `P = char` ([05 §1](05-interfaces.md) rule 2) —
+the same member that finds a text in a text.
 
 **Clone** (10 K5; N2a). A `List`, a `Deque`, a `Set`, a `Map` and a `Heap` are `Clone` where their
 elements — a map's keys and values — are: `clone()` is a new container of the elements' clones, as
