@@ -427,8 +427,8 @@ forms over the running thread's own. Not for secrets — `randomBytes` of §Cryp
 
 ## Time
 
-`std.time` ([design 10 Q1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S5a): spans and the system's two clocks. The
-calendar and RFC 3339 follow with S5b; the time zones' database and the format patterns with M10.
+`std.time` ([design 10 Q1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S5a, S5b): spans, the system's two clocks,
+the calendar and RFC 3339. The time zones' database and the format patterns follow with M10.
 
 1. **`Duration`** is a span in whole nanoseconds, negative or not: `ofNanos`, `ofMicros`,
    `ofMillis`, `ofSecs`, `ofMinutes`, `ofHours`; `nanos()`, `millis()` and `secs()` rounded toward
@@ -451,6 +451,24 @@ calendar and RFC 3339 follow with S5b; the time zones' database and the format p
    moments they are. The system may set its wall clock back. **`Monotonic`** is a moment on the
    clock that only moves forward, from an unspecified start: `Monotonic.now()`,
    `elapsed(): Duration`.
+5. **The calendar** is the proleptic Gregorian one, every year an `int` holds. `Date.of(year,
+   month, day)` and `Time.of(hour, minute, second, nano = 0)` throw `TimeError` for what is no
+   date — a month outside 1–12, a day beyond the month's — and no time of day — 24:00, a second
+   60, which POSIX time does not count. A year is a leap year divisible by 4, and by 400 where by
+   100 (`isLeapYear()`). `plusDays(n)` moves a date, `dayOfWeek()` is a `Weekday`, `Monday` first.
+   Dates and times compare and order; a date's text is ISO 8601's `YYYY-MM-DD` — a year outside
+   0000–9999 with its sign and at least four digits —, a time's `HH:MM:SS` and the fraction
+   without trailing zeros.
+6. **A zone** is a fixed offset from UTC: `Zone.utc`, `Zone.fixed(offset)` — whole minutes under
+   a day, else `TimeError`. *(Informative.)* The zones of a database come with M10.
+7. **`DateTime`** is a date and a time of day at an offset: `DateTime.of(date, time, zone)`,
+   `instant.toDateTime(zone)`, `toInstant()`, `date()`, `time()`, `offset()`. Two compare field by
+   field — one moment at two offsets is two date-times, one instant.
+8. **RFC 3339** (§5.6) is the text of an `Instant` — in UTC, `Z` — and of a `DateTime` — its offset,
+   `Z` for none —, the fraction without trailing zeros, none where it is zero. Parsing is strict: a
+   `T` or `t` between date and time, `Z`, `z` or `±hh:mm`, a fraction of any length, cut to
+   nanoseconds; a space for the `T`, a missing offset, a date or a time that does not exist is
+   `Invalid`, an empty text `Empty`. `Date.parse` reads the full-date alone.
 
 ## Strings
 

@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 2026-01-05 0012-03-04 -0001-12-31 +12345-06-07
+//! | 07:05:03 23:59:59.12 00:00:00.000000001
+//! | 2026-01-05 true
+//! since: 5.0.0
+// 12 §Time, rules 5 and 8: ISO 8601's full-date, four digits of year at least and a sign outside
+// 0000–9999; a time with its fraction, the trailing zeros dropped; Date.parse reads the full-date.
+import std.io { println };
+import std.time { Date, Time };
+
+fn main(): void throws Error {
+    println(f"{try Date.of(2026, 1, 5)} {try Date.of(12, 3, 4)} {try Date.of(-1, 12, 31)} {try Date.of(12345, 6, 7)}");
+    println(f"{try Time.of(7, 5, 3)} {try Time.of(23, 59, 59, 120000000)} {try Time.of(0, 0, 0, 1)}");
+    let d = try Date.parse("2026-01-05");
+    println(f"{d} {d == try Date.of(2026, 1, 5)}");
+}
