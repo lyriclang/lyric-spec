@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | closed: case-closed.txt (read)
+//! | closed: case-closed.txt (written)
+//! | closed: case-closed.txt (sought)
+//! | closed twice
+//! since: 5.0.0
+// 12 §Files, rule 4: after close() every call throws Closed; a second close() does nothing.
+import std.fs { File };
+import std.io { println, IoError };
+
+fn said(f: fn() -> void throws IoError): string {
+    try {
+        f();
+        return "done";
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let f = try File.create("case-closed.txt");
+    try f.close();
+    let one: uint8[] = [0u8];
+    println(said(() => { try f.read(one[..]); }));
+    println(said(() => { try f.write(one[..]); }));
+    println(said(() => { try f.seek(.Start(0)); }));
+    try f.close();
+    println("closed twice");
+}

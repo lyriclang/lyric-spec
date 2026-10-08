@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 24 true
+//! | 7 file 19 5
+//! | one two x
+//! since: 5.0.0
+// 12 §Files, rules 1 and 2: a file written and read back, its position moved from each end; append
+// writes at the end, create cuts what was there.
+import std.fs { File, OpenOptions };
+import std.io { println };
+
+fn main(): void throws Error {
+    let out = try File.create("case-file.txt");
+    try out.writeString("hello, file\nsecond line\n");
+    try out.close();
+    let back = try File.open("case-file.txt");
+    let text = try back.readToString();
+    println(f"{text.length()} {text.startsWith("hello, file")}");
+    let at = try back.seek(.Start(7));
+    let four: uint8[] = [0u8] * 4;
+    try back.readExact(four[..]);
+    let end = try back.seek(.End(-5));
+    println(f"{at} {try string.fromUtf8(four[..])} {end} {(try back.readToString()).length()}");
+    try back.close();
+    let log = try File.create("case-log.txt");
+    try log.writeString("one ");
+    try log.close();
+    let more = try File.openWith("case-log.txt", OpenOptions { append = true });
+    try more.writeString("two");
+    try more.close();
+    let both = try File.open("case-log.txt");
+    let logged = try both.readToString();
+    try both.close();
+    let cut = try File.create("case-log.txt");
+    try cut.writeString("x");
+    try cut.close();
+    let last = try File.open("case-log.txt");
+    println(f"{logged} {try last.readToString()}");
+    try last.close();
+}
