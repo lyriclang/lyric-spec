@@ -153,3 +153,25 @@ standard library's own tests through it, `StdTests`).
    function's, `app.tests.math.adds` — holds the text.
 4. The exit is 0 when every test held — or when there is none to run —, and 1 when one failed or
    the program was refused (§1.3).
+
+## 4. `bench`
+
+The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)) — the package of the nearest
+`lyric.toml`, as in §2.
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `BenchCommandTests`).
+
+1. **`lyric bench`** builds every function the package marks `@Bench` — in its modules under
+   `src/` and under `tests/` — into one program for this machine, in the **release** profile
+   unless `--profile` names another, and runs them one after another on one thread.
+2. A line for each: `bench app.tests.speed.reads: 412.3 ns/op, 0 allocs/op, 0 B/op, 2483.2 MB/s
+   (290000 runs)` — the nanoseconds a run, the allocations a run and their bytes, the megabytes a
+   second where the benchmark said its bytes, and the runs measured. `-f <text>`
+   (`--filter <text>`) runs those whose name holds the text; where none does, or there is none,
+   a line says so.
+3. **`--save <file>`** writes the run's times to the file, a line a benchmark — its name, then the
+   nanoseconds, the allocations and the bytes a run, apart by tabs —; **`--compare <file>`** reads
+   such a file, and the line of a benchmark it has a row for ends with how its time changed:
+   `, was 400.1 ns/op: +3.0%`.
+4. The exit is 0, and 1 where the file to compare with or to save to could not be read or
+   written, or the program was refused (§1.3).
