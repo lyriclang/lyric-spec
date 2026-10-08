@@ -57,15 +57,19 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 ## 2. Interface values
 
 1. A value whose static type is an interface holds **any conforming value** of a struct, a
-   class or an enum: `let d: Damageable = Player.new(100);`. The transition happens at the
+   class or an enum: `let d: Damageable = Player.new(100);`,
+   or of a **built-in type** that conforms through
+   `std.core`'s blocks — a number, `bool`, `char`, `string`, a string's view: `let d: Display = 5;`,
+   `f(1, "two")` for `f(xs: Display...)` (design 01 V7). The transition happens at the
    positions of 03 T8 — a binding with a type, an argument, a return, a field, an array element
    under a context. *(Informative.)* It is a fat pointer: the data and the table of the concrete
    type's implementations, two words, by value (V7).
 2. A **class** value is shared through the interface value: what one side writes, the other
    reads. A **struct** or an **enum** value is **copied** at the transition (D12) and lives in
    the interface value from then on: a `mut fn` called through it writes that copy, the original
-   stays as it was, and a later change to the original is not seen. *(Informative.)* The copy
-   lies in a box on the heap.
+   stays as it was, and a later change to the original is not seen. A built-in's value is
+   copied as a struct's is; a string's text, which nothing changes, is shared. *(Informative.)*
+   The copy lies in a box on the heap, a string's reference too.
 3. A call through the interface value runs the conforming type's implementation — the language's
    only **dynamic dispatch**. A default called through it runs with `this` as the **interface
    value** — the interface is the conformer there (§1 rule 4) —, so a call on `this` inside it
@@ -238,8 +242,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    search of the conformance list behind that descriptor. `is` stands at the comparison level
    and does not chain.
 3. The operand's static type is an **interface**. On a known type (`c is Circle` with
-   `c: Circle`), on an optional (`?Shape`: test for `null` first), against a type a value is
-   never behind an interface (`s is int`) and against a type parameter (`s is T`, O2: a
+   `c: Circle`), on an optional (`?Shape`: test for `null` first), against a built-in type (`s is int`, whose value
+   lies behind an interface in a box of its own, §2 rule 1 — asking for it is no form of the
+   language) and against a type parameter (`s is T`, O2: a
    dynamic test takes `Any`) the test is refused (`LYR-SEM0131`); against a constraint-only
    interface it is refused as a value of it is (`LYR-SEM0126`).
 4. **Narrowing.** In the branch `x is T` guards, the name `x` **is a `T`** — the smart cast,

@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 7 seven 9
+//! since: 5.0.0
+// 05 §2 rule 1: a generic body that makes an interface value of its T makes one of an int and
+// of a string too, as of a struct.
+import std.io { println };
+
+fn lifted<T :: [Display]>(t: T): Display {
+    return t;
+}
+
+fn main(): void {
+    let maybe: ?Display = 9;
+    println(f"{lifted(7)} {lifted("seven")} {maybe!}");
+}

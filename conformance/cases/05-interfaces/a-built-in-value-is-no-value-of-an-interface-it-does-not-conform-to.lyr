@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 05 §2 rule 1: a built-in's value stands only for an interface it conforms to.
+interface Named {
+    fn name(): string;
+}
+
+fn main(): void {
+    let n: Named = 3;
+}
