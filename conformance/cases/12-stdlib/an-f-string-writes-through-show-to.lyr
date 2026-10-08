@@ -15,7 +15,7 @@ struct Tag :: [Display, Debug] {
         return "<show>";
     }
 
-    fn showTo(&out: StringBuilder): void {
+    fn showTo(out: StringBuilder): void {
         out.appendStr("<to>");
     }
 
@@ -23,7 +23,7 @@ struct Tag :: [Display, Debug] {
         return "debug";
     }
 
-    fn debugTo(&out: StringBuilder): void {
+    fn debugTo(out: StringBuilder): void {
         out.appendStr("debugTo");
     }
 }
