@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | cancelled after reading 'kept'
+//! since: 5.0.0
+// 12 §Files, rule 5: a file's call is no wait — cancelled before it runs, the task reads the file
+// to its end, and its next wait throws Cancelled.
+import std.fs { File };
+import std.io { println };
+import std.task { Cancelled, sleep, spawn };
+import std.time { Duration };
+
+class Reached {
+    var text: string = "",
+}
+
+fn main(): void throws Error {
+    let out = try File.create("case-cancel.txt");
+    try out.writeString("kept");
+    try out.close();
+    let reached = Reached { };
+    let task = spawn(() => {
+        let f = try File.open("case-cancel.txt");
+        reached.text = try f.readToString();
+        try f.close();
+        try sleep(Duration.ofMillis(1));
+        return reached.text;
+    });
+    task.cancel();
+    try {
+        let text = task.await();
+        println(f"returned {text}");
+    } catch (_: Cancelled) {
+        println(f"cancelled after reading '{reached.text}'");
+    }
+}

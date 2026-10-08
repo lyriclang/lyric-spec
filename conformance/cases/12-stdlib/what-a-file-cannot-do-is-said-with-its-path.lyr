@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | not found: case-no-such-file.txt (opened to read)
+//! | invalid input: x (opened neither to read nor to write)
+//! | invalid input: x (cut to nothing without being written from the start)
+//! | invalid input: x (created without being written)
+//! | not found: case-missing-dir/x.txt (opened to write)
+//! since: 5.0.0
+// 12 §Files, rules 1 and 3: an IoError says the kind, the path and what was done; options that make
+// no sense are refused before the system is asked.
+import std.fs { File, OpenOptions };
+import std.io { println, IoError };
+
+fn said(f: fn() -> void throws IoError): string {
+    try {
+        f();
+        return "opened";
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void {
+    println(said(() => { using let f = try File.open("case-no-such-file.txt"); }));
+    println(said(() => { using let f = try File.openWith("x", OpenOptions { }); }));
+    println(said(() => { using let f = try File.openWith("x", OpenOptions { read = true, truncate = true }); }));
+    println(said(() => { using let f = try File.openWith("x", OpenOptions { read = true, create = true }); }));
+    println(said(() => { using let f = try File.openWith("case-missing-dir/x.txt", OpenOptions { write = true, create = true }); }));
+}

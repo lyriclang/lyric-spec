@@ -496,6 +496,34 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
 5. **`components(p)`** lists the root — with its volume — and then the elements, without the
    empty ones and `.`, keeping `..`; nothing is normalized.
 
+## Files
+
+`std.fs` ([design 10 O4, O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6b): `File`, a handle on a file. Its
+conveniences follow with S6c, the directories with S7.
+
+1. **`File.open(path)`** opens to read, **`File.create(path)`** to write — made where it is not
+   there, cut to nothing where it is —, **`File.openWith(path, options)`** as an `OpenOptions`
+   says: `read`, `write`, `append` (writes at the end), `create`, `truncate`. Options that read and
+   write nothing, cut without writing from the start, or create without writing are refused
+   (`InvalidInput`).
+2. **A file is a `Reader`, a `Writer` and a `Seek`** at its position, and `Closeable`. It reads
+   and writes through the caller's slice. A read or a write may take part of it, as rule 2 of
+   §Input and output allows.
+3. **What a file cannot do is an `IoError`** with its path and what was done — `opened to read`,
+   `opened to write`, `read`, `written`, `sought`, `closed` —: `not found: data.txt (opened to
+   read)`. The system's errors map to `NotFound`, `PermissionDenied`, `AlreadyExists`,
+   `IsDirectory`, `NotDirectory` and `InvalidInput`, and any other to `Other { code }`, the
+   system's number. Whether a directory opens as a file and fails at the read, or fails to open,
+   is the system's (POSIX opens it; the read says `IsDirectory`).
+4. **A file is closed once**: after `close()` every call throws `Closed`, and a second `close()`
+   does nothing. A `File` that nothing closes is warned about (06 §7.4).
+5. **The I/O pool.** A file's calls run on a few threads of the program's own, started at the
+   first call: the running task is parked meanwhile and its thread runs the other tasks. A call
+   on a file ends in a bounded time and is no wait in the sense of [10 §1](10-concurrency.md)
+   rule 7: in a cancelled task it runs to its end, and the cancellation is thrown at the task's
+   next wait. *(Informative.)* Ending early would hand the caller back a buffer the pool still
+   writes into.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

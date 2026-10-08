@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 1000 2000 3000 4000
+//! since: 5.0.0
+// 12 §Files, rule 5: four tasks read four files at once, each parked while the I/O pool works.
+import std.fs { File };
+import std.io { println };
+import std.task { spawn };
+
+fn sizeOf(name: string): int throws Error {
+    let f = try File.open(name);
+    let n = (try f.readToEnd()).length();
+    try f.close();
+    return n;
+}
+
+fn main(): void throws Error {
+    for (k in 0..4) {
+        let out = try File.create(f"case-task-{k}.txt");
+        try out.writeString("z" * (1000 * (k + 1)));
+        try out.close();
+    }
+    let tasks = [spawn(() => try sizeOf("case-task-0.txt")), spawn(() => try sizeOf("case-task-1.txt")),
+        spawn(() => try sizeOf("case-task-2.txt")), spawn(() => try sizeOf("case-task-3.txt"))];
+    var line = "";
+    for (t in tasks) {
+        let n = try t.await();
+        line = if (line.isEmpty()) f"{n}" else f"{line} {n}";
+    }
+    println(line);
+}
