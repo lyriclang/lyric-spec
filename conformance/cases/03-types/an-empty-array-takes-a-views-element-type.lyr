@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 0 0 0 0
+//! since: 5.0.0
+// 03 §5.1 rule 2, §5.2 rule 4: '[]' takes its element type from a view where one is expected — an
+// argument, a binding, an inferred argument, a return.
+import std.io { println };
+
+fn take(s: Slice<uint8>): int {
+    return s.length();
+}
+
+fn count<T>(s: Slice<T>, x: T): int {
+    return s.length();
+}
+
+fn none(): Slice<int> {
+    return [];
+}
+
+fn main(): void {
+    let s: Slice<uint8> = [];
+    println(f"{take([])} {s.length()} {count([], 1)} {none().length()}");
+}

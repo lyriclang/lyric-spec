@@ -407,7 +407,11 @@ Elements in a row: behind a reference, through a view, or as a value
    struct element lies in the array, not behind it — reached through a **reference**
    ([§2.1](#21-values-and-references)): a binding, an assignment, an argument and a return share
    the one array. The length is a property of the value, not of the type.
-2. `[a, b, c]` builds an array of its elements; `[]` takes its element type from the position.
+2. `[a, b, c]` builds an array of its elements; `[]` takes its element type from the position —
+   an array's, or a view's, where an array stands as a view of itself (§5.2 rule 4):
+   `take([])` for `take(s: Slice<uint8>)`. A position that gives none — the target of an index or
+   a member, `[].length()`; an operand of `+`; a hole of an f-string — refuses it
+   (`LYR-SEM0060`).
    `[x] * n` builds an array of `n` elements each a copy of `x` — a value copied, a string
    shared — and panics with `LYR-RT0007` when `n` is negative; `xs * n` is the only order.
    `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).

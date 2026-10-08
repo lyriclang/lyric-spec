@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 03 §5.1 rule 2: the target of a member gives '[]' no element type.
+fn main(): int {
+    return [].length();
+}

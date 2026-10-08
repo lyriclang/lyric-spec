@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0010
+//! since: 5.0.0
+// 03 §5.1 rule 2: a binding without a type gives '[]' none, and says so once — as the binding's
+// error, not a second time at the literal.
+fn main(): int {
+    let none = [];
+    return 0;
+}
