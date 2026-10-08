@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 253 3
+//! since: 5.0.0
+// 03 §5.2 rule 4: a literal where a view is expected checks its elements against the view's
+// element type — 250 fits a uint8 — and passes a view of the array it builds.
+import std.io { println };
+
+fn take(s: Slice<uint8>): int {
+    var sum = 0;
+    for (b in s) {
+        sum += b as int;
+    }
+    return sum;
+}
+
+fn count(s: Slice<float>): int {
+    return s.length();
+}
+
+fn main(): void {
+    println(f"{take([1, 2, 250])} {count([1, 2.5, 3])}");
+}

@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §5.2 rule 4: the elements check against the view's element type as against an array's — a
+// text is no uint8.
+fn take(s: Slice<uint8>): int {
+    return s.length();
+}
+
+fn main(): void {
+    let n = take([1, "two"]);
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §7 rule 1: a range's bounds are one number type or two characters.
+fn main(): void {
+    let r = 'a'..5;
+}

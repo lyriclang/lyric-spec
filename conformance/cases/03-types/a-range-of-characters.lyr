@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | abcde true false
+//! | zyx 4
+//! since: 5.0.0
+// 03 §7 rules 1-2, 12 §Iteration: two characters bound a range; in a head it walks, from either
+// end, past the surrogates — D7FE, D7FF, E000, E001.
+import std.io { println };
+
+fn main(): void {
+    var line = "";
+    for (c in 'a'..='e') {
+        line = f"{line}{c}";
+    }
+    let r = 'a'..'d';
+    let b = 'b';
+    let d = 'd';
+    println(f"{line} {b in r} {d in r}");
+    var back = "";
+    var it = 'x'..='z';
+    loop {
+        if (let c = it.nextBack()) {
+            back = f"{back}{c}";
+        } else {
+            break;
+        }
+    }
+    var around = 0;
+    for (_ in '\u{D7FE}'..='\u{E001}') {
+        around += 1;
+    }
+    println(f"{back} {around}");
+}
