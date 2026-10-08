@@ -706,17 +706,21 @@ streams, its end.
    `stdout`, `stderr: ?PipeReader` — a `Writer` and `Reader`s whose calls wait as a socket's do
    (§The network), and that are `Closeable`; closing `stdin` is the end of the child's input.
 3. **`wait()`** closes the child's `stdin`, then waits for its end — a wait a cancel ends — and
-   answers an **`ExitStatus`**: `success()`, `code(): ?int`, and `signal(): ?Signal`, the signal
-   that ended it; its text is `exit code 3` or `signal 9`. Every task that waits for one child, on
+   answers an **`ExitStatus`**: `success()`, `code(): ?int` — 0 to 255 on POSIX, any 32 bits on
+   Windows —, and `signal(): ?Signal`, the signal that ended it; its text is `exit code 3` or
+   `signal 9`. Every task that waits for one child, on
    any thread, sees its end.
-4. **`kill()`** ends the child — SIGKILL on POSIX —, **`signal(s)`** sends it `s` (10 Q9); neither
-   touches a child that has ended.
+4. **`kill()`** ends the child — SIGKILL on POSIX; on Windows its code is then 1 —, **`signal(s)`**
+   sends it `s` (10 Q9), `Unsupported` on Windows, which has no signals; neither touches a child
+   that has ended.
 5. **`output()`** starts the child with no input and both other streams piped, takes the two to
    their ends at once and waits: an **`Output { status, stdout, stderr }`**. **`status()`** starts it
    with the parent's streams and waits.
 6. *(Informative.)* On POSIX a child's end comes as SIGCHLD, which the runtime keeps for itself
    (10 Q9). A child starts with SIGPIPE at its default although the program ignores it: an ignored
-   signal would outlive the exec. Windows' processes come with M8b S12b.
+   signal would outlive the exec. On Windows (M8b S12b) a child gets its arguments on one command
+   line, quoted as the C runtime reads them back, and inherits its three handles alone; its pipes'
+   calls block, and run on the I/O pool as a file's do (§Files rule 5).
 
 ## Strings
 
