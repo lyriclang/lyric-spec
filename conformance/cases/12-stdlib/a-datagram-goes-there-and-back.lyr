@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | ping from the client
+//! | pong from the server
+//! since: 5.0.0
+// 12 §The network, rule 7: a datagram from one UDP socket to another on 127.0.0.1, its sender's
+// address with it, and one back to that address.
+import std.io { println };
+import std.net { IpAddr, SocketAddr, UdpSocket };
+
+fn main(): void throws Error {
+    let local = IpAddr.V4(127, 0, 0, 1);
+    var server = try UdpSocket.bind(SocketAddr { ip = local, port = 0 });
+    var client = try UdpSocket.bind(SocketAddr { ip = local, port = 0 });
+    let serverAt = try server.localAddr();
+    let clientAt = try client.localAddr();
+    let ping: uint8[] = [112u8, 105u8, 110u8, 103u8];
+    let sent = try client.sendTo(ping[..], serverAt);
+    let buf: uint8[] = [0u8] * 16;
+    let (n, from) = try server.recvFrom(buf[..]);
+    println(f"{string.fromUtf8Lossy(buf[..n])} from {if (from == clientAt) "the client" else from.show()}");
+    let pong: uint8[] = [112u8, 111u8, 110u8, 103u8];
+    let sentBack = try server.sendTo(pong[..], from);
+    let (m, back) = try client.recvFrom(buf[..]);
+    println(f"{string.fromUtf8Lossy(buf[..m])} from {if (back == serverAt && sent + sentBack == 8) "the server" else back.show()}");
+    try client.close();
+    try server.close();
+}
