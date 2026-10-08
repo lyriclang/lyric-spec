@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 20 2
+//! | 9000 1 8191
+//! since: 5.0.0
+// 12 §Input and output, rule 6: a BufReader reads its inner reader a buffer at a time — twenty
+// reads of a byte are one read of the inner reader and the one that finds its end; a read at
+// least as large as the buffer, while it is empty, goes to the inner reader directly.
+import std.io { println, BufReader, ByteReader, IoError, Reader };
+
+class Counted :: [Reader] {
+    var inner: ByteReader,
+    var reads: int = 0,
+
+    mut fn read(into: Slice<uint8>): int throws IoError {
+        this.reads = this.reads + 1;
+        return try this.inner.read(into);
+    }
+}
+
+fn main(): void throws Error {
+    let bytes: uint8[] = [7u8] * 20;
+    let counted = Counted { inner = ByteReader.new(bytes[..]) };
+    let small = BufReader.new(counted);
+    let one: uint8[] = [0u8];
+    var n = 0;
+    while (try small.read(one[..]) > 0) {
+        n = n + 1;
+    }
+    println(f"{n} {counted.reads}");
+    let data: uint8[] = [5u8] * 20000;
+    let r = BufReader.new(ByteReader.new(data[..]));
+    let into: uint8[] = [0u8] * 9000;
+    let a = try r.read(into[..]);
+    let b = try r.read(into[..1]);
+    let c = try r.read(into[..]);
+    println(f"{a} {b} {c}");
+}

@@ -299,9 +299,8 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 
 ## Input and output
 
-The core of `std.io` ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S2). The
-buffers and the text, the files, the console's streams and the network follow with M8b's later
-slices.
+The core of `std.io`, its buffers and its text ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md);
+M8b S2 and S3). The files, the console's streams and the network follow with M8b's later slices.
 
 1. **`IoError`** is the one error that input and output throw (O3), a struct: `kind:
    IoErrorKind`, `path: ?string`, `detail: string` and `inner: ?Error` — the field O3 calls
@@ -315,7 +314,8 @@ slices.
    the slice holds is no end. **`Writer`** has `write(from: Slice<uint8>): int`: it takes from the
    front and may take **fewer** bytes than it is handed. **`Seek`** has `seek(to: SeekFrom): int`,
    `SeekFrom.Start(n)`, `.End(n)` or `.Current(n)`, and answers the position counted from the
-   start. All three throw `IoError`, and all three are `mut fn`s.
+   start. All three throw `IoError`, and all three are `mut fn`s. A writer's **`flush()`** hands on
+   what it holds back; the default does nothing (design 10 B8).
 3. **The defaults** (O1), on every reader: `readExact(into)` fills the slice whole or throws
    `UnexpectedEof`; `readToEnd()` is everything to the end in a new array; `readToString()` the
    same as UTF-8 — bytes that are no UTF-8 throw `InvalidData`, the decoder's `Utf8Error` as the
@@ -330,6 +330,25 @@ slices.
    `ByteBuffer.new()` appends what is written and reads from the front what was written and not
    yet read, with `length()` and `toArray()` of what it holds. Both are classes, say
    `throws IoError` and throw nothing.
+6. **The buffers** (O2), with 8 KiB of their own. `BufReader.new(r)` is a reader that reads `r` a
+   buffer at a time; a read at least as large as the buffer, while it is empty, goes to `r`
+   directly. `BufWriter.new(w)` is a writer that holds back what it is handed until the buffer is
+   full, a `flush()` or a `close()`; a write at least as large goes to `w` directly, after what is
+   held. A flush that throws keeps what `w` did not take, for the next. A `BufWriter` is
+   `Closeable`: `close()` flushes and leaves `w` open, and one that nothing closes is warned
+   about (06 §7.4, `LYR-SEM0144`). *(Informative.)* O2 has both as structs with the bytes inline;
+   every read hands the inner reader a view of the buffer, and an inline array in a frame has no
+   view (03 §5.3), so they are classes over a buffer on the heap.
+7. **`TextReader.new(r, skipBom: false)`** reads UTF-8 text through a buffer of its own.
+   `readLine(): ?string` is the next line without its end — a `\n` or a `\r\n`; a `\r` alone is
+   text — or `null` at the end. A last line without an end is a line; the end of the last line
+   starts none. `lines()` iterates the same, with `Error = IoError`; `chars()` iterates the
+   codepoints; `readToEnd(): string` is the rest. A codepoint split between two reads of `r`
+   waits for its rest. Bytes that are no UTF-8 throw `InvalidData`, a `Utf8Error` as the cause
+   whose offset counts from the reader's start; a line that throws is consumed. A byte order mark
+   is text, `U+FEFF`, unless `skipBom: true` drops it from the front.
+8. **`TextWriter.new(w)`**: `write(s)` writes the text's UTF-8, `writeLine(s)` that and a `\n`, on
+   every system. It holds nothing back.
 
 ## Strings
 

@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | 233 8364 128512
+//! | zwei
+//! | 8193 true x
+//! since: 5.0.0
+// 12 §Input and output, rule 7: a codepoint split between two reads of the inner reader waits for
+// its rest — over reads of one byte each, and over the end of the 8 KiB buffer.
+import std.io { println, ByteBuffer, ByteReader, IoError, Reader, TextReader };
+
+class Drip :: [Reader] {
+    bytes: uint8[],
+    var at: int = 0,
+    var reads: int = 0,
+
+    mut fn read(into: Slice<uint8>): int throws IoError {
+        this.reads = this.reads + 1;
+        if (this.at >= this.bytes.length() || into.isEmpty()) {
+            return 0;
+        }
+        into[0] = this.bytes[this.at];
+        this.at = this.at + 1;
+        return 1;
+    }
+}
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn main(): void throws Error {
+    let t = TextReader.new(Drip { bytes = utf8("é€😀\nzwei") });
+    var codes = "";
+    for (c in try t.chars()) {
+        if (c == '\n') {
+            break;
+        }
+        codes = if (codes.isEmpty()) f"{c as uint32}" else f"{codes} {c as uint32}";
+    }
+    println(codes);
+    println(try t.readLine() ?? "<end>");
+    let big = TextReader.new(ByteReader.new(utf8("a" * 8191 + "é\nx")[..]));
+    let first = try big.readLine() ?? "";
+    println(f"{first.length()} {first.endsWith("é")} {try big.readLine() ?? "<end>"}");
+}

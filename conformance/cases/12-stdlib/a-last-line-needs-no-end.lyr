@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | [a][b][][c]
+//! | 1 0
+//! since: 5.0.0
+// 12 §Input and output, rule 7: a line ends in '\n' or '\r\n', which it does not keep; a last line
+// without an end is a line, and the end of the last line starts none.
+import std.io { println, ByteBuffer, ByteReader, IoError, TextReader };
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn count(s: string): int throws IoError {
+    var n = 0;
+    for (_ in try TextReader.new(ByteReader.new(utf8(s)[..])).lines()) {
+        n = n + 1;
+    }
+    return n;
+}
+
+fn main(): void throws Error {
+    var seen = "";
+    for (line in try TextReader.new(ByteReader.new(utf8("a\nb\r\n\nc")[..])).lines()) {
+        seen = f"{seen}[{line}]";
+    }
+    println(seen);
+    println(f"{try count("a\n")} {try count("")}");
+}

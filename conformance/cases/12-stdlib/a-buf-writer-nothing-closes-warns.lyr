@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0144
+//! since: 5.0.0
+// 12 §Input and output, rule 6: a BufWriter is Closeable, and one that nothing closes is warned
+// about (06 §7.4) — its last bytes would stay in its buffer.
+import std.io { BufWriter, ByteBuffer };
+
+fn main(): void throws Error {
+    let w = BufWriter.new(ByteBuffer.new());
+    try w.writeString("lost");
+}

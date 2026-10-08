@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 5 true
+//! | hi 2
+//! | hi
+//! since: 5.0.0
+// 12 §Input and output, rule 7: a byte order mark is text, U+FEFF, unless 'skipBom: true' drops it
+// from the front; without one there, 'skipBom' drops nothing.
+import std.io { println, ByteReader, TextReader };
+
+fn main(): void throws Error {
+    let withBom: uint8[] = [0xEFu8, 0xBBu8, 0xBFu8, 0x68u8, 0x69u8];
+    let kept = try TextReader.new(ByteReader.new(withBom[..])).readToEnd();
+    println(f"{kept.length()} {kept.startsWith("\u{FEFF}")}");
+    let dropped = try TextReader.new(ByteReader.new(withBom[..]), skipBom: true).readToEnd();
+    println(f"{dropped} {dropped.length()}");
+    let none: uint8[] = [0x68u8, 0x69u8];
+    println(try TextReader.new(ByteReader.new(none[..]), skipBom: true).readLine() ?? "<end>");
+}
