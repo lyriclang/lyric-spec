@@ -425,6 +425,33 @@ forms over the running thread's own. Not for secrets — `randomBytes` of §Cryp
    *(Informative.)* Q2 names them `random.int` and `random.float`; no declaration takes a builtin
    type's name ([07](07-statements.md) K5), so they carry `Random`'s names.
 
+## Time
+
+`std.time` ([design 10 Q1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S5a): spans and the system's two clocks. The
+calendar and RFC 3339 follow with S5b; the time zones' database and the format patterns with M10.
+
+1. **`Duration`** is a span in whole nanoseconds, negative or not: `ofNanos`, `ofMicros`,
+   `ofMillis`, `ofSecs`, `ofMinutes`, `ofHours`; `nanos()`, `millis()` and `secs()` rounded toward
+   zero, `asSecsFloat()`. `+` and `-` with a `Duration`, `*` and `/` with an `int`; arithmetic that
+   leaves the range of `int` panics (`LYR-RT0002`), a division by zero too (`LYR-RT0001`). It is
+   `Equatable`, `Ordered`, `TotalOrder`, `Hashable`, its default is zero.
+2. **A duration's text** is Go's: `0s`; under a second one unit — `ns`, `µs`, `ms` — with its
+   fraction, the fraction's trailing zeros dropped (`1.5µs`, `500ms`); from a second on hours,
+   minutes and seconds, from the first that is not zero, the seconds with their fraction
+   (`1.5s`, `1m30s`, `1h0m0s`); a minus in front of a negative span.
+3. **`Duration.parse(s)`** reads Go's form: an optional sign, then one or more numbers each with a
+   unit — `ns`, `us` (or `µs`, `μs`), `ms`, `s`, `m`, `h` —, a number with a fraction allowed
+   (`1.5h`, `.5s`), `0` alone for zero. An empty text throws `ParseError` with `Empty`, a number
+   without a unit or a unit unknown, `Invalid`, a span beyond the range, `Overflow`. A fraction is
+   taken as Go takes it, `fraction × (unit ÷ 10^digits)` in floating point, so what Go reads this
+   reads. A duration's text parses back to it.
+4. **`Instant`** is a moment on the wall clock, nanoseconds since `1970-01-01T00:00:00Z`, POSIX
+   time without leap seconds: `Instant.now()`, `epochSecs()` and `epochMillis()` rounded down,
+   `instant + duration`, `later.since(earlier): Duration`. Instants compare and order as the
+   moments they are. The system may set its wall clock back. **`Monotonic`** is a moment on the
+   clock that only moves forward, from an unspecified start: `Monotonic.now()`,
+   `elapsed(): Duration`.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

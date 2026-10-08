@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | true true 1.5s -1.5s true
+//! | true
+//! since: 5.0.0
+// 12 §Time, rule 4: an instant on the wall clock — after 2025 —, moved by a duration and measured
+// against another; the monotonic clock's elapsed time covers a sleep.
+import std.io { println };
+import std.task { sleep };
+import std.time { Duration, Instant, Monotonic };
+
+fn main(): void throws Error {
+    let now = Instant.now();
+    let later = now + Duration.ofMillis(1500);
+    println(f"{now.epochSecs() > 1735689600} {now.epochMillis() / 1000 == now.epochSecs()} {later.since(now)} {now.since(later)} {now < later}");
+    let start = Monotonic.now();
+    try sleep(Duration.ofMillis(10));
+    println(f"{start.elapsed() >= Duration.ofMillis(10)}");
+}
