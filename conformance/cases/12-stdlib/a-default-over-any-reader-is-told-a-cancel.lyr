@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0034
+//! since: 5.0.0
+// 12 §Input and output, rule 3: a default throws what any reader's read may — over a ByteReader,
+// which declares IoError alone, too —, so a function that covers IoError alone is refused.
+import std.io { ByteReader, IoError };
+
+fn whole(r: ByteReader): string throws IoError {
+    var it = r;
+    return try it.readToString();
+}
+
+fn main(): void throws Error {
+    let bytes: uint8[] = [104u8, 105u8];
+    let _ = try whole(ByteReader.new(bytes[..]));
+}
