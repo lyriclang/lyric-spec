@@ -397,6 +397,34 @@ ChaCha20-Poly1305 and Argon2.
 5. **`constantTimeEq(a, b): bool`** compares two byte slices in a time that depends on their
    lengths alone — not on where they first differ. Slices of different lengths are unequal.
 
+## Random numbers
+
+`std.random` ([design 10 Q2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S4c): a generator, its draws, and the free
+forms over the running thread's own. Not for secrets — `randomBytes` of §Cryptography is.
+
+1. **`Random`** is ChaCha8 (RFC 8439's block function, eight rounds), 64 bits a draw.
+   `Random.seeded(seed: uint64)` gives the stream the seed names, **the same in every 5.x**:
+   the key is four outputs of SplitMix64 from the seed — eight words, the low half of each output
+   first —, the nonce is zero, the block counter counts from zero in words 12 and 13, and each
+   block's sixteen words are taken in order, two of them a draw, the first the low half.
+   `Random.fresh()` keys a generator from the system's random bytes.
+2. **The draws.** `nextUint64()`; `nextInt()`, the draw as an `int`; `nextInRange(r)`, an integer
+   of the `Range<int>` `r`, each alike — a draw below 2⁶⁴ modulo the range's length is drawn
+   again —, an empty range panics (`LYR-RT0008`); `nextFloat()`, the high 53 bits of a draw over
+   2⁵³, in [0, 1); `nextBool()`, the high bit of a draw; `nextBytes(into)`, eight bytes a draw, the
+   low byte first, a shorter tail from one draw's low bytes; `nextNormal(mean = 0.0, stdDev =
+   1.0)`, Marsaglia's polar method, two floats a try and one of the pair kept. Each takes its
+   draws from the stream as said, so a seeded generator gives the same values in every 5.x —
+   `nextNormal` up to the last bits of the platform's `ln` and `sqrt`.
+3. **`shuffle(s)`** puts a `Slice<T>` in an order each of its orders alike (Fisher–Yates, from
+   the back, the place `i` swapped with one of `0..i + 1`). **`choice(s): ?T`** is an element,
+   each alike, or `null` for an empty slice, which draws nothing. **`sample(s, k): T[]`** is `k`
+   elements from `k` different places, in a random order; `k` outside `0..=s.length()` panics.
+4. **The free forms** `random.nextInRange(r)`, `random.nextFloat()` and `random.shuffle(s)` draw
+   from the running thread's generator — its own, keyed from the system at its first use there.
+   *(Informative.)* Q2 names them `random.int` and `random.float`; no declaration takes a builtin
+   type's name ([07](07-statements.md) K5), so they carry `Random`'s names.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 3 1 4 6 2 5 0 7
+//! | 20 26 27 23 21
+//! | 7 null
+//! since: 5.0.0
+// 12 §Random numbers, rule 3: Fisher–Yates from the back; a sample from distinct places; a choice,
+// and none from an empty slice.
+import std.core { arrayOf };
+import std.io { println };
+import std.random { Random };
+
+fn line(xs: int[]): string {
+    var out = "";
+    for (x in xs) {
+        out = if (out.isEmpty()) f"{x}" else f"{out} {x}";
+    }
+    return out;
+}
+
+fn main(): void {
+    let xs = arrayOf(8, (i) => i);
+    Random.seeded(3).shuffle(xs[..]);
+    println(line(xs));
+    let pool = arrayOf(10, (i) => 20 + i);
+    println(line(Random.seeded(4).sample(pool[..], 5)));
+    let three: int[] = [7, 8, 9];
+    let none: int[] = [];
+    let r = Random.seeded(5);
+    let c = r.choice(three[..]);
+    println(f"{c ?? -1} {if (r.choice(none[..]) == null) "null" else "some"}");
+}

@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 13804888775535289832 4211859015901796865 4415496932110364166 1713244878998487631 6692990728071973259 785888715741328994 6858711743081713853 10796604925839515679 1239024447360315208
+//! | 3536907876931541756 1681417456739323905 17856965759995586207
+//! since: 5.0.0
+// 12 §Random numbers, rule 1: the stream a seed names — the same in every 5.x —, over the end of
+// a block (eight draws a block).
+import std.core { arrayOf };
+import std.io { println };
+import std.random { Random };
+
+fn line(xs: uint64[]): string {
+    var out = "";
+    for (x in xs) {
+        out = if (out.isEmpty()) f"{x}" else f"{out} {x}";
+    }
+    return out;
+}
+
+fn main(): void {
+    let a = Random.seeded(0);
+    println(line(arrayOf(9, (i) => a.nextUint64())));
+    let b = Random.seeded(42);
+    println(line(arrayOf(3, (i) => b.nextUint64())));
+}
