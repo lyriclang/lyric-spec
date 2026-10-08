@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | A ß σ Σ
+//! | Ǆ ǆ i 中
+//! since: 5.0.0
+// 12 §Characters, rule 3: the simple case mappings — 'ß' has no one-character uppercase and keeps
+// itself; the titlecase 'ǅ' has both; no locale turns 'İ' into anything but 'i'.
+import std.io { println };
+
+fn main(): void {
+    let a = 'a';
+    let sz = 'ß';
+    let sigma = 'Σ';
+    let finalSigma = 'ς';
+    let dz = 'ǅ';
+    let dotted = 'İ';
+    let han = '中';
+    println(f"{a.toUpper()} {sz.toUpper()} {sigma.toLower()} {finalSigma.toUpper()}");
+    println(f"{dz.toUpper()} {dz.toLower()} {dotted.toLower()} {han.toUpper()}");
+}

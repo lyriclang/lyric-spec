@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 7 null 15 35 null
+//! | b 9 null null
+//! since: 5.0.0
+// 12 §Characters, rule 4: a digit of a base, ASCII alone — the Arabic-Indic three is none.
+import std.io { println };
+
+fn shown(d: ?int): string {
+    if (let v = d) {
+        return f"{v}";
+    }
+    return "null";
+}
+
+fn written(c: ?char): string {
+    if (let v = c) {
+        return f"{v}";
+    }
+    return "null";
+}
+
+fn main(): void {
+    let seven = '7';
+    let hexF = 'f';
+    let z = 'Z';
+    let three = '\u{0663}';
+    println(f"{shown(seven.toDigit(10))} {shown(seven.toDigit(7))} {shown(hexF.toDigit(16))} {shown(z.toDigit(36))} {shown(three.toDigit(10))}");
+    println(f"{written(char.fromDigit(11, 16))} {written(char.fromDigit(9, 10))} {written(char.fromDigit(10, 10))} {written(char.fromDigit(-1, 10))}");
+}

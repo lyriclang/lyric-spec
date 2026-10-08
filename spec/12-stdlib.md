@@ -722,6 +722,34 @@ streams, its end.
    line, quoted as the C runtime reads them back, and inherits its three handles alone; its pipes'
    calls block, and run on the I/O pool as a file's do (§Files rule 5).
 
+## Characters
+
+A `char` is a Unicode scalar value ([design 10 S4, S5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8c S1). What it is,
+`std.core` answers from the Unicode Character Database, its version pinned:
+`std.string.unicodeVersion` is `"18.0.0"` for Lyric 5.0.
+
+1. **`category(): UnicodeCategory`** is the character's general category (UAX #44). The enum's
+   thirty variants are the standard's, in its order: `UppercaseLetter`, `LowercaseLetter`,
+   `TitlecaseLetter`, `ModifierLetter`, `OtherLetter`, `NonspacingMark`, `SpacingMark`,
+   `EnclosingMark`, `DecimalNumber`, `LetterNumber`, `OtherNumber`, `ConnectorPunctuation`,
+   `DashPunctuation`, `OpenPunctuation`, `ClosePunctuation`, `InitialPunctuation`,
+   `FinalPunctuation`, `OtherPunctuation`, `MathSymbol`, `CurrencySymbol`, `ModifierSymbol`,
+   `OtherSymbol`, `SpaceSeparator`, `LineSeparator`, `ParagraphSeparator`, `Control`, `Format`,
+   `Surrogate`, `PrivateUse`, `Unassigned`. No `char` is a `Surrogate`; a code point the database
+   does not list is `Unassigned`.
+2. **`isX` asks Unicode, `isAsciiX` ASCII.** `isAlpha` is a letter, the categories Lu, Ll, Lt,
+   Lm and Lo; `isDigit` a decimal digit of any script, Nd; `isAlphanumeric` either; `isUpper` Lu;
+   `isLower` Ll; `isControl` Cc; `isWhitespace` the property White_Space. `isAsciiDigit` is
+   `0`–`9`; `isAsciiAlpha` `a`–`z` and `A`–`Z`; `isAsciiHexDigit` the digits and `a`–`f`, `A`–`F`;
+   `isAsciiWhitespace` the space, tab, line feed, form feed and carriage return.
+3. **Case maps one character to one.** `toUpper()` and `toLower()` are the database's simple
+   case mappings; a character without one maps to itself — `'ß'.toUpper()` is `'ß'`. No locale
+   takes part.
+4. **Digits are ASCII**, as `parse` reads them: `toDigit(radix): ?int` reads `0`–`9`, then `a`–`z`
+   or `A`–`Z` as 10 to 35, and is `null` for a character that is no digit of the base;
+   `char.fromDigit(n, radix): ?char` writes the digit `n`, its letters lowercase, and is `null`
+   where `n` is no digit of the base. A radix outside 2–36 panics (`LYR-RT0008`).
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

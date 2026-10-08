@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 18.0.0
+//! | UnicodeCategory.UppercaseLetter UnicodeCategory.TitlecaseLetter UnicodeCategory.OtherLetter
+//! | UnicodeCategory.NonspacingMark UnicodeCategory.DecimalNumber UnicodeCategory.LetterNumber
+//! | UnicodeCategory.InitialPunctuation UnicodeCategory.CurrencySymbol UnicodeCategory.LineSeparator
+//! | UnicodeCategory.Format UnicodeCategory.PrivateUse UnicodeCategory.Unassigned
+//! since: 5.0.0
+// 12 §Characters, rule 1: the general category is the database's, the version pinned; a code point
+// it does not list is Unassigned.
+import std.io { println };
+import std.string { unicodeVersion };
+
+fn main(): void {
+    println(unicodeVersion);
+    let rows: char[][] = [
+        ['A', '\u{01C5}', '中'],
+        ['\u{0301}', '٣', 'Ⅻ'],
+        ['«', '€', '\u{2028}'],
+        ['\u{200B}', '\u{E000}', '\u{0378}'],
+    ];
+    for (row in rows) {
+        var line = "";
+        for (c in row) {
+            let k = c.category();
+            line = if (line.isEmpty()) f"{k:?}" else f"{line} {k:?}";
+        }
+        println(line);
+    }
+}
