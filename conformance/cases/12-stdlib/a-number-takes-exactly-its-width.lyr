@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0008]: a number of 8 bytes from a slice of 4
+//! since: 5.0.0
+// 12 §Encodings, rule 5: fromBytesLE reads exactly its type's width; another length panics.
+import std.encoding;
+import std.io { println };
+
+fn main(): void {
+    let four: uint8[] = [0u8] * 4;
+    println(f"{int.fromBytesLE(four[..])}");
+}

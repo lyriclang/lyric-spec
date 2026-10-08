@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | '' 'Zg==' 'Zm8=' 'Zm9v' 'Zm9vYg==' 'Zm9vYmE=' 'Zm9vYmFy'
+//! | true
+//! since: 5.0.0
+// 12 §Encodings, rule 2: Base64 pads to a multiple of four and decodes what it encoded — RFC
+// 4648 §10's vectors.
+import std.encoding { Base64 };
+import std.io { println, ByteBuffer };
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn main(): void throws Error {
+    var line = "";
+    var back = true;
+    for (word in ["", "f", "fo", "foo", "foob", "fooba", "foobar"]) {
+        let e = Base64.encode(utf8(word)[..]);
+        line = if (line.isEmpty()) f"'{e}'" else f"{line} '{e}'";
+        back = back && (try Base64.decode(e)) == utf8(word);
+    }
+    println(line);
+    println(f"{back}");
+}
