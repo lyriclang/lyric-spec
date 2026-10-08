@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0059
+//! since: 5.0.0
+// 03 §5.3 rule 7: the array compares where its element does — a class without Equatable gives
+// its arrays no '=='.
+class Node {
+    value: int,
+}
+
+fn main(): void {
+    let a: Node[2] = [Node { value = 1 }, Node { value = 2 }];
+    let b: Node[2] = [Node { value = 1 }, Node { value = 2 }];
+    let same = a == b;
+}

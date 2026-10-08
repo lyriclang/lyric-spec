@@ -495,6 +495,11 @@ Elements in a row: behind a reference, through a view, or as a value
    and such a member is refused where it is called, with the way out — a copy,
    `xs.toArray().contains(x)` (`LYR-SEM0115`). An extend block does not target an inline array
    (`LYR-SEM0047`): a member written on `Slice<T>` is the one that reaches it.
+7. **Equality and hashing.** `T[N]` is `Equatable` where `T` is, and `==` compares the two
+   element by element; it is `Hashable` where `T` is, and `hash` writes its elements into the
+   hasher in order — nothing after them, as the length is the type's (design 10 C8). Wherever it
+   lies: `d == sha256(x)`, and a `uint8[16]` is a key of a `Map`. An element type that is
+   neither leaves the array neither (`LYR-SEM0059` for `==`).
 
 ## 6. Tuples
 
