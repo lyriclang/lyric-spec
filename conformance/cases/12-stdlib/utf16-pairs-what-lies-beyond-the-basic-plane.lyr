@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 97 233 55357 56832 true
+//! | 0 0 1
+//! since: 5.0.0
+// 12 §Encodings, rule 4: a codepoint past U+FFFF is a surrogate pair; half a pair without its
+// other half is no UTF-16, at its unit.
+import std.encoding { EncodingError, Utf16 };
+import std.io { println };
+
+fn offsetOf(units: uint16[]): int {
+    try {
+        Utf16.decode(units[..]);
+        return -1;
+    } catch (e: EncodingError) {
+        return e.offset;
+    }
+}
+
+fn main(): void throws Error {
+    let units = Utf16.encode("aé😀");
+    println(f"{units[0]} {units[1]} {units[2]} {units[3]} {try Utf16.decode(units[..]) == "aé😀"}");
+    let lone: uint16[] = [0xD83Du16];
+    let unpaired: uint16[] = [0xD83Du16, 0x61u16];
+    let low: uint16[] = [0x61u16, 0xDE00u16];
+    println(f"{offsetOf(lone)} {offsetOf(unpaired)} {offsetOf(low)}");
+}

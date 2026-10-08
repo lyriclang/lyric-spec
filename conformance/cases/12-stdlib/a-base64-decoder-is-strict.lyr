@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 3 2 1 2 1 2 4 0
+//! since: 5.0.0
+// 12 §Encodings, rule 2: no padding, bits past the last byte, a character outside the alphabet,
+// a '=' before the end, whitespace — each fails at its offset; a short text at its end.
+import std.encoding { Base64, EncodingError };
+import std.io { println };
+
+fn offsetOf(s: string): int {
+    try {
+        Base64.decode(s);
+        return -1;
+    } catch (e: EncodingError) {
+        return e.offset;
+    }
+}
+
+fn main(): void {
+    var line = "";
+    for (s in ["Zg=", "Zg", "Zh==", "Zm9=", "Z!==", "Zg==Zg==", "Zm9v\nYmF", "===="]) {
+        line = if (line.isEmpty()) f"{offsetOf(s)}" else f"{line} {offsetOf(s)}";
+    }
+    println(line);
+}

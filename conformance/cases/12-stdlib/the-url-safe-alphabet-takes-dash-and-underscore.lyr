@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | +/+/ -_-_ 3
+//! | no Base64 digit at offset 0
+//! since: 5.0.0
+// 12 §Encodings, rule 2: Base64Url's alphabet has '-' and '_' where Base64's has '+' and '/', and
+// the one's digits are no digits of the other.
+import std.encoding { Base64, Base64Url, EncodingError };
+import std.io { println };
+
+fn main(): void throws Error {
+    let bytes: uint8[] = [0xFBu8, 0xFFu8, 0xBFu8];
+    let back = try Base64Url.decode(Base64Url.encode(bytes[..]));
+    println(f"{Base64.encode(bytes[..])} {Base64Url.encode(bytes[..])} {back.length()}");
+    try {
+        Base64Url.decode("+/+/");
+    } catch (e: EncodingError) {
+        println(e.message());
+    }
+}

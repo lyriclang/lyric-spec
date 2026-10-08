@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 666f6f626172 3 102
+//! | the text ends inside a pair at offset 3
+//! | no hexadecimal digit at offset 1
+//! since: 5.0.0
+// 12 §Encodings, rule 3: Hex writes small letters and reads either case; an odd count of digits
+// fails at the end, a character that is no digit where it stands.
+import std.encoding { EncodingError, Hex };
+import std.io { println, ByteBuffer };
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn main(): void throws Error {
+    let foo = try Hex.decode("666F6f");
+    println(f"{Hex.encode(utf8("foobar")[..])} {foo.length()} {foo[0]}");
+    for (s in ["abc", "0g"]) {
+        try {
+            Hex.decode(s);
+        } catch (e: EncodingError) {
+            println(e.message());
+        }
+    }
+}

@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 513 1800 134678021 16909060 578437695752307201
+//! | -1 -1 -128 -32768 128 18446744073709551615
+//! since: 5.0.0
+// 12 §Encodings, rule 5: the integers of a byte slice, the first byte the lowest (LE) or the
+// highest (BE), signed ones reinterpreted.
+import std.encoding;
+import std.io { println };
+
+fn main(): void {
+    let b: uint8[] = [1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8];
+    let s = b[..];
+    println(f"{s.getUint16LE(0)} {s.getUint16BE(6)} {s.getUint32LE(4)} {s.getUint32BE(0)} {s.getUint64LE(0)}");
+    let ff: uint8[] = [0xFFu8] * 8;
+    let high: uint8[] = [0x80u8, 0u8];
+    println(f"{ff[..].getInt16BE(0)} {ff[..].getInt64LE(0)} {int8.fromBytesLE(high[..1])} {int16.fromBytesBE(high[..])} {int16.fromBytesLE(high[..])} {ff[..].getUint64BE(0)}");
+}

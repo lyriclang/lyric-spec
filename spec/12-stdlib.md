@@ -350,6 +350,32 @@ M8b S2 and S3). The files, the console's streams and the network follow with M8b
 8. **`TextWriter.new(w)`**: `write(s)` writes the text's UTF-8, `writeLine(s)` that and a `\n`, on
    every system. It holds nothing back.
 
+## Encodings
+
+`std.encoding` ([design 10 Q5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S4a): bytes as text and
+back, and the integers of a byte slice. Each encoding is a struct of static members, a name
+space: `Base64.encode(bytes)`.
+
+1. **`EncodingError`** is what a decoder throws: `offset`, where the text first is not the
+   encoding — a byte of it, a unit of UTF-16 —, and `detail`, what is wrong there. Its
+   `message()` is `no Base64 digit at offset 1`.
+2. **`Base64`** and **`Base64Url`** encode a `Slice<uint8>` with RFC 4648's alphabets (§4 with
+   `+` and `/`, §5 with `-` and `_`), padded with `=` to a multiple of four characters. `decode`
+   is strict: a text whose length is no multiple of four fails at its end; a character outside the
+   alphabet — whitespace and the other alphabet's two among them — or a `=` before the end fails
+   where it stands; bits past the last byte that are not zero fail at their character (RFC 4648
+   §3.5).
+3. **`Hex`** encodes two digits a byte, in small letters, and decodes either case; an odd count
+   of digits fails at the end.
+4. **`Utf16`** encodes a text as code units, `uint16[]`, a codepoint past `U+FFFF` as a surrogate
+   pair; `decode` takes units, and half of a pair without its other half fails at its unit.
+5. **The integers of bytes**: `T.fromBytesLE(s)` and `T.fromBytesBE(s)` for every integer type
+   `T` read exactly its width — another length panics (`LYR-RT0008`) —, the first byte the lowest
+   or the highest. `Slice<uint8>` has `getUint16LE(at)`, `getUint16BE`, the same for `Uint32`,
+   `Uint64`, `Int16`, `Int32` and `Int64`: the width at the byte offset `at`. They are members of
+   the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
+   are reached through `std.io`'s `ByteBuffer` until `toBytes` (M8c).
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
