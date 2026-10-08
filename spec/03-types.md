@@ -412,6 +412,14 @@ Elements in a row: behind a reference, through a view, or as a value
    `take([])` for `take(s: Slice<uint8>)`. A position that gives none — the target of an index or
    a member, `[].length()`; an operand of `+`; a hole of an f-string — refuses it
    (`LYR-SEM0060`).
+   Where a **`FromArrayLiteral<T>`** of `std.core` is expected at a coercion site
+   ([§1.3](#13-widening)), through an optional as every coercion (§3.1),
+   the literal is that type's `fromLiteral` of a fresh `T[]` of its elements, each checked
+   against `T` ([10 K4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)):
+   `let s: Set<int> = [1, 2, 2];` is a set of two, `let m: Map<string, int> = [("a", 1)];` a
+   map — there is no map literal — and `[]` takes `T` from the type. A literal inside such a
+   literal is checked against `T` in turn. A type of the program's own is one as the
+   library's are; a type that is not one refuses the literal (`LYR-SEM0001`).
    `[x] * n` builds an array of `n` elements each a copy of `x` — a value copied, a string
    shared — and panics with `LYR-RT0007` when `n` is negative; `xs * n` is the only order.
    `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md));

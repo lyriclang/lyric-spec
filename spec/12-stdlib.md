@@ -883,6 +883,13 @@ negative `n` panics with `LYR-RT0007`, as `[x] * n` does; `n * s` is refused, th
 element is whatever a container's bounds admit, an object included, and every slot holds its own
 (M8a S16).
 
+An array literal stands for a container where one is expected ([03 §5.1](03-types.md) rule 2;
+design 10 K4): `List<T>`, `Deque<T>`, `Heap<T>` and `Set<T>` are each a **`FromArrayLiteral<T>`**
+of `std.core` — `static fn fromLiteral(items: T[]): Self`, the container of the elements, in
+order — and `Map<K, V>` is one of `(K, V)`, a later value of a key replacing the earlier one;
+`Set` and `Map` with the default hasher. `let s: Set<int> = [1, 2, 3];`,
+`let m: Map<string, int> = [("a", 1)];`.
+
 - **`List<T>`** (C3), a class: its elements in order, at the front of a buffer that doubles when
   full. `new()`, `of(xs)` (a copy of the array), `from(it)` (the values of an iterator, in order),
   `withCapacity(n)` — room for `n` elements before
