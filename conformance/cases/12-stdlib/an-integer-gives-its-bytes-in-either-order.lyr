@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | [1, 2] [2, 1]
+//! | [255, 255, 255, 254] -2
+//! | [0, 0, 0, 0, 0, 0, 0, 1] 1
+//! since: 5.0.0
+// 12 §Encodings rule 5: an integer's bytes, its width, the first the highest or the lowest - and
+// the way back.
+import std.encoding;
+import std.io { println };
+
+fn main(): void {
+    let n: uint16 = 258;
+    println(f"{n.toBytesBE().toArray():?} {n.toBytesLE().toArray():?}");
+    let m: int32 = -2;
+    let be = m.toBytesBE();
+    println(f"{be.toArray():?} {int32.fromBytesBE(be.toArray())}");
+    let one: uint = 1;
+    let wide = one.toBytesBE();
+    println(f"{wide.toArray():?} {uint.fromBytesBE(wide.toArray())}");
+}

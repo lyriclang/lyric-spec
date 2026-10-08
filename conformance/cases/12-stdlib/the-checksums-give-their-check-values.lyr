@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | cbf43926 e3069283 11e60398
+//! | 00000000 00000000 00000001
+//! since: 5.0.0
+// 12 §Hashing: CRC-32, CRC-32C and Adler-32 over their check inputs - the CRC catalogue's
+// "123456789" and "Wikipedia" - and over nothing, where each is its start.
+import std.hash { adler32, crc32, crc32c };
+import std.io { println };
+
+fn main(): void {
+    let check = "123456789".toBytes();
+    let wiki = "Wikipedia".toBytes();
+    println(f"{crc32(check):08x} {crc32c(check):08x} {adler32(wiki):08x}");
+    let none: uint8[] = [];
+    println(f"{crc32(none):08x} {crc32c(none):08x} {adler32(none):08x}");
+}

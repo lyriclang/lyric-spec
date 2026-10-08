@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | true true true
+//! since: 5.0.0
+// 12 §Hashing: the checksum of the whole is that of its pieces, one after the other.
+import std.hash { adler32, crc32, crc32c };
+import std.io { println };
+
+fn main(): void {
+    let all = "a text cut in two".toBytes();
+    let one = all[..6];
+    let two = all[6..];
+    let crc = crc32(two, crc32(one)) == crc32(all);
+    let castagnoli = crc32c(two, crc32c(one)) == crc32c(all);
+    let adler = adler32(two, adler32(one)) == adler32(all);
+    println(f"{crc} {castagnoli} {adler}");
+}
