@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | refused
+//! since: 5.0.0
+// 12 §The network, rule 4: a connection to a port nobody listens on — one a listener had and gave
+// back — is ConnectionRefused.
+import std.io { IoError, println };
+import std.net { IpAddr, SocketAddr, TcpListener, TcpStream };
+
+fn main(): void throws Error {
+    let gone = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try gone.localAddr();
+    try gone.close();
+    try {
+        var stream = try TcpStream.connect(at);
+        try stream.close();
+        println("connected");
+    } catch (e: IoError) {
+        println(if (e.kind == .ConnectionRefused) "refused" else e.message());
+    }
+}

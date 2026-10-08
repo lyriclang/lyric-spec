@@ -649,6 +649,39 @@ that is no UTF-8 is taken with U+FFFD for its bad bytes, as `string.fromUtf8Loss
    `os.tempDir()`, the system's directory for temporary files, absolute (`fs.tempDir()` makes a new
    one in it); `os.hostname()`; `os.cpuCount()`, one at least; `os.pid()`.
 
+## The network
+
+`std.net` ([design 10 O7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S10b): IP addresses, socket addresses and
+TCP. A call that would block parks the task until the thread's poller says the socket is ready,
+and is a wait in the sense of [10 §1](10-concurrency.md) rule 7: a cancel ends it with
+`Cancelled` (§Input and output rule 2). There are no socket timeouts: `withTimeout` is the one
+way. *(Informative.)* POSIX; on Windows every call throws `Unsupported` until M8b S11 gives it its
+poller.
+
+1. **`IpAddr`** is `V4(a, b, c, d)`, four `uint8`, or `V6(…)`, eight `uint16` groups; it is
+   `Equatable`. **`IpAddr.parse(s)`** takes version 4 as four decimal bytes, none with a leading
+   zero, and version 6 as RFC 4291 §2.2 writes it — groups of one to four hex digits, `::` once
+   for one or more zero groups, an IPv4 tail in the last 32 bits, no zone; anything else is a
+   `ParseError`. Its text is version 4 dotted, and version 6 as RFC 5952 §4 has it: lower case,
+   no leading zero, the longest run of two or more zero groups — the first of equals — as `::`,
+   and an IPv4-mapped address (`::ffff:0:0/96`) with its dotted tail.
+2. **`SocketAddr { ip, port: uint16 }`** is `Equatable`; its text, and what `SocketAddr.parse`
+   takes, is `192.0.2.1:8080` or `[2001:db8::1]:8080` — a version 6 address in brackets, and only
+   it —, the port decimal from 0 to 65535 with no leading zero.
+3. **`TcpListener.bind(addr)`** makes a listener; port 0 asks the system for a free one, which
+   `localAddr()` says. **`accept()`** waits until a connection comes and gives it as a
+   `TcpStream`.
+4. **`TcpStream.connect(addr)`** waits until the connection is made; one that nobody listens for
+   is `ConnectionRefused`. A stream is a `Reader` and a `Writer`: `read` waits until bytes come
+   and answers 0 once the peer has shut its writing; `write` waits until the system takes some.
+   A peer that is gone is `BrokenPipe` or `ConnectionReset`. **`shutdown(how)`**, `Shutdown.Read`,
+   `.Write` or `.Both`, ends a way of the stream; `setNoDelay(on)` turns Nagle's waiting off;
+   `peerAddr()` and `localAddr()` are its two ends.
+5. **A socket is closed once** (`Closeable`): after `close()` every call throws `Closed` — a task
+   that waits in a call of it runs again and throws it —, and a second `close()` does nothing.
+6. *(Informative.)* Every wait is the task's own: its thread runs its other tasks meanwhile, so
+   one thread serves many connections.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | closed (accepted)
+//! | closed (asked its address)
+//! since: 5.0.0
+// 12 §The network, rule 5: a listener closed while a task waits in its accept — the task runs
+// again and throws Closed —; a call after the close throws it too.
+import std.io { IoError, println };
+import std.net { IpAddr, SocketAddr, TcpListener };
+import std.task { sleep, spawn };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let waiting = spawn(() => try listener.accept());
+    try sleep(Duration.ofMillis(20));
+    try listener.close();
+    try {
+        var stream = try waiting.await();
+        try stream.close();
+        println("came");
+    } catch (e: IoError) {
+        println(e.message());
+    }
+    try {
+        let _ = try listener.localAddr();
+    } catch (e: IoError) {
+        println(e.message());
+    }
+}
