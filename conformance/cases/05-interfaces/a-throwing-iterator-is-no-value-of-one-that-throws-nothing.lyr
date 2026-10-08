@@ -1,0 +1,28 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 05 §8 rule 6: Iterator<Item = int> answers Error with never, its default; an iterator that
+// throws answers otherwise and is no such value.
+class Oops :: [Error] {
+    fn message(): string {
+        return "oops";
+    }
+}
+
+struct Countdown :: [Iterator] {
+    type Item = int;
+    type Error = Oops;
+    var n: int,
+
+    mut fn next(): ?int throws Oops {
+        if (this.n == 0) {
+            throw Oops { };
+        }
+        this.n -= 1;
+        return this.n;
+    }
+}
+
+fn main(): void {
+    let it: Iterator<Item = int> = Countdown { n = 1 };
+}

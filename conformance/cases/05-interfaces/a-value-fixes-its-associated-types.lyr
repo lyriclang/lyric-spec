@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 1 12 21 100
+//! since: 5.0.0
+// 05 §8 rule 6: an interface with associated types is a value's type where the type fixes them -
+// taken and given, walked by 'for', two types behind one, a type of the program's own.
+import std.io { println };
+
+interface Container {
+    type Item;
+    fn first(): Self.Item;
+}
+
+struct IntBox :: [Container] {
+    type Item = int;
+    v: int,
+
+    fn first(): int {
+        return this.v;
+    }
+}
+
+fn evens(xs: int[]): Iterator<Item = int> {
+    return xs.iter().filter((x: int) => x % 2 == 0);
+}
+
+fn sum(it: Iterator<Item = int>): int {
+    var total = 0;
+    for (x in it) {
+        total += x;
+    }
+    return total;
+}
+
+fn main(): void {
+    let c: Container<Item = int> = IntBox { v = 1 };
+    let xs = [1, 2, 3, 4, 5, 6];
+    let both: Iterator<Item = int>[] = [xs.iter(), xs[..4].iter().map((x: int) => x * 10)];
+    println(f"{c.first()} {sum(evens(xs))} {sum(both[0])} {sum(both[1])}");
+}

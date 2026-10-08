@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 11
+//! since: 5.0.0
+// 05 §8 rule 6: a type parameter whose constraints fix every associated type stands for the value.
+import std.io { println };
+
+fn lift<T :: [Iterator<Item = int, Error = never>]>(t: T): Iterator<Item = int> {
+    return t;
+}
+
+fn main(): void {
+    let xs = [5, 6];
+    var total = 0;
+    for (x in lift(xs.iter())) {
+        total += x;
+    }
+    println(f"{total}");
+}
