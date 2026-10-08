@@ -1,0 +1,49 @@
+//! run
+//! stdout:
+//! | [a][b][][c]
+//! | a, then closed: case-conv-lines.txt (read)
+//! | 4, then none
+//! | a, then closed: case-conv-lines.txt (read)
+//! since: 5.0.0
+// 12 §Files, rule 7: a file's lines without their ends; a loop that leaves early closes the file,
+// and what was read ahead is not given; at its end it gives no more; close() by hand.
+import std.fs;
+import std.io { IoError, println };
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    try fs.writeText("case-conv-lines.txt", "a\nb\r\n\nc");
+    var shown = "";
+    for (line in try fs.lines("case-conv-lines.txt")) {
+        shown = f"{shown}[{line}]";
+    }
+    println(shown);
+    let early = try fs.lines("case-conv-lines.txt");
+    var first = "";
+    for (line in try early) {
+        first = line;
+        break;
+    }
+    println(f"{first}, then {said(() => (try early.next()) ?? "none")}");
+    let whole = try fs.lines("case-conv-lines.txt");
+    var n = 0;
+    loop {
+        if (try whole.next() == null) {
+            break;
+        }
+        n = n + 1;
+    }
+    println(f"{n}, then {said(() => (try whole.next()) ?? "none")}");
+    try whole.close();
+    let manual = try fs.lines("case-conv-lines.txt");
+    let a = try manual.next() ?? "";
+    try manual.close();
+    println(f"{a}, then {said(() => (try manual.next()) ?? "none")}");
+}

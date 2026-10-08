@@ -498,8 +498,9 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
 
 ## Files
 
-`std.fs` ([design 10 O4, O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6b): `File`, a handle on a file. Its
-conveniences follow with S6c, the directories with S7.
+`std.fs` ([design 10 O4, O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6b, S6c): `File`, a handle on a file, and the
+conveniences that read or write a file whole or its lines one by one. The directories follow
+with S7.
 
 1. **`File.open(path)`** opens to read, **`File.create(path)`** to write — made where it is not
    there, cut to nothing where it is —, **`File.openWith(path, options)`** as an `OpenOptions`
@@ -523,6 +524,18 @@ conveniences follow with S6c, the directories with S7.
    rule 7: in a cancelled task it runs to its end, and the cancellation is thrown at the task's
    next wait. *(Informative.)* Ending early would hand the caller back a buffer the pool still
    writes into.
+6. **The conveniences** read or write a file whole: **`fs.readText(path)`**, its UTF-8 — bytes
+   that are no UTF-8 throw `InvalidData` with the path, and a byte order mark is text, as rule 7
+   of §Input and output keeps it —, **`fs.readBytes(path)`**, **`fs.writeText(path, text)`** and
+   **`fs.writeBytes(path, bytes)`**, which make or cut the file as `File.create` does, and
+   **`fs.appendText(path, text)`**, which writes at its end and makes it where it is not there.
+   Each closes its file on every way out; what the close throws counts where nothing went
+   wrong before ([06 §7](06-errors.md)).
+7. **`fs.lines(path)`** gives the file's lines as `TextReader`'s `readLine` gives them, through a
+   `FileLinesIter` with `Error = IoError` that is `Closeable`: it closes the file at its end and
+   at its first error, a loop that leaves it early closes it ([07 §2](07-statements.md) rule 7),
+   and so does `close()`. After its end or an error it gives no more; after `close()` a call
+   throws `Closed`, and what it had read ahead is not given.
 
 ## Strings
 
