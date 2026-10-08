@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 06 §4.4: a lambda in the clause captures the binding's value, and the record lives only as long
+// as the clause - the lambda's 'e' has no backtrace.
+class Boom :: [Error] {
+    fn message(): string { return "boom"; }
+}
+
+fn explode(): void throws Boom {
+    throw Boom { };
+}
+
+fn main(): void {
+    try { explode(); } catch (e) {
+        let later = () => e.backtrace();
+        later();
+    }
+}

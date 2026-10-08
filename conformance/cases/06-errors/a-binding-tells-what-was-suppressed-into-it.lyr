@@ -1,0 +1,63 @@
+//! run
+//! stdout:
+//! | caught boom
+//! | suppressed close b
+//! | suppressed close a
+//! | typed 1 close c
+//! | expression 2
+//! | none 0
+//! since: 5.0.0
+// 06 §4.4, §7.3: a clause's binding tells which errors were suppressed into the error it took -
+// two closes on the way out, the last bound closed first - in a clause without a type, a typed one
+// and the expression form; an error nothing was suppressed into has none.
+import std.io { println };
+
+class Res :: [Closeable] {
+    name: string,
+
+    fn close(): void throws Error {
+        throw Exception(f"close {this.name}");
+    }
+}
+
+class Boom :: [Error] {
+    fn message(): string { return "boom"; }
+}
+
+fn explode(): void throws Boom {
+    throw Boom { };
+}
+
+fn closing(): void throws Error {
+    using let a = Res { name = "a" };
+    using let b = Res { name = "b" };
+    try explode();
+}
+
+fn closingOne(): void throws Error {
+    using let c = Res { name = "c" };
+    try explode();
+}
+
+fn counted(): int throws Error {
+    try closing();
+    return -1;
+}
+
+fn main(): void throws Error {
+    try { closing(); } catch (e) {
+        println(f"caught {e.message()}");
+        for (s in e.suppressed()) {
+            println(f"suppressed {s.message()}");
+        }
+    }
+    try { closingOne(); } catch (e: Boom) {
+        let all = e.suppressed();
+        println(f"typed {all.length()} {all[0].message()}");
+    }
+    let n = try counted() catch (e) e.suppressed().length();
+    println(f"expression {n}");
+    try { explode(); } catch (e) {
+        println(f"none {e.suppressed().length()}");
+    }
+}

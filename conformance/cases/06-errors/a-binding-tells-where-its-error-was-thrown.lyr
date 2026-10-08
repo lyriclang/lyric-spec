@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | true
+//! since: 5.0.0
+// 06 §4.4: a clause's binding tells where its error was thrown, a ?Backtrace - in the debug
+// profile one whose text names the function that threw, in the release profile null.
+import std.core { Backtrace };
+import std.io { println };
+
+class Boom :: [Error] {
+    fn message(): string { return "boom"; }
+}
+
+fn explode(): void throws Boom {
+    throw Boom { };
+}
+
+fn named(where: ?Backtrace): bool {
+    if (where != null) {
+        return where.show().contains("explode");
+    }
+    return true;
+}
+
+fn main(): void {
+    try { explode(); } catch (e) {
+        println(f"{named(e.backtrace())}");
+    }
+}
