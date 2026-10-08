@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | [3, 2] [1, 2]
+//! since: 5.0.0
+// 12 §Collections: List.from takes an iterator's values in order; shrinkToFit keeps the elements.
+import std.collections { List };
+import std.io { println };
+
+fn main(): void {
+    let list: List<int> = List.from([3, 1, 2].iter().filter((x: int) => x > 1));
+    let grown: List<int> = List.withCapacity(100);
+    grown.push(1);
+    grown.shrinkToFit();
+    grown.push(2);
+    println(f"{list.toArray()} {grown.toArray()}");
+}
