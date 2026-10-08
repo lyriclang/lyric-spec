@@ -376,6 +376,27 @@ space: `Base64.encode(bytes)`.
    the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
    are reached through `std.io`'s `ByteBuffer` until `toBytes` (M8c).
 
+## Cryptography
+
+`std.crypto` ([design 10 Q4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S4b): the hashes for security, HMAC,
+the system's random bytes, and a comparison of secrets. The doors are Ed25519, X25519,
+ChaCha20-Poly1305 and Argon2.
+
+1. **`Digest`** is a hash fed in pieces: `static let size` and `static let blockSize` in bytes,
+   `static fn new()`, `update(bytes)` as often as there are pieces, and `finish(): uint8[]`, the
+   hash of all of them. `finish` leaves the digest as it was: fed further, it hashes the longer
+   input. *(Informative.)* Q4 writes `finish(): uint8[N]`; an interface names no length that is
+   each implementer's own, as 5.0 has no generic constant ([03 §5](03-types.md)).
+2. **`Sha256`** and **`Sha512`** are FIPS 180-4's SHA-256 and SHA-512, **`Sha1`** its SHA-1 and
+   **`Md5`** RFC 1321's MD5. SHA-1 and MD5 are broken for collisions and are there for what an old
+   format asks. `sha256(bytes): uint8[32]` is the hash at once.
+3. **`Hmac<D>.new(key)`** is RFC 2104's HMAC over any `Digest`, with `update` and `finish` as a
+   digest's: a key longer than `D.blockSize` is hashed first, a shorter one padded with zeros.
+4. **`randomBytes(n): uint8[]`** and **`randomUint64(): uint64`** come from the system; a system
+   that gives none panics (`LYR-RT0015`).
+5. **`constantTimeEq(a, b): bool`** compares two byte slices in a time that depends on their
+   lengths alone — not on where they first differ. Slices of different lengths are unequal.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

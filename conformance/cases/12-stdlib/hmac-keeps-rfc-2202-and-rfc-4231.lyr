@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843
+//! | effcdf6ae5eb2fa2d27416d5f184df9c259a7c79
+//! | 80b24263c7c1a3ebb71493c1dd7be8b49b46d1f41b4aeec1121b013783f8f3526b56d037e05f2598bd0fd2215d6a1e5295e64f73f63f0aec8b915a985d786598
+//! since: 5.0.0
+// 12 §Cryptography, rule 3: RFC 4231's case 2 and RFC 2202's case 2 for a short key, RFC 4231's
+// case 6 for a key longer than the block, which is hashed first.
+import std.crypto { Digest, Hmac, Sha1, Sha256, Sha512 };
+import std.encoding { Hex };
+import std.io { println, ByteBuffer };
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn hex<D :: [Digest]>(s: string): string {
+    var d = D.new();
+    d.update(utf8(s)[..]);
+    return Hex.encode(d.finish()[..]);
+}
+
+fn mac<D :: [Digest]>(key: uint8[], message: string): string {
+    let m = Hmac<D>.new(key[..]);
+    m.update(utf8(message)[..]);
+    return Hex.encode(m.finish()[..]);
+}
+
+fn main(): void {
+    println(mac<Sha256>(utf8("Jefe"), "what do ya want for nothing?"));
+    println(mac<Sha1>(utf8("Jefe"), "what do ya want for nothing?"));
+    println(mac<Sha512>([0xaau8] * 131, "Test Using Larger Than Block-Size Key - Hash Key First"));
+}
