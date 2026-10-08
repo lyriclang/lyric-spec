@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 😀 H true
+//! since: 5.0.0
+// 01 §4.3: a character beyond the basic plane is one character; '\u{…}' names a scalar value.
+import std.io { println };
+
+fn main(): void {
+    let smile = '😀';
+    let h = '\u{48}';
+    let isTab = '\t' == '\u{9}';
+    println(f"{smile} {h} {isTab}");
+}

@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 1000000 255 493 10 1
+//! | 255 -9223372036854775808
+//! since: 5.0.0
+// 01 §4.1: decimal, hex, octal and binary digits, '_' among and after them, a suffix, and the '-'
+// that belongs to the literal.
+import std.io { println };
+
+fn main(): void {
+    let a = 1_000_000;
+    let b = 0xFF;
+    let c = 0o755;
+    let d = 0b1010;
+    let e = 1_;
+    let f = 255u8;
+    let g = -9223372036854775808;
+    println(f"{a} {b} {c} {d} {e}");
+    println(f"{f} {g}");
+}

@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 1 2
+//! since: 5.0.0
+// 01 §3.4: Lyric 4's words are names in Lyric 5.
+import std.io { println };
+
+fn main(): void {
+    let module = 1;
+    let params = 2;
+    println(f"{module} {params}");
+}

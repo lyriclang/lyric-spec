@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0013
+//! since: 5.0.0
+// 01 §4.5: '\xNN' stands in a byte string alone — a character is '\u{…}'.
+fn main(): void {
+    let s = "\x41";
+    let c = '\x41';
+}

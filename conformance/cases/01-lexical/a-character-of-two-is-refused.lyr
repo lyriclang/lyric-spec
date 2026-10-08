@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-LEX0008
+//! since: 5.0.0
+// 01 §4.3: one character between the quotes, not two.
+fn main(): void {
+    let c = 'ab';
+}

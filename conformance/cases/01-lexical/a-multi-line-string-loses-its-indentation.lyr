@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | two
+//! |   lines
+//! |
+//! | end!
+//! | raw \n
+//! since: 5.0.0
+// 01 §4.4: the closing line's indentation comes off every line, a blank line may be indented less,
+// the escapes resolve after the lines are read; 'r"""…"""' keeps them.
+import std.io { println };
+
+fn main(): void {
+    let text = """
+        two
+          lines
+
+        end\u{21}
+        """;
+    println(text);
+    println(r"""
+        raw \n
+        """);
+}
