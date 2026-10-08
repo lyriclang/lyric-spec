@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | before the panic 1
+//! since: 5.0.0
+// 12 §The console, rule 2: what the output holds is written before a panic's report.
+import std.io { print, println };
+
+fn main(): void {
+    print("before the panic ");
+    println(1);
+    panic("boom");
+}

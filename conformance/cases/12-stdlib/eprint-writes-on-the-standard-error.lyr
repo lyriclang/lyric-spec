@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | out 1
+//! stderr:
+//! | err 2
+//! | e3
+//! since: 5.0.0
+// 12 §The console, rules 1 and 2: eprint and eprintln write on the standard error, apart from the
+// output; flush writes both.
+import std.io { eprint, eprintln, flush, println };
+
+fn main(): void {
+    println(f"out {1}");
+    eprintln(f"err {2}");
+    eprint("e");
+    eprint(3);
+    eprintln("");
+    flush();
+}
