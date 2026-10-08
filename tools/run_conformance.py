@@ -24,7 +24,7 @@ import tomllib
 PROGRAM_TIMEOUT = 60
 
 def parse_header(path):
-    spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
+    spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None, "stdin": None,
             "errors": [], "warnings": [], "since": None, "until": None, "bin": None, "options": [],
             "update": False}
     lines = path.read_text(encoding="utf-8").splitlines()
@@ -41,11 +41,11 @@ def parse_header(path):
             spec["exit"] = int(body[5:].strip())
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
-        elif body in ("stdout:", "stderr:"):
+        elif body in ("stdout:", "stderr:", "stdin:"):
             out = spec[body[:-1]] = []
         elif body.startswith("|"):
             if out is None:
-                raise ValueError(f"{path}: a '|' line before 'stdout:' or 'stderr:'")
+                raise ValueError(f"{path}: a '|' line before 'stdout:', 'stderr:' or 'stdin:'")
             # One space after the bar is the format's, more are the text's: a report's
             # '  suppressed:' keeps its indentation.
             out.append(body[2:] if body[1:].startswith(" ") else body[1:])
@@ -204,7 +204,9 @@ def run_case(case, spec, lyric5, profile, workdir):
     if not binaries:
         return fail(f"no binary '{name}' under {cwd / 'out' / profile}")
     try:
-        executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd,
+        # 'stdin:' feeds its lines, each with its newline; without it the program reads nothing
+        fed = "".join(line + "\n" for line in spec["stdin"]) if spec["stdin"] is not None else ""
+        executed = subprocess.run([str(binaries[0])], capture_output=True, text=True, cwd=cwd, input=fed,
                                   timeout=PROGRAM_TIMEOUT, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         return fail(f"the program did not end within {PROGRAM_TIMEOUT} s")

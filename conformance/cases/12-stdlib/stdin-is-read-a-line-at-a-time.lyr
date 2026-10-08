@@ -1,0 +1,30 @@
+//! run
+//! stdin:
+//! | first
+//! | second
+//! | third
+//! | fourth
+//! stdout:
+//! | 1 first sec ond
+//! | 2 [third][fourth]
+//! | 3 <end> same
+//! since: 5.0.0
+// 12 §The console, rule 4: the standard input a line at a time, raw bytes from the same buffer
+// between, the rest by lines, null at its end — and one stdin() for the program.
+import std.io { println, stdin };
+
+fn main(): void throws Error {
+    let input = stdin();
+    let a = try input.readLine();
+    let three: uint8[] = [0u8] * 3;
+    let n = try input.read(three[..]);
+    let b = try input.readLine();
+    println(f"1 {a ?? "<end>"} {try string.fromUtf8(three[..n])} {b ?? "<end>"}");
+    var rest = "";
+    for (line in try input.lines()) {
+        rest = rest + "[" + line + "]";
+    }
+    println(f"2 {rest}");
+    let again = stdin();
+    println(f"3 {(try again.readLine()) ?? "<end>"} {if (same(again, input)) "same" else "another"}");
+}

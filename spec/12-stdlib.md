@@ -581,8 +581,8 @@ their entries, and what is put together from them. Each call of the system's run
 
 ## The console
 
-`std.io` ([design 10 O9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S8a): the program's standard output and standard
-error. `stdin()` and the two streams as a `Reader` and `Writer`s follow with S8b.
+`std.io` ([design 10 O9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S8a, S8b): the program's standard input, output and
+error.
 
 1. **`print(v)`** writes `v`'s text — what its `Display` shows — on the standard output, and
    **`println(v)`** the same followed by a newline; **`eprint(v)`** and **`eprintln(v)`** write
@@ -595,6 +595,13 @@ error. `stdin()` and the two streams as a `Reader` and `Writer`s follow with S8b
 3. *(Informative.)* Through one pipe the two streams show the mode: blocks come at the end, the
    output's first. A program another reads while it runs — a line someone waits for — flushes, as
    a C program does.
+4. **`stdin()`** is the program's standard input, one for the program: a `Reader` whose reads go
+   through a buffer of its own, with **`readLine()`** — the next line without its end, `\n` or
+   `\r\n`, and `null` at the end of the input — and **`lines()`**, an iterator of them with
+   `Error = IoError`. A `read` takes what a line's read left in the buffer first.
+5. **`stdout()`** and **`stderr()`** are `Writer`s over the buffers `print` and `eprint` write into,
+   so what the two write keeps its order. Their `flush()` throws what the system says — a pipe
+   nobody reads is `BrokenPipe`; the console is not `Closeable`.
 
 ## Strings
 
