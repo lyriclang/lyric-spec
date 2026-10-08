@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | broken pipe 3
+//! | abcdefgh
+//! since: 5.0.0
+// 12 §Input and output, rule 6: a flush that throws keeps what the inner writer did not take, and
+// the next flush writes it — nothing lost, nothing twice.
+import std.io { println, BufWriter, ByteBuffer, IoError, Writer };
+
+class Sink :: [Writer] {
+    most: int = 1 << 30,
+    failAt: int = -1,
+    var writes: int = 0,
+    var flushes: int = 0,
+    var taken: ByteBuffer = ByteBuffer.new(),
+
+    mut fn write(from: Slice<uint8>): int throws IoError {
+        this.writes = this.writes + 1;
+        if (this.writes == this.failAt) {
+            throw IoError { kind = .BrokenPipe };
+        }
+        let n = if (from.length() < this.most) from.length() else this.most;
+        try this.taken.write(from[..n]);
+        return n;
+    }
+
+    mut fn flush(): void throws IoError {
+        this.flushes = this.flushes + 1;
+    }
+}
+
+fn main(): void throws Error {
+    let into = Sink { most = 3, failAt = 2 };
+    using let w = BufWriter.new(into);
+    try w.writeString("abcdefgh");
+    try {
+        w.flush();
+    } catch (e: IoError) {
+        println(f"{e.message()} {into.taken.length()}");
+    }
+    try w.flush();
+    println(try into.taken.readToString());
+}

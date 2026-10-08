@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | a
+//! | invalid data (the bytes are no UTF-8): the bytes are no UTF-8 from byte 3 on
+//! | c
+//! | a, then the bytes are no UTF-8 from byte 1 on
+//! since: 5.0.0
+// 12 §Input and output, rule 7: bytes that are no UTF-8 throw InvalidData, the Utf8Error's offset
+// counted from the reader's start; the line that throws is consumed. A codepoint the end cuts off
+// is no UTF-8 either.
+import std.io { println, ByteReader, IoError, TextReader };
+
+fn main(): void throws Error {
+    let bad: uint8[] = [0x61u8, 0x0Au8, 0x62u8, 0xFFu8, 0x0Au8, 0x63u8];
+    let t = TextReader.new(ByteReader.new(bad[..]));
+    println(try t.readLine() ?? "<end>");
+    try {
+        println(t.readLine() ?? "<end>");
+    } catch (e: IoError) {
+        println(f"{e.message()}: {e.cause()?.message() ?? ""}");
+    }
+    println(try t.readLine() ?? "<end>");
+    let cut: uint8[] = [0x61u8, 0xE2u8, 0x82u8];
+    var seen = "";
+    try {
+        for (c in TextReader.new(ByteReader.new(cut[..])).chars()) {
+            seen = f"{seen}{c}";
+        }
+    } catch (e: IoError) {
+        seen = f"{seen}, then {e.cause()?.message() ?? ""}";
+    }
+    println(seen);
+}

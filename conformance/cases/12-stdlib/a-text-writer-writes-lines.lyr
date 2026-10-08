@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | [ab][ü]
+//! | 6 6
+//! since: 5.0.0
+// 12 §Input and output, rules 2 and 8: a TextWriter writes the text's UTF-8, and 'writeLine' a
+// '\n' after it; a writer's 'flush' does nothing by default.
+import std.io { println, ByteBuffer, ByteReader, TextReader, TextWriter };
+
+fn main(): void throws Error {
+    let into = ByteBuffer.new();
+    let t = TextWriter.new(into);
+    try t.write("a");
+    try t.writeLine("b");
+    try t.writeLine("ü");
+    let before = into.length();
+    try into.flush();
+    let bytes = into.toArray();
+    var seen = "";
+    for (line in try TextReader.new(ByteReader.new(bytes[..])).lines()) {
+        seen = f"{seen}[{line}]";
+    }
+    println(seen);
+    println(f"{before} {into.length()}");
+}

@@ -1,0 +1,50 @@
+//! run
+//! stdout:
+//! | 0 0
+//! | 1 200 1
+//! | 1 1
+//! since: 5.0.0
+// 12 §Input and output, rule 6: a BufWriter holds back what it is handed until its buffer is full,
+// a flush or its close; closing flushes it and its inner writer — 'using let' closes it too.
+import std.io { println, BufWriter, ByteBuffer, IoError, Writer };
+
+class Sink :: [Writer] {
+    most: int = 1 << 30,
+    failAt: int = -1,
+    var writes: int = 0,
+    var flushes: int = 0,
+    var taken: ByteBuffer = ByteBuffer.new(),
+
+    mut fn write(from: Slice<uint8>): int throws IoError {
+        this.writes = this.writes + 1;
+        if (this.writes == this.failAt) {
+            throw IoError { kind = .BrokenPipe };
+        }
+        let n = if (from.length() < this.most) from.length() else this.most;
+        try this.taken.write(from[..n]);
+        return n;
+    }
+
+    mut fn flush(): void throws IoError {
+        this.flushes = this.flushes + 1;
+    }
+}
+
+fn scoped(into: Sink): void throws IoError {
+    using let w = BufWriter.new(into);
+    try w.writeString("z");
+}
+
+fn main(): void throws Error {
+    let into = Sink { };
+    let w = BufWriter.new(into);
+    for (_ in 0..100) {
+        try w.writeString("xy");
+    }
+    println(f"{into.writes} {into.taken.length()}");
+    try w.close();
+    println(f"{into.writes} {into.taken.length()} {into.flushes}");
+    let other = Sink { };
+    try scoped(other);
+    println(f"{other.taken.length()} {other.flushes}");
+}
