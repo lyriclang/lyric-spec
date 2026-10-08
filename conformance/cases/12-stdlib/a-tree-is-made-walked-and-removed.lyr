@@ -1,0 +1,50 @@
+//! run
+//! stdout:
+//! | A.md a/ a.txt b/ b/c/ b/c/x.txt b/y.txt z.txt
+//! | 9 dirs, 6 files, 12 bytes
+//! | removed: false, again: fine
+//! since: 5.0.0
+// 12 §Directories, rules 5, 7 and 8: a tree made in a temporary directory, walked depth first in
+// the byte order of the names, and removed with all in it.
+import std.fs;
+import std.io { println };
+import std.path;
+
+fn main(): void throws Error {
+    let t = try fs.tempDir();
+    for (d in ["b/c", "a"]) {
+        try fs.createDirAll(path.join(t, d));
+    }
+    for (f in ["z.txt", "b/y.txt", "b/c/x.txt", "a.txt", "A.md"]) {
+        try fs.writeText(path.join(t, f), f);
+    }
+    var out = "";
+    for (e in try fs.walk(t)) {
+        let rel = (path.relative(t, e.path) ?? e.path).replace("\\", "/");
+        out = out + (if (out.isEmpty()) "" else " ") + rel + (if (e.isDir) "/" else "");
+    }
+    println(out);
+    let root = path.join(t, "tree");
+    for (k in 0..3) {
+        for (j in 0..2) {
+            try fs.createDirAll(path.join(root, f"d{k}", f"e{j}"));
+            try fs.writeText(path.join(root, f"d{k}", f"e{j}", "leaf.txt"), f"{k}{j}");
+        }
+    }
+    var dirs = 0;
+    var files = 0;
+    var bytes = 0;
+    for (e in try fs.walk(root)) {
+        if (e.isDir) {
+            dirs = dirs + 1;
+        } else if (e.isFile) {
+            files = files + 1;
+            bytes = bytes + (try e.metadata()).size;
+        }
+    }
+    println(f"{dirs} dirs, {files} files, {bytes} bytes");
+    try fs.removeAll(t);
+    let gone = fs.exists(t);
+    try fs.removeAll(t);
+    println(f"removed: {gone}, again: fine");
+}

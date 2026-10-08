@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 100000 100000
+//! | 5 small
+//! | invalid input, small
+//! | is a directory, made: false
+//! | not found
+//! since: 5.0.0
+// 12 §Directories, rule 6: copy gives the bytes and their count; over a file it cuts; onto itself
+// and from a directory it is refused before anything is written.
+import std.fs;
+import std.io { IoError, println };
+import std.path;
+
+fn kind(f: fn() -> void throws IoError): string {
+    try {
+        f();
+        return "copied";
+    } catch (e: IoError) {
+        let m = e.message();
+        return m[..(m.find(":") ?? m.length())].toString();
+    }
+}
+
+fn main(): void throws Error {
+    let t = try fs.tempDir();
+    let big: uint8[] = [42u8] * 100000;
+    try fs.writeBytes(path.join(t, "big.bin"), big[..]);
+    let n = try fs.copy(path.join(t, "big.bin"), path.join(t, "copy.bin"));
+    println(f"{n} {(try fs.readBytes(path.join(t, "copy.bin"))).length()}");
+    try fs.writeText(path.join(t, "small.txt"), "small");
+    let m = try fs.copy(path.join(t, "small.txt"), path.join(t, "copy.bin"));
+    println(f"{m} {try fs.readText(path.join(t, "copy.bin"))}");
+    let s = path.separator;
+    let itself = kind(() => { let _ = try fs.copy(path.join(t, "small.txt"), f"{t}{s}.{s}small.txt"); });
+    println(f"{itself}, {try fs.readText(path.join(t, "small.txt"))}");
+    let dir = kind(() => { let _ = try fs.copy(t, path.join(t, "d")); });
+    println(f"{dir}, made: {fs.exists(path.join(t, "d"))}");
+    println(kind(() => { let _ = try fs.copy(path.join(t, "none"), path.join(t, "e")); }));
+    try fs.removeAll(t);
+}
