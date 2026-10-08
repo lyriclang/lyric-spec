@@ -1,0 +1,18 @@
+//! run
+//! exit: 3
+//! stdout:
+//! | before exit 1
+//! since: 5.0.0
+// 12 §The system, rule 4: exit ends the program with its code; what the console holds is written,
+// a defer does not run.
+import std.io { print, println };
+import std.os;
+
+fn main(): void {
+    defer {
+        println("a defer ran");
+    }
+    print("before exit ");
+    println(1);
+    os.exit(3);
+}

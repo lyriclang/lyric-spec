@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 1 args-name-the-program-first
+//! since: 5.0.0
+// 12 §The system, rule 1: a program started without arguments has one: its own name.
+import std.io { println };
+import std.os;
+import std.path;
+
+fn main(): void {
+    let a = os.args();
+    println(f"{a.length()} {path.stem(a[0])}");
+}

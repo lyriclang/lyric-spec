@@ -603,6 +603,27 @@ error.
    so what the two write keeps its order. Their `flush()` throws what the system says — a pipe
    nobody reads is `BrokenPipe`; the console is not `Closeable`.
 
+## The system
+
+`std.os` ([design 10 Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S9): the program's arguments, its environment, its
+working directory, its end, and the facts of the system it runs on. A text the system holds
+that is no UTF-8 is taken with U+FFFD for its bad bytes, as `string.fromUtf8Lossy` takes it.
+
+1. **`os.args()`** gives the program's arguments, its own name first, as a new `string[]`.
+2. **`os.env(name)`** is the variable's value, or `null` where it is not set; **`os.envs()`** the
+   whole environment as a `Map<string, string>`, a snapshot; **`os.setEnv(name, value)`** sets a
+   variable for the process and those it starts. A name that is empty or holds `=` or a NUL, or a
+   value that holds a NUL, is the program's mistake: `setEnv` panics.
+3. **`os.cwd()`** is the working directory, absolute; **`os.setCwd(path)`** moves it. What they
+   cannot do is an `IoError` with the path.
+4. **`os.exit(code)`** ends the program with `code`: what the console holds is written, and no
+   `defer`, no `using` and no other task runs ([06 §7](06-errors.md)).
+5. **The facts**: `os.platform()` (`Platform`: `Linux`, `MacOS`, `Windows`, `Other`) and
+   `os.arch()` (`Arch`: `X86_64`, `Aarch64`, `Other`), whose texts are the target triples' words
+   (`linux`, `macos`, `windows`, `x86_64`, `aarch64`); `os.homeDir()`, the user's home or `null`;
+   `os.tempDir()`, the system's directory for temporary files, absolute (`fs.tempDir()` makes a new
+   one in it); `os.hostname()`; `os.cpuCount()`, one at least; `os.pid()`.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

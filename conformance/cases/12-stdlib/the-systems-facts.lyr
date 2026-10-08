@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true true
+//! | true true true true true
+//! since: 5.0.0
+// 12 §The system, rule 5: the platform and the machine by the target triples' words; a process
+// number, a processor, a host name, an absolute directory for temporary files.
+import std.io { println };
+import std.os;
+import std.path;
+
+fn main(): void throws Error {
+    let p = f"{os.platform()}";
+    let a = f"{os.arch()}";
+    println(f"{p == "linux" || p == "macos" || p == "windows"} {a == "x86_64" || a == "aarch64"}");
+    let home = os.homeDir() ?? "";
+    println(f"{os.pid() > 0} {os.cpuCount() >= 1} {!(try os.hostname()).isEmpty()} {path.isAbsolute(os.tempDir())} {home.isEmpty() || path.isAbsolute(home)}");
+}

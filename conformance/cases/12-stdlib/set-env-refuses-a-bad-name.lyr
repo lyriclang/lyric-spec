@@ -1,0 +1,9 @@
+//! run
+//! panic: LYR-RT0008
+//! since: 5.0.0
+// 12 §The system, rule 2: a name with `=` in it is the program's mistake.
+import std.os;
+
+fn main(): void {
+    os.setEnv("A=B", "x");
+}
