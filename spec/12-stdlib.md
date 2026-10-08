@@ -655,8 +655,8 @@ that is no UTF-8 is taken with U+FFFD for its bad bytes, as `string.fromUtf8Loss
 TCP, UDP and the resolver. A call that would block parks the task until the thread's poller says the socket is ready,
 and is a wait in the sense of [10 §1](10-concurrency.md) rule 7: a cancel ends it with
 `Cancelled` (§Input and output rule 2). There are no socket timeouts: `withTimeout` is the one
-way. *(Informative.)* POSIX; on Windows every call throws `Unsupported` until M8b S11 gives it its
-poller.
+way. *(Informative.)* POSIX waits for its sockets through epoll or kqueue; Windows waits for its sockets through AFD
+poll requests on the thread's completion port (M8b S11).
 
 1. **`IpAddr`** is `V4(a, b, c, d)`, four `uint8`, or `V6(…)`, eight `uint16` groups; it is
    `Equatable`. **`IpAddr.parse(s)`** takes version 4 as four decimal bytes, none with a leading
