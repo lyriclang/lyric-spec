@@ -132,7 +132,9 @@ standard library's own tests through it, `StdTests`).
 1. **`lyric test`** builds every function the package marks `@Test`
    ([11 §1](11-metaprogramming.md)) — in its modules under `src/` and under `tests/`
    ([15 §7](15-project.md)) — into one program for this machine, under the profile asked for as
-   `build` takes it (§1.1), and runs it. A library has tests as well. It takes no file.
+   `build` takes it (§1.1), and runs it. A library has tests as well. It takes no file. Built
+   for another machine — or for the target `--target` names, as `run` takes it — the program is
+   named and not run, exit 2.
 2. The tests run one after another — module by module in the order of their paths, each
    module's in the order it writes them —, each in a task of its own: a panic or an error that
    leaves a test fails it, and the run goes on. A test with a `skip` is named and not run.
@@ -163,7 +165,8 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 
 1. **`lyric bench`** builds every function the package marks `@Bench` — in its modules under
    `src/` and under `tests/` — into one program for this machine, in the **release** profile
-   unless `--profile` names another, and runs them one after another on one thread.
+   unless `--profile` names another, and runs them one after another on one thread; `--target`
+   as `test` takes it (§3).
 2. A line for each: `bench app.tests.speed.reads: 412.3 ns/op, 0 allocs/op, 0 B/op, 2483.2 MB/s
    (290000 runs)` — the nanoseconds a run, the allocations a run and their bytes, the megabytes a
    second where the benchmark said its bytes, and the runs measured. `-f <text>`

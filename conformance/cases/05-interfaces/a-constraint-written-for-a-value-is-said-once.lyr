@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3: a constraint only written as a parameter's type says so there, once, and goes on
+// as no type: the body's uses and the call say nothing more.
+import std.io { println };
+
+fn total(xs: Iterator): int {
+    var n = 0;
+    while (let x = xs.next()) {
+        n += 1;
+    }
+    println(f"{xs}");
+    return n;
+}
+
+fn main(): void {
+    println(f"{total([1, 2].iter())}");
+}

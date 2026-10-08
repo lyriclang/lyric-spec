@@ -30,8 +30,10 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
 ## 3. Names and words
 
 1. A **name** begins with an ASCII letter or `_` and goes on with ASCII letters, digits and `_`. A
-   character beyond ASCII stands in no name and is refused where it stands (`LYR-LEX0001`). `_`
-   alone is the wildcard where a name would bind.
+   character beyond ASCII stands in no name and is refused where it stands (`LYR-LEX0001`); a word
+   of letters and digits that holds such characters — `größe` — is refused once, as the name it
+   would be, naming them, and read as that name, so its uses refuse it again and say nothing
+   else. `_` alone is the wildcard where a name would bind.
 2. The **reserved words** are no names: `import as pub internal private static struct class enum
    interface extend fn mut let var if else while do for in is match break continue return yield
    defer try catch throw true false null this`. One where a name belongs is refused — the
@@ -69,7 +71,10 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
 
 1. A float literal is digits, a `.` and digits, or an exponent — `e` or `E`, an optional sign,
    digits —, or both: `1.0`, `2.5e3`, `1e-2`, `1_000.5`. A digit stands on both sides of the `.`:
-   `1.` and `.5` are no float literals. A suffix `f32` or `f64` gives it its type.
+   `1.` and `.5` are no float literals, each refused once (`LYR-LEX0016`) and read as the float it
+   means, `1.0` and `0.5`. `1.` is it where no digit, name or second `.` follows the point —
+   `3.show()` calls, `1..3` is a range —; `.5` where an operand begins — after one it names a
+   tuple's element. A suffix `f32` or `f64` gives it its type.
 
 ### 4.3 Characters
 
