@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | 7 3
+//! | system error 0 (the writer took none of 1 bytes)
+//! since: 5.0.0
+// 12 §Input and output, rules 2 and 3: a write may take fewer bytes than it is handed; 'writeAll'
+// takes the rest, and throws for a writer that takes none.
+import std.io { println, IoError, Writer };
+
+class Trickle :: [Writer] {
+    most: int,
+    var taken: int = 0,
+    var calls: int = 0,
+
+    mut fn write(from: Slice<uint8>): int throws IoError {
+        let n = if (from.length() < this.most) from.length() else this.most;
+        this.taken = this.taken + n;
+        this.calls = this.calls + 1;
+        return n;
+    }
+}
+
+fn main(): void {
+    let data: uint8[] = [1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8];
+    let t = Trickle { most = 3 };
+    try! t.writeAll(data[..]);
+    println(f"{t.taken} {t.calls}");
+    let stuck = Trickle { most = 0 };
+    try {
+        stuck.writeAll(data[..1]);
+    } catch (e: IoError) {
+        println(e.message());
+    }
+}

@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | 3 1
+//! | unexpected end of input (0 of 2 bytes)
+//! since: 5.0.0
+// 12 §Input and output, rule 3: 'readExact' fills the slice whole, over as many reads as it takes,
+// or throws UnexpectedEof.
+import std.io { println, IoError, Reader };
+
+class Drip :: [Reader] {
+    var left: int,
+
+    mut fn read(into: Slice<uint8>): int throws IoError {
+        if (this.left == 0 || into.isEmpty()) {
+            return 0;
+        }
+        into[0] = this.left as uint8;
+        this.left = this.left - 1;
+        return 1;
+    }
+}
+
+fn main(): void {
+    let d = Drip { left = 3 };
+    let three: uint8[] = [0u8] * 3;
+    try! d.readExact(three[..]);
+    println(f"{three[0]} {three[2]}");
+    let more: uint8[] = [0u8] * 2;
+    try {
+        d.readExact(more[..]);
+    } catch (e: IoError) {
+        println(e.message());
+    }
+}

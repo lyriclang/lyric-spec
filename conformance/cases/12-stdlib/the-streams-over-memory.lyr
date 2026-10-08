@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 2 98 301 99
+//! | 3 1 20 0
+//! since: 5.0.0
+// 12 §Input and output, rule 5: a ByteBuffer reads what was written, and grows; a ByteReader seeks
+// from either end, and past the end reads nothing.
+import std.io { println, ByteBuffer, ByteReader };
+
+fn main(): void {
+    let b = ByteBuffer.new();
+    try! b.writeString("abc");
+    let two: uint8[] = [0u8] * 2;
+    let got = try! b.read(two[..]);
+    for (_ in 0..100) {
+        try! b.writeString("xyz");
+    }
+    println(f"{got} {two[1]} {b.length()} {b.toArray()[0]}");
+    let data: uint8[] = [10u8, 20u8, 30u8, 40u8];
+    let r = ByteReader.new(data[..]);
+    let end = try! r.seek(.End(-1));
+    let back = try! r.seek(.Current(-2));
+    let one: uint8[] = [0u8];
+    try! r.readExact(one[..]);
+    try! r.seek(.Start(9));
+    println(f"{end} {back} {one[0]} {try! r.read(one[..])}");
+}
