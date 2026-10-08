@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 13 12 true
+//! | 4 255
+//! | x
+//! | one two made
+//! since: 5.0.0
+// 12 §Files, rule 6: a file read and written whole, as text and as bytes; a write cuts what was
+// there; an append writes at the end, and makes the file where it is not there.
+import std.fs;
+import std.io { println };
+
+fn main(): void throws Error {
+    try fs.writeText("case-conv-a.txt", "héllo, file\n");
+    let text = try fs.readText("case-conv-a.txt");
+    println(f"{text.length()} {text.charCount()} {text.startsWith("héllo")}");
+    let bytes: uint8[] = [0u8, 255u8, 10u8, 13u8];
+    try fs.writeBytes("case-conv-b.bin", bytes[..]);
+    let back = try fs.readBytes("case-conv-b.bin");
+    println(f"{back.length()} {back[1]}");
+    try fs.writeText("case-conv-a.txt", "x");
+    println(try fs.readText("case-conv-a.txt"));
+    try fs.writeText("case-conv-log.txt", "one");
+    try fs.appendText("case-conv-log.txt", " two");
+    try fs.appendText("case-conv-made.txt", "made");
+    println(f"{try fs.readText("case-conv-log.txt")} {try fs.readText("case-conv-made.txt")}");
+}

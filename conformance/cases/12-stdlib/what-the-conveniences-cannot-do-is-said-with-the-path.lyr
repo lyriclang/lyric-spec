@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | invalid data: case-conv-bad.txt (the bytes are no UTF-8)
+//! | a, then invalid data: case-conv-bad.txt (the bytes are no UTF-8), then none
+//! | not found: case-conv-none.txt (opened to read)
+//! | not found: case-conv-none.txt (opened to read)
+//! | not found: case-conv-dir/x.txt (opened to write)
+//! since: 5.0.0
+// 12 §Files, rules 3, 6 and 7: what the conveniences cannot do is an IoError with the path — the
+// decoder's InvalidData too; the lines give no more after their first error.
+import std.fs;
+import std.io { IoError, println };
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let bad: uint8[] = [0x61u8, 0x0Au8, 0xFFu8, 0x0Au8];
+    try fs.writeBytes("case-conv-bad.txt", bad[..]);
+    println(said(() => try fs.readText("case-conv-bad.txt")));
+    let it = try fs.lines("case-conv-bad.txt");
+    let a = try it.next() ?? "";
+    let error = said(() => (try it.next()) ?? "none");
+    println(f"{a}, then {error}, then {said(() => (try it.next()) ?? "none")}");
+    try it.close();
+    println(said(() => f"{(try fs.readBytes("case-conv-none.txt")).length()}"));
+    println(said(() => {
+        using let ls = try fs.lines("case-conv-none.txt");
+        return "opened";
+    }));
+    println(said(() => {
+        try fs.appendText("case-conv-dir/x.txt", "x");
+        return "appended";
+    }));
+}
