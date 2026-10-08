@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | <none> after true
+//! | true
+//! since: 5.0.0
+// 12 §The system, rule 2: a variable not set is null; set, it is read back and is in the whole
+// environment.
+import std.io { println };
+import std.os;
+
+fn main(): void {
+    let before = os.env("LYRIC_CASE_ENV_ROUND") ?? "<none>";
+    os.setEnv("LYRIC_CASE_ENV_ROUND", "after");
+    let all = os.envs();
+    println(f"{before} {os.env("LYRIC_CASE_ENV_ROUND") ?? "<none>"} {(all.get("LYRIC_CASE_ENV_ROUND") ?? "") == "after"}");
+    println(f"{all.length() >= 1}");
+}

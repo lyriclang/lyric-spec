@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | true true true
+//! | not found: case-sys-none (made the working directory)
+//! since: 5.0.0
+// 12 §The system, rule 3: the working directory is absolute, moves into a directory and back;
+// one that is not there is not found, with its path.
+import std.fs;
+import std.io { IoError, println };
+import std.os;
+import std.path;
+
+fn main(): void throws Error {
+    let start = try os.cwd();
+    try fs.createDir("case-sys-dir");
+    try os.setCwd("case-sys-dir");
+    let moved = try os.cwd();
+    try os.setCwd(start);
+    println(f"{path.isAbsolute(start)} {moved == path.join(start, "case-sys-dir")} {(try os.cwd()) == start}");
+    try {
+        os.setCwd("case-sys-none");
+    } catch (e: IoError) {
+        println(e.message());
+    }
+}
