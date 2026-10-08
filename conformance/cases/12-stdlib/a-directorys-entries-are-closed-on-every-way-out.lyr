@@ -1,0 +1,54 @@
+//! run
+//! stdout:
+//! | after a break: closed: case-dir-e (read)
+//! | 3, then none
+//! | closed twice, then closed: case-dir-e (read)
+//! since: 5.0.0
+// 12 §Directories, rule 3: the entries' iterator lets its directory go at a loop's break, at its
+// end, and at close(); after close() a call throws Closed, after the end it gives no more.
+import std.fs;
+import std.fs { ReadDirIter };
+import std.io { IoError, println };
+import std.path;
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    try fs.createDir("case-dir-e");
+    for (k in 0..3) {
+        try fs.writeText(path.join("case-dir-e", f"{k}.txt"), "");
+    }
+    let early = try fs.readDir("case-dir-e");
+    for (_ in try early) {
+        break;
+    }
+    println(f"after a break: {said(() => try nameOf(early))}");
+    let whole = try fs.readDir("case-dir-e");
+    var n = 0;
+    loop {
+        if (try whole.next() == null) {
+            break;
+        }
+        n = n + 1;
+    }
+    println(f"{n}, then {said(() => try nameOf(whole))}");
+    try whole.close();
+    let manual = try fs.readDir("case-dir-e");
+    try manual.close();
+    try manual.close();
+    println(f"closed twice, then {said(() => try nameOf(manual))}");
+}
+
+/// The next entry's name, or "none".
+fn nameOf(it: ReadDirIter): string throws IoError {
+    if (let e = try it.next()) {
+        return e.name;
+    }
+    return "none";
+}

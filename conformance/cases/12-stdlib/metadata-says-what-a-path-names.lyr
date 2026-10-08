@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 5 true false false false
+//! | written now: true
+//! | true false
+//! | 3
+//! | true false
+//! | not found: case-dir-none (looked at)
+//! since: 5.0.0
+// 12 §Directories, rules 1 and 3: what a file and a directory are, their size, when they were
+// written; an entry's metadata; exists.
+import std.fs;
+import std.io { IoError, println };
+import std.path;
+import std.time { Instant };
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    try fs.writeText("case-dir-m.txt", "hello");
+    let m = try fs.metadata("case-dir-m.txt");
+    println(f"{m.size} {m.isFile} {m.isDir} {m.readonly} {m.isSymlink}");
+    let age = Instant.now().since(m.modified).secs();
+    println(f"written now: {age < 60 && age > -60}");
+    try fs.createDir("case-dir-md");
+    let d = try fs.metadata("case-dir-md");
+    println(f"{d.isDir} {d.isFile}");
+    try fs.writeText(path.join("case-dir-md", "f"), "abc");
+    for (e in try fs.readDir("case-dir-md")) {
+        println(f"{(try e.metadata()).size}");
+    }
+    println(f"{fs.exists("case-dir-md")} {fs.exists("case-dir-none")}");
+    println(said(() => f"{(try fs.metadata("case-dir-none")).size}"));
+}
