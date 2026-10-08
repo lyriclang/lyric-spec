@@ -22,8 +22,10 @@ A `let` or a `var` at the top of a module
    within the module (G2): a later binding may read an earlier one, and the initializer is an
    ordinary expression — a call, an object, an array. A `static let` on a type that is generic
    in nothing is the same mechanism under the type's name (rule 6 for a generic type's).
-   *(The order across modules — imports first, a cycle an
-   error — is written with the modules, M7.)*
+   Across modules a module's bindings are filled before those of every module that imports it
+   (G2) — imports form no cycle ([§2](#2-module-names), `LYR-RES0005`) —, so an initializer may
+   read what a module it imports declares. A binding read before it is filled — a later one of
+   its own module — is refused (`LYR-SEM0057`).
 3. A module-level **`var`** is written from any function that sees it, as a local is; a
    module-level `let` and a `static let` are not (`LYR-SEM0019`) (G5). What a `let` holds
    may still be written where it is a place: the fields of an object it references, the

@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 7 -6 6 9 3 8 5 true
+//! | true
+//! since: 5.0.0
+// 08 §4.1: multiplication before addition, the prefix before both, 'as' before '*', '??' to the
+// right, a range's end an addition, '+' before '<<', '&' before '|', '&&' before '||'; parentheses
+// group an equality.
+import std.io { println };
+
+fn main(): void {
+    let x: int8 = 3;
+    let n: ?int = null;
+    let m: ?int = null;
+    var count = 0;
+    for (_ in 0..2 + 1) { count = count + 1; }
+    println(f"{1 + 2 * 3} {-2 * 3} {x as int * 2} {n ?? m ?? 9} {count} {1 << 2 + 1} {5 & 3 | 4} {true || false && false}");
+    println(f"{(1 == 1) == true}");
+}

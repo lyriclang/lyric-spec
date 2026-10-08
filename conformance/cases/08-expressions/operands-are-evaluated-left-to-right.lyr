@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | left
+//! | right
+//! | third
+//! | 7
+//! | receiver
+//! | first
+//! | second
+//! | 3
+//! | a
+//! | b
+//! | false true
+//! since: 5.0.0
+// 08 §5: operands left to right whatever binds first, the receiver before the arguments, and
+// '&&' and '||' evaluate their right only when the left does not decide.
+import std.io { println };
+
+fn say(tag: string, v: int): int {
+    println(tag);
+    return v;
+}
+
+struct Adder {
+    fn add(a: int, b: int): int {
+        return a + b;
+    }
+}
+
+fn adder(): Adder {
+    println("receiver");
+    return Adder { };
+}
+
+fn main(): void {
+    println(f"{say("left", 1) + say("right", 2) * say("third", 3)}");
+    println(f"{adder().add(say("first", 1), say("second", 2))}");
+    let t = say("a", 0) > 0 && say("never", 1) > 0;
+    let u = say("b", 1) > 0 || say("never", 1) > 0;
+    println(f"{t} {u}");
+}

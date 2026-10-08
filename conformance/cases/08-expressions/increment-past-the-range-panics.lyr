@@ -1,0 +1,8 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 08 §6.1: the step is checked as '+' is.
+fn main(): void {
+    var x = 9223372036854775807;
+    x++;
+}

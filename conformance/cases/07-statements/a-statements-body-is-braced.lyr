@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-PAR0017
+//! since: 5.0.0
+// 07 §5.1: the body of 'if' and 'while' is a block, braced even around one statement — said once
+// for each.
+import std.io { println };
+
+fn main(): void {
+    let c = true;
+    if (c) println("x");
+    while (!c) println("y");
+}

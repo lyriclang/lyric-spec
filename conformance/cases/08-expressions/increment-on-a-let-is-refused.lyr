@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0019
+//! since: 5.0.0
+// 08 §6.1: '++' writes its place, and a 'let' is not written.
+fn main(): void {
+    let x = 1;
+    x++;
+}

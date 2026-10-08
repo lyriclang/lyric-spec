@@ -1,7 +1,9 @@
 # Expressions
 
-> **Skeleton.** Written with milestone **M2/M3** of the Lyric 5 plan, spec-first: each rule lands
-> here with its conformance case before or with its implementation. Source of the decisions:
+> **Partly written.** §1 to §6 were written with milestones **M4** to **M8a** of the Lyric 5 plan
+> and the catch-up block N (2026-10-07); lambdas, trailing blocks and `with` follow, spec-first:
+> each rule lands here with its conformance case before or with its implementation. Source of the
+> decisions:
 > [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md), [04 Abstraction D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md).
 
 ## Scope
@@ -111,3 +113,56 @@ left to right everywhere, the target before the value).
 3. **Its value** is the value stored, at the type of the place: `o = v` where `o` holds a `?T`
    or an interface is worth that `?T` or that interface. A compound assignment is worth the
    new value; `t++` the old one, `++t` the new.
+
+## 4. Precedence
+
+1. The operators bind by these levels, the tightest first (08 Y4):
+
+   | Level | Operators | Associativity |
+   |---|---|---|
+   | postfix | `.` `?.` `[ … ]` `( … )` `!` `++` `--` `with { … }` | left |
+   | prefix | `!` `-` `~` `++` `--` `&` `try` `try?` `try!` `throw` `comptime` | right |
+   | cast | `as` | left |
+   | multiplicative | `*` `/` `%` `*%` | left |
+   | additive | `+` `-` `+%` `-%` | left |
+   | shift | `<<` `>>` | left |
+   | range | `..` `..=` | none |
+   | bitwise and | `&` | left |
+   | bitwise xor | `^` | left |
+   | bitwise or | `\|` | left |
+   | comparison | `<` `<=` `>` `>=` `is` `in` `!in` | none |
+   | equality | `==` `!=` | none |
+   | logical and | `&&` | left |
+   | logical or | `\|\|` | left |
+   | coalescing | `??` | right |
+   | assignment | `=` and every compound assignment | right |
+
+   So `1 << 2 + 1` is `1 << 3`, `x as int * 2` casts before it multiplies, and `0..n + 1` ends at
+   `n + 1`.
+2. A level **without associativity does not chain**: `a..b..c` is refused (`LYR-PAR0005`), and so
+   are `a < b < c` and `a == b == c` (`LYR-PAR0059`) — a chained comparison would compare a `bool`
+   with the third operand, a chained equality would take a `bool` for what was meant. Parentheses
+   say which: `(a == b) == c`. *(Informative.)* The diagnostic names the form likely meant,
+   `a < b && b < c`.
+3. `try` covers everything to its right in the expression it stands in: `try a + b` is
+   `try (a + b)` ([06 §3](06-errors.md#3-the-try-mark-and-coverage)).
+
+## 5. Evaluation order
+
+1. **Left to right, everywhere** ([04 D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md)):
+   the left operand of an operator before the right one; a call's receiver before its arguments,
+   and the arguments in the order they are written; the parts of a literal, a tuple and an
+   initializer in the order they stand. An assignment evaluates its target before its value
+   (§3 rule 1).
+2. `a && b` evaluates `b` only when `a` is `true`, `a || b` only when `a` is `false`, `a ?? b` only
+   when `a` is `null` (§2 rule 3).
+
+## 6. `++` and `--`
+
+1. **`++` and `--`** add and take one on a place that holds a number — a `var`, a field, an
+   element: `x++`, `p.count--`, `++xs[i]`. A place that cannot be written is refused
+   (`LYR-SEM0019`). The step is checked as `+` and `-` are: past the type's range it panics
+   (`LYR-RT0002`, [03 §1](03-types.md)).
+2. `x++` and `x--` are worth the **old** value, `++x` and `--x` the **new** one (§3 rule 3); what
+   leads to the place is evaluated once (§3 rule 2).
+

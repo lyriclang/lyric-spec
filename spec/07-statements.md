@@ -1,7 +1,8 @@
 # Statements
 
-> **Skeleton.** Written with milestone **M2/M3** of the Lyric 5 plan, spec-first: each rule lands
-> here with its conformance case before or with its implementation. Source of the decisions:
+> **Partly written.** §1 to §5 were written with milestones **M5** to **M8a** of the Lyric 5 plan
+> and the catch-up block N (2026-10-07), spec-first: each rule lands here with its conformance case
+> before or with its implementation. Source of the decisions:
 > [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md).
 
 ## Scope
@@ -148,3 +149,15 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    block, as in C#, Java and Go: a `let` of its name there is refused too — a lambda's parameter
    likewise. A block further in may bind the name again; its binding hides the outer one until
    that block ends.
+
+## 5. `if`, `while` and `do`
+
+1. **`if (c) { … }`**, with **`else { … }`** or **`else if (c) { … }`** after it: `c` is a `bool`
+   (`LYR-SEM0004`). The body of an `if`, an `else`, a `while`, a `do` and a `for` is a **block**,
+   braced even around one statement — `if (c) f();` is refused (`LYR-PAR0017`, 08 Y5 S1). An `if`
+   as a value is [08 §2](08-expressions.md#2-if-and-match-as-values)'s; `if (let p = e)` and
+   `let p = e else { … };` take a pattern ([09](09-patterns.md)).
+2. **`while (c) { … }`** tests `c` before every round; **`do { … } while (c);`** after every
+   round, so its block runs at least once, and a `;` ends it. A `continue` in a `do` goes to the
+   test ([§1](#1-loop-and-the-jumps)).
+
