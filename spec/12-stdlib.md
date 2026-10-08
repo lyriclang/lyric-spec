@@ -539,9 +539,8 @@ with S7.
 
 ## Directories
 
-`std.fs` ([design 10 O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S7a): what a path names, the directories and their
-entries. What is put together from these — `createDirAll`, `removeAll`, `copy`, `walk`,
-`tempDir`, `tempFile` — follows with S7b. Each call is one of the system's, on the I/O pool
+`std.fs` ([design 10 O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S7a, S7b): what a path names, the directories and
+their entries, and what is put together from them. Each call of the system's runs on the I/O pool
 (§Files rule 5).
 
 1. **`fs.metadata(path)`** says what a path names, through links: `size` in bytes, `modified`,
@@ -563,6 +562,22 @@ entries. What is put together from these — `createDirAll`, `removeAll`, `copy`
 4. **`fs.canonicalize(path)`** is the path absolute, its links resolved and its `.` and `..`
    taken out, as the system names it; it must be there. **`fs.absolute(path)`** makes it absolute
    by the working directory and normalizes it (§Paths), and asks nothing more of the file system.
+5. **`fs.createDirAll(path)`** makes the directory and every one above it that is not there; a
+   directory there already is nothing to do, and something else there is `NotDirectory`.
+   **`fs.removeAll(path)`** removes the path and all that is in it: a link is removed, never
+   followed into, and nothing there is nothing to do. It removes what it can and throws the first
+   error it met.
+6. **`fs.copy(from, to)`** copies a file's bytes — `to` made or cut as `File.create` makes it —
+   and answers how many. Onto itself, the same file by `canonicalize`, it is `InvalidInput`, and
+   from a directory `IsDirectory`, before anything is written.
+7. **`fs.walk(path)`** gives the entries under the path, not the path itself: depth first, a
+   directory before what is in it, each directory's entries in the byte order of their names,
+   and links not followed. It reads each directory whole and lets it go, so it holds nothing
+   open; its `Error` is `IoError`, and an error ends it.
+8. **`fs.tempDir()`** makes a new directory under the system's directory for temporary files
+   and answers its path; **`fs.tempFile()`** makes a new empty file there and answers its path.
+   Each name is made where nothing was, so it is the program's alone. Neither is removed by
+   itself.
 
 ## Strings
 

@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | dirs: true true true
+//! | files: true 0 true
+//! | made all twice: true
+//! | over a file: not a directory: case-tree-f (made)
+//! | nothing there removed: fine
+//! since: 5.0.0
+// 12 §Directories, rules 5 and 8: two temporary directories and two temporary files are new and
+// distinct; createDirAll makes the parents and finds nothing to do the second time; over a file it
+// says so; removeAll of nothing is nothing to do.
+import std.fs;
+import std.io { IoError, println };
+import std.path;
+
+fn said(f: fn() -> void throws IoError): string {
+    try {
+        f();
+        return "made";
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let one = try fs.tempDir();
+    let two = try fs.tempDir();
+    println(f"dirs: {one != two} {(try fs.metadata(one)).isDir} {path.parent(one) == path.parent(two)}");
+    let f = try fs.tempFile();
+    let g = try fs.tempFile();
+    println(f"files: {f != g} {(try fs.metadata(f)).size} {path.parent(f) == path.parent(one)}");
+    try fs.remove(f);
+    try fs.remove(g);
+    let deep = path.join(one, "a", "b", "c");
+    try fs.createDirAll(deep);
+    try fs.createDirAll(deep);
+    println(f"made all twice: {(try fs.metadata(deep)).isDir}");
+    try fs.writeText("case-tree-f", "");
+    println(f"over a file: {said(() => { try fs.createDirAll("case-tree-f"); })}");
+    try fs.removeAll(one);
+    try fs.removeAll(two);
+    try fs.removeAll(path.join(one, "none"));
+    println("nothing there removed: fine");
+}
