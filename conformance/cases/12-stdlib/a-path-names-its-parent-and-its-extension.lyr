@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | baz.js y x/y . ..
+//! | .js .bashrc [] notes a.tar a/notes.md a/notes.md a/notes
+//! since: 5.0.0
+// 12 §Paths, rule 3: the last element and the rest (Go's Base and Dir), the extension from the
+// last dot with its dot (Go's Ext), the stem, another extension.
+import std.io { println };
+import std.path;
+
+/// The path with '/' for the system's separator: one output on every system.
+fn show(p: string): string {
+    return p.replace(path.separator, "/");
+}
+
+fn main(): void {
+    println(f"{path.fileName("x/y/baz.js")} {path.fileName("x/y/")} {show(path.parent("x/y/baz.js"))} {path.parent("dev.txt")} {path.parent("../todo.txt")}");
+    println(f"{path.extension("main.test.js")} {path.extension(".bashrc")} [{path.extension("a.b/c")}] {path.stem("a/notes.txt")} {path.stem("a.tar.gz")} {show(path.withExtension("a/notes.txt", ".md"))} {show(path.withExtension("a/notes.txt", "md"))} {show(path.withExtension("a/notes.txt", ""))}");
+}

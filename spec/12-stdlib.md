@@ -470,6 +470,32 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
    nanoseconds; a space for the `T`, a missing offset, a date or a time that does not exist is
    `Invalid`, an empty text `Empty`. `Date.parse` reads the full-date alone.
 
+## Paths
+
+`std.path` ([design 10 O6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6a): a path is a string, and there is no
+`Path` type. These functions take a path apart and put one together lexically, as Go's
+`path/filepath` does; none of them asks the file system.
+
+1. **The system's forms.** `path.separator` is `\` on Windows and `/` elsewhere. On Windows both
+   `\` and `/` separate; a path may start with a volume — a drive, `C:`, or a UNC share,
+   `\\server\share` —; two names compare without regard to the case of ASCII letters; and what
+   these functions build, they build with `\`.
+2. **`normalize(p)`** is Go's `Clean`: separators run together, `.` elements dropped, a `..`
+   taking the element before it away — above the root it is dropped, in a relative path kept —,
+   no separator at the end but the root's, and `.` for nothing. **`join(parts...)`** joins the
+   parts that are not empty by the separator and normalizes; it is empty for no such part.
+3. **`fileName(p)`** is the last element (Go's `Base`), **`parent(p)`** the rest, normalized
+   (Go's `Dir`), **`extension(p)`** the last element's extension with its dot, from its last dot
+   (Go's `Ext`; of `.bashrc` that is all of it), **`stem(p)`** the last element without it, and
+   **`withExtension(p, ext)`** the path with another extension — a dot added to `ext` where it
+   has none, the extension dropped for an empty one.
+4. **`isAbsolute(p)`** is Go's `IsAbs` — on Windows a drive with the root, or a UNC share.
+   **`relative(base, target): ?string`** is Go's `Rel`: the path that names `target` from `base`,
+   `.` for the same place, `null` where none exists — one absolute and the other not, two volumes,
+   a base that climbs above where the target is.
+5. **`components(p)`** lists the root — with its volume — and then the elements, without the
+   empty ones and `.`, keeping `..`; nothing is normalized.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
