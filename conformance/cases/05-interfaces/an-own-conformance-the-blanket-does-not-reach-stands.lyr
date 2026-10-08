@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 3
+//! since: 5.0.0
+// 05 §13 rules 8, 9: a type's own Into<int> stands while the blanket does not reach it there - int
+// is no From<Meters>.
+import std.io { println };
+
+struct Meters :: [Into<int>] {
+    n: int,
+
+    fn into(): int {
+        return this.n;
+    }
+}
+
+fn main(): void {
+    let m = Meters { n = 3 };
+    let n: int = m.into();
+    println(f"{n}");
+}

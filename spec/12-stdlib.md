@@ -267,6 +267,26 @@ range. All three are `std.core`'s.
   the range an infinity, below it a zero, as IEEE 754 rounds — a float has no `Overflow`.
 - A **bool** is `true` or `false`.
 
+## Results and conversions
+
+A failure kept as a value, and a value made from another (design 05 E1, 10 B3, B4) — both
+`std.core`'s, and named in the prelude ([04](04-modules.md)).
+
+- **`Result<T, E :: [Error]>`** is an enum, `Ok(T)` or `Err(E)`, matched as every enum is
+  ([09](09-patterns.md)). `throws` stays the mechanism: two bridges lead to it and back, and no
+  operator is a result's own (05 E1). **`Result.of(f)`** calls `f`, a `fn() -> T throws E`, and
+  is `Ok` with what it returns or `Err` with what it throws — `Result.of { try half(n) }`, `E`
+  inferred from what the lambda throws (05 K4), the root `Error` where that is two types.
+  **`r.get()`** is an `Ok`'s value and throws an `Err`'s error: `try r.get()`. `E` is an `Error`,
+  since `get()` throws it. The library returns no `Result` (10 B3); the caller makes one.
+- **`From<T> { static fn from(v: T): Self; }`** is a conversion into a type, which the type
+  writes: `Centimeters.from(m)`. **`Into<T> { fn into(): T; }`** follows from it through
+  std.core's blanket `extend<T, U :: [From<T>]> T :: [Into<U>]` ([05 §13](05-interfaces.md)
+  rule 9): `let c: Centimeters = m.into();` — the type the position expects chooses the target;
+  where none is expected the call is refused (`LYR-SEM0060`), and a target that is no `From` of
+  the value's type too (`LYR-SEM0028`). A constraint `T :: [Into<X>]` holds for every type `X`
+  is a `From` of. `as` converts numbers only ([03 §1.4](03-types.md)).
+
 ## Arrays and views
 
 The members of an array and of a view are `std.core`'s (design 10 C2), written once on

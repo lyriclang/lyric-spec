@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0060
+//! since: 5.0.0
+// 05 §13 rule 9: where nothing determines a parameter only the block's conformance names, the call
+// is refused.
+struct Meters {
+    n: int,
+}
+
+struct Centimeters :: [From<Meters>] {
+    n: int,
+
+    static fn from(m: Meters): Centimeters {
+        return Centimeters { n = m.n * 100 };
+    }
+}
+
+fn main(): void {
+    let m = Meters { n = 1 };
+    let c = m.into();
+}

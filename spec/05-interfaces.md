@@ -13,8 +13,8 @@ Declaring an interface and a conformance, the interface value, how a call resolv
 M4 S1, S3, S4, S4b, S5a, S5b, S6, S7a and S7b; the chapter grows with the milestone's slices —
 synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
 `Iterator<Item = int>` is not written yet; of the operators (D6,
-[§12](#12-the-operator-interfaces)) the conversions `From`/`Into` wait for the
-collections. What is not written here yet is decided in the design documents, not here.
+[§12](#12-the-operator-interfaces)) the conversions `From`/`Into` stand in [12](12-stdlib.md),
+their blanket under [§13](#13-generic-extends) rule 9. What is not written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/05-interfaces/`.
 
@@ -364,7 +364,7 @@ collections. What is not written here yet is decided in the design documents, no
    inside a type: `extend<I :: [Iterator<Item = (K, V)>], K :: [Hashable], V> I` matches the
    receiver's `Item` against `(K, V)` and binds both — a receiver whose `Item` is no pair has no
    such member. A parameter that neither the
-   target nor a fixation names is bound by nothing: the block reaches no type, and is refused
+   target, a fixation nor the block's conformance (rule 9) names is bound by nothing: the block reaches no type, and is refused
    where the parameter stands (`LYR-SEM0170`).
 3. **Conditional conformance.** `extend<T :: [Display]> Bag<T> :: [Display] { … }` gives the
    conformance to every instance whose arguments satisfy the block's constraints and to no
@@ -430,6 +430,18 @@ collections. What is not written here yet is decided in the design documents, no
    its constraints, which a shape does through a block naming them alone (rule 6); and another
    blanket block giving one, even where no type could meet both (`LYR-SEM0133`). A value of
    `J` is not made through a blanket conformance yet (`LYR-SEM0047`).
+9. **A parameter only the conformance names** (design 10 B4): in `extend<T, U :: [From<T>]> T ::
+   [Into<U>] { … }` the target does not name `U`, nor does a fixation; the block's conformance
+   does. The instance a constraint asks for binds it: `Meters` satisfies `Into<Centimeters>`
+   where `Centimeters :: [From<Meters>]` holds, and a call through the constraint is the block's
+   member with `U` that instance's. At a call of the block's member on a receiver the call binds
+   it, as it binds the member's own parameters ([03 §9.2](03-types.md)) — from the arguments,
+   then from the type the position expects: `let c: Centimeters = m.into();`. Where nothing
+   determines it the call is refused (`LYR-SEM0060`), and where what binds it fails the block's
+   constraints too (`LYR-SEM0028`). Such a block reaches a type at the instances bound so and at
+   no other, so it excludes a type's own conformance (rule 8) at those alone, whole-program:
+   `Meters :: [Into<int>]` stands while `int` is no `From<Meters>`, and is refused where it is
+   one (`LYR-SEM0133`), said at the type's conformance.
 
 ## 14. Conformance synthesis
 

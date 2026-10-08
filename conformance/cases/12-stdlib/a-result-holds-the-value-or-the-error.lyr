@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | ok 4
+//! | err 3 is odd
+//! | 4 true
+//! since: 5.0.0
+// 12 §Results and conversions: Result.of keeps what a call returns or what it throws; get() is the
+// value, or throws the error again.
+import std.io { println };
+
+class Odd :: [Error] {
+    n: int,
+
+    fn message(): string {
+        return f"{this.n} is odd";
+    }
+}
+
+fn half(n: int): int throws Odd {
+    if (n % 2 != 0) {
+        throw Odd { n = n };
+    }
+    return n / 2;
+}
+
+fn describe(r: Result<int, Odd>): string {
+    return match (r) {
+        .Ok(v) => f"ok {v}",
+        .Err(e) => f"err {e.message()}",
+    };
+}
+
+fn main(): void {
+    let good = Result.of { try half(8) };
+    let bad = Result.of { try half(3) };
+    println(describe(good));
+    println(describe(bad));
+    let lost = try? bad.get();
+    println(f"{try! good.get()} {lost == null}");
+}

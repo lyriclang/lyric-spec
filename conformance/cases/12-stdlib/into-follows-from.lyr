@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 300 300 3000
+//! | 200
+//! since: 5.0.0
+// 12 §Results and conversions: a type writes From, and Into follows, the type the position expects
+// choosing the target; a constraint on Into holds where the From does.
+import std.io { println };
+
+struct Meters {
+    n: int,
+}
+
+struct Centimeters :: [From<Meters>] {
+    n: int,
+
+    static fn from(m: Meters): Centimeters {
+        return Centimeters { n = m.n * 100 };
+    }
+}
+
+struct Millimeters :: [From<Meters>] {
+    n: int,
+
+    static fn from(m: Meters): Millimeters {
+        return Millimeters { n = m.n * 1000 };
+    }
+}
+
+fn inCentimeters<T :: [Into<Centimeters>]>(t: T): int {
+    let c: Centimeters = t.into();
+    return c.n;
+}
+
+fn main(): void {
+    let m = Meters { n = 3 };
+    let c: Centimeters = m.into();
+    let mm: Millimeters = m.into();
+    println(f"{Centimeters.from(m).n} {c.n} {mm.n}");
+    println(f"{inCentimeters(Meters { n = 2 })}");
+}
