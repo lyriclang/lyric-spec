@@ -581,20 +581,21 @@ their entries, and what is put together from them. Each call of the system's run
 
 ## The console
 
-`std.io` ([design 10 O9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S8a, S8b): the program's standard input, output and
+`std.io` ([design 10 O9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S8a–S8c): the program's standard input, output and
 error.
 
 1. **`print(v)`** writes `v`'s text — what its `Display` shows — on the standard output, and
    **`println(v)`** the same followed by a newline; **`eprint(v)`** and **`eprintln(v)`** write
    on the standard error. Each takes one argument of any type that is `Display`; an f-string
    formats more.
-2. **Each stream is buffered**: a line at a time where it is a terminal, a block at a time
-   otherwise. **`flush()`** writes what both hold, the output's first. What they hold is written
-   at every end of the program: when `main` returns, before a panic's report, and before an error
-   that leaves `main` is reported. These functions drop a failed write.
-3. *(Informative.)* Through one pipe the two streams show the mode: blocks come at the end, the
-   output's first. A program another reads while it runs — a line someone waits for — flushes, as
-   a C program does.
+2. **Each stream is buffered**: the output a line at a time where it is a terminal, a block at a
+   time otherwise; the error always a line at a time. **`flush()`** writes what both hold, the
+   output's first. What they hold is written at every end of the program: when `main` returns,
+   before a panic's report, and before an error that leaves `main` is reported. These functions
+   drop a failed write, but for the one rule 6 names.
+3. *(Informative.)* Through one pipe the two streams show the modes: the error's lines come as
+   they are written, the output's block at the end. A program another reads while it runs — a
+   line someone waits for — flushes, as a C program does.
 4. **`stdin()`** is the program's standard input, one for the program: a `Reader` whose reads go
    through a buffer of its own, with **`readLine()`** — the next line without its end, `\n` or
    `\r\n`, and `null` at the end of the input — and **`lines()`**, an iterator of them with
@@ -602,6 +603,13 @@ error.
 5. **`stdout()`** and **`stderr()`** are `Writer`s over the buffers `print` and `eprint` write into,
    so what the two write keeps its order. Their `flush()` throws what the system says — a pipe
    nobody reads is `BrokenPipe`; the console is not `Closeable`.
+6. **A standard output nobody reads ends a printing program**: where the flush of `print`,
+   `println` or `flush()`, or the one when `main` returns, finds the standard output a pipe nobody
+   reads, the program ends as SIGPIPE would have ended it — on POSIX killed by that signal, which
+   a shell shows as 141 —, what the error holds written first. A `Writer` of `stdout()` throws
+   `BrokenPipe` instead (rule 5), and a failed write to the error is dropped. Where there is no
+   such signal (Windows), the write is dropped and the program goes on; where a host embeds the
+   program ([13](13-abi.md)), the host's signals decide.
 
 ## The system
 
