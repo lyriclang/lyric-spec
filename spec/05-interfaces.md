@@ -360,7 +360,10 @@ collections. What is not written here yet is decided in the design documents, no
    on one instance adds to that instance alone (`LYR-SEM0012` elsewhere). A parameter the target
    does not name is bound where a **fixation** in another's constraint names it:
    `extend<I :: [Iterator<Item = T>], T :: [Num]> I` binds `I` to the receiver and `T` to its
-   `Item`, whose constraints then hold or the member is not there. A parameter that neither the
+   `Item`, whose constraints then hold or the member is not there. A fixation may name parameters
+   inside a type: `extend<I :: [Iterator<Item = (K, V)>], K :: [Hashable], V> I` matches the
+   receiver's `Item` against `(K, V)` and binds both — a receiver whose `Item` is no pair has no
+   such member. A parameter that neither the
    target nor a fixation names is bound by nothing: the block reaches no type, and is refused
    where the parameter stands (`LYR-SEM0170`).
 3. **Conditional conformance.** `extend<T :: [Display]> Bag<T> :: [Display] { … }` gives the

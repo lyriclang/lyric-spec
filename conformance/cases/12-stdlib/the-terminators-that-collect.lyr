@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | bb a 2.5
+//! | [[1, 2], [3]] [[1, 2], [2, 3]] [1, 2, 3]
+//! | [(1, "y"), (1, "w"), (2, "x")] [1, 2] [5, 6] [ab, de] 3
+//! since: 5.0.0
+// 12 §Iteration: minBy, maxBy, average; chunks, windows, sorted, sortedBy (stable), partition,
+// groupBy, toMap — a later value of a key replacing the earlier one.
+import std.collections { List };
+import std.io { println };
+
+fn shown(xs: List<string>): string {
+    return "[" + xs.toArray()[..].join(", ") + "]";
+}
+
+fn main(): void {
+    let words = ["bb", "a", "cc"];
+    let longest = words.iter().maxBy((s: string) => s.length())!;
+    let shortest = words.iter().minBy((s: string) => s.length())!;
+    let mean = [1, 2, 3, 4].iter().average()!;
+    println(f"{longest} {shortest} {mean}");
+    let chunks = [1, 2, 3].iter().chunks(2).map((c: List<int>) => c.toArray()).toArray();
+    let windows = [1, 2, 3].iter().windows(2).map((w: List<int>) => w.toArray()).toArray();
+    let sorted = [3, 1, 2].iter().sorted().toArray();
+    println(f"{chunks} {windows} {sorted}");
+    let pairs = [(2, "x"), (1, "y"), (1, "w")];
+    let stable = pairs.iter().sortedBy((a: (int, string), b: (int, string)) => a.0.totalCompare(b.0)).toArray();
+    let (small, large) = [1, 5, 2, 6].iter().partition((x: int) => x < 4);
+    let groups = ["ab", "c", "de"].iter().groupBy((s: string) => s.length());
+    let m = [("a", 1), ("a", 3)].iter().toMap();
+    let a = "a";
+    println(f"{stable} {small.toArray()} {large.toArray()} {shown(groups.get(2)!)} {m.get(a)!}");
+}
