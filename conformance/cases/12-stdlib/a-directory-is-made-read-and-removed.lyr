@@ -1,0 +1,45 @@
+//! run
+//! stdout:
+//! | made; again: already exists: case-dir-a (made)
+//! | a.txt:file b.txt:file sub:dir
+//! | not empty: system error
+//! | gone: false
+//! | not found: case-dir-a (removed)
+//! since: 5.0.0
+// 12 §Directories, rules 2 and 3: a directory made, read and removed; one that is not empty stays,
+// with the system's code.
+import std.fs;
+import std.io { IoError, println };
+import std.path;
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let d = "case-dir-a";
+    try fs.createDir(d);
+    println(f"made; again: {said(() => { try fs.createDir(d); return "made twice"; })}");
+    try fs.writeText(path.join(d, "a.txt"), "a");
+    try fs.writeText(path.join(d, "b.txt"), "b");
+    try fs.createDir(path.join(d, "sub"));
+    let seen: List<string> = List.new();
+    for (e in try fs.readDir(d)) {
+        seen.push(f"{e.name}:{if (e.isFile) "file" else if (e.isDir) "dir" else "other"}");
+    }
+    let sorted = seen.toArray();
+    sorted.sort();
+    println(sorted.join(" "));
+    let stays = said(() => { try fs.removeDir(d); return "removed"; });
+    println(f"not empty: {if (stays.startsWith("system error")) "system error" else stays}");
+    try fs.remove(path.join(d, "a.txt"));
+    try fs.remove(path.join(d, "b.txt"));
+    try fs.removeDir(path.join(d, "sub"));
+    try fs.removeDir(d);
+    println(f"gone: {fs.exists(d)}");
+    println(said(() => { try fs.removeDir(d); return "removed"; }));
+}

@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | renamed: false new
+//! | not found: case-dir-gone.txt (renamed to case-dir-x.txt)
+//! | canonical: true true
+//! | not found: case-dir-not-there (resolved)
+//! | absolute: true true true
+//! since: 5.0.0
+// 12 §Directories, rules 2 and 4: a rename replaces a file; canonicalize resolves `..` and needs
+// the path to be there; absolute asks nothing of the file system.
+import std.fs;
+import std.io { IoError, println };
+import std.path;
+
+fn said(f: fn() -> string throws IoError): string {
+    try {
+        return f();
+    } catch (e: IoError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    try fs.writeText("case-dir-from.txt", "new");
+    try fs.writeText("case-dir-to.txt", "old");
+    try fs.rename("case-dir-from.txt", "case-dir-to.txt");
+    println(f"renamed: {fs.exists("case-dir-from.txt")} {try fs.readText("case-dir-to.txt")}");
+    println(said(() => { try fs.rename("case-dir-gone.txt", "case-dir-x.txt"); return "renamed"; }));
+    let here = try fs.canonicalize(".");
+    try fs.createDir("case-dir-c");
+    let s = path.separator;
+    let c = try fs.canonicalize(f"case-dir-c{s}..{s}case-dir-c");
+    println(f"canonical: {path.isAbsolute(here)} {c == path.join(here, "case-dir-c")}");
+    println(said(() => try fs.canonicalize("case-dir-not-there")));
+    let cwd = try fs.absolute(".");
+    let a = try fs.absolute(f"x{s}..{s}case-dir-not-there");
+    println(f"absolute: {path.isAbsolute(cwd)} {a == path.join(cwd, "case-dir-not-there")} {!fs.exists(a)}");
+}

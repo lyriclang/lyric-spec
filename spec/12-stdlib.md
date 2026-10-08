@@ -537,6 +537,33 @@ with S7.
    and so does `close()`. After its end or an error it gives no more; after `close()` a call
    throws `Closed`, and what it had read ahead is not given.
 
+## Directories
+
+`std.fs` ([design 10 O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S7a): what a path names, the directories and their
+entries. What is put together from these — `createDirAll`, `removeAll`, `copy`, `walk`,
+`tempDir`, `tempFile` — follows with S7b. Each call is one of the system's, on the I/O pool
+(§Files rule 5).
+
+1. **`fs.metadata(path)`** says what a path names, through links: `size` in bytes, `modified`,
+   an `Instant`, `isFile` and `isDir` — neither for what is neither —, `readonly`, and
+   `isSymlink`, whether the path itself is a link. A link that leads nowhere is not found.
+   **`fs.exists(path)`** is whether `metadata` answers: false where it would throw.
+2. **`fs.createDir(path)`** makes a directory in one that is there, **`fs.removeDir(path)`**
+   removes an empty one, **`fs.remove(path)`** a file, and **`fs.rename(from, to)`** renames on
+   one file system, a file that `to` names replaced. What they cannot do is an `IoError` with the
+   path and what was done — `made`, `removed`, `renamed to <to>`, `looked at` —, as §Files rule 3
+   says. A directory that is not empty is `Other` with the system's code: no kind names it. What
+   a directory removed as a file, or a file read as a directory, gives is the system's.
+3. **`fs.readDir(path)`** gives the directory's entries in the system's order, without `.` and
+   `..`, as `DirEntry`s: `name`, `path` — the directory's joined with the name (§Paths) —, and
+   `isFile`, `isDir` and `isSymlink` of the entry itself, a link not followed; its `metadata()`
+   follows it. Its `ReadDirIter`, with `Error = IoError`, is `Closeable` and lets the directory
+   go as a file's lines let their file go (§Files rule 7). A name that is no UTF-8 is
+   `InvalidData` with the directory's path.
+4. **`fs.canonicalize(path)`** is the path absolute, its links resolved and its `.` and `..`
+   taken out, as the system names it; it must be there. **`fs.absolute(path)`** makes it absolute
+   by the working directory and normalizes it (§Paths), and asks nothing more of the file system.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
