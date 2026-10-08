@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | Empty Invalid Invalid Invalid Invalid Invalid Invalid Invalid Invalid
+//! since: 5.0.0
+// 12 §Time, rule 8: no date that does not exist, no 24:00, no second 60, no space for the 'T', an
+// offset with two digits of hours, an offset at all, a fraction with a digit, nothing after it.
+import std.core { ParseError };
+import std.io { println };
+import std.time { Instant };
+
+fn kind(s: string): string {
+    try {
+        let i = Instant.parse(s);
+        return f"read {i}";
+    } catch (e: ParseError) {
+        return if (e.kind == .Empty) "Empty" else if (e.kind == .Invalid) "Invalid" else "Overflow";
+    }
+}
+
+fn main(): void {
+    var line = "";
+    for (s in ["", "2026-02-30T00:00:00Z", "2026-10-08T24:00:00Z", "2026-10-08T23:59:60Z", "2026-10-08 12:00:00Z",
+        "2026-10-08T12:00:00+2:00", "2026-10-08T12:00:00", "2026-10-08T12:00:00.Z", "2026-10-08T12:00:00Z "]) {
+        line = if (line.isEmpty()) kind(s) else f"{line} {kind(s)}";
+    }
+    println(line);
+}

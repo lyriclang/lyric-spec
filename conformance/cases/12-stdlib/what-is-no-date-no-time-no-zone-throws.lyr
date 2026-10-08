@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | there is no day 29 in 2026-02
+//! | there is no month 13
+//! | there is no time of day with hour 24, minute 0, second 0, nanosecond 0
+//! | an offset is whole minutes under a day; 1m30s is not
+//! since: 5.0.0
+// 12 §Time, rules 5 and 6: a date, a time of day and a zone that do not exist throw TimeError, which
+// says what.
+import std.io { println };
+import std.time { Date, Duration, Time, TimeError, Zone };
+
+fn main(): void {
+    try {
+        Date.of(2026, 2, 29);
+    } catch (e: TimeError) {
+        println(e.message());
+    }
+    try {
+        Date.of(2026, 13, 1);
+    } catch (e: TimeError) {
+        println(e.message());
+    }
+    try {
+        Time.of(24, 0, 0);
+    } catch (e: TimeError) {
+        println(e.message());
+    }
+    try {
+        Zone.fixed(Duration.ofSecs(90));
+    } catch (e: TimeError) {
+        println(e.message());
+    }
+}

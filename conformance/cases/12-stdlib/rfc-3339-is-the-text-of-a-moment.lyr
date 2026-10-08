@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 2026-10-08T10:34:56.789Z 1791455696789
+//! | 2000-01-01T07:59:59Z 946713599000
+//! | 2000-02-29T00:00:00.1Z 951782400100
+//! | 2026-10-08T07:00:00Z 1791442800000
+//! | 1969-12-31T23:59:59.5Z -1 -500
+//! | 2026-10-08T12:34:56.789+02:00 2026-10-08T05:04:56.789-05:30 true false
+//! since: 5.0.0
+// 12 §Time, rules 7 and 8: RFC 3339 read at any offset, a 't' and a 'z' among them, and written in
+// UTC, the fraction without its trailing zeros; a moment before 1970 counted down; a date-time keeps
+// its offset, and the same moment at another offset is another date-time.
+import std.io { println };
+import std.time { DateTime, Duration, Instant, Zone };
+
+fn main(): void throws Error {
+    for (s in ["2026-10-08T12:34:56.789+02:00", "1999-12-31T23:59:59-08:00", "2000-02-29T00:00:00.100000000Z", "2026-10-08t07:00:00z"]) {
+        let moment = try Instant.parse(s);
+        println(f"{moment} {moment.epochMillis()}");
+    }
+    let early = try Instant.parse("1969-12-31T23:59:59.5Z");
+    println(f"{early} {early.epochSecs()} {early.epochMillis()}");
+    let local = try DateTime.parse("2026-10-08T12:34:56.789+02:00");
+    let west = local.toInstant().toDateTime(try Zone.fixed(Duration.ofMinutes(-330)));
+    println(f"{local} {west} {west.toInstant() == local.toInstant()} {west == local}");
+}

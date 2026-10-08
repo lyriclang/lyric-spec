@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | 1970-01-01 Thursday 1970-01-02 0
+//! | 2000-02-29 Tuesday 2000-03-01 11016
+//! | 1900-02-28 Wednesday 1900-03-01 -25509
+//! | 1600-01-01 Saturday 1600-01-02 -135140
+//! | 2026-10-08 Thursday 2026-10-09 20734
+//! | false true true false true
+//! | 0001-01-01 0000-12-31 -0001-12-31 +10000-01-01
+//! since: 5.0.0
+// 12 §Time, rule 5: the proleptic Gregorian calendar — days from 1970 walked one at a time,
+// weekdays, the day after a leap day and after a century's last of February, the leap rule (year 0
+// among them), years before 1 and after 9999.
+import std.io { println };
+import std.time { Date };
+
+fn main(): void throws Error {
+    let epoch = try Date.of(1970, 1, 1);
+    let dates: (int, int, int)[] = [(1970, 1, 1), (2000, 2, 29), (1900, 2, 28), (1600, 1, 1), (2026, 10, 8)];
+    for ((y, m, d) in dates) {
+        let date = try Date.of(y, m, d);
+        var n = 0;
+        var at = epoch;
+        let step = if (date >= epoch) 1 else -1;
+        while (at != date) {
+            at = at.plusDays(step);
+            n = n + step;
+        }
+        println(f"{date} {date.dayOfWeek()} {date.plusDays(1)} {n}");
+    }
+    var leaps = "";
+    for (y in [1900, 2000, 2024, 2100, 0]) {
+        let leap = (try Date.of(y, 1, 1)).isLeapYear();
+        leaps = if (leaps.isEmpty()) f"{leap}" else f"{leaps} {leap}";
+    }
+    println(leaps);
+    let first = try Date.of(1, 1, 1);
+    println(f"{first} {first.plusDays(-1)} {first.plusDays(-367)} {(try Date.of(9999, 12, 31)).plusDays(1)}");
+}
