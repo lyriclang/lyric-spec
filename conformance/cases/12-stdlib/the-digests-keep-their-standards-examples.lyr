@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+//! | ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f
+//! | a9993e364706816aba3e25717850c26c9cd0d89d
+//! | 900150983cd24fb0d6963f7d28e17f72
+//! | ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+//! since: 5.0.0
+// 12 §Cryptography, rule 2: SHA-256, SHA-512, SHA-1 and MD5 of "abc" — FIPS 180-4's and RFC
+// 1321's example —, and the one-liner.
+import std.crypto { Digest, Md5, Sha1, Sha256, Sha512, sha256 };
+import std.encoding { Hex };
+import std.io { println, ByteBuffer };
+
+fn utf8(s: string): uint8[] {
+    let b = ByteBuffer.new();
+    try! b.writeString(s);
+    return b.toArray();
+}
+
+fn hex<D :: [Digest]>(s: string): string {
+    var d = D.new();
+    d.update(utf8(s)[..]);
+    return Hex.encode(d.finish()[..]);
+}
+
+fn main(): void {
+    println(hex<Sha256>("abc"));
+    println(hex<Sha512>("abc"));
+    println(hex<Sha1>("abc"));
+    println(hex<Md5>("abc"));
+    println(Hex.encode(sha256(utf8("abc")[..]).toArray()[..]));
+}
