@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0100
+//! since: 5.0.0
+// 11 §2 rule 1: an object of a class is no literal — it has an identity a fresh copy would not.
+class Counter {
+    var n: int = 0,
+}
+
+fn counter(): Counter {
+    return Counter { };
+}
+
+fn main(): void {
+    let _ = comptime counter();
+}

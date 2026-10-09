@@ -43,7 +43,11 @@ computes what the binary computes — the number tower, the texts of numbers, st
 the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `ComptimeTests`).
 
 1. **`comptime e`** evaluates `e` while the program is compiled, and the site stands for the value,
-   a literal of its type. The value is a scalar, a `bool`, a `char` or a `string` (`LYR-SEM0100`).
+   a literal of its type. The value is of any **value type**: a scalar, a `string`, and an array,
+   an inline array, a tuple, an optional, a struct, an enum or a `Box` of such. An array is the
+   program's to write: every evaluation of the site gives a fresh one, as an array literal does.
+   An object of a class, a view, a function value, a coroutine and an interface value are no
+   literal (`LYR-SEM0100`, with the reason).
    `e` sees what the module level sees: it names no local, no parameter and no `this`, and holds no
    lambda and no assignment (`LYR-SEM0100`).
 2. **The code evaluated is pure** (Q3): `e` calls functions, which then run at compile time, and

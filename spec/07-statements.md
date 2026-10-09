@@ -148,7 +148,8 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    the same block is refused (`LYR-SEM0176`). A **parameter** counts as bound in the body's own
    block, as in C#, Java and Go: a `let` of its name there is refused too — a lambda's parameter
    likewise. A block further in may bind the name again; its binding hides the outer one until
-   that block ends.
+   that block ends. **`_`** binds nothing ([09 §1](09-patterns.md) rule 1): `let _ = e;` keeps a
+   value nobody reads, as often in a block as it is written.
 
 ## 5. `if`, `while` and `do`
 
