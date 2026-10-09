@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 2 4 1 3 5
+//! since: 5.0.0
+// 06 §9.3 rule 3: 'never' is a type parameter's default where the bound is Error — the adapters'
+// E, and a type's own — so MapIter<I, U> is MapIter<I, U, never>.
+import std.io { println };
+import std.core { MapIter, FilterIter, SliceIter };
+
+struct Tagged<E :: [Error] = never> { n: int }
+
+fn main(): void {
+    let doubled: MapIter<SliceIter<int>, int> = [1, 2].iter().map((x: int) => x * 2);
+    let odd: FilterIter<SliceIter<int>> = [1, 2, 3].iter().filter((x: int) => x % 2 == 1);
+    var out = "";
+    for (d in doubled) {
+        out = out + f"{d} ";
+    }
+    for (o in odd) {
+        out = out + f"{o} ";
+    }
+    let t: Tagged = Tagged { n = 5 };
+    println(f"{out}{t.n}");
+}

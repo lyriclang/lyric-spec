@@ -187,7 +187,8 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   stack unwinds and its defers run.
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
   its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U, E>` (`Map` is
-  the collection's), `it.filter(p)` a `FilterIter<I, E>`. Every iterator type's name ends in `Iter`
+  the collection's), `it.filter(p)` a `FilterIter<I, E>`; `E` defaults to `never`, so
+  `MapIter<I, U>` names the one whose function throws nothing. Every iterator type's name ends in `Iter`
   (the review's A9g): the adapters (`TakeIter`, `ZipIter`, …), the string's (`CharsIter`,
   `SplitIter<P>`, `MatchesIter<P>`, `LinesIter`), the map's (`MapEntriesIter`, `MapKeysIter`,
   `MapValuesIter`), the

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 06 §9.3 rule 3: for a parameter not bounded by Error, 'never' as its default would type a value
+// that cannot exist.
+struct Plain<T = never> { n: int }
+
+fn main(): void {
+}
