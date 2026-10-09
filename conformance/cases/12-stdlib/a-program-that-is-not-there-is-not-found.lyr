@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | not found: no-such-program-for-lyric (started)
+//! since: 5.0.0
+// 12 §Processes, rule 2: a program that is not on PATH is NotFound, the program as the path.
+import std.io { IoError, IoErrorKind, println };
+import std.process { Command };
+
+fn main(): void throws Error {
+    try {
+        let _ = Command { program = "no-such-program-for-lyric" }.spawn();
+        println("started");
+    } catch (e: IoError) {
+        println(if (e.kind == IoErrorKind.NotFound) f"not found: {e.path ?? "-"} ({e.detail})" else e.message());
+    }
+}

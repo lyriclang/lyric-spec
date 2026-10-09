@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | cat: piped data
+//! since: 5.0.0
+// 12 §Processes, rule 2: what is written into a child's piped stdin reaches it; the close is the end
+// of its input.
+import std.io { println };
+import std.process { Command, Stdio };
+
+fn main(): void throws Error {
+    var cat = try Command { program = "cat", stdin = Stdio.Piped, stdout = Stdio.Piped }.spawn();
+    var into = cat.stdin!;
+    try into.writeString("piped data");
+    try into.close();
+    var back = cat.stdout!;
+    let text = try back.readToString();
+    try back.close();
+    let _ = try cat.wait();
+    println(f"cat: {text}");
+}

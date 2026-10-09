@@ -691,6 +691,33 @@ poll requests on the thread's completion port (M8b S11).
    `List<IpAddr>`; a name nobody knows is `NotFound`. It runs on the I/O pool as a file's call does
    (§Files rule 5): no wait in the sense of 10 §1 rule 7.
 
+## Processes
+
+`std.process` ([design 10 O8, Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S12a): a child started, its
+streams, its end.
+
+1. **`Command { program, args, cwd, env, stdin, stdout, stderr }`** is an options struct: the
+   program a path or a name looked up on `PATH`; `args` after its name; `cwd` the parent's where
+   `null`; `env` pairs set over the parent's environment; each stream `Stdio.Inherit` — the
+   default —, `Stdio.Piped` or `Stdio.Null`. A NUL in an argument or a variable, or a variable's
+   name that is empty or holds `=`, is `InvalidInput`.
+2. **`spawn()`** starts the child. A program that is not there is `NotFound`, one that may not run
+   `PermissionDenied`, the program as the path. Its piped streams are `stdin: ?PipeWriter` and
+   `stdout`, `stderr: ?PipeReader` — a `Writer` and `Reader`s whose calls wait as a socket's do
+   (§The network), and that are `Closeable`; closing `stdin` is the end of the child's input.
+3. **`wait()`** closes the child's `stdin`, then waits for its end — a wait a cancel ends — and
+   answers an **`ExitStatus`**: `success()`, `code(): ?int`, and `signal(): ?Signal`, the signal
+   that ended it; its text is `exit code 3` or `signal 9`. Every task that waits for one child, on
+   any thread, sees its end.
+4. **`kill()`** ends the child — SIGKILL on POSIX —, **`signal(s)`** sends it `s` (10 Q9); neither
+   touches a child that has ended.
+5. **`output()`** starts the child with no input and both other streams piped, takes the two to
+   their ends at once and waits: an **`Output { status, stdout, stderr }`**. **`status()`** starts it
+   with the parent's streams and waits.
+6. *(Informative.)* On POSIX a child's end comes as SIGCHLD, which the runtime keeps for itself
+   (10 Q9). A child starts with SIGPIPE at its default although the program ignores it: an ignored
+   signal would outlive the exec. Windows' processes come with M8b S12b.
+
 ## Strings
 
 A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on

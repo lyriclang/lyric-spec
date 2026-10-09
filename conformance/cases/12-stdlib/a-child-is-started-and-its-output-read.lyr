@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | hello world | exit code 0
+//! since: 5.0.0
+// 12 §Processes, rules 1–3: a child with its output piped, read to its end, and waited for.
+import std.io { println };
+import std.process { Command, Stdio };
+
+fn main(): void throws Error {
+    var child = try Command { program = "echo", args = ["hello", "world"], stdout = Stdio.Piped }.spawn();
+    var out = child.stdout!;
+    let said = try out.readToString();
+    try out.close();
+    let status = try child.wait();
+    println(f"{said.trimEnd()} | {status}");
+}
