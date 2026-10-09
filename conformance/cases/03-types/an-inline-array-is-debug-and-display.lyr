@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | [1, 2, 3] [1, 2, 3] |  [1, 2, 3]|
+//! | ["a", "b"] ["a", "b"] ["a", "b"]
+//! since: 5.0.0
+// 03 §5.3 rule 8: T[N] is Debug and Display where T is Debug, as an array is — each element in its
+// debug text, the display text the same, a width padding it; in a frame its own members answer.
+import std.io { println };
+
+fn main(): int {
+    let b: uint8[3] = [1u8, 2u8, 3u8];
+    let names: string[2] = ["a", "b"];
+    println(f"{b} {b:?} |{b:>11}|");
+    println(f"{names} {names.show()} {names.debug()}");
+    return 0;
+}

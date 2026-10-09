@@ -344,7 +344,10 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
 ### 3.4 Equality and hashing
 
 1. An optional is `Equatable` and `Hashable` where its value's type is (N2a): `null` equals only
-   `null`, and a `?int` is a set's element.
+   `null`, and a `?int` is a set's element. It is `Debug` where its value's type is (M8c S16): its
+   debug text is `null` or the value's own, with no wrapper — `{d:?}`, and
+   `assertEq('7'.toDigit(10), 7)` names both sides. It is no `Display`: a hole asks for a value,
+   and a `null` is tested first (`LYR-SEM0006`).
 
 ## 4. Enums
 
@@ -512,6 +515,10 @@ Elements in a row: behind a reference, through a view, or as a value
    hasher in order — nothing after them, as the length is the type's (design 10 C8). Wherever it
    lies: `d == sha256(x)`, and a `uint8[16]` is a key of a `Map`. An element type that is
    neither leaves the array neither (`LYR-SEM0059` for `==`).
+8. **Text.** `T[N]` is `Debug` and `Display` where `T` is `Debug`, as an array is
+   ([12 §Arrays and views](12-stdlib.md#arrays-and-views)): `[1, 2, 3]`, each element in its debug text, the display text
+   the same — `{x.toBytesLE()}`, and a width pads it. Wherever it lies: `names.show()` on an array
+   in a frame is its own member, not a view's (M8c S16).
 
 ## 6. Tuples
 

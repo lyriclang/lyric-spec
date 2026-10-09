@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0006
+//! since: 5.0.0
+// 03 §3.4 rule 1: an optional is no Display — a hole asks for a value, and a null is tested first.
+import std.io { println };
+
+fn main(): int {
+    let d: ?int = '7'.toDigit(10);
+    println(f"{d}");
+    return 0;
+}

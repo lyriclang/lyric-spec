@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 7 null "a\"b"
+//! | 7 null
+//! since: 5.0.0
+// 03 §3.4 rule 1: an optional is Debug where its value's type is — `null`, or the value's own
+// debug text, with no wrapper; assertEq takes it.
+import std.io { println };
+import std.test { assertEq };
+
+fn main(): int {
+    let d: ?int = '7'.toDigit(10);
+    let n: ?int = 'x'.toDigit(10);
+    let s: ?string = "a\"b";
+    println(f"{d:?} {n:?} {s:?}");
+    println(f"{d.debug()} {n.debug()}");
+    assertEq('7'.toDigit(10), 7);
+    assertEq(n, null);
+    return 0;
+}
