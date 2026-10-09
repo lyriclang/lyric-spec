@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | cancelled
+//! since: 5.0.0
+// 10 §1: a task whose body never returns — its result type `never` — runs until it is cancelled;
+// its await throws Cancelled. (M8b S10c: the compiler's lowering read the generic result type and
+// failed on this instance.)
+import std.io { println };
+import std.task { Cancelled, sleep, spawn };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let forever = spawn(() => {
+        loop {
+            try sleep(Duration.ofMillis(5));
+        }
+    });
+    try sleep(Duration.ofMillis(20));
+    forever.cancel();
+    try {
+        forever.await();
+    } catch (_: Cancelled) {
+        println("cancelled");
+    }
+}

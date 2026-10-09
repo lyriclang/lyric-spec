@@ -651,8 +651,8 @@ that is no UTF-8 is taken with U+FFFD for its bad bytes, as `string.fromUtf8Loss
 
 ## The network
 
-`std.net` ([design 10 O7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S10b): IP addresses, socket addresses and
-TCP. A call that would block parks the task until the thread's poller says the socket is ready,
+`std.net` ([design 10 O7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S10b, S10c): IP addresses, socket addresses,
+TCP, UDP and the resolver. A call that would block parks the task until the thread's poller says the socket is ready,
 and is a wait in the sense of [10 §1](10-concurrency.md) rule 7: a cancel ends it with
 `Cancelled` (§Input and output rule 2). There are no socket timeouts: `withTimeout` is the one
 way. *(Informative.)* POSIX; on Windows every call throws `Unsupported` until M8b S11 gives it its
@@ -678,9 +678,18 @@ poller.
    `.Write` or `.Both`, ends a way of the stream; `setNoDelay(on)` turns Nagle's waiting off;
    `peerAddr()` and `localAddr()` are its two ends.
 5. **A socket is closed once** (`Closeable`): after `close()` every call throws `Closed` — a task
-   that waits in a call of it runs again and throws it —, and a second `close()` does nothing.
+   that waits in a call of it, on any thread, runs again and throws it —, and a second `close()`
+   does nothing.
 6. *(Informative.)* Every wait is the task's own: its thread runs its other tasks meanwhile, so
    one thread serves many connections.
+7. **`UdpSocket.bind(addr)`** makes a UDP socket, port 0 as for a listener. **`sendTo(from,
+   addr)`** sends `from` as one datagram — whole or not at all — and waits until the system takes
+   it; **`recvFrom(into)`** waits for the next datagram and answers how many of its bytes went into
+   `into` — the rest of a longer one is lost — and who sent it, a `SocketAddr`.
+8. **`resolve(host)`** gives the addresses a name stands for — `localhost`, a name the system's
+   resolver knows, or an address's own text — each once, in the resolver's order, as a
+   `List<IpAddr>`; a name nobody knows is `NotFound`. It runs on the I/O pool as a file's call does
+   (§Files rule 5): no wait in the sense of 10 §1 rule 7.
 
 ## Strings
 

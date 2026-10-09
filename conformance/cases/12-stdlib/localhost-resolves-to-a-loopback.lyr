@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | localhost: a loopback
+//! | 192.0.2.1: [192.0.2.1]
+//! since: 5.0.0
+// 12 §The network, rule 8: `localhost` stands for a loopback address — 127.0.0.1 or ::1 —, and an
+// address's own text for the address.
+import std.io { println };
+import std.net { IpAddr, resolve };
+
+fn main(): void throws Error {
+    var loopback = false;
+    for (a in try resolve("localhost")) {
+        if (a == IpAddr.V4(127, 0, 0, 1) || a == IpAddr.V6(0, 0, 0, 0, 0, 0, 0, 1)) {
+            loopback = true;
+        }
+    }
+    println(f"localhost: {if (loopback) "a loopback" else "no loopback"}");
+    var text = "";
+    for (a in try resolve("192.0.2.1")) {
+        text = if (text.isEmpty()) a.show() else f"{text}, {a}";
+    }
+    println(f"192.0.2.1: [{text}]");
+}
