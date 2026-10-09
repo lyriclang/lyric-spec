@@ -723,7 +723,8 @@ that is no UTF-8 is taken with U+FFFD for its bad bytes, as `string.fromUtf8Loss
    `defer`, no `using` and no other task runs ([06 §7](06-errors.md)).
 5. **The facts**: `os.platform()` (`Platform`: `Linux`, `MacOS`, `Windows`, `Other`) and
    `os.arch()` (`Arch`: `X86_64`, `Aarch64`, `Other`), whose texts are the target triples' words
-   (`linux`, `macos`, `windows`, `x86_64`, `aarch64`); `os.homeDir()`, the user's home or `null`;
+   (`linux`, `macos`, `windows`, `x86_64`, `aarch64`) — the two kinds are `std.core`'s, whose
+   `target` holds the build's ([11 §3](11-metaprogramming.md)); `os.homeDir()`, the user's home or `null`;
    `os.tempDir()`, the system's directory for temporary files, absolute (`fs.tempDir()` makes a new
    one in it); `os.hostname()`; `os.cpuCount()`, one at least; `os.pid()`.
 

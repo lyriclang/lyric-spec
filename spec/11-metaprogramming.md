@@ -35,7 +35,7 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    `string` and has a default, which a call that writes the argument itself keeps; the attribute
    names its parameter by name (`LYR-SEM0155`). Beside it a parameter takes what its marker
    admits there (rule 4).
-4. **Every declaration takes attributes** (09 T7): the module header, a function, a method, a
+4. **Every declaration takes attributes** (09 T7): the module header (`module;`, §3 rule 4), a function, a method, a
    field, a `static let`, a variant, a parameter, a struct, a class, an enum, an interface, an
    alias, an `extend` block, a module-level binding, an associated type. A marker names one kind
    or a set of them (09 F1): `OnModule`; `OnFunction` (a function at the top level), `OnMethod`,
@@ -56,7 +56,7 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 7. **The compiler instructions** — in the prelude — are the closed list of `std.core` the compiler
    reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
    (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
-   `@MustUse` (rule 11), `@NonExhaustive` (rule 12) and `@Allow` (rule 13). What one says holds for
+   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13) and `@When` (§3). What one says holds for
    every instance, so beside `@Test` they sit on a generic declaration too, where data may not
    (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
@@ -135,3 +135,30 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
    none, is `LYR-CT0004`. It is the one thing code run at compile time reads from outside the
    program, and a build reads the file again when it changes. A `comptime` site, or what one calls,
    makes the call; a call the program would make at run time is refused (`LYR-CT0004`).
+
+
+## 3. Target, profile, `@When`
+
+([09 A6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md), [11 W2 P11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** `conformance/cases/11-metaprogramming/`; what a cross-build emits, the toolchain's
+own tests (`tests/Lyric5.Tests`, `TargetTests`).
+
+1. **`target`** and **`profile`** — `std.core`, in the prelude — are constants of the build (B4):
+   `target.os` (`Platform`: `Linux`, `MacOS`, `Windows`, `Other`), `target.arch` (`Arch`: `X86_64`,
+   `Aarch64`, `Other`) and `target.pointerWidth` (in bits) are the target's — a cross-build's, not
+   the host's —, and `profile.debug` holds where the profile is the built-in `debug` or inherits
+   from it ([15 §4](15-project.md)). A program that reads neither carries neither.
+2. **`comptime if (target.os == .Windows)`** chooses by them while compiling (§2 rule 7): every
+   branch is checked, the chosen one is built.
+3. **`@When(cond)`** — in the prelude — on what stands at a module's top level, or on the module
+   (rule 4): `cond` is a `bool` computed while compiling (§1 rule 5), over `target` and `profile`.
+   Where it holds, the declaration is built. Where it does not, the declaration is checked as every
+   other, its `comptime` sites are not evaluated, and nothing of it is built. A use the program would
+   run of what a build leaves out is refused (`LYR-CT0006`); a use within what it leaves out, or in
+   the branch a `comptime if` does not take, is none. `@When` chooses no name: two declarations of
+   one name stay refused (`LYR-RES0001`, `LYR-SEM0085`), and `comptime if` chooses between names.
+4. **The module header** `module;` names nothing — the path names the module
+   ([04 §2](04-modules.md) rule 2) — and carries the module's attributes:
+   `@When(target.os == .Windows) module;` leaves the whole module out of every other build. One
+   module per target is a file per target, chosen between with `comptime if`.

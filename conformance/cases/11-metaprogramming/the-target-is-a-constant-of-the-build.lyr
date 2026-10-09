@@ -1,0 +1,15 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 64
+// 11 §3 rules 1, 2: 'target' is a constant of the build, which 'comptime if' chooses by while
+// compiling; every target Lyric 5 builds for has 64-bit pointers.
+import std.io { println };
+
+fn main(): void {
+    comptime if (target.pointerWidth == 64) {
+        println("64");
+    } else {
+        println("another width");
+    }
+}

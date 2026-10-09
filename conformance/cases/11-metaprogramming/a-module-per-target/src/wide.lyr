@@ -1,0 +1,6 @@
+@When(target.pointerWidth == 64)
+module;
+
+pub fn name(): string {
+    return "wide";
+}

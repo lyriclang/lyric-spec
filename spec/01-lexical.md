@@ -47,7 +47,8 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
    and `using` before `let` or `var` ([06 §7](06-errors.md#7-closing-using)).
 4. `module` and `params` are names (08 Y1: they were Lyric 4's words). At their old places —
    `module a.b;` at the start of a file, `params xs: T[]` in a list of parameters — they are read
-   as they were, to be refused with what replaced them: `LYR-RES0008` ([04 §2](04-modules.md)) and
+   as they were, to be refused with what replaced them (`module;` alone is Lyric 5's header,
+   [04 §2](04-modules.md) rule 2): `LYR-RES0008` ([04 §2](04-modules.md)) and
    `LYR-SEM0024` ([08 §1.1](08-expressions.md#11-arguments)).
 5. The builtin type names — `int`, `uint`, `float`, `int8` … `int64`, `uint8` … `uint64`,
    `float32`, `float64`, `bool`, `char`, `string`, `void`, `never`, `Self` — are names that no

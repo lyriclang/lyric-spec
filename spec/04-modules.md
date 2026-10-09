@@ -69,8 +69,9 @@ toolchain's own tests (`tests/Lyric5.Tests`, `PackageTests`).
    `geo.lib` (`LYR-RES0003`), and a directory `src/lib/` is a namespace like any other (rule 3).
    The package's own modules import the root module the same way, and it may stand beside
    `src/main.lyr`.
-2. A file has **no `module` header**: one is refused (`LYR-RES0008`), and the name is the path's
-   alone (M2).
+2. A file **names no module**: a `module` header with a path is refused (`LYR-RES0008`), and the
+   name is the path's alone (M2). `module;` without a path names nothing; it carries the module's
+   attributes ([11 §3](11-metaprogramming.md) rule 4).
 3. A **directory is a namespace, not a module**: `src/net.lyr` beside `src/net/` is the module
    `app.net`, one of its own, and a directory without such a file is no module to import
    (`LYR-RES0003`) (M5).

@@ -1,0 +1,25 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | wide
+// 11 §3 rule 3: '@When' builds a declaration only where its condition holds; 'comptime if' chooses
+// between names.
+import std.io { println };
+
+@When(target.pointerWidth == 64)
+fn wide(): string {
+    return "wide";
+}
+
+@When(target.pointerWidth != 64)
+fn narrow(): string {
+    return "narrow";
+}
+
+fn main(): void {
+    comptime if (target.pointerWidth == 64) {
+        println(wide());
+    } else {
+        println(narrow());
+    }
+}

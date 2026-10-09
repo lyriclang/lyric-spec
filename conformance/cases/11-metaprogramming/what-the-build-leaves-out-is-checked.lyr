@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 11 §3 rule 3: a declaration the build leaves out is checked as every other.
+
+@When(target.pointerWidth == 16)
+fn narrow(): int {
+    return "sixteen";
+}
+
+fn main(): void {
+}

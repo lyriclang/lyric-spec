@@ -1,7 +1,8 @@
 //! check
 //! error: LYR-RES0008
 //! since: 5.0.0
-// 04 §2 rule 2: a file has no 'module' header; the name is the path's alone.
+// 04 §2 rule 2: a file names no module — a header with a path is refused; the name is the path's
+// alone.
 module tools.gen;
 
 fn main(): void {
