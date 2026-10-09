@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | 2 4 3 5
+//! since: 5.0.0
+// 06 §9.3 rule 3: 'never' is a type argument for a parameter bounded by Error — the empty thrown
+// set — in a type, a call and a struct literal.
+import std.io { println };
+import std.core { MapIter, SliceIter };
+
+struct Tagged<E :: [Error]> { n: int }
+
+fn count<E :: [Error]>(n: int): int {
+    return n;
+}
+
+fn main(): void {
+    let doubled: MapIter<SliceIter<int>, int, never> = [1, 2].iter().map((x: int) => x * 2);
+    var out = "";
+    for (d in doubled) {
+        out = out + f"{d} ";
+    }
+    let t = Tagged<never> { n = 5 };
+    println(f"{out}{count<never>(3)} {t.n}");
+}

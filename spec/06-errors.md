@@ -290,9 +290,12 @@ written here yet is decided in the design documents, not here.
    `?.`, and the operand of a `try` with clauses.
 3. `never` is written **only as a return type**: the whole return type of a function, a lambda or
    a function type, `fn fail(m: string): never`. Anywhere else — a parameter, a binding, a field,
-   an element, an optional, a type argument, a thrown set, an alias — it would type a value that
-   cannot exist and is refused (`LYR-SEM0145`); `?never` and `never[]` are refused in a return
-   position too. `try?` over an expression of type `never` would be worth `?never` and is refused
+   an element, an optional, a type argument for any other parameter, a thrown set, an alias — it
+   would type a value that cannot exist and is refused (`LYR-SEM0145`); `?never` and `never[]` are
+   refused in a return position too. As a type argument for a parameter whose bound is `Error` it
+   is the empty thrown set, as `E = never` is what a set of nothing binds (design 05 E2 K4, "Review
+   2026-10-09" S5): `MapIter<SliceIter<int>, int, never>`, `f<never>()` for `f<E :: [Error]>`, a
+   struct literal's and a type path's arguments alike. `try?` over an expression of type `never` would be worth `?never` and is refused
    the same way.
 4. A function that returns `never` **does not return**: every path ends in a `throw`, a panic, a
    call that does not return or a `loop` no `break` leaves (`LYR-SEM0017` otherwise), and a
