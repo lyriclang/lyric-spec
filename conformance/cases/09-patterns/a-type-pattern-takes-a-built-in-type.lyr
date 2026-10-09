@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | int 42
+//! | string s
+//! | int8 3
+//! | int16 4
+//! | point 7
+//! | other
+//! | other
+//! since: 5.0.0
+// 09 §2 rules 12-13: a type pattern and a type set take a built-in type, tested exactly ('int32'
+// is neither 'int' nor in the set); a larger set binds the value with the set, and a match over
+// it is exhaustive with an arm per type.
+import std.io { println };
+import std.core { Any };
+
+struct Point { x: int, y: int }
+
+fn kind(a: Any): string {
+    return match (a) {
+        n: int => f"int {n * 2}",
+        s: string => f"string {s}",
+        small in [int8, int16] => match (small) {
+            b: int8 => f"int8 {b}",
+            h: int16 => f"int16 {h}",
+        },
+        p: Point => f"point {p.x}",
+        _ => "other",
+    };
+}
+
+fn main(): int {
+    let xs: Any[] = [21, "s", 3 as int8, 4 as int16, Point { x = 7, y = 0 }, 'c', 5 as int32];
+    for (x in xs) {
+        println(kind(x));
+    }
+    return 0;
+}

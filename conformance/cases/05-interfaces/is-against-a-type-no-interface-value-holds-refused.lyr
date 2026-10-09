@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0131
+//! since: 5.0.0
+// 05 §9 rule 3: no interface value holds an array — the test is refused.
+fn main(): int {
+    let d: Display = 5;
+    if (d is int[]) {
+        return 1;
+    }
+    return 0;
+}

@@ -245,24 +245,27 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 
 ## 9. `Any`, type tests and type patterns
 
-1. **`Any`** is the empty interface of `std.core` (03 T10), visible without an import as
-   every public type of `std.core` is. Every struct, class and enum value is an `Any` at the
-   transition, nothing declared — the ordinary transition of [§2](#2-interface-values), a
-   copy into a box for a struct or an enum. Nothing converts to `Any` unasked: only a position
-   whose type is `Any` takes a value that way, and a scalar never (`LYR-SEM0001`). `Any[]` is
-   the heterogeneous array.
+1. **`Any`** is the empty interface of `std.core` (03 T10), imported as any other of its public types
+   — the prelude does not pass it on (design 10 B2). Every struct, class and enum value is an
+   `Any` at the transition, nothing declared, and so is every value of a built-in type an
+   interface value holds ([§2](#2-interface-values) rule 1) — a number, `bool`, `char`, `string`,
+   a string's view: `let a: Any = 5;`. It is the ordinary transition of §2, a copy into a box
+   for a struct, an enum or a built-in's value. Nothing converts to `Any` unasked: only a
+   position whose type is `Any` takes a value that way. `Any[]` is the heterogeneous array.
 2. **`x is T`** (03 T11) asks an interface value what it holds and answers a `bool`: for a
-   struct, a class or an enum `T`, whether the value is one — a comparison of the descriptor
-   the value's table begins with; for an interface `T` that is a value type
+   struct, a class, an enum or a built-in type `T`, whether the value is one — a comparison of the descriptor
+   the value's table begins with, a built-in's box having one of its own. For a built-in type the
+   test is **exact**: `5 as int8` is no `int` and nothing widens, an alias is the type it names
+   (`int64` is `int`), and a `string` is no `StringView`. For an interface `T` that is a value type
    ([§7](#7-self-and-static-members) rule 3), whether the concrete type conforms to it — a
    search of the conformance list behind that descriptor. `is` stands at the comparison level
    and does not chain.
 3. The operand's static type is an **interface**. On a known type (`c is Circle` with
-   `c: Circle`), on an optional (`?Shape`: test for `null` first), against a built-in type (`s is int`, whose value
-   lies behind an interface in a box of its own, §2 rule 1 — asking for it is no form of the
-   language) and against a type parameter (`s is T`, O2: a
-   dynamic test takes `Any`) the test is refused (`LYR-SEM0131`); against a constraint-only
-   interface it is refused as a value of it is (`LYR-SEM0126`).
+   `c: Circle`), on an optional (`?Shape`: test for `null` first), against a type parameter
+   (`s is T`, O2: a dynamic test takes `Any`) and against a type no interface value holds —
+   `void`, an array, a tuple, an optional, a function type: `d is int[]` — the test is refused
+   (`LYR-SEM0131`); against a constraint-only interface it is refused as a value of it is
+   (`LYR-SEM0126`).
 4. **Narrowing.** In the branch `x is T` guards, the name `x` **is a `T`** — the smart cast,
    the mechanism of the null test ([03 §3.2](03-types.md#32-tests-and-narrowing)):
    `if (s is Circle) { s.r }`, `s is Circle && s.r > 0`. The branch's end ends it, as an

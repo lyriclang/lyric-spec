@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 5 true true true true true
+//! | true false
+//! since: 5.0.0
+// 05 §9 rule 1: a built-in's value is an 'Any' at the transition, in a box of its own; 'is' asks
+// for its type.
+import std.io { println };
+import std.core { Any };
+
+fn main(): int {
+    let xs: Any[] = [5, 'c', "text", true, 2.5];
+    println(f"{xs.length()} {xs[0] is int} {xs[1] is char} {xs[2] is string} {xs[3] is bool} {xs[4] is float}");
+    let a: Any = 5;
+    println(f"{a is int} {a is string}");
+    return 0;
+}

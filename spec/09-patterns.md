@@ -1,7 +1,8 @@
 # Patterns
 
 > **Partly written.** §1 to §4 were written with milestone **M3** of the Lyric 5 plan (slices S4
-> to S6), the type patterns with **M4**, the type-set pattern with the catch-up block N (N2c),
+> to S6), the type patterns with **M4**, the type-set pattern with the catch-up block N (N2c), a
+> built-in type in both with **M8c** S15,
 > spec-first: each rule lands here with its conformance case before or with its implementation.
 > Source of the decisions:
 > [08 Syntax Y6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md),
@@ -79,9 +80,11 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
     (`LYR-SEM0029`).
 12. **Type.** `c: Circle` and `_: Circle` stand against an **interface value** and match when
     it holds a value of that type ([05 §9](05-interfaces.md#9-any-type-tests-and-type-patterns));
-    `c` binds that value **as that type** — the object for a class, a copy for a struct or an
-    enum. On a scrutinee whose type is no interface the pattern is refused (`LYR-SEM0131`):
-    the static type answers already.
+    `c` binds that value **as that type** — the object for a class, a copy for a struct, an
+    enum or a built-in's value; the type may be a built-in one (`n: int`), tested exactly as `is`
+    tests it ([05 §9](05-interfaces.md#9-any-type-tests-and-type-patterns) rule 2). On a scrutinee
+    whose type is no interface the pattern is refused (`LYR-SEM0131`): the static type answers
+    already.
 13. **Type set** (08 Y6; N2c). `s in [Circle, Rect]` and `_ in [Circle, Rect]` stand against an
     interface value and match when it holds a value of **one of the types**, tested in order —
     the form of `catch (e in [A, B])` ([06 §4](06-errors.md#4-the-try-block-and-its-clauses)),
