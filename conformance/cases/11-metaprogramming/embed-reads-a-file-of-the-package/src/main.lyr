@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 4 104 33
+//! since: 5.0.0
+// 11 §2 rule 9: 'embed' gives the bytes of a file of the package, relative to the module that
+// calls, read while the program compiles — also from a function a site calls.
+import std.io { println };
+import std.core { embed };
+
+fn greeting(): uint8[] {
+    return embed("../data/greeting.txt");
+}
+
+fn main(): void {
+    let bytes = comptime greeting();
+    println(f"{bytes.length()} {bytes[0]} {bytes[2]}");
+}

@@ -73,3 +73,9 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
    once, stands once per element, with `x` that element's value. A `continue` goes on with the
    next round, a `break` past the last. A pattern in place of `x`, or a `w` that is no array, is
    refused (`LYR-SEM0100`).
+9. **`embed(path)`** (`std.core`) gives the bytes of a file as a `uint8[]`, read while the program
+   compiles (Q4). `path` is relative to the module that calls, and the file lies within the
+   package's directory; a module of no package is held to its own directory. A file outside, or
+   none, is `LYR-CT0004`. It is the one thing code run at compile time reads from outside the
+   program, and a build reads the file again when it changes. A `comptime` site, or what one calls,
+   makes the call; a call the program would make at run time is refused (`LYR-CT0004`).
