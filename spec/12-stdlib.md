@@ -300,7 +300,8 @@ Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ## Input and output
 
 The core of `std.io`, its buffers and its text ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md);
-M8b S2 and S3). The files, the console's streams and the network follow with M8b's later slices.
+M8b S2, S3 and S10a). The files, the console's streams and the network follow with M8b's later
+slices.
 
 1. **`IoError`** is the one error that input and output throw (O3), a struct: `kind:
    IoErrorKind`, `path: ?string`, `detail: string` and `inner: ?Error` — the field O3 calls
@@ -314,27 +315,37 @@ M8b S2 and S3). The files, the console's streams and the network follow with M8b
    the slice holds is no end. **`Writer`** has `write(from: Slice<uint8>): int`: it takes from the
    front and may take **fewer** bytes than it is handed. **`Seek`** has `seek(to: SeekFrom): int`,
    `SeekFrom.Start(n)`, `.End(n)` or `.Current(n)`, and answers the position counted from the
-   start. All three throw `IoError`, and all three are `mut fn`s. A writer's **`flush()`** hands on
-   what it holds back; the default does nothing (design 10 B8).
+   start. All three are `mut fn`s. `read`, `write` and a writer's **`flush()`** — which hands on
+   what it holds back; the default does nothing (design 10 B8) — throw **`[IoError, Cancelled]`**,
+   `seek` throws `IoError`. **Why `Cancelled`** (design 10 Review 2026-10-08): a read from a socket
+   or a pipe, or a write into one, waits for as long as the other side does nothing, and a cancel
+   ([10 §1](10-concurrency.md) rule 7) must be able to end that wait with the error every wait
+   ends with — not with an `IoError`, which a handler would take for the stream's failure. A
+   reader or writer that never waits without bound declares `IoError` alone, as an implementation
+   may throw less than its member ([06 §2](06-errors.md) rule 4); code over any reader or writer
+   is told both.
 3. **The defaults** (O1), on every reader: `readExact(into)` fills the slice whole or throws
    `UnexpectedEof`; `readToEnd()` is everything to the end in a new array; `readToString()` the
    same as UTF-8 — bytes that are no UTF-8 throw `InvalidData`, the decoder's `Utf8Error` as the
    cause. On every writer: `writeAll(from)` writes until all of it is taken — a writer that takes
    no byte of a slice that has some throws `Other { code: 0 }` rather than being asked forever —
-   and `writeString(s)` writes the text's UTF-8.
-4. **`copy(r, w): int`** copies everything `r` holds into `w` and answers how many bytes. The two
+   and `writeString(s)` writes the text's UTF-8. They throw what any reader's or writer's call
+   may, `[IoError, Cancelled]` — over one that declares `IoError` alone too.
+4. **`copy(r, w): int`** copies everything `r` holds into `w` and answers how many bytes, and
+   throws `[IoError, Cancelled]`. The two
    are used as the values handed in: a class is itself, and a reader that is a struct is read
    through a copy, its position unmoved for the caller.
 5. **The streams over memory** (O2): `ByteReader.new(bytes)` reads a `Slice<uint8>` from the
    front and seeks — a position past the end reads nothing, one before the start panics;
    `ByteBuffer.new()` appends what is written and reads from the front what was written and not
    yet read, with `length()` and `toArray()` of what it holds. Both are classes, say
-   `throws IoError` and throw nothing.
+   `throws IoError` and throw nothing; never waiting, they leave `Cancelled` out.
 6. **The buffers** (O2), with 8 KiB of their own. `BufReader.new(r)` is a reader that reads `r` a
    buffer at a time; a read at least as large as the buffer, while it is empty, goes to `r`
    directly. `BufWriter.new(w)` is a writer that holds back what it is handed until the buffer is
    full, a `flush()` or a `close()`; a write at least as large goes to `w` directly, after what is
-   held. A flush that throws keeps what `w` did not take, for the next. A `BufWriter` is
+   held. A flush that throws keeps what `w` did not take, for the next. Both throw what any
+   reader's or writer's call may (rule 2). A `BufWriter` is
    `Closeable`: `close()` flushes and leaves `w` open, and one that nothing closes is warned
    about (06 §7.4, `LYR-SEM0144`). *(Informative.)* O2 has both as structs with the bytes inline;
    every read hands the inner reader a view of the buffer, and an inline array in a frame has no
@@ -342,13 +353,15 @@ M8b S2 and S3). The files, the console's streams and the network follow with M8b
 7. **`TextReader.new(r, skipBom: false)`** reads UTF-8 text through a buffer of its own.
    `readLine(): ?string` is the next line without its end — a `\n` or a `\r\n`; a `\r` alone is
    text — or `null` at the end. A last line without an end is a line; the end of the last line
-   starts none. `lines()` iterates the same, with `Error = IoError`; `chars()` iterates the
-   codepoints; `readToEnd(): string` is the rest. A codepoint split between two reads of `r`
+   starts none. `lines()` iterates the same; `chars()` iterates the codepoints; `readToEnd():
+   string` is the rest. All throw `[IoError, Cancelled]`, and the two iterators' `Error` is
+   `Join<IoError, Cancelled>`, the root `Error` once reduced (§Iteration): a loop over them is
+   told `Error`. A codepoint split between two reads of `r`
    waits for its rest. Bytes that are no UTF-8 throw `InvalidData`, a `Utf8Error` as the cause
    whose offset counts from the reader's start; a line that throws is consumed. A byte order mark
    is text, `U+FEFF`, unless `skipBom: true` drops it from the front.
 8. **`TextWriter.new(w)`**: `write(s)` writes the text's UTF-8, `writeLine(s)` that and a `\n`, on
-   every system. It holds nothing back.
+   every system. It holds nothing back, and throws what `w` may.
 
 ## Encodings
 
@@ -523,7 +536,9 @@ with S7.
    on a file ends in a bounded time and is no wait in the sense of [10 §1](10-concurrency.md)
    rule 7: in a cancelled task it runs to its end, and the cancellation is thrown at the task's
    next wait. *(Informative.)* Ending early would hand the caller back a buffer the pool still
-   writes into.
+   writes into. So a `File` declares `IoError` alone (§Input and output rule 2), and so do the
+   conveniences below and `FileLinesIter`, though the defaults they use declare `Cancelled` for
+   any reader: from a file it cannot come.
 6. **The conveniences** read or write a file whole: **`fs.readText(path)`**, its UTF-8 — bytes
    that are no UTF-8 throw `InvalidData` with the path, and a byte order mark is text, as rule 7
    of §Input and output keeps it —, **`fs.readBytes(path)`**, **`fs.writeText(path, text)`** and
@@ -599,7 +614,9 @@ error.
 4. **`stdin()`** is the program's standard input, one for the program: a `Reader` whose reads go
    through a buffer of its own, with **`readLine()`** — the next line without its end, `\n` or
    `\r\n`, and `null` at the end of the input — and **`lines()`**, an iterator of them with
-   `Error = IoError`. A `read` takes what a line's read left in the buffer first.
+   `Error = IoError`. A `read` takes what a line's read left in the buffer first. The console's
+   read runs on the I/O pool as a file's call does (§Files rule 5), so `readLine`, `read` and
+   `lines()` — a `StdinLinesIter` of its own — throw `IoError` alone.
 5. **`stdout()`** and **`stderr()`** are `Writer`s over the buffers `print` and `eprint` write into,
    so what the two write keeps its order. Their `flush()` throws what the system says — a pipe
    nobody reads is `BrokenPipe`; the console is not `Closeable`.

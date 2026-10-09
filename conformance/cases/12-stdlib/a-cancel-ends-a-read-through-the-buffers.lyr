@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | timed out
+//! since: 5.0.0
+// 12 §Input and output, rule 2: a read that waits without bound — here on a channel nobody sends
+// on — ends at a cancel; its Cancelled passes the buffer and the text, and withTimeout says
+// TimedOut.
+import std.io { IoError, Reader, TextReader, println };
+import std.task { Cancelled, Channel, TimedOut, withTimeout };
+import std.time { Duration };
+
+class Waiting :: [Reader] {
+    var ch: Channel<int>,
+
+    mut fn read(into: Slice<uint8>): int throws [IoError, Cancelled] {
+        let got = try this.ch.recv();
+        return got ?? 0;
+    }
+}
+
+fn main(): void throws Error {
+    let text = TextReader.new(Waiting { ch = Channel.new() });
+    try {
+        let line = withTimeout(Duration.ofMillis(50), () => try text.readLine());
+        println(f"line: {line ?? "-"}");
+    } catch (_: TimedOut) {
+        println("timed out");
+    }
+}

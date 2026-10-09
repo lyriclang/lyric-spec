@@ -1,0 +1,34 @@
+//! run
+//! stdin:
+//! | one
+//! | two
+//! stdout:
+//! | 2 lines in, 5 bytes back
+//! since: 5.0.0
+// 12 §Files rule 5, §The console rule 4: a file's calls and the console's are never cancelled, so
+// the conveniences and stdin's lines throw IoError alone, though the defaults beneath declare
+// Cancelled — a function that covers IoError is enough.
+import std.fs;
+import std.io { IoError, println, stdin };
+
+fn input(): int throws IoError {
+    var n = 0;
+    for (_ in try stdin().lines()) {
+        n = n + 1;
+    }
+    return n;
+}
+
+fn back(): int throws IoError {
+    let p = "never-cancelled.txt";
+    try fs.writeText(p, "hello");
+    let text = try fs.readText(p);
+    try fs.remove(p);
+    return text.length();
+}
+
+fn main(): void throws Error {
+    let lines = try input();
+    let bytes = try back();
+    println(f"{lines} lines in, {bytes} bytes back");
+}
