@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0100
+//! since: 5.0.0
+// 11 §4 rule 6: a site is evaluated once - one that asks std.meta about a type parameter within a
+// larger expression is refused; 'comptime fields<T>()' alone is answered per instance.
+import std.meta { fields };
+
+fn sized<T>(): int {
+    return comptime fields<T>().length();
+}
+
+fn main(): void {
+}

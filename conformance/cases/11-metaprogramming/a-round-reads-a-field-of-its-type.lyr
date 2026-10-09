@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 3: 'e.[f]' reads a field of the type 'f' walks the fields of - 'q' is no 'P'.
+import std.meta { fields };
+
+struct P { a: int }
+struct Q { a: int }
+
+fn mismatch(p: P, q: Q): int {
+    comptime for (f in fields<P>()) {
+        let w = q.[f];
+    }
+    return 0;
+}
+
+fn main(): void {
+}

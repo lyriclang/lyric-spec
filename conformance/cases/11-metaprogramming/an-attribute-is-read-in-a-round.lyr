@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 4: 'attribute<A>(f)' asks a round's variable - a type parameter's loop has no rounds.
+import std.meta { fields, attribute };
+import std.core { OnField };
+
+struct Mark :: [OnField] { }
+
+fn noRound<T>(): int {
+    comptime for (f in fields<T>()) {
+        let r = attribute<Mark>(f);
+    }
+    return 0;
+}
+
+fn main(): void {
+}

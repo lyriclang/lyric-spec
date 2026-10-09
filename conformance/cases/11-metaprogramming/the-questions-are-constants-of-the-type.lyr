@@ -1,0 +1,50 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | key:int;name:string;
+//! | User true false true
+//! | Red/0;Green/1;Blue/1;
+//! | greet;make!;rename~;
+//! | true false true
+// 11 §4 rule 1: a generic function's fields per instance, a type's name and kind, an enum's
+// variants and their payloads, the members of a type's own body, the conformances.
+import std.io { println };
+import std.meta { fields, variants, conformances, hasConformance, members, typeName, isStruct, isEnum };
+
+interface Named {
+    fn named(): string;
+}
+
+struct User :: [Named] {
+    key: int,
+    var name: string,
+    fn greet(): string { return "hi"; }
+    static fn make(): User { return User { key = 1, name = "a" }; }
+    mut fn rename(to: string): void { this.name = to; }
+    fn named(): string { return this.name; }
+}
+
+enum Color { Red, Green(int), Blue { level: int } }
+
+fn names<T>(): string {
+    var s = "";
+    comptime for (f in fields<T>()) { s = s + f.name + ":" + f.type.name + ";"; }
+    return s;
+}
+
+fn main(): void {
+    println(names<User>());
+    println(f"{typeName<User>()} {isStruct<User>()} {isEnum<User>()} {isEnum<Color>()}");
+    var shades = "";
+    comptime for (v in variants<Color>()) { shades = shades + v.name + "/" + f"{v.payload.length()}" + ";"; }
+    println(shades);
+    var list = "";
+    comptime for (m in members<User>()) {
+        if (m.name == "named") { continue; }
+        list = list + m.name + (if (m.isStatic) "!" else "") + (if (m.isMut) "~" else "") + ";";
+    }
+    println(list);
+    var listed = "";
+    comptime for (i in conformances<User>()) { listed = listed + i.name + ","; }
+    println(f"{hasConformance<User, Named>()} {hasConformance<Color, Named>()} {listed.contains("Named")}");
+}

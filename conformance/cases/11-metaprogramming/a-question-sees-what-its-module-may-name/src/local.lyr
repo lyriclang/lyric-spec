@@ -1,0 +1,9 @@
+import std.meta { fields };
+
+pub interface LocalKeys {
+    fn localKeys(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) { out = out + f.name + ";"; }
+        return out;
+    }
+}

@@ -1,7 +1,7 @@
 # Metaprogramming
 
-> **Partly written.** §1 was begun with milestone **M8a** of the Lyric 5 plan (`@Test`), §2 with
-> **M9a** (`comptime`); the rest comes with **M9a/M9b**, spec-first: each rule lands here with its conformance case before or
+> **Partly written.** §1 was begun with milestone **M8a** of the Lyric 5 plan (`@Test`), §2–§4 with
+> **M9a** (`comptime`, `@When`, `std.meta`); the rest comes with **M9b**, spec-first: each rule lands here with its conformance case before or
 > with its implementation. Source of the decisions:
 > [09 Metaprogramming](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md).
 
@@ -165,3 +165,45 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    ([04 §2](04-modules.md) rule 2) — and carries the module's attributes:
    `@When(target.os == .Windows) module;` leaves the whole module out of every other build. One
    module per target is a file per target, chosen between with `comptime if`.
+
+## 4. Type information
+
+([09 A5, A7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md), [10 B13 M1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md))
+
+**Conformance.** `conformance/cases/11-metaprogramming/`.
+
+1. **`std.meta`** answers questions about a type as constants (R1): `fields<T>()`, a
+   `FieldInfo { name, type, index, visibility, isVar }` per field of a struct or a class, in
+   declaration order, `index` its place in the answer; `variants<E>()`, a
+   `VariantInfo { name, index, payload }` per variant, the payload's fields named by their position
+   where they have no names; `members<T>()`, a `MemberInfo { name, visibility, isStatic, isMut }` per
+   function of the type's own body; `conformances<T>()` and `hasConformance<T, I>()`;
+   `typeName<T>()`; `isStruct`, `isClass`, `isEnum`, `isInterface<T>()`. A `Type` holds its name.
+   Each answer is a constant of the type at the instance it is asked at — in a generic function or a
+   default, of each instance (R3). Nothing is reflected at run time (R6): a program reads a type
+   through such constants alone.
+2. **What a question sees** (R7) is what the code that asks may name: the module of the function
+   it stands in, the interface's for a default. Another package's field is listed where it is
+   `pub`, one of the package where it is not `private`, one of the module always; members alike.
+3. **`comptime for (f in fields<T>())`** walks the answer (§2), its body once per field. Where `T`
+   is a type the loop's place knows — a written type, or `Self` in a default (rule 5) — each round
+   has the body as its own: `f` is that field's info, a constant a `comptime` site of the round may
+   read (`comptime if (f.isVar)`), and **`e.[f]`** is the field of `e` that `f` names, of the
+   field's own type — read, written and a place as `e.name` is (R2). `e` is a value of the type `f`
+   walks the fields of (`LYR-SEM0185`). Where `T` is known only per instance — a type parameter of
+   a generic function — the rounds share one body, checked once: `f` is a `FieldInfo`, and no field
+   is read through it (`LYR-SEM0185`).
+4. **`attribute<A>(f)`** is the attribute of type `A` that the field `f` names carries, its value,
+   or `null` (R4); `f` is a round's variable (`LYR-SEM0185`). **`typeAttribute<T, A>()`** is the
+   one `T`'s declaration carries.
+5. **A default that walks `Self`'s fields is set in place for each conformer that takes it** (A5):
+   checked as the conformer's — `Self` and `this` the conformer, its names those of the
+   interface's module —, each round's `this.[f]` of the conformer's field's type. What is wrong
+   there is said at the line written once, with the field and the conformer named. A call through
+   a value of the interface reaches it; a conformer that writes the member itself takes nothing
+   ([05 §14](05-interfaces.md) rule 1). A generic conformer's field of a parameter's type has what
+   the parameter's constraints give it: `struct Pair<T :: [ToJson]> :: [ToJson]` is written out,
+   `Pair<T>` without the constraint is refused at the default's line.
+6. A `comptime` site is evaluated once: one that asks `std.meta` about a type known only per
+   instance within a larger expression is refused (`LYR-SEM0100`); asked alone,
+   `comptime fields<T>()`, the question is answered per instance.

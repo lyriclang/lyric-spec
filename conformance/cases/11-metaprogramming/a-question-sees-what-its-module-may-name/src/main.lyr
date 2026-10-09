@@ -1,0 +1,28 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | a;b; a;b;c;
+// 11 §4 rule 2: the fields a question lists are those its module may name - in another module of
+// the package the private field is no one's, beside the type it is.
+import std.io { println };
+import std.meta { fields };
+import app.local { LocalKeys };
+
+interface HereKeys {
+    fn hereKeys(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) { out = out + f.name + ";"; }
+        return out;
+    }
+}
+
+struct P :: [LocalKeys, HereKeys] {
+    pub a: int,
+    b: int,
+    private c: int,
+}
+
+fn main(): void {
+    let p = P { a = 1, b = 2, c = 3 };
+    println(f"{p.localKeys()} {p.hereKeys()}");
+}

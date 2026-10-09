@@ -1,0 +1,55 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | var a=1;var b=2;
+//! | var a=0;var b=0;
+//! | left=3;right=4;
+//! | var a=5;var b=6;
+// 11 §4 rules 3, 5: a round's site reads its field's info; 'this.[f]' is written in a mut default;
+// a generic conformer's parameter is bound at its instance; a call through a value of the
+// interface reaches the default set in place for the conformer.
+import std.io { println };
+import std.meta { fields };
+
+interface Show2 {
+    fn show2(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) {
+            comptime if (f.isVar) { out = out + "var "; }
+            out = out + f.name + "=" + this.[f].show2() + ";";
+        }
+        return out;
+    }
+}
+
+interface Reset {
+    mut fn reset(): void {
+        comptime for (f in fields<Self>()) {
+            this.[f] = 0;
+        }
+    }
+}
+
+extend int :: [Show2] {
+    fn show2(): string { return f"{this}"; }
+}
+
+struct Counter :: [Show2, Reset] {
+    var a: int,
+    var b: int,
+}
+
+struct Pair<T :: [Show2]> :: [Show2] {
+    left: T,
+    right: T,
+}
+
+fn main(): void {
+    var c = Counter { a = 1, b = 2 };
+    println(c.show2());
+    c.reset();
+    println(c.show2());
+    println(Pair<int> { left = 3, right = 4 }.show2());
+    let asValue: Show2 = Counter { a = 5, b = 6 };
+    println(asValue.show2());
+}
