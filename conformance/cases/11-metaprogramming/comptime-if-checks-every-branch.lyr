@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 11 §2 rule 7: every branch of a 'comptime if' is checked — the one it does not choose too.
+fn main(): void {
+    comptime if (true) {
+        let fine = 1;
+    } else {
+        let wrong: int = "a string";
+    }
+}

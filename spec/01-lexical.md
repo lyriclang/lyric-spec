@@ -36,16 +36,15 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
    else. `_` alone is the wildcard where a name would bind.
 2. The **reserved words** are no names: `import as pub internal private static struct class enum
    interface extend fn mut let var if else while do for in is match break continue return yield
-   defer try catch throw true false null this`. One where a name belongs is refused — the
+   defer try catch throw true false null this`, and the compile-time words `comptime inline quote
+   macro` ([11 §2](11-metaprogramming.md); `inline`, `quote` and `macro` have no form yet). One where a name belongs is refused — the
    parser's error for a missing name, `LYR-PAR0020` for a binding, with a note that it is a word —
    and read as that name, so nothing further is reported about it.
 3. The **contextual words** are names everywhere but at their place: `type` before a type alias,
    `opaque` before `type` (and refused there, [03 §10](03-types.md#10-aliases)), `throws` after a
    signature, `extern` before its ABI string, `sealed` before `interface`, `by` in a conformance
    list, `with` after an expression, `loop` before its `{` ([07 §1](07-statements.md#1-loop-and-the-jumps)),
-   `using` before `let` or `var` ([06 §7](06-errors.md#7-closing-using)), and `comptime` before an
-   expression. *(Informative.)* `inline`, `macro` and `quote` come with the compile-time forms
-   (M9a).
+   and `using` before `let` or `var` ([06 §7](06-errors.md#7-closing-using)).
 4. `module` and `params` are names (08 Y1: they were Lyric 4's words). At their old places —
    `module a.b;` at the start of a file, `params xs: T[]` in a list of parameters — they are read
    as they were, to be refused with what replaced them: `LYR-RES0008` ([04 §2](04-modules.md)) and
