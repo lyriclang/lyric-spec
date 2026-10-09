@@ -7,6 +7,7 @@
 // 12 §Input and output, rule 6: a BufWriter holds back what it is handed until its buffer is full,
 // a flush or its close; closing flushes it and its inner writer — 'using let' closes it too.
 import std.io { println, BufWriter, ByteBuffer, IoError, Writer };
+import std.task { Cancelled };
 
 class Sink :: [Writer] {
     most: int = 1 << 30,
@@ -30,7 +31,7 @@ class Sink :: [Writer] {
     }
 }
 
-fn scoped(into: Sink): void throws IoError {
+fn scoped(into: Sink): void throws [IoError, Cancelled] {
     using let w = BufWriter.new(into);
     try w.writeString("z");
 }
