@@ -1,0 +1,15 @@
+//! check
+//! warning: LYR-SEM0180
+//! since: 5.0.0
+// 11 §1 rule 13: an '@Allow' that takes back nothing warns, so a stale one leaves with the code it
+// was written for.
+
+@Allow("LYR-SEM0071")
+fn tidy(): int {
+    let used = 1;
+    return used;
+}
+
+fn main(): void {
+    let _ = tidy();
+}

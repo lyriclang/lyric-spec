@@ -1,0 +1,31 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | app/src/main.lyr:28
+//! | app/src/main.lyr:9
+//! | A:30
+// 11 §1 rule 8: where a call leaves the parameter out, '@callerLine' gives the line the call
+// begins on and '@callerFile' the file, as the package's name and the path in it — through an
+// interface as directly; a call that writes the argument keeps it.
+import std.io { println };
+
+fn here(@callerLine line: int = 0, @callerFile file: string = ""): string {
+    return f"{file}:{line}";
+}
+
+interface Sink {
+    fn put(@callerLine line: int = 0): string;
+}
+
+struct A { }
+
+extend A :: [Sink] {
+    fn put(@callerLine line: int = 0): string { return f"A:{line}"; }
+}
+
+fn main(): void {
+    let s: Sink = A { };
+    println(here());
+    println(here(9));
+    println(s.put());
+}

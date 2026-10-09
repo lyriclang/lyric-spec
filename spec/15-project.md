@@ -34,9 +34,12 @@ in `ProgramTests`.
    type).
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
-   `[profile]` is §4's, `[native]` §5's, `[build-dependencies]` and `[trust]` §8's. The other parts
-   of a manifest ([11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)) — lints — are refused the same way until this chapter
-   writes them.
+   `[profile]` is §4's, `[native]` §5's, `[build-dependencies]` and `[trust]` §8's. `[lints]`
+   holds `allow`, the warning codes the package's files do not report
+   ([11 §1](11-metaprogramming.md) rule 13): `[lints] allow = ["LYR-SEM0071"]`, a code each
+   (`LYR-PKG0002`). The levels beside it, `warn` and `deny`
+   ([11 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)),
+   are refused the same way until [16](16-diagnostics.md) writes them.
 5. A package's **programs** are its `src/main.lyr`, whose binary is named after the package
    ([14 §1.2](14-cli.md)), and each `[[bin]]`: `name = "tool"` — a lowercase letter, then
    letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the

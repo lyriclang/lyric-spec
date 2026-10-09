@@ -1,0 +1,16 @@
+//! check
+//! since: 5.0.0
+// 11 §1 rule 9: a use inside a deprecated declaration does not warn — what goes, goes together.
+
+@Deprecated
+fn old(): int {
+    return 1;
+}
+
+@Deprecated
+fn older(): int {
+    return old() + 1;
+}
+
+fn main(): void {
+}

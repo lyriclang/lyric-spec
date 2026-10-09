@@ -113,6 +113,9 @@ Literal, binding (a bare name always binds), variant (`.Red`), field, tuple, arr
 3. A guarded arm covers nothing: whether its guard holds is not known to the check.
 4. A scrutinee of type `?E` admits `null` and the variants of `E` in one `match`; presence is
    established before a variant is examined, and the arms are still tried in order.
+5. An enum or a sealed interface that carries `@NonExhaustive` is **open** outside the package
+   that declares it ([11 §1](11-metaprogramming.md) rule 12): there a `match` over it needs a `_`
+   or a binding arm, whatever its other arms cover — a later version may add to it.
 
 A type pattern covers one conformer, a type-set pattern each of its types. Over an open interface the set of conformers is open, so a
 match of type patterns needs `_` (`LYR-SEM0050`); over a **sealed** interface

@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 11 §1 rule 12: outside the package that declares a '@NonExhaustive' enum, a match covers it with a
+// '_' or binding arm alone — a later version may add a variant. Inside, its variants cover it.
+import geo { Shape, name };
+
+fn local(s: Shape): string {
+    return match (s) {
+        .Dot => "d",
+        .Line => "l",
+    };
+}
+
+fn main(): void {
+    let _ = local(Shape.Dot) + name(Shape.Line);
+}

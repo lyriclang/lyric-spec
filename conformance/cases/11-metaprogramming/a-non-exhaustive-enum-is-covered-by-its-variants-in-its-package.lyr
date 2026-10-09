@@ -1,0 +1,24 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | dot line
+// 11 §1 rule 12: inside the package that declares a '@NonExhaustive' enum, its variants cover it —
+// the package grows them itself.
+import std.io { println };
+
+@NonExhaustive
+enum Shape {
+    Dot,
+    Line,
+}
+
+fn name(s: Shape): string {
+    return match (s) {
+        .Dot => "dot",
+        .Line => "line",
+    };
+}
+
+fn main(): void {
+    println(f"{name(Shape.Dot)} {name(Shape.Line)}");
+}

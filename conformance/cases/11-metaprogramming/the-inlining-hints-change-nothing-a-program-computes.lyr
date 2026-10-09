@@ -1,0 +1,26 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 6 5 rare
+// 11 §1 rule 10: '@AlwaysInline', '@NoInline' and '@Cold' are hints to the C compiler — the
+// program computes what it computes without them.
+import std.io { println };
+
+@AlwaysInline
+fn twice(x: int): int {
+    return x * 2;
+}
+
+@NoInline
+fn next(x: int): int {
+    return x + 1;
+}
+
+@Cold
+fn rare(): string {
+    return "rare";
+}
+
+fn main(): void {
+    println(f"{twice(3)} {next(4)} {rare()}");
+}

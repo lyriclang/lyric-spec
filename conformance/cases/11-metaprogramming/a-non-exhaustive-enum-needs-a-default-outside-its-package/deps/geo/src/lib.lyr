@@ -1,0 +1,14 @@
+// A later version of this package may add a shape.
+@NonExhaustive
+pub enum Shape {
+    Dot,
+    Line,
+}
+
+/// Inside the package its variants cover it.
+pub fn name(s: Shape): string {
+    return match (s) {
+        .Dot => "dot",
+        .Line => "line",
+    };
+}

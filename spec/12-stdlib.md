@@ -287,7 +287,8 @@ A failure kept as a value, and a value made from another (design 05 E1, 10 B3, B
   is `Ok` with what it returns or `Err` with what it throws — `Result.of { try half(n) }`, `E`
   inferred from what the lambda throws (05 K4), the root `Error` where that is two types.
   **`r.get()`** is an `Ok`'s value and throws an `Err`'s error: `try r.get()`. `E` is an `Error`,
-  since `get()` throws it. The library returns no `Result` (10 B3); the caller makes one.
+  since `get()` throws it. The library returns no `Result` (10 B3); the caller makes one. It is
+  `@MustUse` ([11 §1](11-metaprogramming.md) rule 11): a statement that drops one warns.
 - **`From<T> { static fn from(v: T): Self; }`** is a conversion into a type, which the type
   writes: `Centimeters.from(m)`. **`Into<T> { fn into(): T; }`** follows from it through
   std.core's blanket `extend<T, U :: [From<T>]> T :: [Into<U>]` ([05 §13](05-interfaces.md)
@@ -381,8 +382,9 @@ slices.
    `cause`, named so because `Error` asks for a method `cause()` and a type's members do not share
    a name (as `Exception`'s `inner`). Its `message()` is the kind in words, then the path and the
    detail where there are any: `not found: data.txt (opened to read)`. `IoErrorKind` names O3's
-   kinds, and `Other { code }` a system's code no kind names. *(Informative.)* O3 marks the kinds
-   `@NonExhaustive`, which comes with the compiler's attributes (M9a).
+   kinds, and `Other { code }` a system's code no kind names. It is `@NonExhaustive`
+   ([11 §1](11-metaprogramming.md) rule 12): a later release may name another kind, so a `match`
+   over it outside `std` writes a `_`.
 2. **`Reader`** has `read(into: Slice<uint8>): int`: it fills the slice from the front and answers
    how many bytes it put there — **0 only at the end**, and at once for an empty slice; fewer than
    the slice holds is no end. **`Writer`** has `write(from: Slice<uint8>): int`: it takes from the

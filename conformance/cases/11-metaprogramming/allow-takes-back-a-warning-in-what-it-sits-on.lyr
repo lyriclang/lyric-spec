@@ -1,0 +1,12 @@
+//! check
+//! since: 5.0.0
+// 11 §1 rule 13: '@Allow' takes back the warnings with its code within the declaration it sits on.
+
+@Allow("LYR-SEM0071")
+fn quiet(): void {
+    let unused = 1;
+}
+
+fn main(): void {
+    quiet();
+}

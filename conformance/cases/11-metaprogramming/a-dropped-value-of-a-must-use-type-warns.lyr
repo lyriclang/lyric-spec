@@ -1,0 +1,18 @@
+//! check
+//! warning: LYR-SEM0178
+//! since: 5.0.0
+// 11 §1 rule 11: an expression statement that drops a value of a '@MustUse' type warns, whatever
+// gives it.
+
+@MustUse
+struct Ticket {
+    n: int,
+}
+
+fn issue(): Ticket {
+    return Ticket { n = 1 };
+}
+
+fn main(): void {
+    issue();
+}

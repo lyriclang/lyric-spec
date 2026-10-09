@@ -1,0 +1,35 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 1,10,2
+//! | 1,2,2
+//! | 5,10,0
+//! | 3 0
+// 08 §1.1 rules 1, 2: a call through an interface leaves out what a direct call may — a default,
+// one reading an earlier parameter; arguments by name; a variadic rest, empty too.
+import std.io { println };
+
+interface Sink {
+    fn put(a: int, b: int = 10, c: int = a + 1): string;
+    fn all(xs: int...): int;
+}
+
+struct A { }
+
+extend A :: [Sink] {
+    fn put(a: int, b: int = 10, c: int = a + 1): string {
+        return f"{a},{b},{c}";
+    }
+
+    fn all(xs: int...): int {
+        return xs.length();
+    }
+}
+
+fn main(): void {
+    let s: Sink = A { };
+    println(s.put(1));
+    println(s.put(b: 2, a: 1));
+    println(s.put(5, c: 0));
+    println(f"{s.all(1, 2, 3)} {s.all()}");
+}

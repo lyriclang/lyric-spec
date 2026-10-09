@@ -1,0 +1,17 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 4 x
+// 11 §1 rule 7: a compiler instruction says the same of every instance, so it may sit on a
+// generic declaration — where data may not (rule 2).
+import std.io { println };
+
+@NoInline
+@MustUse
+fn pick<T>(x: T): T {
+    return x;
+}
+
+fn main(): void {
+    println(f"{pick(4)} {pick("x")}");
+}

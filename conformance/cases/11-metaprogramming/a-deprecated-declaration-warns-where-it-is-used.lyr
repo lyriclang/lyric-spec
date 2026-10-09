@@ -1,0 +1,21 @@
+//! check
+//! warning: LYR-SEM0076
+//! since: 5.0.0
+// 11 §1 rule 9: every use of a deprecated declaration warns; its message may be computed, and a
+// release it is kept until that has not come leaves it a warning.
+import std.io { println };
+
+let NEW = "neu";
+
+@Deprecated { message = "use " + NEW, until = "99.0", replacement = NEW }
+fn alt(): int {
+    return 1;
+}
+
+fn neu(): int {
+    return 2;
+}
+
+fn main(): void {
+    println(f"{alt()} {neu()}");
+}
