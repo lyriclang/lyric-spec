@@ -1,0 +1,23 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 6
+// 03 §8.5 rule 2, 07 §1 rule 4: 'continue' in a lambda set in place goes on with the writer's
+// loop - the next row, not the next element -, 'break' leaves it.
+import std.io { println };
+
+fn sumRows(rows: int[][]): int {
+    var total = 0;
+    for (row in rows) {
+        row.iter().forEach((x) => {
+            if (x < 0) { break; }
+            if (x == 0) { continue; }
+            total += x;
+        });
+    }
+    return total;
+}
+
+fn main(): void {
+    println(f"{sumRows([[1, 2, 0, 5], [3, -1, 7], [4]])}");
+}

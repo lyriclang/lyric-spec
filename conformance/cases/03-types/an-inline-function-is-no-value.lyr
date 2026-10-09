@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0183
+//! since: 5.0.0
+// 03 §8.5 rule 4: an inline function is called, and set in place there - there is nothing to
+// point at.
+inline fn inc(x: int): int {
+    return x + 1;
+}
+
+fn main(): void {
+    let h = inc;
+}

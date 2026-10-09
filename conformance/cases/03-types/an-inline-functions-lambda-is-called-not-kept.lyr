@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0181
+//! since: 5.0.0
+// 03 §8.5 rule 3: a function parameter of an inline function is called, or passed on to another
+// inline function's - never returned.
+inline fn keep(f: fn() -> void): fn() -> void {
+    return f;
+}
+
+fn main(): void {
+    keep(() => {});
+}

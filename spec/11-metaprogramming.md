@@ -56,7 +56,7 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 7. **The compiler instructions** — in the prelude — are the closed list of `std.core` the compiler
    reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
    (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
-   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13) and `@When` (§3). What one says holds for
+   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14) and `@When` (§3). What one says holds for
    every instance, so beside `@Test` they sit on a generic declaration too, where data may not
    (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
@@ -89,6 +89,9 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
     An error is never taken back. An `@Allow` that takes back nothing warns (`LYR-SEM0180`), and a
     value that is no code is refused (`LYR-SEM0179`): the lints' names come with
     [16](16-diagnostics.md).
+14. **`@Shared`** on a field: the `clone()` a `Clone` synthesis writes copies the field instead of
+    cloning it ([05 §14](05-interfaces.md#14-conformance-synthesis) rule 2) — the reference, where
+    the field holds one. A `clone()` the type writes itself is its own.
 
 ## 2. `comptime`
 

@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-PAR0032
+//! since: 5.0.0
+// 03 §8.5 rule 1: the words stand 'static inline fn'; the other order is refused, and read as
+// what it says - nothing else is reported.
+struct Box2<T> {
+    value: T,
+    inline static fn make(v: T): Box2<T> {
+        return Box2 { value = v };
+    }
+}
+
+fn main(): void {
+    let b = Box2<int>.make(4);
+}

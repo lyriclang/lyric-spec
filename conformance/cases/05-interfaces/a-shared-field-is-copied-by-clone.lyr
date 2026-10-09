@@ -1,0 +1,21 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 5 a
+// 05 §14 rule 2, 11 §1 rule 14: the synthesized clone() copies a '@Shared' field - both values
+// reach the one service - and clones the rest; the field's type needs no Clone.
+import std.io { println };
+
+class Service { var n: int }
+
+struct Node :: [Clone] {
+    @Shared service: Service,
+    name: string,
+}
+
+fn main(): void {
+    let a = Node { service = Service { n = 1 }, name = "a" };
+    let b = a.clone();
+    b.service.n = 5;
+    println(f"{a.service.n} {b.name}");
+}

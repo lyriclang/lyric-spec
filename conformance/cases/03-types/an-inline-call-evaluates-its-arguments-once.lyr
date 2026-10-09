@@ -1,0 +1,24 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 22 ab
+// 03 §8.5 rule 1: an inline function's call evaluates its arguments first, left to right, each
+// once - the body reads 'a' twice, the argument ran once.
+import std.io { println };
+
+class Log { var text: string }
+
+fn note(log: Log, s: string, v: int): int {
+    log.text = log.text + s;
+    return v;
+}
+
+inline fn pair(a: int, b: int, f: fn(int) -> int): int {
+    return f(a) + f(a) + b;
+}
+
+fn main(): void {
+    let log = Log { text = "" };
+    let v = pair(note(log, "a", 1), note(log, "b", 2), (x) => x * 10);
+    println(f"{v} {log.text}");
+}

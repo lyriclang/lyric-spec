@@ -227,7 +227,9 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
-  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`, in one pass; `minBy(key)`
+  decides; `find(p)` and `position(p)`; `forEach(f)`, inline
+  ([03 §8.5](03-types.md#85-inline-functions)): a lambda written at the call is set in place, its
+  `return` the caller's; `toArray()`, in one pass; `minBy(key)`
   and `maxBy(key)`, the value whose `TotalOrder` key is least or greatest, the first of equal
   ones, `null` without a value. Of `std.collections`: `chunks(n)`, the values in `List`s of `n`,
   the last shorter where they do not divide, and `windows(n)`, every run of `n` values in turn,

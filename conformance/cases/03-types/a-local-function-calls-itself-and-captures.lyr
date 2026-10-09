@@ -1,0 +1,27 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 120 15 2
+//! | 11
+// 03 §8.6 rule 1: a local fn calls itself, captures a 'let' and writes a captured 'var', and is a
+// value of its function type.
+import std.io { println };
+
+fn main(): void {
+    let base = 10;
+    fn fact(n: int): int {
+        return if (n <= 1) 1 else n * fact(n - 1);
+    }
+    fn plus(n: int): int {
+        return n + base;
+    }
+    var count = 0;
+    fn bump(): void {
+        count += 1;
+    }
+    bump();
+    bump();
+    println(f"{fact(5)} {plus(5)} {count}");
+    let f: fn(int) -> int = plus;
+    println(f"{f(1)}");
+}
