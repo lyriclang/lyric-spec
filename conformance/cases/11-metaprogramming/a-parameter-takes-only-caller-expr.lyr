@@ -1,7 +1,7 @@
 //! check
 //! error: LYR-SEM0065
 //! since: 5.0.0
-// 11 §1 rule 3: @callerExpr is the one attribute a parameter takes.
+// 11 §1 rule 4: a parameter takes what a marker admits there — @Test is a function's.
 
 fn f(@Test x: int): int {
     return x;

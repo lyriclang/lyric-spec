@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0094
+//! since: 5.0.0
+// 11 §1 rule 1: the parenthesized form fills the one field without a default — 'Two' has two.
+import std.core { OnAny };
+
+struct Two :: [OnAny] {
+    a: int,
+    b: int,
+}
+
+@Two(1)
+fn f(): void {
+}
+
+fn main(): void {
+}

@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0065
+//! since: 5.0.0
+// 11 §1 rule 4: an attribute whose markers admit no function stands on none — 'OnField' admits
+// fields.
+import std.core { OnField };
+
+struct Width :: [OnField] {
+    value: int,
+}
+
+@Width { value = 3 }
+fn f(): void {
+}
+
+fn main(): void {
+}
