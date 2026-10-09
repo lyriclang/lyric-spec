@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3: a field's type that is a constraint only is said at the field, once: its read in
+// same() and the struct literal say nothing more.
+struct Holder { e: Equatable, n: int }
+
+fn same(h: Holder): bool {
+    return h.e == h.e;
+}
+
+fn main(): void {
+    let h = Holder { e = 1, n = 2 };
+}
