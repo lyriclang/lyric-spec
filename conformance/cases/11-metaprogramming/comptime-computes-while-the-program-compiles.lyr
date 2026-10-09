@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 6765 ab-ab-ab-
+//! since: 5.0.0
+// 11 §2 rule 1: 'comptime e' evaluates e while the program compiles, and the site stands for the
+// value — the functions it calls run at compile time, their loops and their strings with them.
+import std.io { println };
+
+fn fib(n: int): int {
+    return if (n < 2) n else fib(n - 1) + fib(n - 2);
+}
+
+fn repeated(s: string, n: int): string {
+    var out = "";
+    var i = 0;
+    while (i < n) {
+        out = out + s + "-";
+        i += 1;
+    }
+    return out;
+}
+
+fn main(): void {
+    println(f"{comptime fib(20)} {comptime repeated("ab", 3)}");
+}

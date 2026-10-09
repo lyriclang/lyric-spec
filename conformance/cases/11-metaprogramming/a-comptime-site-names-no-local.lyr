@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0100
+//! since: 5.0.0
+// 11 §2 rule 1: a site sees what the module level sees — a local of the function it stands in
+// is no part of it.
+fn main(): void {
+    let x = 3;
+    let _ = comptime x;
+}

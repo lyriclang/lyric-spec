@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-CT0003
+//! since: 5.0.0
+// 11 §2 rule 2: code run at compile time does not reach the world — a call that writes to the
+// console is an error at the site.
+import std.io { println };
+
+fn loud(): int {
+    println("hello");
+    return 1;
+}
+
+fn main(): void {
+    let _ = comptime loud();
+}

@@ -1,7 +1,7 @@
 # Metaprogramming
 
-> **Partly written.** §1 was begun with milestone **M8a** of the Lyric 5 plan (`@Test`); the rest
-> comes with **M9a/M9b**, spec-first: each rule lands here with its conformance case before or
+> **Partly written.** §1 was begun with milestone **M8a** of the Lyric 5 plan (`@Test`), §2 with
+> **M9a** (`comptime`); the rest comes with **M9a/M9b**, spec-first: each rule lands here with its conformance case before or
 > with its implementation. Source of the decisions:
 > [09 Metaprogramming](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md).
 
@@ -33,3 +33,28 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    `string` and has a default, which a call that writes the argument itself keeps; the attribute
    names its parameter by name (`LYR-SEM0155`). It is the one attribute a parameter takes
    (`LYR-SEM0065`).
+
+## 2. `comptime`
+
+([09 A4, Q1–Q7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md))
+
+**Conformance.** `conformance/cases/11-metaprogramming/`, the cases on `comptime`; that a site
+computes what the binary computes — the number tower, the texts of numbers, strings, containers,
+the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `ComptimeTests`).
+
+1. **`comptime e`** evaluates `e` while the program is compiled, and the site stands for the value,
+   a literal of its type. The value is a scalar, a `bool`, a `char` or a `string` (`LYR-SEM0100`).
+   `e` sees what the module level sees: it names no local, no parameter and no `this`, and holds no
+   lambda and no assignment (`LYR-SEM0100`).
+2. **The code evaluated is pure** (Q3): `e` calls functions, which then run at compile time, and
+   builds values of any type on its way. A call that reaches the world — the console, files, the
+   network, the clock, randomness, processes, threads and tasks — is an error at the site
+   (`LYR-CT0003`) that names the call and the calls that led to it.
+3. **A panic** of the evaluation is an error at the site (`LYR-CT0001`). It names the run-time code
+   the program would have ended with and shows the frames of the evaluation, innermost first (Q6).
+4. **The value is the binary's** (Q7): `e` computes as the compiled program does, in the profile it
+   is built in — an overflow panics where the profile checks ([03 T2](03-types.md)) and wraps where
+   it does not —, and alike on every platform the compiler runs on.
+5. **Each site has a budget** of steps (Q5): the toolchain's, or `comptimeBudget` of the root
+   manifest ([15 §1](15-project.md) rule 7). A site that takes more is an error at the site
+   (`LYR-CT0002`) that names the budget. What one step is belongs to the implementation.

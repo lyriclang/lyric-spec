@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-CT0001
+//! since: 5.0.0
+// 11 §2 rule 3: a panic of the evaluation is an error at the site — here a division by zero two
+// calls deep.
+fn ratio(a: int, b: int): int {
+    return a / b;
+}
+
+fn half(): int {
+    return ratio(1, 0);
+}
+
+fn main(): void {
+    let _ = comptime half();
+}
