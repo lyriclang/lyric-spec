@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | 192.0.2.1
+//! | 2001:db8::ff00:42:8329
+//! | 1:0:0:2::3
+//! | ::ffff:192.0.2.1
+//! | ::
+//! | [2001:db8::1]:443
+//! | refused: 01.2.3.4 1::2::3 [127.0.0.1]:80 127.0.0.1:65536
+//! since: 5.0.0
+// 12 §The network, rules 1–2: version 4 dotted, version 6 as RFC 4291 reads it and RFC 5952
+// writes it, a socket address with version 6 in brackets; what neither takes is a ParseError.
+import std.core { ParseError };
+import std.io { println };
+import std.net { IpAddr, SocketAddr };
+
+fn refused(s: string, socket: bool): bool {
+    try {
+        if (socket) {
+            let _ = SocketAddr.parse(s);
+        } else {
+            let _ = IpAddr.parse(s);
+        }
+        return false;
+    } catch (_: ParseError) {
+        return true;
+    }
+}
+
+fn main(): void throws Error {
+    println(try IpAddr.parse("192.0.2.1"));
+    println(try IpAddr.parse("2001:0DB8:0000:0000:0000:FF00:0042:8329"));
+    println(try IpAddr.parse("1:0:0:2:0:0:0:3"));
+    println(try IpAddr.parse("::ffff:c000:201"));
+    println(IpAddr.V6(0, 0, 0, 0, 0, 0, 0, 0));
+    println(try SocketAddr.parse("[2001:db8:0::1]:443"));
+    var no = "refused:";
+    if (refused("01.2.3.4", false)) { no = f"{no} 01.2.3.4"; }
+    if (refused("1::2::3", false)) { no = f"{no} 1::2::3"; }
+    if (refused("[127.0.0.1]:80", true)) { no = f"{no} [127.0.0.1]:80"; }
+    if (refused("127.0.0.1:65536", true)) { no = f"{no} 127.0.0.1:65536"; }
+    println(no);
+}

@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | timed out
+//! since: 5.0.0
+// 12 §The network: an accept is a wait (10 §1 rule 7) — withTimeout's cancel ends it, and nobody
+// ever comes.
+import std.io { println };
+import std.net { IpAddr, SocketAddr, TcpListener };
+import std.task { TimedOut, withTimeout };
+import std.time { Duration };
+
+fn main(): void throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    try {
+        var stream = withTimeout(Duration.ofMillis(50), () => try listener.accept());
+        try stream.close();
+        println("came");
+    } catch (_: TimedOut) {
+        println("timed out");
+    }
+    try listener.close();
+}
