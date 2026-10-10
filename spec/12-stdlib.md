@@ -166,11 +166,13 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   iterator is iterable as itself, `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]`.
 - **`DoubleEnded :: [Iterator] { mut fn nextBack(): ?Self.Item; }`**: the last value not yet
   given.
-- A **`Range<T>`** of an integer type is an `Iterator` of `T` and `DoubleEnded`: `next()` gives
-  `start` and moves it on, `nextBack()` moves `end` back and gives it. A **`RangeInclusive<T>`**
-  is both too and gives `end` as well; its last value leaves `start` past `end`, or `end` before
-  `start` where that value is the type's `max` (its `min`, from the back) — no bound leaves the
-  type. A range walked changes: `start` and `end` are `var`.
+- A **`Range<T>`** of an integer type or of `char` is an `Iterator` of `T` and `DoubleEnded`:
+  `next()` gives `start` and moves it on, `nextBack()` moves `end` back and gives it. A
+  **`RangeInclusive<T>`** is both too and gives `end` as well; its last value leaves `start` past
+  `end`, or `end` before `start` where that value is the type's last (its first, from the back) —
+  no bound leaves the type. A range of characters has its values the scalar values in between,
+  the surrogates passed over, its first `'\0'` and its last `'\u{10FFFF}'`. A range walked
+  changes: `start` and `end` are `var`.
 - A **`Coroutine<T>`** is an `Iterator` of `T` and `Closeable`, built in (design 10 B6 I7): its
   `Error` is what it throws, `never` where nothing, and it conforms to nothing else. A loop over
   one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its

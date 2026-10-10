@@ -460,6 +460,9 @@ Elements in a row: behind a reference, through a view, or as a value
    array's own blocks give no member of the name, `xs.m()` is the view's member, called on a view
    of all of `xs`, its constraints checked as for the view (`LYR-SEM0134`); a blanket member
    comes after it ([05 §13](05-interfaces.md) rule 7). The library writes such a member once.
+   An array literal at such a site checks its elements against the view's element type, as
+   against an array's (§5.1): `take([1, 2])` with `take(s: Slice<uint8>)` builds a `uint8[]`
+   and passes a view of it.
 5. There is no lifetime: the array lives as long as any view of it does, and a view kept in an
    object or returned from a function is as good as one in a local ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
 6. `StringView`, the view of a string's bytes, is written with the strings ([12](12-stdlib.md)).
@@ -536,12 +539,15 @@ The values `a..b` and `a..=b`
 **Conformance.** `conformance/cases/03-types/`.
 
 1. `a..b` is a value of `Range<T>` and `a..=b` of `RangeInclusive<T>`, structs of `std.core`
-   holding their bounds as `start` and `end`; `T` is the bounds' one type, a number type. The
+   holding their bounds as `start` and `end`; `T` is the bounds' one type, a number type or
+   `char` — two characters bound a range of characters, `'a'..='z'`; other bounds are refused
+   (`LYR-SEM0003`). The
    open forms `a..`, `..b` and `..` are the structs `RangeFrom<T>`, `RangeTo<T>` and
    `RangeFull` and are written inside `[…]` only, where they take a view ([§5.2](#52-slicet)).
 2. In a **`for` head**, `for (i in a..b)` and `for (i in a..=b)` with the range written there
    are the counted loop: no value is built, and `for (i in ..b)` is refused. A range held in
-   a binding is walked as an `Iterator` ([05](05-interfaces.md)).
+   a binding is walked as an `Iterator` ([05](05-interfaces.md)), and so is a range of
+   characters in a head: its walk passes over the surrogates ([12](12-stdlib.md) §Iteration).
 3. A range is an ordinary value everywhere else: bound, stored in a field or an array, passed
    and returned. A range is not an integer (`LYR-SEM0001`).
 
