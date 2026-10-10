@@ -1,0 +1,18 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | cbf43926 36
+// 11 §2 rule 5: a tight 'comptimeBudget' holds the program's own sites; the standard library's -
+// std.hash's tables, computed while compiling - take the toolchain's.
+import std.io { println };
+import std.hash { crc32 };
+
+fn square(n: int): int {
+    return n * n;
+}
+
+let SMALL: int = comptime square(6);
+
+fn main(): void {
+    println(f"{crc32("123456789".toBytes()):x} {SMALL}");
+}

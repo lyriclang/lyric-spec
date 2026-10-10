@@ -121,7 +121,9 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
    it does not —, and alike on every platform the compiler runs on.
 5. **Each site has a budget** of steps (Q5): the toolchain's, or `comptimeBudget` of the root
    manifest ([15 §1](15-project.md) rule 7). A site that takes more is an error at the site
-   (`LYR-CT0002`) that names the budget. What one step is belongs to the implementation.
+   (`LYR-CT0002`) that names the budget. What one step is belongs to the implementation. The
+   standard library's sites take the toolchain's budget whatever the manifest says: a program's
+   budget is its own code's, and std's tables are no part of it.
 6. **`comptime { … }`** is a block evaluated whole, its last expression the value. It binds,
    assigns, loops and builds lambdas as any block does.
 7. **`comptime if (c) { … } else { … }`** chooses while compiling: `c` is a site of type `bool`, and
