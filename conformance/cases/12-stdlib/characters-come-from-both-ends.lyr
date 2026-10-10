@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | c a b true
+//! | [(0, 'a'), (1, 'é'), (3, '€')]
+//! | héllo
+//! since: 5.0.0
+// 12 §Strings: chars() from either end, the ends meeting; charIndices() with the byte each begins
+// at; fromChars joins them again.
+import std.io { println };
+
+fn main(): void {
+    var it = "abc".chars();
+    let c = it.nextBack()!;
+    let a = it.next()!;
+    let b = it.nextBack()!;
+    let done = it.next() == null && it.nextBack() == null;
+    println(f"{c} {a} {b} {done}");
+    let word = "aé€";
+    let pairs = word.charIndices().toArray();
+    println(f"{pairs}");
+    println(string.fromChars("héllo".chars()));
+}

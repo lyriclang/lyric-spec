@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | [a b] [x] [x] 4
+//! since: 5.0.0
+// 12 §Strings: trimming takes White_Space — the ideographic and the no-break space, the paragraph
+// separator —, and the zero-width space is none: its three bytes and the a stay.
+import std.io { println };
+
+fn main(): void {
+    let wide = "  \u{3000}a b\u{00A0}\n";
+    let start = "\t x";
+    let end = "x \u{2029}";
+    let zero = "\u{200B}a";
+    println(f"[{wide.trim()}] [{start.trimStart()}] [{end.trimEnd()}] {zero.trim().length()}");
+}

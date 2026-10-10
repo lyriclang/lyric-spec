@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | "a\"b\\c\nd\u{200b}"
+//! | "it's" '\'' '"' '\0' '\u{3000}' ' '
+//! | ["a\"b", "x\ty"]
+//! since: 5.0.0
+// 12 §Strings, Debug of text: the quote, the backslash and the control characters escaped, a
+// character that does not print as \u{…}; a char between ', a text between ", a list's elements
+// as they are written.
+import std.io { println };
+
+fn main(): void {
+    let s = "a\"b\\c\nd\u{200B}";
+    println(s.debug());
+    let it = "it's";
+    let apostrophe = '\'';
+    let quote = '"';
+    let nul = '\0';
+    let wide = '\u{3000}';
+    let space = ' ';
+    println(f"{it.debug()} {apostrophe.debug()} {quote.debug()} {nul.debug()} {wide.debug()} {space.debug()}");
+    let xs = ["a\"b", "x\ty"];
+    println(f"{xs}");
+}
