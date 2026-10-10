@@ -1,0 +1,10 @@
+//! run
+//! panic: LYR-RT0008
+//! since: 5.0.0
+// 12 §Characters, rule 4: a radix outside 2–36 is a programmer's error.
+import std.io { println };
+
+fn main(): void {
+    let one = '1';
+    println(f"{one.toDigit(37)!}");
+}

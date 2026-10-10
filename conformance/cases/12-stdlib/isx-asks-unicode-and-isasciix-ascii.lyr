@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | true false true
+//! | true false false
+//! | true true false
+//! | true false true false
+//! since: 5.0.0
+// 12 §Characters, rule 2: a letter, a digit, whitespace of any script; the ASCII forms ASCII alone.
+// U+0663 is the Arabic-Indic three, U+3000 the ideographic space, U+000B the vertical tab.
+import std.io { println };
+
+fn main(): void {
+    let sz = 'ß';
+    let han = '中';
+    let three = '\u{0663}';
+    let twelve = 'Ⅻ';
+    let wide = '\u{3000}';
+    let vt = '\u{000B}';
+    let dz = '\u{01C5}';
+    let upperA = 'Ä';
+    let lowerA = 'ä';
+    let under = '_';
+    println(f"{sz.isAlpha()} {sz.isAsciiAlpha()} {han.isAlphanumeric()}");
+    println(f"{three.isDigit()} {three.isAsciiDigit()} {twelve.isDigit()}");
+    println(f"{wide.isWhitespace()} {vt.isWhitespace()} {vt.isAsciiWhitespace()}");
+    println(f"{upperA.isUpper()} {dz.isUpper()} {lowerA.isLower()} {under.isAlphanumeric()}");
+}
