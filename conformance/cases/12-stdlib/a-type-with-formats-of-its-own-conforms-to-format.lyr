@@ -11,7 +11,7 @@ import std.string { StringBuilder };
 struct Celsius :: [Format] {
     degrees: float,
 
-    fn format(spec: StringView, &out: StringBuilder): void {
+    fn format(spec: StringView, out: StringBuilder): void {
         if (spec == "F") {
             out.appendStr(f"{this.degrees * 1.8 + 32.0}°F");
         } else {

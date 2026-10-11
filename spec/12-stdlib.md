@@ -56,7 +56,7 @@ language, without locale, checked where it is written
    `showTo` writes; `?` takes fill, alignment and width, on what `debugTo` writes, for every
    type. A spec that is no format,
    or a part that does not apply to the hole's type, is refused (`LYR-SEM0164`). A type with
-   formats of its own conforms to `Format { fn format(spec: StringView, &out: StringBuilder): void; }`
+   formats of its own conforms to `Format { fn format(spec: StringView, out: StringBuilder): void; }`
    and reads the spec as written, unchecked — `?` stays `Debug`.
 3. **Defaults**: a number right-aligned, the rest left-aligned. A float without a type or a
    precision is its shortest text ([03 §1.7](03-types.md)); with a precision and no type it is
@@ -70,7 +70,7 @@ language, without locale, checked where it is written
 4. **Binding**: an f-string writes its text into one `StringBuilder`, piece by
    piece in order (design 10 S6) — no string per hole and no chain of joins: a scalar's hole
    its text (§1), another `Display` type's through `showTo`; `{x:spec}` through
-   `format(spec, &out)` for a `Format` type — the scalars conform —, through the padding of what
+   `format(spec, out)` for a `Format` type — the scalars conform —, through the padding of what
    `showTo` writes for another `Display` type, and through `debugTo` under `?`. The calls are
    `std.core`'s, bound by the compiler: a program need not import anything for an f-string.
 

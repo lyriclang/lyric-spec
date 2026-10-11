@@ -319,9 +319,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    adds; under `T :: [Add]` alone `a + b` is a `T.Out`, which is not a `T`
    ([§8](#8-associated-types) rule 5).
 8. `{x}` in an f-string renders through
-   `Display { fn show(): string; fn showTo(&out: StringBuilder): void; }`: the f-string calls
+   `Display { fn show(): string; fn showTo(out: StringBuilder): void; }`: the f-string calls
    `showTo`, which by default appends `show()`, so a type that can write itself into the buffer
-   does (design 10 S6); `StringBuilder.append(v)` calls it too. The scalars render natively and
+   does (design 10 S6); `StringBuilder.append(v)` calls it too. The builder is a class, written
+   through the reference it is passed as — no `&` (design 10 S13). The scalars render natively and
    conform besides.
 9. **Indexing.** `x[k]` on a struct, a class or an enum is `x.index(k)` through
    `Index<K> { type Output; fn index(k: K): Self.Output; }`, and `x[k] = v` is `x.setIndex(k, v)`
@@ -493,7 +494,7 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    `debug()` of its own gets none, silently — there was nothing asked and nothing to report —
    and `x.debug()` on it is `LYR-SEM0012`. Listing `Debug` asks, and then rule 6 names the
    field. `Display` is never automatic ([§12](#12-the-operator-interfaces) rule 8). `Debug` is
-   `{ fn debug(): string; fn debugTo(&out: StringBuilder): void; }`, `debugTo` by default
+   `{ fn debug(): string; fn debugTo(out: StringBuilder): void; }`, `debugTo` by default
    appending `debug()`, as `Display`'s `showTo` appends `show()`; `{x:?}` calls `debugTo`.
 8. **`Identity`** (02 M10, 04 D7; N2b) is an object's: `class Node :: [Identity]` is given
    `Equatable` and `Hashable` **by the object** — `equals` is `same(this, o)`, `hash` writes the

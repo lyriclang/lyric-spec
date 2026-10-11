@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0157
+//! since: 5.0.0
+// 05 §12 rule 8 (design 10 S13): showTo takes the builder as a value, a class written through
+// its reference; '&' hands a place where none is asked for.
+import std.string { StringBuilder };
+
+fn main(): void {
+    var b = StringBuilder.new();
+    let n = 5;
+    n.showTo(&b);
+}
