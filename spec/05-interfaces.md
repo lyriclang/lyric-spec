@@ -12,7 +12,7 @@ the language's one dynamic dispatch
 Declaring an interface and a conformance, the interface value, how a call resolves. Written with
 M4 S1, S3, S4, S4b, S5a, S5b, S6, S7a and S7b; the chapter grows with the milestone's slices —
 synthesis (D7). Of the associated types (T6, [§8](#8-associated-types)) the value form
-`Iterator<Item = int>` is not written yet; of the operators (D6,
+`Iterator<Item = int>` is rule 6 there; of the operators (D6,
 [§12](#12-the-operator-interfaces)) the conversions `From`/`Into` stand in [12](12-stdlib.md),
 their blanket under [§13](#13-generic-extends) rule 9. What is not written here yet is decided in the design documents, not here.
 
@@ -218,10 +218,17 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    `FromIterator<int>` (M8a S15); an argument whose answer is another type does not satisfy
    the constraint (`LYR-SEM0028`); a name no associated type of the interface carries is
    refused (`LYR-SEM0128`).
-6. An interface declaring an associated type is a **constraint only** for now
-   ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`): the value form, the interface
-   with its answer fixed as a fat pointer, comes with M8c (design 03 M4-1) and is not written
-   here.
+6. **The value form** (design 03 M4-1, T6): an interface declaring associated types is the type
+   of a value where that type answers every one of them — fixed as rule 5 writes it,
+   `Iterator<Item = int>`, or by the interface's default, `Iterator`'s `Error` being `never`.
+   The members typed by an associated type then have one signature, `next(): ?int`, and are
+   called through the value ([§2](#2-interface-values)). A type stands for such a value where it
+   conforms and answers **every** associated type as the value does (`LYR-SEM0001` otherwise,
+   the answer named): a throwing iterator is no `Iterator<Item = int>`, and neither is a type
+   parameter whose constraints leave its `Error` open — `T :: [Iterator<Item = int, Error =
+   never>]` is one. Where the value's type leaves an associated type unanswered the interface
+   stays a constraint only ([§7](#7-self-and-static-members) rule 3, `LYR-SEM0126`). A member
+   that names `Self` itself, `equals(o: Self)`, keeps it one too.
 7. An interface's **parent list** is a constraint on `Self` and may **fix** a parent's
    associated type the same way: `interface Num :: [Add<Out = Self>] { … }`. Every conformer
    answers as fixed — another answer does not conform (`LYR-SEM0042`) — and through a

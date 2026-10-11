@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 05 §8 rule 6: a constraint that fixes Item and leaves Error open does not answer as
+// Iterator<Item = int>: its instance may throw.
+fn lift<T :: [Iterator<Item = int>]>(t: T): Iterator<Item = int> {
+    return t;
+}
+
+fn main(): void {
+}

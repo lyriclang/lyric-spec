@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 1 0 true
+//! since: 5.0.0
+// 05 §8 rule 6: a value whose type fixes Error as well holds a throwing iterator; a call through it
+// throws what the type says.
+import std.io { println };
+
+class Oops :: [Error] {
+    fn message(): string {
+        return "oops";
+    }
+}
+
+struct Countdown :: [Iterator] {
+    type Item = int;
+    type Error = Oops;
+    var n: int,
+
+    mut fn next(): ?int throws Oops {
+        if (this.n == 0) {
+            throw Oops { };
+        }
+        this.n -= 1;
+        return this.n;
+    }
+}
+
+fn main(): void {
+    var it: Iterator<Item = int, Error = Oops> = Countdown { n = 2 };
+    let a = try? it.next();
+    let b = try? it.next();
+    let c = try? it.next();
+    println(f"{a!!} {b!!} {c == null}");
+}
