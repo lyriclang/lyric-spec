@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0042
+//! since: 5.0.0
+// 05 §1 rule 2: the binding the plain member asks for must hold the generic member's constraints -
+// a Point is no Display.
+interface Holds<T> {
+    fn holds(x: T): bool;
+}
+
+struct Point {
+    x: int,
+}
+
+struct Shown :: [Holds<Point>] {
+    fn holds<N :: [Display]>(x: N): bool {
+        return true;
+    }
+}
+
+fn main(): void {
+}

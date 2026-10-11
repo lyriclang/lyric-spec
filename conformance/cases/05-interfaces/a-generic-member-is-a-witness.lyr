@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 05 §1 rule 2: a generic member answers a plain interface member where its type parameters bind to
+// the member's and their constraints hold; a call through the constraint runs it at that binding.
+import std.io { println };
+
+interface Holds<T> {
+    fn holds(x: T): bool;
+}
+
+struct Digits :: [Holds<int>] {
+    text: string,
+
+    fn holds<N :: [Display]>(x: N): bool {
+        return this.text.contains(f"{x}");
+    }
+}
+
+fn holding<H :: [Holds<int>]>(h: H, n: int): bool {
+    return h.holds(n);
+}
+
+fn main(): void {
+    let d = Digits { text = "123" };
+    println(f"{holding(d, 2)} {holding(d, 9)}");
+}
