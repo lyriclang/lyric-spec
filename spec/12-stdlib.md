@@ -358,6 +358,17 @@ holds three:
 Where the system gives no random bytes, the program panics with `LYR-RT0015`
 ([13](13-abi.md)).
 
+`std.hash` also holds three **checksums** of a `Slice<uint8>`, each a `uint32` (design 10 Q3; M8c
+S11). Each continues from a running value, as zlib's do: the checksum of the whole is that of its
+pieces, one after the other — `crc32(rest, crc32(first))`.
+
+- **`crc32(bytes, running = 0)`**, CRC-32 of ISO-HDLC (zip, gzip, PNG):
+  `crc32("123456789".toBytes())` is `0xCBF43926`.
+- **`crc32c(bytes, running = 0)`**, the Castagnoli polynomial (iSCSI, RFC 3720): `0xE3069283` over
+  the same nine bytes.
+- **`adler32(bytes, running = 1)`**, RFC 1950's (zlib): `adler32("Wikipedia".toBytes())` is
+  `0x11E60398`.
+
 ## Input and output
 
 The core of `std.io`, its buffers and its text ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md);
@@ -446,8 +457,11 @@ space: `Base64.encode(bytes)`.
 5. **The integers of bytes**: `T.fromBytesLE(s)` and `T.fromBytesBE(s)` for every integer type
    `T` read exactly its width — another length panics (`LYR-RT0008`) —, the first byte the lowest
    or the highest. `Slice<uint8>` has `getUint16LE(at)`, `getUint16BE`, the same for `Uint32`,
-   `Uint64`, `Int16`, `Int32` and `Int64`: the width at the byte offset `at`. They are members of
-   the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
+   `Uint64`, `Int16`, `Int32` and `Int64`: the width at the byte offset `at`. The way back:
+   `v.toBytesLE()` and `v.toBytesBE()` of every integer type give its width as an inline array,
+   `uint8[N]` — `(258 as uint16).toBytesBE()` is `[1, 2]` (M8c S11). An inline array in a frame
+   gives no view ([03 §5.3](03-types.md)): `T.fromBytesLE(v.toBytesLE().toArray())` is `v`. They
+   are members of the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
    are `toBytes()` (§Strings).
 
 ## Cryptography
