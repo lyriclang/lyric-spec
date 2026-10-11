@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | [2, 3] [1, -1, 2, -2] [1, 2, 3] [1, 2, 1]
+//! | [0, 1, 3, 6] 5 5 [3, 2, 1] [1, 2, 1, 2, 1]
+//! since: 5.0.0
+// 12 §Iteration: mapNotNull, flatMap, flatten, dedup, scan, peekable, rev, cycle.
+import std.io { println };
+
+fn main(): void {
+    let words = ["ab", "", "abc"];
+    let numbers = words.iter().mapNotNull((s: string) => if (s.isEmpty()) null else s.length()).toArray();
+    let mirrored = [1, 2].iter().flatMap((x: int) => [x, -x]).toArray();
+    let nested: int[][] = [[1], [], [2, 3]];
+    let flat = nested.iter().flatten().toArray();
+    let runs = [1, 1, 2, 1].iter().dedup().toArray();
+    println(f"{numbers} {mirrored} {flat} {runs}");
+    let running = [1, 2, 3].iter().scan(0, (a: int, x: int) => a + x).toArray();
+    var it = [5, 6].iter().peekable();
+    let seen = it.peek()!;
+    let taken = it.next()!;
+    let back = [1, 2, 3].iter().rev().toArray();
+    let round = [1, 2].iter().cycle().take(5).toArray();
+    println(f"{running} {seen} {taken} {back} {round}");
+}

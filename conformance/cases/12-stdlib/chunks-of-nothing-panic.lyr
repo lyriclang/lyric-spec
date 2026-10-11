@@ -1,0 +1,8 @@
+//! run
+//! panic: LYR-RT0008
+//! since: 5.0.0
+// 12 §Iteration: chunks and windows of fewer than one value are a programmer's error.
+fn main(): void {
+    let xs = [1, 2];
+    let none = xs.iter().chunks(0);
+}

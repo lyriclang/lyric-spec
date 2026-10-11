@@ -188,10 +188,20 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   source besides: `take(n)` and `skip(n)`;
   `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
   value and then every `n`th, `n` below 1 a panic; `enumerate()`, each value with its position
-  from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through. Of two
+  from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through;
+  `mapNotNull(f)`, the values through `f`, the `null`s left out; `flatMap(f)`, the values of the
+  `Iterable`s `f` gives, one after the other, and `flatten()` of an iterator of `Iterable`s;
+  `dedup()` of an `Equatable` item and `dedupBy(same)`, a run of values `same` holds for given
+  once; `scan(init, f)`, `init` and then each running value `f` makes of the one before and a
+  value; `peekable()`, a `PeekableIter` whose `peek()` gives the next value without taking it;
+  `rev()` of a `DoubleEnded` iterator, its values from the back — no `DoubleEnded` itself, and
+  throwing nothing, as a pull from the back throws nothing; `cycle()` of an iterator that is
+  `Clone`, its values over and over from a clone each time, none where it has none — an array's
+  walk, a range and a string's characters are `Clone`. Of two
   sources: `zip(other)`, each value beside the other's as long as both have one, the other an
   `Iterable`; `chain(other)`, the values and then the other's, an iterator of the same items.
-  An adapter over a `Closeable` iterator is `Closeable` itself and passes `close()` on (the
+  An adapter over a `Closeable` iterator — `rev()` and `cycle()` excepted — is `Closeable`
+  itself and passes `close()` on (the
   review's M8a-4), so a loop that leaves `gen().map(f)` early closes the generator; `zip` and
   `chain` close both of theirs, the first error winning.
   Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
@@ -208,7 +218,17 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
-  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`, in one pass.
+  decides; `find(p)` and `position(p)`; `forEach(f)`; `toArray()`, in one pass; `minBy(key)`
+  and `maxBy(key)`, the value whose `TotalOrder` key is least or greatest, the first of equal
+  ones, `null` without a value. Of `std.collections`: `chunks(n)`, the values in `List`s of `n`,
+  the last shorter where they do not divide, and `windows(n)`, every run of `n` values in turn,
+  each a `List` of its own, none where there are fewer — `n` below 1 panics (`LYR-RT0008`);
+  `sorted()` of a `TotalOrder` item and `sortedBy(cmp)`, the values in a `List`, stably sorted;
+  `partition(p)`, the values `p` holds for and the others, two `List`s in order; `groupBy(key)`,
+  a `Map` of the values in `List`s under their key, each list in order; `toMap()` of pairs, a
+  `Map`, a later value of a key replacing the earlier one. `collect()` into an array or a list
+  starts with the room the iterator's `sizeHint()` gives; where that is exact, an array is made
+  without a copy.
 - **`FromIterator<T> { static fn fromIter<I :: [Iterator<Item = T>]>(it: I): Self throws
   I.Error; }`** is what **`collect<C :: [FromIterator<Item>]>()`** builds (design 10 B6, I4;
   M8a S15): the values in a `C`, the type the call's position expects —
@@ -220,7 +240,8 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
 - The terminators **of an element kind** stand on the iterators whose `Item` admits them
   ([05 §13](05-interfaces.md) rule 2): `sum()` and `product()` of a `Num`, zero and one where there
   is no value; `min()` and `max()` of an `Ordered`, `null` without a value, the first of equal
-  ones; `join(sep)` of a `Display`, the texts with `sep` between each two.
+  ones; `join(sep)` of a `Display`, the texts with `sep` between each two; `average()` of `int`
+  or of `float` values, a `float`, `null` without a value.
 - **`SliceIter<T>`** is the iterator of an array or a view, from both ends, through a view of its
   elements — nothing is copied, and a write to a later element is seen; its `sizeHint()` is
   exact. `T[]` and `Slice<T>` are `Iterable` through it: `xs.iter()`.
