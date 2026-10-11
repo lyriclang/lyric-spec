@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | stopped [1, 3, 4, 5, 6]
+//! since: 5.0.0
+// 12 §Collections: a removeWhere whose test throws ends there — 2 is gone, 1 and 3 kept, and 4 to 6,
+// not yet judged, stay.
+import std.collections { List };
+import std.io { println };
+
+struct Stop :: [Error] {
+    fn message(): string {
+        return "stopped";
+    }
+}
+
+fn main(): void {
+    let list = List.of([1, 2, 3, 4, 5, 6]);
+    var said = "";
+    try {
+        list.removeWhere((x: int) => {
+            if (x == 4) {
+                throw Stop {};
+            }
+            return x == 2;
+        });
+    } catch (e: Stop) {
+        said = e.message();
+    }
+    let rest = list.toArray();
+    println(f"{said} {rest}");
+}

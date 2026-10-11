@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 6
+//! | not a number
+//! | 7
+//! since: 5.0.0
+// 12 §Iteration: map takes a function that throws, and the walk throws it beside what the source
+// throws; a loop over it is marked; fold throws what its function throws.
+import std.core { ParseError };
+import std.io { println };
+
+fn total(words: string[]): int throws ParseError {
+    var sum = 0;
+    for (n in try words.iter().map((s: string) => try int.parse(s))) {
+        sum += n;
+    }
+    return sum;
+}
+
+fn main(): void {
+    let good = ["1", "2", "3"];
+    let bad = ["1", "x"];
+    println(f"{try! total(good)}");
+    try {
+        total(bad);
+    } catch (_: ParseError) {
+        println("not a number");
+    }
+    let digits = ["3", "4"];
+    let folded = try! digits.iter().fold(0, (acc: int, s: string) => acc + (try int.parse(s)));
+    println(f"{folded}");
+}

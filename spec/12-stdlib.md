@@ -178,13 +178,14 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its
   stack unwinds and its defers run.
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
-  its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U>` (`Map` is the
-  collection's), `it.filter(p)` a `FilterIter<I>`. Every iterator type's name ends in `Iter`
+  its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U, E>` (`Map` is
+  the collection's), `it.filter(p)` a `FilterIter<I, E>`. Every iterator type's name ends in `Iter`
   (the review's A9g): the adapters (`TakeIter`, `ZipIter`, …), the string's (`CharsIter`,
   `SplitIter<P>`, `MatchesIter<P>`, `LinesIter`), the map's (`MapEntriesIter`, `MapKeysIter`,
   `MapValuesIter`), the
   slice's and the list's (`SliceIter`, `ListIter`). They pull lazily, one value at a time, and their
-  `Error` is the inner iterator's. Of one source besides: `take(n)` and `skip(n)`;
+  `Error` is the inner iterator's, joined with what a function they take throws (below). Of one
+  source besides: `take(n)` and `skip(n)`;
   `takeWhile(p)`, which stays ended once `p` failed, and `skipWhile(p)`; `stepBy(n)`, the first
   value and then every `n`th, `n` below 1 a panic; `enumerate()`, each value with its position
   from 0, `(int, Item)`; `inspect(f)`, each value shown to `f` on its way through. Of two
@@ -196,6 +197,13 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
   one type where both are one, the other where one is `never`, the root `Error` where they
   differ — reduced once both are known; open, it covers each of its parts.
+- A **function an adapter or a terminator takes may throw** (design 05 K4; 13 M8c P2): `map`,
+  `filter`, `takeWhile`, `skipWhile` and `inspect` take a `fn(…) -> … throws E` and give an
+  iterator whose `Error` is `Join<I.Error, E>`; `fold`, `reduce`, `any`, `all`, `none`, `find`,
+  `position` and `forEach` throw `Join<I.Error, E>`. `E` is what the function throws, bound at the
+  call, and `never` where it throws nothing — then nothing is joined and no `try` stands:
+  `words.iter().map((s) => try int.parse(s))` is walked with `try`, `xs.iter().map((x) => x * 2)`
+  without.
 - The **terminators** walk an iterator — a copy of a struct one, a class one where it stands — and
   throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
@@ -278,9 +286,11 @@ through one reaches the array. `length()` and the index are the primitives
   ascending order. All three are **stable** — equal elements keep their order — and take a buffer
   of the length. `sortUnstable()`, of a `TotalOrder` element, sorts in place without one; equal
   elements end in any order. Each is `O(n log n)` in comparisons. A `float` has no total order
-  of its own: its elements sort through `sortBy`.
+  of its own: its elements sort through `sortBy`. The comparison of `sortBy`, the key of
+  `sortByKey` and the test of `partitionPoint(p)` may throw, and the call throws it: a sort that
+  one ends leaves every element in the slice, in some order.
 - `arrayOf(n, f)` ([03 §8](03-types.md)) calls `f` once per index, in order; a negative `n`
-  panics.
+  panics; what `f` throws, the call throws, and no array is made.
 
 ## Hashing
 
@@ -858,7 +868,8 @@ element is whatever a container's bounds admit, an object included, and every sl
   every container's `withCapacity(n)` panics on a negative `n`. `xs[i]` and `xs[i] = v` through `IndexSet<int>`
   ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`); `get(i)`,
   `null` there. `push(v)`, `pushAll(xs)`, `pop()` (`null` for none), `insert(i, v)`, `removeAt(i)`,
-  `removeWhere(p)` (how many went), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
+  `removeWhere(p)` (how many went; a `p` that throws ends it there — what it decided is done,
+  the rest kept), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
   `toArray()` (a copy); of an `Equatable` element `contains(x)`, `remove(x)` (whether there was one)
   and `dedup()` (runs of equal ones kept once). `asSlice()` is a view of the buffer, so the members
   of arrays and views reach the list — a sort writes it; a push past the room moves the list to a
@@ -874,7 +885,9 @@ element is whatever a container's bounds admit, an object included, and every sl
   answers the value it replaces or `null`; `get(k)` the value or `null`; `containsKey(k)`;
   `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`; `getOr(k, d)`;
   `getOrInsert(k, make)`, `make()`'s value inserted where `k` has none; `update(k, f)`, whether
-  there was one to replace; `retain(p)`, how many went. A map is `Iterable` over its entries,
+  there was one to replace; `retain(p)`, how many went. Their functions may throw, and the call
+  throws it with the map still a map: `make()` inserts nothing, `f` replaces nothing, `retain`
+  keeps what it has not judged. A map is `Iterable` over its entries,
   `(K, V)`, and `keys()` and `values()` walk the same order — none the map's own (I8); a change of
   the map while it is walked panics at the next pull (I9). *(Informative.)*
   A Swiss table: groups of eight slots under a control word, the hash's seven low bits compared

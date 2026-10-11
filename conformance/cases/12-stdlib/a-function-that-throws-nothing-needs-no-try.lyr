@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 12 true [2, 4, 6]
+//! since: 5.0.0
+// 12 §Iteration: where the function throws nothing, E is never — nothing is joined, and no try
+// stands before the walk.
+import std.io { println };
+
+fn main(): void {
+    let xs = [1, 2, 3];
+    let sum = xs.iter().map((x: int) => x * 2).fold(0, (a: int, b: int) => a + b);
+    let any = xs.iter().any((x: int) => x > 2);
+    let doubled = xs.iter().map((x: int) => x * 2).toArray();
+    println(f"{sum} {any} {doubled}");
+}
