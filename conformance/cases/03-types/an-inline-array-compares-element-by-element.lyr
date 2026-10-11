@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | true false true
+//! | true false
+//! since: 5.0.0
+// 03 §5.3 rule 7: a bare inline array compares element by element, in a frame too; an inline
+// array of inline arrays compares through its elements' equality.
+import std.io { println };
+
+fn main(): void {
+    let a: uint8[4] = [1, 2, 3, 4];
+    let b: uint8[4] = [1, 2, 3, 4];
+    let c: uint8[4] = [1, 2, 3, 5];
+    println(f"{a == b} {a == c} {a != c}");
+    let grid: int[2][3] = [[1, 2], [3, 4], [5, 6]];
+    let same: int[2][3] = [[1, 2], [3, 4], [5, 6]];
+    let other: int[2][3] = [[1, 2], [3, 4], [6, 5]];
+    println(f"{grid == same} {grid == other}");
+}

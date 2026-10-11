@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | localhost - 1
+//! | 2
+//! since: 5.0.0
+// 03 §5.3 rule 7: an inline array hashes where its element does, so it is a key of a Map and an
+// element of a Set — equal ones meet.
+import std.collections { Map, Set };
+import std.io { println };
+
+fn main(): void {
+    let names: Map<uint8[4], string> = Map.new();
+    let home: uint8[4] = [127, 0, 0, 1];
+    let again: uint8[4] = [127, 0, 0, 1];
+    let away: uint8[4] = [10, 0, 0, 1];
+    {
+        let _ = names.insert(home, "localhost");
+    }
+    let none = "-";
+    println(f"{names.get(again) ?? none} {names.get(away) ?? none} {names.length()}");
+    let pairs: Set<char[2]> = Set.new();
+    let ab: char[2] = ['a', 'b'];
+    let ba: char[2] = ['b', 'a'];
+    for (p in [ab, ba, ab]) {
+        let _ = pairs.insert(p);
+    }
+    println(f"{pairs.length()}");
+}
