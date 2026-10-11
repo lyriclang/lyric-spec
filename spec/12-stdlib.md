@@ -73,6 +73,14 @@ language, without locale, checked where it is written
    `format(spec, out)` for a `Format` type — the scalars conform —, through the padding of what
    `showTo` writes for another `Display` type, and through `debugTo` under `?`. The calls are
    `std.core`'s, bound by the compiler: a program need not import anything for an f-string.
+5. **At run time**: `std.fmt.format(template: string, args: Display...): string` reads its
+   template when it runs, in this language (design 08 Y7, 10 S7): `{}` takes the next value and
+   `{i}` the i-th from 0 — the two mix, `{}` counting only itself —, either with `:spec` as rules
+   1–3 say, `?` for the value's `Debug` text; `{{` and `}}` write a brace, and a value no hole
+   names is left out. A value is passed as a `Display` ([05 §2](05-interfaces.md)), a scalar's
+   too. What the compiler refuses in an f-string **panics** here (`LYR-RT0008`, design 10 B3): a
+   brace left open or closed without being opened, a value named that is not given, a spec that
+   is no format or holds a part the value's type does not take, `?` on a value without `Debug`.
 
 ## Numbers
 

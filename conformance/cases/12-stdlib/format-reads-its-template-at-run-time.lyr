@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 1 and two / two 1 two / b    1
+//! | 0xff 0003.142 [   ab] 1,234,567 [  c  ]
+//! | (1, 2) [  (1, 2)] Point { x = 1, y = 2 } "q" {5}
+//! since: 5.0.0
+// 12 §2 rule 5: std.fmt.format reads its template at run time - the next value and the i-th, a
+// spec on either, a Display type padded, Debug under '?', braces doubled.
+import std.fmt { format };
+import std.io { println };
+
+struct Point :: [Display, Debug] {
+    x: int,
+    y: int,
+
+    fn show(): string {
+        return f"({this.x}, {this.y})";
+    }
+}
+
+fn main(): void {
+    println(format("{} and {} / {1} {0} {1} / {} {0:>4}", 1, "two", "b"));
+    println(format("{:#x} {:08.3f} [{:>5}] {:,} [{:^5}]", 255, 3.14159, "ab", 1234567, 'c'));
+    let p = Point { x = 1, y = 2 };
+    println(format("{} [{:>8}] {:?} {:?} {{{}}}", p, p, p, "q", 5));
+}
