@@ -1,0 +1,44 @@
+//! run
+//! stdout:
+//! | 6 0 2
+//! | 2 [1, 2] 1
+//! since: 5.0.0
+// 03 §5.1 rule 2: where a FromArrayLiteral is expected - an argument, a return, a field - a
+// literal is the type's fromLiteral of its elements, a type of the program's own as the
+// library's; a literal inside one is checked against its element type.
+import std.collections { List, Map, Set };
+import std.core { FromArrayLiteral };
+import std.io { println };
+
+struct Total :: [FromArrayLiteral<int>] {
+    sum: int,
+
+    static fn fromLiteral(items: int[]): Total {
+        var sum = 0;
+        for (x in items) {
+            sum += x;
+        }
+        return Total { sum = sum };
+    }
+}
+
+struct Bag {
+    tags: Set<string>,
+}
+
+fn sumOf(t: Total): int {
+    return t.sum;
+}
+
+fn nothing(): Total {
+    return [];
+}
+
+fn main(): void {
+    let bag = Bag { tags = ["x", "y", "x"] };
+    println(f"{sumOf([1, 2, 3])} {nothing().sum} {bag.tags.length()}");
+    let m: Map<string, List<int>> = [("a", [1, 2]), ("b", [])];
+    let a = "a";
+    let sets: List<Set<int>> = [[1, 1], [2]];
+    println(f"{m.length()} {m[a]!.toArray()} {sets[0].length()}");
+}

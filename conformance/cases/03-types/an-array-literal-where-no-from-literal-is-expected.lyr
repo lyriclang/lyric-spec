@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §5.1 rule 2: a type that is no FromArrayLiteral refuses an array literal.
+struct Point {
+    x: int,
+}
+
+fn main(): void {
+    let p: Point = [1];
+}
