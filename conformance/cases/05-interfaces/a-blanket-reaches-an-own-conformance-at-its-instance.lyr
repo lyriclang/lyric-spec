@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 05 §13 rules 8, 9: std.core's Into blanket reaches Meters at Into<int> once int is a From<Meters>,
+// whichever module says so, and then excludes Meters' own Into<int>.
+struct Meters :: [Into<int>] {
+    n: int,
+
+    fn into(): int {
+        return this.n;
+    }
+}
+
+extend int :: [From<Meters>] {
+    static fn from(m: Meters): int {
+        return m.n;
+    }
+}
+
+fn main(): void {
+}

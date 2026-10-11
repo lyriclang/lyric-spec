@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0006
+//! since: 5.0.0
+// 03 §1.4 rule 5: 'as' converts numbers; a From makes no cast - the conversion is 'from' or 'into'.
+struct Meters {
+    n: int,
+}
+
+struct Centimeters :: [From<Meters>] {
+    n: int,
+
+    static fn from(m: Meters): Centimeters {
+        return Centimeters { n = m.n * 100 };
+    }
+}
+
+fn main(): void {
+    let m = Meters { n = 1 };
+    let c: Centimeters = m as Centimeters;
+}

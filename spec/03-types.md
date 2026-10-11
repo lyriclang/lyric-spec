@@ -74,6 +74,9 @@ The number tower, `bool` and `char`
 3. `bool` converts to nothing and from nothing by `as`.
 4. `as` is the one conversion operator. It never fails on numbers, so it never answers an
    optional; a checked narrowing is a method ([03 T1d](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md), form with the standard library).
+5. Between any other two types `as` converts nothing (`LYR-SEM0006`; [04 D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md)):
+   a conversion is a method, `T.from(v)` or `v.into()` through a `From`
+   ([12](12-stdlib.md)), and no `From` makes a cast of it.
 
 ### 1.5 `char` and `bool` are not numbers
 

@@ -184,10 +184,10 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    import is used when its module is named, or one of its extension methods called. A `pub
    import` is used by being passed on.
 4. The **prelude**, the module `std.prelude`, is named in every module without an import (I8;
-   [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`, `sequence`; `Error`, `Exception`, `Box`,
+   [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`, `sequence`; `Error`, `Exception`, `Result`, `Box`,
    `Ordering`, `Range`, `RangeInclusive`, `RangeFrom`, `RangeTo`, `RangeFull`; `Equatable`,
    `Hashable`, `Ordered`, `TotalOrder`, `Display`, `Debug`, `Default`, `Clone`, `Closeable`,
-   `Num`, `Integer`, `Float`, `Iterator`, `Iterable`, `FromIterator`, `Index`, `IndexSet`; `List`, `Map`, `Set`,
+   `Num`, `Integer`, `Float`, `Iterator`, `Iterable`, `FromIterator`, `Into`, `From`, `Index`, `IndexSet`; `List`, `Map`, `Set`,
    the collections' vocabulary — what signatures and the language need, not effects: `println`
    is `std.io`'s. The rest of the
    standard library is imported, `std.core`'s operator interfaces (`Add` …) and `Any`

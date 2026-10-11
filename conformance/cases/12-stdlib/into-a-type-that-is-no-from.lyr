@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 12 §Results and conversions: into a type that is no From of the value's type is refused at the
+// call.
+struct Meters {
+    n: int,
+}
+
+struct Feet {
+    n: int,
+}
+
+fn main(): void {
+    let m = Meters { n = 1 };
+    let f: Feet = m.into();
+}

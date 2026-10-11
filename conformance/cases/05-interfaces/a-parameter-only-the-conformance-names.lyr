@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | 21 5
+//! since: 5.0.0
+// 05 §13 rule 9: a block's parameter only its conformance names is bound by the instance a
+// constraint asks for, and at a call of the member by the type the position expects.
+import std.io { println };
+
+interface Make<T> {
+    static fn make(v: T): Self;
+}
+
+interface Turn<T> {
+    fn turn(): T;
+}
+
+extend<T, U :: [Make<T>]> T :: [Turn<U>] {
+    fn turn(): U {
+        return U.make(this);
+    }
+}
+
+struct Celsius :: [Make<int>] {
+    d: int,
+
+    static fn make(v: int): Celsius {
+        return Celsius { d = v };
+    }
+}
+
+fn viaConstraint<T :: [Turn<Celsius>]>(t: T): int {
+    let c: Celsius = t.turn();
+    return c.d;
+}
+
+fn main(): void {
+    let n = 21;
+    let c: Celsius = n.turn();
+    println(f"{c.d} {viaConstraint(5)}");
+}
