@@ -414,7 +414,8 @@ Elements in a row: behind a reference, through a view, or as a value
    (`LYR-SEM0060`).
    `[x] * n` builds an array of `n` elements each a copy of `x` — a value copied, a string
    shared — and panics with `LYR-RT0007` when `n` is negative; `xs * n` is the only order.
-   `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
+   `xs + ys` builds a new array of the elements of both ([10 C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md));
+   so does a view plus a view, `xs[1..] + ys[..]`, through std.core's `Add` on `Slice<T>`.
    An element that is or holds an object — a class, an array, a view, a function value, an
    interface value, directly or inside a struct, an enum, a tuple, an optional or an inline
    array — is repeated by **`clone`** ([05 §14](05-interfaces.md)), never shared into every slot:

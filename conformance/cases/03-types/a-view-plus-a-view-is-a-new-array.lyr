@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | [9, 3, 4] [1, 2, 3]
+//! since: 5.0.0
+// 03 §5.1: a view plus a view is a new array — a write into it leaves the arrays behind the views.
+import std.io { println };
+
+fn main(): void {
+    let xs = [1, 2, 3];
+    let ys = [4];
+    let both = xs[1..] + ys[..];
+    both[0] = 9;
+    println(f"{both} {xs}");
+}

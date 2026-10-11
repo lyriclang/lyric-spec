@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | [1, 2, 3, 4] [2, 3] [1] [1, 4]
+//! | true true false true
+//! since: 5.0.0
+// 12 §Collections: a set's operations are methods, each a new set; the questions about two sets.
+import std.collections { Set };
+import std.io { println };
+
+fn sortedOf(s: Set<int>): int[] {
+    return s.iter().sorted().toArray();
+}
+
+fn main(): void {
+    let a = Set.of([1, 2, 3]);
+    let b = Set.of([2, 3, 4]);
+    println(f"{sortedOf(a.union(b))} {sortedOf(a.intersect(b))} {sortedOf(a.difference(b))} {sortedOf(a.symmetricDifference(b))}");
+    let small = Set.of([2]);
+    let far = Set.of([9]);
+    println(f"{small.isSubset(a)} {a.isSuperset(small)} {a.isDisjoint(b)} {a.isDisjoint(far)}");
+}

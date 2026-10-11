@@ -884,14 +884,16 @@ element is whatever a container's bounds admit, an object included, and every sl
 (M8a S16).
 
 - **`List<T>`** (C3), a class: its elements in order, at the front of a buffer that doubles when
-  full. `new()`, `of(xs)` (a copy of the array), `withCapacity(n)` — room for `n` elements before
+  full. `new()`, `of(xs)` (a copy of the array), `from(it)` (the values of an iterator, in order),
+  `withCapacity(n)` — room for `n` elements before
   it grows, taken at the first push, since a list holds no value it was not given (10 N3; M8a S14);
   every container's `withCapacity(n)` panics on a negative `n`. `xs[i]` and `xs[i] = v` through `IndexSet<int>`
   ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`); `get(i)`,
   `null` there. `push(v)`, `pushAll(xs)`, `pop()` (`null` for none), `insert(i, v)`, `removeAt(i)`,
   `removeWhere(p)` (how many went; a `p` that throws ends it there — what it decided is done,
   the rest kept), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
-  `toArray()` (a copy); of an `Equatable` element `contains(x)`, `remove(x)` (whether there was one)
+  `toArray()` (a copy), `shrinkToFit()` (the room cut down to the elements — a view taken before
+  keeps the buffer it was taken of); of an `Equatable` element `contains(x)`, `remove(x)` (whether there was one)
   and `dedup()` (runs of equal ones kept once). `asSlice()` is a view of the buffer, so the members
   of arrays and views reach the list — a sort writes it; a push past the room moves the list to a
   new buffer, and an older view keeps the older one. A list is `Iterable` front to back
@@ -902,21 +904,26 @@ element is whatever a container's bounds admit, an object included, and every sl
   no order of its own, each key once. `Map<K, V>.new()` hashes with the process's key, so its
   order differs from run to run, and `withCapacity(n)` is the same with room for `n` keys before
   it grows; `withHasher(seed)` takes a hasher, which is a value the map
-  copies fresh for every key — `FixedHasher.new()` hashes alike in every run. `insert(k, v)`
+  copies fresh for every key — `FixedHasher.new()` hashes alike in every run; `from(pairs)`, the
+  pairs of a view in a map, a later value of a key replacing the earlier one. `m[k]` through
+  `IndexSet<K>` with `Output = ?V`: the value under `k` or `null`; `m[k] = v` puts `v` there, and
+  `m[k] = null` takes `k` out. `insert(k, v)`
   answers the value it replaces or `null`; `get(k)` the value or `null`; `containsKey(k)`;
   `remove(k)` the value taken out or `null`; `length()`, `isEmpty()`, `clear()`; `getOr(k, d)`;
   `getOrInsert(k, make)`, `make()`'s value inserted where `k` has none; `update(k, f)`, whether
   there was one to replace; `retain(p)`, how many went. Their functions may throw, and the call
   throws it with the map still a map: `make()` inserts nothing, `f` replaces nothing, `retain`
   keeps what it has not judged. A map is `Iterable` over its entries,
-  `(K, V)`, and `keys()` and `values()` walk the same order — none the map's own (I8); a change of
+  `(K, V)`, `entries()` too, and `keys()` and `values()` walk the same order — none the map's own (I8); a change of
   the map while it is walked panics at the next pull (I9). *(Informative.)*
   A Swiss table: groups of eight slots under a control word, the hash's seven low bits compared
   a group at a time, at most seven of eight slots filled.
 - **`Set<T :: [Hashable], H :: [Hasher] = DefaultHasher>`** (C5), a class over a map's keys:
-  `new()`, `withCapacity(n)`, `withHasher(seed)`, `insert(v)` (whether it was not there), `contains(v)`, `remove(v)`
+  `new()`, `of(xs)` (the array's values, each once), `withCapacity(n)`, `withHasher(seed)`, `insert(v)` (whether it was not there), `contains(v)`, `remove(v)`
   (whether it was there), `length()`, `isEmpty()`, `clear()`; `Iterable` over its values, in no
-  order of its own.
+  order of its own. Its operations are methods, no operators: `union(o)`, `intersect(o)`,
+  `difference(o)` and `symmetricDifference(o)`, each a new set hashing as this one does;
+  `isSubset(o)`, `isSuperset(o)` and `isDisjoint(o)` — the empty set a subset of every set.
 - Every iterator's **`toList()`** collects what it gives into a `List` (I4).
 - **`Deque<T>`** (C6), a class over a ring buffer: `new()`, `withCapacity(n)`, `pushFront(v)`, `pushBack(v)`,
   `popFront()` and `popBack()` (the value or `null`), `peekFront()`, `peekBack()`, `length()`,
