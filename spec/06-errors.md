@@ -15,7 +15,8 @@ block with its clauses and the error path at run time — propagation, `defer` o
 several types, the set a binding carries and the refusal of a clause no error can reach (S2b); a
 `defer` that throws (S3a); `using` and `Exception` (S3b); where an error was thrown, and a rethrow
 that keeps it (S3c); the thrown set of a function type (S4a); panics and `never` (S4b). Written
-with M5. What is not written here yet is decided in the design documents, not here.
+with M5; what a clause's binding tells of the error it took (§4 rule 4) with M8c. What is not
+written here yet is decided in the design documents, not here.
 
 **Conformance.** `conformance/cases/06-errors/`.
 
@@ -113,7 +114,16 @@ with M5. What is not written here yet is decided in the design documents, not he
    going on** (05 E6 O3): the errors suppressed into it stay with it
    ([§5](#5-the-error-path) rule 5), and so, in the debug profile, does where it was first thrown
    (§5 rule 3). Any other `throw` — the value under another name, or from a lambda — starts an
-   error of its own.
+   error of its own. The binding also **tells of that record** (05 E6 O3, the review's M5-3):
+   `e.suppressed()` is an `Error[]` of the errors suppressed into it, in the order they were
+   ([§5](#5-the-error-path) rule 5, [§7](#7-closing-using) rule 3), a new array each call;
+   `e.backtrace()` is a `?Backtrace` of `std.core`, where it was first thrown — kept in the debug
+   profile, and `null` in the release profile, which keeps none. A **`Backtrace`** is a `Display`
+   whose text is the frames in a panic's trace form, a line `    at <function> (<file>:<line>)`
+   each, innermost first. Both are asked of the binding itself, in its clause: an error stored,
+   passed on or captured by a lambda is a value like any other and has neither
+   (`LYR-SEM0012`). Where the binding's type has a member of either name, the name is that
+   member.
 5. A type is caught **once** per `try` (`LYR-SEM0141`, E9 C1), and a clause no value can reach is
    refused (`LYR-SEM0142`, C2): a type of it is covered ([§3](#3-the-try-mark-and-coverage) rule 4)
    by a type caught before it — `catch (e: IoError)` above `catch (e: Disk)`, or `Error` above

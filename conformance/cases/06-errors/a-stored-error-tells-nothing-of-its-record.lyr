@@ -1,0 +1,21 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 06 §4.4: what was suppressed into an error is asked of the clause's binding itself; the value
+// stored under another name is an error like any other.
+import std.io { println };
+
+class Boom :: [Error] {
+    fn message(): string { return "boom"; }
+}
+
+fn explode(): void throws Boom {
+    throw Boom { };
+}
+
+fn main(): void {
+    try { explode(); } catch (e) {
+        let kept = e;
+        println(f"{kept.suppressed().length()}");
+    }
+}

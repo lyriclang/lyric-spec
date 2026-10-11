@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | mine 0
+//! since: 5.0.0
+// 06 §4.4: where the binding's type has a member of either name, the name is that member; the
+// other still tells of the record.
+import std.io { println };
+
+class Noted :: [Error] {
+    fn message(): string { return "noted"; }
+    fn backtrace(): string { return "mine"; }
+}
+
+fn note(): void throws Noted {
+    throw Noted { };
+}
+
+fn main(): void {
+    try { note(); } catch (e) {
+        println(f"{e.backtrace()} {e.suppressed().length()}");
+    }
+}
