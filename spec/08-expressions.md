@@ -97,6 +97,9 @@ A call names a function and gives it arguments
 5. **Definite assignment** ([07 §1](07-statements.md#1-loop-and-the-jumps) rule 5) treats the
    branches of an `if` expression as an `if` statement's: behind it a variable is assigned when
    every branch that completes assigned it.
+6. **`comptime if (c) a else b`** is a value whose condition is decided while compiling, the arms
+   expressions ([11 §4](11-metaprogramming.md) rule 9): where a round decides `c`, the chosen arm
+   alone is checked; otherwise both arms are, of one type, and the site chooses.
 
 ## 3. Assignment
 

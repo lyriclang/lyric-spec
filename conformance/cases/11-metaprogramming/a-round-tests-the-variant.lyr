@@ -1,0 +1,25 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | A B Rect
+// 11 §4 rule 7: 'e is v' is true where the enum value holds the variant the round names - a test
+// of the run, a bool.
+import std.io { println };
+import std.meta { variants };
+
+enum Shape :: [Named] { A, B, Rect { w: int, h: int } }
+
+interface Named {
+    fn name(): string {
+        comptime for (v in variants<Self>()) {
+            if (this is v) {
+                return v.name;
+            }
+        }
+        return "?";
+    }
+}
+
+fn main(): void {
+    println(f"{Shape.A.name()} {Shape.B.name()} {Shape.Rect { w = 1, h = 2 }.name()}");
+}

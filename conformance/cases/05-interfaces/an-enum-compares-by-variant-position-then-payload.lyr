@@ -1,0 +1,20 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true true false false
+//! | true true false false true
+// 05 §14 rule 3: an enum's synthesized Equatable and Ordered - the same variant with equal
+// payloads; the variant's position first, then the payload lexicographically.
+import std.io { println };
+
+enum E :: [Equatable, Ordered] { A, B(int, string), C { w: int } }
+
+fn main(): void {
+    let a = E.A;
+    let b1 = E.B(1, "x");
+    let b2 = E.B(1, "x");
+    let b3 = E.B(2, "x");
+    let c = E.C { w = 4 };
+    println(f"{a == a} {b1 == b2} {b1 == b3} {a == b1}");
+    println(f"{a < b1} {b1 < b3} {b3 < b1} {c < a} {b1 < c}");
+}

@@ -1,0 +1,23 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | A;B;C;
+// 11 §4 rule 7: a comptime for over variants<E>() has a round per variant, 'v' that variant's info.
+import std.io { println };
+import std.meta { variants };
+
+enum Color :: [Names] { A, B, C }
+
+interface Names {
+    fn names(): string {
+        var out = "";
+        comptime for (v in variants<Self>()) {
+            out = out + v.name + ";";
+        }
+        return out;
+    }
+}
+
+fn main(): void {
+    println(Color.A.names());
+}

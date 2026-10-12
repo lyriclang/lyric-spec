@@ -1,0 +1,21 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 1 a true
+// 11 §4 rule 8: 'Self { comptime for (f in fields<Self>()) [f] = e }' sets one field per round.
+import std.io { println };
+import std.meta { fields };
+
+struct P :: [Equatable, Copy] { x: int, name: string }
+
+interface Copy {
+    fn copy(): Self {
+        return Self { comptime for (f in fields<Self>()) [f] = this.[f] };
+    }
+}
+
+fn main(): void {
+    let p = P { x = 1, name = "a" };
+    let q = p.copy();
+    println(f"{q.x} {q.name} {q == p}");
+}

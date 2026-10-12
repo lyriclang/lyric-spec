@@ -477,7 +477,11 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    Hashable] { x: int, y: string }` compares and hashes field by field, in declaration order.
    There is no `derive` word. A member the type writes itself replaces the synthesis for that
    member; the others are still synthesized. The list is fixed in 5.0; a synthesis of the
-   program's own interfaces is [11](11-metaprogramming.md)'s question.
+   program's own interfaces is [11](11-metaprogramming.md)'s question. `Equatable`, `Hashable`,
+   `Ordered`, `TotalOrder` and `Clone` are std.core's defaults, written once over the
+   conformer's fields and variants and set in place for each conformer ([11 §4](11-metaprogramming.md)
+   rules 5 and 10; 09 A5); `Default` — a static member of an interface declares only
+   (`LYR-SEM0127`) —, `Display`, `Debug` and `Identity` are the compiler's.
 2. **Field by field, declaration order.** `equals` is the conjunction of the fields' equalities;
    `hash` writes the fields into the hasher in order ([12](12-stdlib.md) §Hashing) — an
    optional as a mark and its value, a tuple's and an inline array's elements in order;
@@ -508,9 +512,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    such a list meets the synthesized one as two sites ([§13](#13-generic-extends) rule 4,
    `LYR-SEM0133`): list it, and the block is the one site.
 6. **What is refused is said at the declaration.** A field whose type lacks the conformance
-   the synthesis needs is an error at the type's conformance-list entry, the diagnostic of the
-   missing operation prefixed with the synthesis it stands in and the field's line beside it
-   (`note: synthesized as: && this.f == o.f`); a shape the synthesis has no form for — a
+   the synthesis needs is the diagnostic of the missing operation, with its own code, at the
+   type's conformance-list entry — `'Equatable' is not synthesized for 'P': …` —, the field's
+   round and the default's line as notes (`note: in the round for the field 'f' of 'P'`); a
+   shape the synthesis has no form for — a
    `Slice<T>` or a function to `clone`, a function to `default`, an array or a view to `hash`
    (10 C8) — is
    `LYR-SEM0135` with the field's type, and the member is written by hand.

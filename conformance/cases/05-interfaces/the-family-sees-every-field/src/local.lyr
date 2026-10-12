@@ -1,0 +1,9 @@
+// A type whose private field no other module names - and which its synthesized Equatable compares.
+pub struct Secret :: [Equatable, Hashable] {
+    pub shown: int,
+    private hidden: int,
+}
+
+pub fn make(shown: int, hidden: int): Secret {
+    return Secret { shown = shown, hidden = hidden };
+}

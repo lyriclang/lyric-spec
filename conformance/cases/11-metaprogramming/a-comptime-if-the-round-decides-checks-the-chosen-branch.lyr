@@ -1,0 +1,31 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 2 true
+// 11 §4 rule 9: a comptime if the round decides checks the chosen branch alone - here the other
+// names a 'clone' the field's type has not; and 'comptime if' is a value.
+import std.io { println };
+import std.core { OnField };
+import std.meta { fields, attribute };
+
+pub struct Keep :: [OnField] { }
+
+class Parent { name: string }
+
+struct Child :: [Deep] {
+    n: int,
+    @Keep parent: Parent,
+}
+
+interface Deep {
+    fn deep(): Self {
+        return Self { comptime for (f in fields<Self>()) [f] = comptime if (attribute<Keep>(f) != null) this.[f] else this.[f].clone() };
+    }
+}
+
+fn main(): void {
+    let p = Parent { name = "p" };
+    let c = Child { n = 2, parent = p };
+    let d = c.deep();
+    println(f"{d.n} {same(d.parent, p)}");
+}

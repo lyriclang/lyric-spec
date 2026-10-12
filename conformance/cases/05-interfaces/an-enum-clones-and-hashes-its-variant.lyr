@@ -1,0 +1,21 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true true true 2
+// 05 §14 rule 3: a synthesized Clone rebuilds the variant from its payload cloned; Hashable writes
+// the variant's position, then the payload - two equal values are one key.
+import std.io { println };
+import std.collections { Set };
+
+enum E :: [Equatable, Clone, Hashable] { A, B(int, string), C { w: int } }
+
+fn main(): void {
+    let b1 = E.B(1, "x");
+    let k = b1.clone();
+    let c = E.C { w = 4 };
+    var s = Set<E>.new();
+    s.insert(E.A);
+    s.insert(E.B(1, "x"));
+    s.insert(E.B(1, "x"));
+    println(f"{k == b1} {c.clone() == c} {E.A.clone() == E.A} {s.length()}");
+}

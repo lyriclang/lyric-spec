@@ -1,0 +1,16 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true false
+// 05 §14 rule 4: 'struct Pair<T> :: [Equatable]' is 'extend<T :: [Equatable]> Pair<T> :: [Equatable]'
+// - the default set in place compares the fields of 'T' under the block's constraint.
+import std.io { println };
+
+struct Pair<T> :: [Equatable] { a: T, b: T }
+
+fn main(): void {
+    let p = Pair<int> { a = 1, b = 2 };
+    let q = Pair<int> { a = 1, b = 2 };
+    let r = Pair<int> { a = 1, b = 3 };
+    println(f"{p == q} {p == r}");
+}
