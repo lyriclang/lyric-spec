@@ -175,9 +175,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 3. An interface that names `Self` beyond the receiver, declares a static member or a generic
    one — abstract or with a default (§1 rule 5) —, is a **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). A type written for a value — a
-   binding's, a parameter's, a function's return type — that is a constraint only, or an optional
-   of one, says so where it is written, once, and goes on as no type: its uses and the calls of
-   its function say nothing more. An interface with neither is a value as
+   binding's, a parameter's, a function's return type, a field's — that is a constraint only, an
+   optional of one, or holds one as an element of an array, a view or a tuple or as a type argument
+   (`List<Equatable>`), says so where it is written, once, and goes on as no type: its uses, its
+   initializers and the calls of its function say nothing more. An interface with neither is a value as
    [§2](#2-interface-values) says.
 
 ## 8. Associated types

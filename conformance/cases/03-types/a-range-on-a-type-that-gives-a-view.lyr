@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | [2, 3] 2 [1, 2] [4]
+//! | [1, 20, 3, 4]
+//! since: 5.0.0
+// 03 §5.2 rule 7: on a List — AsSlice<T> — a range is the range of its view: the bounds and '^n'
+// the view's, a write through it written in the list.
+import std.io { println };
+
+fn main(): void {
+    let xs: List<int> = [1, 2, 3, 4];
+    let mid = xs[1..3];
+    println(f"{mid} {mid.length()} {xs[..2]} {xs[^1..]}");
+    mid[0] = 20;
+    println(f"{xs}");
+}

@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0126
+//! since: 5.0.0
+// 05 §7 rule 3: a constraint only inside a type written for a value — an array's element, a
+// tuple's, a type argument — is said where it is written, once: the comparison in first(), the
+// tuple's value and List.new() say nothing more.
+fn first(xs: Equatable[]): bool {
+    return xs[0] == xs[1];
+}
+
+fn main(): void {
+    let pair: (Equatable, int) = (1, 2);
+    let many: List<Equatable> = List.new();
+}

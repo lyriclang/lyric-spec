@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | row
+//! | arrow
+//! | row
+//! | ok
+//! since: 5.0.0
+// 03 §8.2 rule 3: an empty block is a body of no statements — after a call's parentheses, on
+// one line or two, and after '=>'.
+import std.io { println };
+
+fn labelled(name: string, f: fn() -> void): void {
+    println(name);
+    f();
+}
+
+fn main(): void {
+    labelled("row") { }
+    labelled("arrow", () => { });
+    labelled("row") {
+    }
+    println("ok");
+}

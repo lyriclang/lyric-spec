@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0007
+//! since: 5.0.0
+// 03 §5.2 rule 7: a type that gives no view of itself takes no range — a Map has none.
+fn main(): int {
+    let m: Map<int, int> = Map.new();
+    let part = m[0..1];
+    return 0;
+}

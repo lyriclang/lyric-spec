@@ -481,6 +481,12 @@ Elements in a row: behind a reference, through a view, or as a value
 5. There is no lifetime: the array lives as long as any view of it does, and a view kept in an
    object or returned from a function is as good as one in a local ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
 6. `StringView`, the view of a string's bytes, is written with the strings ([12](12-stdlib.md)).
+7. **A type that gives a view of itself** conforms to `AsSlice<T>` of `std.core`, whose
+   `asSlice()` is a `Slice<T>` of its elements; `List<T>` does. On such a value `x[a..b]` is
+   `x.asSlice()[a..b]`, rule 2 over the view, its bounds and `^n` the view's — a view of the
+   elements, which a write through it writes (design 03 "Review 2026-10-09" S6). Its `x[i]` stays
+   its own `Index`: a second conformance for ranges would be two `index` of one arity (04 D4).
+   A range on a value of any other type has no view to take (`LYR-SEM0007`).
 
 ### 5.3 `T[N]`
 
@@ -611,7 +617,8 @@ Functions as values, and the lambdas that make them
    `{ (k, v) => v }` with a pattern (F2), `{ &n => n += 1; }` with a place
    ([§2.3a](#23a-place-parameters) rule 5a). The body is then the rest of the block.
 3. The body is an expression or a block; a block's last expression without `;` is its value
-   (F3). `return` leaves the lambda, never the enclosing function; `break` and `continue`
+   (F3). An empty block is a body of no statements, a trailing one too: `labelled("row") { }`,
+   `() => { }`. `return` leaves the lambda, never the enclosing function; `break` and `continue`
    belong to loops inside the lambda (F5).
 4. Without a position that expects a function type, the parameters of a bare or trailing
    lambda have no type and are refused (`LYR-SEM0045`); the parenthesized form writes them.
