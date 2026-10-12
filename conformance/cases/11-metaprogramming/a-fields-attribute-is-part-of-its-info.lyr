@@ -1,0 +1,36 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | id;name;
+//! | users
+//! | none
+// 11 §4 rule 4: what a field's attribute says steers the synthesis; a type's attribute is asked of it.
+import std.io { println };
+import std.meta { fields, attribute, typeAttribute };
+import std.core { OnField, OnType };
+
+struct Rename :: [OnField] { to: string }
+struct Table :: [OnType] { name: string }
+
+interface Keys {
+    fn keys(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) {
+            let renamed = attribute<Rename>(f);
+            out = out + (renamed?.to ?? f.name) + ";";
+        }
+        return out;
+    }
+}
+
+@Table("users")
+struct User :: [Keys] {
+    @Rename("id") key: int,
+    name: string,
+}
+
+fn main(): void {
+    println(User { key = 1, name = "a" }.keys());
+    println(typeAttribute<User, Table>()?.name ?? "none");
+    println(typeAttribute<Rename, Table>()?.name ?? "none");
+}

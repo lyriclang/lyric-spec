@@ -1,0 +1,43 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | {"x":1,"y":2}
+//! | {"name":"a","at":{"x":3,"y":4}}
+// 11 §4 rules 3, 5: a synthesis of one's own, written once over Self's fields and set in place for
+// each conformer - each round's 'this.[f]' of that field's type.
+import std.io { println };
+import std.meta { fields };
+
+interface ToJson {
+    fn toJson(): string {
+        var out = "{";
+        comptime for (f in fields<Self>()) {
+            if (f.index > 0) { out = out + ","; }
+            out = out + f"\"{f.name}\":" + this.[f].toJson();
+        }
+        return out + "}";
+    }
+}
+
+extend int :: [ToJson] {
+    fn toJson(): string { return f"{this}"; }
+}
+
+extend string :: [ToJson] {
+    fn toJson(): string { return f"\"{this}\""; }
+}
+
+struct Point :: [ToJson] {
+    x: int,
+    y: int,
+}
+
+struct Named :: [ToJson] {
+    name: string,
+    at: Point,
+}
+
+fn main(): void {
+    println(Point { x = 1, y = 2 }.toJson());
+    println(Named { name = "a", at = Point { x = 3, y = 4 } }.toJson());
+}

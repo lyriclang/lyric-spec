@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 3: a type parameter's fields are known only per instance - the rounds share one body,
+// and no field is read through 'f'.
+import std.meta { fields };
+
+fn generic<T>(x: T): int {
+    comptime for (f in fields<T>()) {
+        let v = x.[f];
+    }
+    return 0;
+}
+
+fn main(): void {
+}

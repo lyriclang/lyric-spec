@@ -1,0 +1,34 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 11 §4 rule 5: the default set in place for 'Holder' reads 'flag.toJson()' - 'bool' has none;
+// said at the default's line, with the field and the conformer.
+import std.meta { fields };
+
+interface ToJson {
+    fn toJson(): string {
+        var out = "{";
+        comptime for (f in fields<Self>()) {
+            if (f.index > 0) { out = out + ","; }
+            out = out + f"\"{f.name}\":" + this.[f].toJson();
+        }
+        return out + "}";
+    }
+}
+
+extend int :: [ToJson] {
+    fn toJson(): string { return f"{this}"; }
+}
+
+extend string :: [ToJson] {
+    fn toJson(): string { return f"\"{this}\""; }
+}
+
+struct Holder :: [ToJson] {
+    n: int,
+    flag: bool,
+}
+
+fn main(): void {
+    let s = Holder { n = 1, flag = true }.toJson();
+}
