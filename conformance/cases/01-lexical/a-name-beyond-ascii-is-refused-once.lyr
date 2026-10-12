@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-LEX0001
+//! since: 5.0.0
+// 01 §3 rule 1: a word that holds letters beyond ASCII - within it or from its first - is refused
+// once, as the name it would be, and read as that name: its use refuses it again, and nothing
+// else follows.
+fn main(): void {
+    let größe = 3;
+    let übrig = größe + 1;
+    let _ = übrig;
+}

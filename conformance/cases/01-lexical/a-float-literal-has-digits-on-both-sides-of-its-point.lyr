@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-LEX0016
+//! since: 5.0.0
+// 01 §4.2 rule 1: '1.' and '.5' are no float literals - each refused once and read as the float
+// it means, so nothing follows from them.
+fn main(): void {
+    let a = 1.;
+    let b = .5;
+    let c: float = a + b;
+}

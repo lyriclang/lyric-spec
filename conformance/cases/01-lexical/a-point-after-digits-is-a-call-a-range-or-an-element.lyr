@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 3 b 1.5
+//! since: 5.0.0
+// 01 §4.2 rule 1: after digits a point that a name or a second point follows is a member or a
+// range; after an operand '.1' is a tuple's element.
+import std.io { println };
+
+fn main(): void {
+    var n = 0;
+    for (_ in 1..4) {
+        n += 1;
+    }
+    let pair = ("a", "b");
+    println(f"{3.show()} {n} {pair.1} {1.5}");
+}
