@@ -1,0 +1,13 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | Dot Circle
+// 11 §4 rule 11: 'VariantName' gives any enum 'name()', the name of the variant the value holds
+// - a payload or none.
+import std.io { println };
+
+enum Shape :: [VariantName] { Dot, Circle(int) }
+
+fn main(): void {
+    println(f"{Shape.Dot.name()} {Shape.Circle(3).name()}");
+}

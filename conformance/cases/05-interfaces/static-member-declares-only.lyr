@@ -1,7 +1,8 @@
 //! check
 //! error: LYR-SEM0127
 //! since: 5.0.0
-// 05 §7.2: a static interface member has no body.
-interface Parse { static fn parse(s: string): int { return 1; } }
+// 05 §2 rule 2: a static constant of an interface has no value - every conformer gives its own.
+// (A static function with a body is a default since M9a S11.)
+interface Num { static let zero: Self = 0; }
 
 fn main(): int { return 0; }

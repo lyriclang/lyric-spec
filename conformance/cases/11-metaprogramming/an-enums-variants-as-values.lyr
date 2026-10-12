@@ -1,0 +1,35 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | Red;Green;Blue;
+//! | g none 3 3 b
+// 11 §4 rule 11: 'Variants' gives a unit enum 'all()', every variant in declaration order, and
+// 'fromName(s)', the variant of that name or null - std.core's static defaults over the
+// variants, reached through the enum's name and through a constraint.
+import std.io { println };
+
+enum Color :: [Variants, Equatable] { Red, Green, Blue }
+
+fn show(c: ?Color): string {
+    return match (c) { null => "none", .Red => "r", .Green => "g", .Blue => "b" };
+}
+
+fn every<T :: [Variants]>(): T[] {
+    return T.all();
+}
+
+fn byName<T :: [Variants]>(s: string): ?T {
+    return T.fromName(s);
+}
+
+fn main(): void {
+    var out = "";
+    for (c in Color.all()) {
+        out = out + c.name() + ";";
+    }
+    println(out);
+    let g = Color.fromName("Green");
+    let p = Color.fromName("Pink");
+    let b = byName<Color>("Blue");
+    println(f"{show(g)} {show(p)} {Color.all().length()} {every<Color>().length()} {show(b)}");
+}

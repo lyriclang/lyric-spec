@@ -1,0 +1,8 @@
+//! check
+//! since: 5.0.0
+//! error: LYR-SEM0135
+// 11 §4 rule 11: 'Variants' is for an enum whose variants all are units - a variant with a
+// payload has no value without it, said at the enum's entry.
+enum Shape :: [Variants] { Dot, Circle(int) }
+
+fn main(): void { }
