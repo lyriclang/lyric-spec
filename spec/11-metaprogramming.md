@@ -16,11 +16,12 @@ Attributes (data, compiler instructions, macros), `comptime`, `std.meta`, condit
 **Conformance.** `conformance/cases/11-metaprogramming/`; what `lyric test` makes of a test, the
 toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 
-1. An attribute is a struct that says where it may sit — `std.core`'s `OnModule`, `OnType` or
-   `OnFunction` — and a use writes its fields: `@Test { skip = "needs a network" }`. The
-   compiler reads the attributes of a closed list in `std.core` by their identity: `@Test` is
-   `std.core.Test` — a struct of the program's own named `Test` is data, nothing the compiler
-   reads.
+1. An attribute is a struct that declares a **marker** for where it may sit (rule 4), and a use
+   writes its fields: `@Test { skip = "needs a network" }`. An attribute with exactly one field
+   without a default also takes that field's value in parentheses, `@Retry(3)`; with any other
+   number the form is refused (`LYR-SEM0094`). The compiler reads the attributes of a closed
+   list in `std.core` by their identity: `@Test` is `std.core.Test` — a struct of the program's
+   own named `Test` is data, nothing the compiler reads.
 2. **`@Test`** — in the prelude — marks a test, which `lyric test` runs ([14 §3](14-cli.md)): a
    function that takes no parameters, returns `void` and is not `private` (`LYR-SEM0154`), and
    is not generic (`LYR-SEM0067`, as for every attribute). It may throw: an error that leaves it
@@ -31,8 +32,26 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    `assertEq(xs.length(), 3)` hands the assertion the words `xs.length()` — as it is written,
    the parentheses in it and around it included: `(1..5).sum()`, `(a + b)`. The parameter is a
    `string` and has a default, which a call that writes the argument itself keeps; the attribute
-   names its parameter by name (`LYR-SEM0155`). It is the one attribute a parameter takes
+   names its parameter by name (`LYR-SEM0155`). Beside it a parameter takes what its marker
+   admits there (rule 4).
+4. **Every declaration takes attributes** (09 T7): the module header, a function, a method, a
+   field, a `static let`, a variant, a parameter, a struct, a class, an enum, an interface, an
+   alias, an `extend` block, a module-level binding, an associated type. A marker names one kind
+   or a set of them (09 F1): `OnModule`; `OnFunction` (a function at the top level), `OnMethod`,
+   `OnField`, `OnParameter`, `OnVariant`; `OnType` (a struct, a class, an enum), `OnInterface`,
+   `OnAlias`, `OnExtend`; and the sets `OnCallable` (a function, a method), `OnMember` (a method,
+   a field, a `static let`, a variant, an associated type), `OnTypeLike` (a struct, a class, an
+   enum, an interface, an alias), `OnTopLevel` (what stands at a module's top level), `OnDecl`
+   (every named declaration) and `OnAny` (every place). The markers inherit nothing from each
+   other. An attribute none of whose markers admits the declaration it stands on is refused
    (`LYR-SEM0065`).
+5. **An attribute's value is computed while the program compiles** (09 F4): its fields are
+   values as a `comptime` site's are (§2) — literals, `let`s, calls: `@Test { timeout = LIMIT }`.
+   The value is the struct the use writes, its defaults filled, and what the compiler and the
+   tools read is that value. A field of a type no literal makes is refused (`LYR-SEM0100`); a
+   panic while computing it is `LYR-CT0001`.
+6. An attribute makes nothing reachable (01 B13): a function only an attribute marks is not
+   built. A test is reached from the program `lyric test` writes.
 
 ## 2. `comptime`
 

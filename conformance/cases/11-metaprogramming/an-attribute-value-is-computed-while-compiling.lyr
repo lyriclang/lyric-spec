@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-CT0001
+//! since: 5.0.0
+// 11 §1 rule 5: an attribute's fields are computed while the program compiles — a panic on the way
+// is an error at the attribute.
+import std.core { OnAny };
+
+struct Tag :: [OnAny] {
+    n: int,
+}
+
+fn broken(): int {
+    let zero = 0;
+    return 1 / zero;
+}
+
+@Tag { n = broken() }
+fn f(): void {
+}
+
+fn main(): void {
+}

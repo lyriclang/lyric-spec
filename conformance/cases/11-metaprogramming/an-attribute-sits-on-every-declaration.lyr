@@ -1,0 +1,68 @@
+//! run
+//! stdout:
+//! | 1 5 8
+//! since: 5.0.0
+// 11 §1 rule 4: every declaration takes attributes — a function, a parameter, a struct, a field, a
+// method, an enum, a variant, an interface, an associated type, an alias, an extend block and its
+// method, a module-level binding; rule 1: one open field takes its value in parentheses; rule 5: a
+// value computed while compiling.
+import std.io { println };
+import std.core { OnAny, OnField, OnCallable };
+
+struct Tag :: [OnAny] {
+    name: string,
+}
+
+struct Level :: [OnField] {
+    value: int,
+}
+
+struct Retry :: [OnCallable] {
+    times: int,
+    delay: int = 0,
+}
+
+@Tag { name = "fn" }
+fn f(@Tag { name = "p" } x: int): int {
+    return x;
+}
+
+@Tag { name = "s" }
+struct S {
+    @Level(3) a: int,
+    @Tag { name = "m" } fn get(): int {
+        return this.a;
+    }
+}
+
+@Tag { name = "e" }
+enum E {
+    @Tag { name = "v" } One,
+    Two,
+}
+
+@Tag { name = "i" }
+interface I {
+    @Tag { name = "t" } type Item;
+    @Retry(2) fn go(): int;
+}
+
+@Tag { name = "a" }
+type Alias = int;
+
+@Tag { name = "x" }
+extend S {
+    @Retry { times = 3, delay = 10 } fn twice(): int {
+        return this.a * 2;
+    }
+}
+
+let base = "g";
+
+@Tag { name = base + "!" }
+let g = 5;
+
+fn main(): void {
+    let s = S { a = 4 };
+    println(f"{f(1)} {g} {s.twice()}");
+}
