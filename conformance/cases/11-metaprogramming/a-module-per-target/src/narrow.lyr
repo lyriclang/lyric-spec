@@ -1,0 +1,12 @@
+@When(target.pointerWidth != 64)
+module;
+
+// No library has it: were this module built, its binding would run before 'main' — and the
+// program would not link.
+extern "C" fn lyric_case_nowhere(): int;
+
+let ticket = lyric_case_nowhere();
+
+pub fn name(): string {
+    return f"narrow {ticket}";
+}

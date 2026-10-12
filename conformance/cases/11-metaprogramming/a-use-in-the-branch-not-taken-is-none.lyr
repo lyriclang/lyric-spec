@@ -1,0 +1,14 @@
+//! check
+//! since: 5.0.0
+// 11 §3 rule 3: a use in the branch a 'comptime if' does not take is none.
+
+@When(target.pointerWidth == 16)
+fn narrow(): int {
+    return 16;
+}
+
+fn main(): void {
+    comptime if (target.pointerWidth == 16) {
+        let _ = narrow();
+    }
+}

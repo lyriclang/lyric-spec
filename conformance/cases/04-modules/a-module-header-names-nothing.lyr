@@ -1,0 +1,8 @@
+//! check
+//! since: 5.0.0
+// 04 §2 rule 2: 'module;' without a path names nothing — the path names the module —, and is where
+// the module's attributes stand (11 §3 rule 4).
+module;
+
+fn main(): void {
+}

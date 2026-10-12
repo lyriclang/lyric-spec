@@ -1,0 +1,18 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | wide
+// 11 §3 rule 4: '@When' on the header 'module;' leaves the whole module out of every other build —
+// the other module binds what a C function no library has gives, a binding its start would run,
+// and the program links. One module per target, chosen between with 'comptime if'.
+import app.narrow;
+import app.wide;
+import std.io { println };
+
+fn main(): void {
+    comptime if (target.pointerWidth == 64) {
+        println(wide.name());
+    } else {
+        println(narrow.name());
+    }
+}

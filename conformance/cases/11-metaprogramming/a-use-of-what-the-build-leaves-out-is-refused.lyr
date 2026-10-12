@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-CT0006
+//! since: 5.0.0
+// 11 §3 rule 3: a use the program would run of what a build leaves out is refused.
+
+@When(target.pointerWidth == 16)
+fn narrow(): int {
+    return 16;
+}
+
+fn main(): void {
+    let _ = narrow();
+}

@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0085
+//! since: 5.0.0
+// 11 §3 rule 3: '@When' chooses no name — two declarations of one name stay refused, whatever
+// their conditions.
+
+@When(target.pointerWidth == 64)
+fn width(): int {
+    return 64;
+}
+
+@When(target.pointerWidth != 64)
+fn width(): int {
+    return 32;
+}
+
+fn main(): void {
+}
