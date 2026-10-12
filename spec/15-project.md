@@ -50,6 +50,10 @@ in `ProgramTests`.
    package ([11 P12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a toolchain below what any package of the program asks
    for refuses the program (`LYR-PKG0009`, exit 2, [14 §1.3](14-cli.md)), a development build of
    a version counting as that version. Another form is refused (`LYR-PKG0002`).
+7. **`comptimeBudget = 100_000_000`** in `[package]` is the steps one `comptime` site may take
+   ([11 §2](11-metaprogramming.md) rule 5), for the whole program where it stands in the root
+   manifest; a dependency's changes no build. A number that is not positive, or another value,
+   is refused (`LYR-PKG0002`).
 
 ## 2. Dependencies
 

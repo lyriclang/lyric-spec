@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-CT0001
+//! since: 5.0.0
+// 11 §2 rule 4: a site computes as the compiled program does — the built-in profiles check
+// overflow (03 T2), so an overflow at compile time is the program's panic: an error at the site.
+fn next(x: int32): int32 {
+    return x + 1;
+}
+
+fn main(): void {
+    let _ = comptime next(2147483647);
+}

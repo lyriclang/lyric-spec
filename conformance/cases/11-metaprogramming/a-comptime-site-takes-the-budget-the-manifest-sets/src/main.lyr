@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-CT0002
+//! since: 5.0.0
+// 11 §2 rule 5, 15 §1 rule 7: each site has the budget the root manifest's 'comptimeBudget' sets —
+// a thousand steps do not count to a million.
+fn count(n: int): int {
+    var i = 0;
+    while (i < n) {
+        i += 1;
+    }
+    return i;
+}
+
+fn main(): void {
+    let _ = comptime count(1000000);
+}
