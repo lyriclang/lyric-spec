@@ -14,11 +14,11 @@ fn main(): void {
     println(s.debug());
     let it = "it's";
     let apostrophe = '\'';
-    let quote = '"';
+    let doubleQuote = '"';
     let nul = '\0';
     let wide = '\u{3000}';
     let space = ' ';
-    println(f"{it.debug()} {apostrophe.debug()} {quote.debug()} {nul.debug()} {wide.debug()} {space.debug()}");
+    println(f"{it.debug()} {apostrophe.debug()} {doubleQuote.debug()} {nul.debug()} {wide.debug()} {space.debug()}");
     let xs = ["a\"b", "x\ty"];
     println(f"{xs}");
 }

@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | big
+//! | 64
+//! since: 5.0.0
+// 11 §2 rule 7: 'comptime if' chooses while compiling, an 'else if' after it the same way; only the
+// chosen branch is part of the program.
+import std.io { println };
+
+let size = 64;
+
+fn main(): void {
+    comptime if (size > 32) {
+        println("big");
+    } else if (size > 8) {
+        println("middle");
+    } else {
+        println("small");
+    }
+    comptime if (size == 64) {
+        println(f"{size}");
+    }
+}

@@ -29,9 +29,9 @@ fn main(): void {
     let view = xs[0..2];
     add(&view[0], 100);
     add(&total, 4);
-    var inline: int[3] = [0, 0, 0];
-    add(&inline[1], 7);
-    println(f"{c.n} {xs[0]} {xs[2]} {total} {inline[1]}");
+    var three: int[3] = [0, 0, 0];
+    add(&three[1], 7);
+    println(f"{c.n} {xs[0]} {xs[2]} {total} {three[1]}");
     var m = 5;
     twice(&m);
     twice(&m);

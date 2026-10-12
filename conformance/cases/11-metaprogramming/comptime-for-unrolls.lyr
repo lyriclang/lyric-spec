@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | a
+//! | c
+//! | 3
+//! since: 5.0.0
+// 11 §2 rule 8: 'comptime for' stands once per element of the array its site computes; a
+// 'continue' goes on with the next round, a 'break' past the last.
+import std.io { println };
+
+fn names(): string[] {
+    return ["a", "b", "c"];
+}
+
+fn main(): void {
+    comptime for (n in names()) {
+        if (n == "b") {
+            continue;
+        }
+        println(n);
+    }
+    var total = 0;
+    comptime for (k in [1, 2, 3, 4]) {
+        if (k == 3) {
+            break;
+        }
+        total += k;
+    }
+    println(f"{total}");
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0100
+//! since: 5.0.0
+// 11 §2 rule 8: what 'comptime for' walks is an array its site computes.
+fn main(): void {
+    comptime for (c in "abc") {
+    }
+}

@@ -48,8 +48,9 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
    program's to write: every evaluation of the site gives a fresh one, as an array literal does.
    An object of a class, a view, a function value, a coroutine and an interface value are no
    literal (`LYR-SEM0100`, with the reason).
-   `e` sees what the module level sees: it names no local, no parameter and no `this`, and holds no
-   lambda and no assignment (`LYR-SEM0100`).
+   `e` sees what the module level sees and what it binds itself: it names no local or parameter of
+   the function it stands in and no `this`, and assigns nothing it did not bind — a module's
+   variable is the run's, not the build's (`LYR-SEM0100`).
 2. **The code evaluated is pure** (Q3): `e` calls functions, which then run at compile time, and
    builds values of any type on its way. A call that reaches the world — the console, files, the
    network, the clock, randomness, processes, threads and tasks — is an error at the site
@@ -62,3 +63,13 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
 5. **Each site has a budget** of steps (Q5): the toolchain's, or `comptimeBudget` of the root
    manifest ([15 §1](15-project.md) rule 7). A site that takes more is an error at the site
    (`LYR-CT0002`) that names the budget. What one step is belongs to the implementation.
+6. **`comptime { … }`** is a block evaluated whole, its last expression the value. It binds,
+   assigns, loops and builds lambdas as any block does.
+7. **`comptime if (c) { … } else { … }`** chooses while compiling: `c` is a site of type `bool`, and
+   an `else if` after it chooses the same way. Every branch is checked; only the chosen one is part
+   of the program, so a function only another branch calls is not built. A `let` condition is
+   refused (`LYR-SEM0100`).
+8. **`comptime for (x in w) { … }`** unrolls: `w` is a site holding an array, and the body, checked
+   once, stands once per element, with `x` that element's value. A `continue` goes on with the
+   next round, a `break` past the last. A pattern in place of `x`, or a `w` that is no array, is
+   refused (`LYR-SEM0100`).
