@@ -7,7 +7,8 @@
 // (MapKeysIter …); `Map<K, V>` alone is the collection. Named here as the types they are —
 // std.core's, imported: the prelude carries the interfaces, not the adapters. An adapter over a
 // function names what the function throws last (M8c S4).
-import std.core { MapIter, FilterIter, CharsIter, SplitIter, SliceIter, ParseError };
+import std.core { CharsIter, SplitIter, SliceIter, ParseError };
+import std.iter { MapIter, FilterIter };
 import std.io { println };
 
 fn main(): void throws ParseError {

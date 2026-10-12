@@ -196,7 +196,11 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its
   stack unwinds and its defers run.
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
-  its own — monomorphized, nothing allocated: `it.map(f)` gives a `MapIter<I, U, E>` (`Map` is
+  its own — monomorphized, nothing allocated. They are `std.iter`'s (M9a S11c): the prelude
+  names that module, so its blocks reach every iterator in every module without an import
+  ([04](04-modules.md) rule 5), and a program imports a struct where it writes the type,
+  `import std.iter { MapIter }`. The protocol, the ranges and the iterators of `std.core`'s own
+  types stay `std.core`'s. Each: `it.map(f)` gives a `MapIter<I, U, E>` (`Map` is
   the collection's), `it.filter(p)` a `FilterIter<I, E>`; `E` defaults to `never`, so
   `MapIter<I, U>` names the one whose function throws nothing. Every iterator type's name ends in `Iter`
   (the review's A9g): the adapters (`TakeIter`, `ZipIter`, …), the string's (`CharsIter`,

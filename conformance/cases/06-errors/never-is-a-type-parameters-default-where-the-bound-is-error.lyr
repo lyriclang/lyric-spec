@@ -5,7 +5,8 @@
 // 06 §9.3 rule 3: 'never' is a type parameter's default where the bound is Error — the adapters'
 // E, and a type's own — so MapIter<I, U> is MapIter<I, U, never>.
 import std.io { println };
-import std.core { MapIter, FilterIter, SliceIter };
+import std.core { SliceIter };
+import std.iter { MapIter, FilterIter };
 
 struct Tagged<E :: [Error] = never> { n: int }
 
