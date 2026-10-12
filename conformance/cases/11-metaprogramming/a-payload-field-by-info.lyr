@@ -1,0 +1,28 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 3 12 0
+// 11 §4 rule 7: 'comptime for (p in v.payload)' walks the payload's fields, and 'e.[v, p]' is that
+// field of e, of its own type.
+import std.io { println };
+import std.meta { variants };
+
+enum Shape :: [Sum] { Circle(int), Rect { w: int, h: int }, Dot }
+
+interface Sum {
+    fn sum(): int {
+        var s = 0;
+        comptime for (v in variants<Self>()) {
+            if (this is v) {
+                comptime for (p in v.payload) {
+                    s = s + this.[v, p];
+                }
+            }
+        }
+        return s;
+    }
+}
+
+fn main(): void {
+    println(f"{Shape.Circle(3).sum()} {Shape.Rect { w = 4, h = 8 }.sum()} {Shape.Dot.sum()}");
+}

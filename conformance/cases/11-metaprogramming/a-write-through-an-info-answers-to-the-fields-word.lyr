@@ -1,0 +1,24 @@
+//! check
+//! since: 5.0.0
+//! error: LYR-SEM0019
+// 11 §4 rule 10: 'this.[f] = ...' answers to the field's word and the function's 'mut' as a write by
+// name does - here the function is no 'mut fn'.
+import std.meta { fields };
+
+struct Row :: [Touch] {
+    tag: string,
+}
+
+interface Touch {
+    fn touch(): string {
+        comptime for (f in fields<Self>()) {
+            this.[f] = this.[f];
+        }
+        return "touched";
+    }
+}
+
+fn main(): void {
+    let r = Row { tag = "t" };
+    r.touch();
+}

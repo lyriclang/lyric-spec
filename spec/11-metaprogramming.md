@@ -209,3 +209,34 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 6. A `comptime` site is evaluated once: one that asks `std.meta` about a type known only per
    instance within a larger expression is refused (`LYR-SEM0100`); asked alone,
    `comptime fields<T>()`, the question is answered per instance.
+7. **`comptime for (v in variants<E>())`** walks an enum's variants (M9a S10), its body once per
+   variant where `E` is a type the loop's place knows, `v` that variant's info. In such a round
+   **`e is v`** is `true` where the enum value `e` holds the variant — a test of the run, a `bool`
+   —; **`E.[v]`** is the value of a unit variant; **`E.[v](…)`** builds a variant with a tuple
+   payload and **`E.[v] { … }`** one with a struct payload, its fields by name or by info (rule 8);
+   **`comptime for (p in v.payload)`** walks the payload's fields, its body once per field with
+   `p` that field's info, and **`e.[v, p]`** is that field of `e`, of the field's own type — read,
+   written and a place as `e.name` is. `e.[v, p]` where `e` holds another variant is a panic. Each
+   form outside such rounds, or over a type known only per instance, is `LYR-SEM0185`.
+8. **An initializer over infos.** In an initializer of a struct or a class — a written type
+   without type arguments, or `Self` in a default — **`[f] = e`** sets the field the round's
+   variable `f` names, and **`comptime for (f in fields<T>()) [f] = e`** sets one field per round,
+   `e` checked with `f` that field's info and against the field's type. The fields set are the
+   written ones (`LYR-SEM0070` twice, `LYR-SEM0015` none such, an omitted one as for a written
+   initializer); the rounds walk the fields of the type built (`LYR-SEM0185` otherwise). The same
+   items build a variant's struct payload in `E.[v] { … }`, over `v.payload`.
+9. **A `comptime if` a round decides** checks the chosen branch alone — against [§2](#2-comptime)
+   rule 7, which checks every branch: the other may name what this field's type has not, a
+   `clone()` of a `@Shared` field. A round decides a condition made of its variables' `isVar`,
+   `index` and `name`, a variant's `index` and `name`, `attribute<A>(f)` against `null`,
+   `isEnum<T>()` and its kin of a known type, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`, `!`,
+   `&&` and `||` over them. **`comptime if (c) a else b` is a value** too: where a round decides
+   `c`, the chosen arm alone is checked and is the value; otherwise both arms, of one type
+   (`LYR-SEM0100`), and the site chooses.
+10. **The family asks with the conformer's module.** The defaults of `Equatable`, `Hashable`,
+   `Ordered`, `TotalOrder` and `Clone` in std.core ([05 §14](05-interfaces.md)) see every field
+   of the conformer, whatever its word: a type's internal and private fields compare, hash and
+   clone as its `pub` ones do. Every other interface's default sees what rule 2 gives it. What
+   is wrong in one of the family's is said at the conformer's entry ([05 §14](05-interfaces.md)
+   rule 6). A write through an info, `this.[f] = …`, answers to the field's word and the
+   function's `mut` as a write to the field by name does (`LYR-SEM0019`).

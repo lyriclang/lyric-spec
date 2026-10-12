@@ -1,0 +1,28 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | B C none
+// 11 §4 rule 7: 'E.[v]' is the value of the unit variant the round names - 'Self.[v]' in a default.
+import std.io { println };
+import std.meta { variants };
+
+enum Level :: [ByIndex] { A, B, C }
+
+interface ByIndex {
+    fn byIndex(i: int): ?Self {
+        comptime for (v in variants<Self>()) {
+            if (v.index == i) {
+                return Self.[v];
+            }
+        }
+        return null;
+    }
+}
+
+fn show(l: ?Level): string {
+    return match (l) { .A => "A", .B => "B", .C => "C", null => "none" };
+}
+
+fn main(): void {
+    println(f"{show(Level.A.byIndex(1))} {show(Level.A.byIndex(2))} {show(Level.A.byIndex(5))}");
+}

@@ -1,0 +1,34 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 1;parent;
+// 11 §4 rule 9: in a round, a comptime if statement the round decides checks the chosen branch
+// alone; the untaken one here calls a 'clone' the field's type has not.
+import std.io { println };
+import std.meta { fields };
+
+class Parent { name: string }
+
+struct Row :: [Describe] {
+    n: int,
+    parent: Parent,
+}
+
+interface Describe {
+    fn describe(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) {
+            comptime if (f.index == 0) {
+                let c = this.[f].clone();
+                out = out + f"{c};";
+            } else {
+                out = out + f.name + ";";
+            }
+        }
+        return out;
+    }
+}
+
+fn main(): void {
+    println(Row { n = 1, parent = Parent { name = "p" } }.describe());
+}

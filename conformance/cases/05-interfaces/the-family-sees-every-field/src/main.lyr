@@ -1,0 +1,16 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true false 2
+// 11 §4 rule 10; 05 §14: the family's defaults see every field of the conformer, whatever its word
+// - two values that differ in a private field alone are unequal, and two keys.
+import std.io { println };
+import std.collections { Set };
+import app.local { Secret, make };
+
+fn main(): void {
+    var s = Set<Secret>.new();
+    s.insert(make(1, 2));
+    s.insert(make(1, 3));
+    println(f"{make(1, 2) == make(1, 2)} {make(1, 2) == make(1, 3)} {s.length()}");
+}

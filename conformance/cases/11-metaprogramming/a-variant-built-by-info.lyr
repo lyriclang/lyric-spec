@@ -1,0 +1,27 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true true true
+// 11 §4 rules 7, 8: 'E.[v] { comptime for (p in v.payload) [p] = ... }' builds the variant from its
+// payload's infos - a tuple payload by position, a struct payload by name, a unit variant whole.
+import std.io { println };
+import std.meta { variants };
+
+enum Shape :: [Equatable, Copy] { Dot, Circle(int, string), Rect { w: int, h: int } }
+
+interface Copy {
+    fn copy(): Self {
+        comptime for (v in variants<Self>()) {
+            if (this is v) {
+                return Self.[v] { comptime for (p in v.payload) [p] = this.[v, p] };
+            }
+        }
+        return this;
+    }
+}
+
+fn main(): void {
+    let c = Shape.Circle(3, "x");
+    let r = Shape.Rect { w = 1, h = 2 };
+    println(f"{c.copy() == c} {r.copy() == r} {Shape.Dot.copy() == Shape.Dot}");
+}
