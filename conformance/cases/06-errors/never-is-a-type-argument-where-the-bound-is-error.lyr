@@ -5,7 +5,8 @@
 // 06 §9.3 rule 3: 'never' is a type argument for a parameter bounded by Error — the empty thrown
 // set — in a type, a call and a struct literal.
 import std.io { println };
-import std.core { MapIter, SliceIter };
+import std.core { SliceIter };
+import std.iter { MapIter };
 
 struct Tagged<E :: [Error]> { n: int }
 

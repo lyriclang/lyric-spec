@@ -196,7 +196,8 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
 5. A name a module declares or imports hides the prelude's of that name in the module, and is
    warned (`LYR-SEM0153`) (K6). An import of the very symbol the prelude passes on hides nothing.
    A block of a module the prelude takes names from stands in every module, as `std.core`'s do:
-   `Map<K, V>.new()` is reached wherever `Map` is.
+   `Map<K, V>.new()` is reached wherever `Map` is — and a module the prelude imports without a
+   name, `std.iter`, whose adapters every iterator has everywhere ([12](12-stdlib.md)).
 6. A **builtin type's** name — `int`, `string`, `bool` … — is no declaration's (`LYR-RES0011`)
    (K5).
 7. A name a module declares or imports is **not also one of its submodules**: `app.net` declaring
