@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0145
+//! since: 5.0.0
+// 06 §9.3 rule 3: for a parameter not bounded by Error, 'never' as a type argument would type a
+// value that cannot exist — in a call and in a struct literal alike.
+struct Box<T> { v: int }
+
+fn plain<T>(n: int): int {
+    return n;
+}
+
+fn main(): int {
+    let b = Box<never> { v = 1 };
+    return plain<never>(2) + b.v;
+}
