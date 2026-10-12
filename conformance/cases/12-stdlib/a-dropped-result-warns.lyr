@@ -1,0 +1,20 @@
+//! check
+//! warning: LYR-SEM0178
+//! since: 5.0.0
+// 12 §Results and conversions: 'Result' is '@MustUse' — a statement that drops one warns.
+
+struct Fail { }
+
+extend Fail :: [Error] {
+    fn message(): string {
+        return "fail";
+    }
+}
+
+fn check(x: int): Result<int, Fail> {
+    return if (x > 0) Result.Ok(x) else Result.Err(Fail { });
+}
+
+fn main(): void {
+    check(1);
+}

@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0179
+//! since: 5.0.0
+// 11 §1 rule 13: '@Allow' names a warning by its code, "LYR-SEM0071"; a lint's name is no code.
+
+@Allow("dead-code")
+fn f(): void {
+}
+
+fn main(): void {
+    f();
+}

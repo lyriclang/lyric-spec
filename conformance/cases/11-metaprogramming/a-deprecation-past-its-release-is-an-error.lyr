@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0081
+//! since: 5.0.0
+// 11 §1 rule 9: 'until' names the release that removes the declaration; a toolchain of that
+// version or later refuses the attribute.
+
+@Deprecated { until = "5.0" }
+fn old(): int {
+    return 1;
+}
+
+fn main(): void {
+}

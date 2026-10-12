@@ -1,0 +1,8 @@
+//! check
+//! since: 5.0.0
+// 15 §1 rule 4, 11 §1 rule 13: '[lints] allow' takes back the warnings with its codes in the
+// package's files — '@Allow' on the package.
+
+fn main(): void {
+    let unused = 1;
+}

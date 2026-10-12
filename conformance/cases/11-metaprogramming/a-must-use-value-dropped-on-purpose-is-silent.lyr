@@ -1,0 +1,12 @@
+//! check
+//! since: 5.0.0
+// 11 §1 rule 11: 'let _ = …' drops a '@MustUse' value on purpose, and nothing warns.
+
+@MustUse
+fn token(): int {
+    return 7;
+}
+
+fn main(): void {
+    let _ = token();
+}

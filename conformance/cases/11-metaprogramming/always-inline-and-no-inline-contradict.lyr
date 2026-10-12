@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0177
+//! since: 5.0.0
+// 11 §1 rule 10: a function takes '@AlwaysInline' or '@NoInline', not both.
+
+@AlwaysInline
+@NoInline
+fn f(): int {
+    return 1;
+}
+
+fn main(): void {
+    let _ = f();
+}

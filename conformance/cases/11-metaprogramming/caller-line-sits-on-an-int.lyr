@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0155
+//! since: 5.0.0
+// 11 §1 rule 8: '@callerLine' gives a line number, so it sits on an 'int' parameter.
+
+fn f(@callerLine line: string = ""): string {
+    return line;
+}
+
+fn main(): void {
+    let _ = f();
+}

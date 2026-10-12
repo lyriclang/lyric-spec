@@ -24,7 +24,8 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    own named `Test` is data, nothing the compiler reads.
 2. **`@Test`** — in the prelude — marks a test, which `lyric test` runs ([14 §3](14-cli.md)): a
    function that takes no parameters, returns `void` and is not `private` (`LYR-SEM0154`), and
-   is not generic (`LYR-SEM0067`, as for every attribute). It may throw: an error that leaves it
+   is not generic (`LYR-SEM0067`, as for every attribute but the compiler instructions of rule 7).
+   It may throw: an error that leaves it
    fails the test. `skip` says why the test is not run, `timeout` how many seconds it may take
    (60 unless it says; 0 for no limit).
 3. **`@callerExpr(p)`** — in the prelude — sits on a parameter: where a call leaves that
@@ -52,6 +53,42 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    panic while computing it is `LYR-CT0001`.
 6. An attribute makes nothing reachable (01 B13): a function only an attribute marks is not
    built. A test is reached from the program `lyric test` writes.
+7. **The compiler instructions** — in the prelude — are the closed list of `std.core` the compiler
+   reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
+   (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
+   `@MustUse` (rule 11), `@NonExhaustive` (rule 12) and `@Allow` (rule 13). What one says holds for
+   every instance, so beside `@Test` they sit on a generic declaration too, where data may not
+   (`LYR-SEM0067`).
+8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
+   leaves the parameter out, it gets the line the call begins on, or the file the call stands in —
+   the package's name, then the path within the package, with `/` on every system:
+   `app/src/main.lyr`. A call through an interface gets them as a direct call does. The parameter
+   has a default, which a call that writes the argument keeps (`LYR-SEM0155`, as for another type).
+9. **`@Deprecated { message, until, replacement }`** sits on what a use names: a module, what
+   stands at a module's top level, a member — not a parameter (`LYR-SEM0065`); on an `extend`
+   block it deprecates the block's members. Every use outside a deprecated declaration warns
+   (`LYR-SEM0076`) with `message`, and names `replacement` as what to write instead. `until` names
+   the release that removes the declaration: a toolchain that claims that version or a later one
+   refuses the attribute (`LYR-SEM0081`), as it refuses an `until` that is no version, `"5.1"` or
+   `"5.1.2"`. Each field is a value computed as rule 5 says.
+10. **`@AlwaysInline`**, **`@NoInline`** and **`@Cold`** on a function or a method are hints to the
+    C compiler — `always_inline`, `noinline`, `cold` —, no promise: the program computes what it
+    computes without them. `@NoInline` keeps the compiler's own inlining away too. A function takes
+    `@AlwaysInline` or `@NoInline`, not both (`LYR-SEM0177`).
+11. **`@MustUse`** on a function or a type: an expression statement that drops what such a function
+    gives, or a value of such a type, warns (`LYR-SEM0178`); `let _ = …` drops a value on purpose,
+    and a `void` call gives nothing to use. In the standard library `Result` carries it, and
+    `std.task.spawn`, whose handle alone carries the task's error.
+12. **`@NonExhaustive`** on an enum or a sealed interface: outside the package that declares it, a
+    `match` covers it with a `_` or binding arm alone (`LYR-SEM0050`; [09 §3](09-patterns.md)) — a
+    later version may add to it; inside, its variants or conformers cover it.
+    `std.io.IoErrorKind` carries it.
+13. **`@Allow("LYR-SEM0071")`** takes back the warnings with that code within the declaration it
+    sits on, or in the module whose header carries it; **`[lints] allow`** in a package's manifest
+    takes them back in the package's files ([15 §1](15-project.md)) — two places, one mechanism.
+    An error is never taken back. An `@Allow` that takes back nothing warns (`LYR-SEM0180`), and a
+    value that is no code is refused (`LYR-SEM0179`): the lints' names come with
+    [16](16-diagnostics.md).
 
 ## 2. `comptime`
 

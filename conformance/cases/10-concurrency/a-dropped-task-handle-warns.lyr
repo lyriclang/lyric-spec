@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0178
+//! since: 5.0.0
+// 10 §2 rule 8: 'spawn' is '@MustUse' — its handle alone carries the task's error, so a statement
+// that drops it warns.
+import std.task { spawn };
+
+fn main(): void {
+    spawn(() => 1);
+}

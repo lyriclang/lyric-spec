@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0050
+//! since: 5.0.0
+// 12 §Input and output, rule 1: 'IoErrorKind' is '@NonExhaustive' — a later release may name
+// another kind, so a match over it outside 'std' covers it with a '_', however many its arms name.
+import std.io { IoErrorKind };
+
+fn kind(k: IoErrorKind): string {
+    return match (k) {
+        .NotFound => "1", .PermissionDenied => "2", .AlreadyExists => "3", .IsDirectory => "4",
+        .NotDirectory => "5", .InvalidInput => "6", .InvalidData => "7", .UnexpectedEof => "8",
+        .TimedOut => "9", .ConnectionRefused => "10", .ConnectionReset => "11", .AddrInUse => "12",
+        .BrokenPipe => "13", .Closed => "14", .Unsupported => "15", .Other { code } => f"{code}",
+    };
+}
+
+fn main(): void {
+    let _ = kind(IoErrorKind.Closed);
+}

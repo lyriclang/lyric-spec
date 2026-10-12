@@ -1,0 +1,13 @@
+//! check
+//! warning: LYR-SEM0178
+//! since: 5.0.0
+// 11 §1 rule 11: an expression statement that drops what a '@MustUse' function gives warns.
+
+@MustUse
+fn token(): int {
+    return 7;
+}
+
+fn main(): void {
+    token();
+}

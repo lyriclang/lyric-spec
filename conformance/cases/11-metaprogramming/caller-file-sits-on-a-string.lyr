@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0155
+//! since: 5.0.0
+// 11 §1 rule 8: '@callerFile' gives a path, so it sits on a 'string' parameter.
+
+fn f(@callerFile file: int = 0): int {
+    return file;
+}
+
+fn main(): void {
+    let _ = f();
+}
