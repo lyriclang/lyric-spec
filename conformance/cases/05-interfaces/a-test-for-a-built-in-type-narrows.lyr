@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | int 42 / string 4 / neither
+//! since: 5.0.0
+// 05 §9 rule 4: behind 'a is int' the name is an 'int'; a negated test turns the branches around.
+import std.io { println };
+import std.core { Any };
+
+fn describe(a: Any): string {
+    if (a is int) {
+        return f"int {a + 1}";
+    }
+    if (!(a is string)) {
+        return "neither";
+    }
+    return f"string {a.length()}";
+}
+
+fn main(): int {
+    println(f"{describe(41)} / {describe("four")} / {describe(true)}");
+    return 0;
+}

@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | true false true true false false
+//! | true false true false true false
+//! since: 5.0.0
+// 05 §9 rule 2: a test for a built-in type is exact — an 'int8' is no 'int', nothing widens; an
+// alias is the type it names; a 'char' is no 'uint32', a 'string' no 'StringView'.
+import std.io { println };
+
+fn view(s: string): StringView {
+    return s;
+}
+
+fn main(): int {
+    let small: Display = 5 as int8;
+    let n: Display = 5;
+    let c: Display = 'q';
+    let s: Display = "abc";
+    let v: Display = view("abc");
+    println(f"{small is int8} {small is int} {n is int} {n is int64} {n is int8} {n is float}");
+    println(f"{c is char} {c is uint32} {s is string} {s is StringView} {v is StringView} {v is string}");
+    return 0;
+}
