@@ -1,0 +1,13 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 17 2.5 0.0 5 -1 0 1 1.0 -1.0 true 81
+// 12 "std.math": abs(x) and signum(x) over Signed - the signed integers and the floats; abs(-0.0)
+// is 0.0, a NaN's signum is NaN; an integer's power by squaring stays its own x.pow(n).
+import std.io { println };
+import std.math { abs, signum };
+
+fn main(): void {
+    let nan = 0.0 / 0.0;
+    println(f"{abs(-17)} {abs(-2.5)} {abs(-0.0)} {abs(-5 as int8)} {signum(-3)} {signum(0)} {signum(7 as int16)} {signum(2.5)} {signum(-0.5)} {signum(nan) != signum(nan)} {(3).pow(4)}");
+}

@@ -1,0 +1,14 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | true 1.4142135 1.4142135623730951 true 5.0 1024.0 true
+// 12 "std.math": the elementary functions are free functions over Float, computed in float by
+// C's library and rounded once to a float32; atan2(y, x), hypot(x, y), pow(x, e).
+import std.io { println };
+import std.math { atan2, hypot, pi, pow, sqrt };
+
+fn main(): void {
+    let narrow: float32 = 2.0;
+    let wide = sqrt(2.0);
+    println(f"{sqrt(narrow) == (wide as float32)} {sqrt(narrow)} {wide} {atan2(1.0, 0.0) == pi / 2.0} {hypot(3.0, 4.0)} {pow(2.0, 10.0)} {sqrt(-1.0) != sqrt(-1.0)}");
+}
