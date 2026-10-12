@@ -1,0 +1,11 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 2.0 -3.0 3.0 -2.0 3.0 -3.0 0.0 -2.0 4503599627370497.0
+// 12 "std.math": floor, ceil, round - a half away from zero - and trunc, as C's library has them.
+import std.io { println };
+import std.math { ceil, floor, round, trunc };
+
+fn main(): void {
+    println(f"{floor(2.5)} {floor(-2.5)} {ceil(2.5)} {ceil(-2.5)} {round(2.5)} {round(-2.5)} {round(0.49999999999999994)} {trunc(-2.7)} {round(4503599627370497.0)}");
+}

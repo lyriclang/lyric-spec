@@ -1,0 +1,9 @@
+//! check
+//! since: 5.0.0
+//! error: LYR-SEM0012
+// 12 "Numbers": what one computes with a number is std.math's, no member of the type - x.sqrt()
+// names nothing.
+fn main(): void {
+    let x = 2.0;
+    let _ = x.sqrt();
+}

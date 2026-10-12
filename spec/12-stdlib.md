@@ -91,15 +91,16 @@ arithmetic stays in the type:
 | Interface | Parents | Members | Conformers |
 |---|---|---|---|
 | `Num` | `Equatable`, `Ordered`, `Add`, `Sub`, `Mul`, `Div`, `Rem` (each `<Out = Self>`), `Display`, `Debug`, `Parse`, `Default` | `static let zero, one: Self`; `isZero(): bool` | all ten |
-| `Signed` | `Num`, `Neg<Out = Self>` | `abs(): Self`, `signum(): Self` | `int8`…`int`, `float32`, `float` |
+| `Signed` | `Num`, `Neg<Out = Self>` | none of its own: what `std.math`'s `abs` and `signum` take | `int8`…`int`, `float32`, `float` |
 | `Integer` | `Num`, `TotalOrder`, `Hashable`, the bit operators (each `<Out = Self>`) | `static let min, max: Self`; `static let bitWidth: int`, `isSigned: bool` | `int8`…`int`, `uint8`…`uint` |
-| `Float` | `Signed` | `static let epsilon, infinity, nan, min, max, leastPositive: Self`; `static fn fromBits(b: uint64): Self`; the methods below | `float32`, `float` |
+| `Float` | `Signed` | `static let epsilon, infinity, nan, min, max, leastPositive: Self`; `static fn fromBits(b: uint64): Self`; the members below | `float32`, `float` |
 
 The prelude passes `Num`, `Integer` and `Float` on (design 10 B2); `Signed` is `std.core`'s.
 
-`isZero`, `abs` and `signum` are defaults, each type's own ([05 §1](05-interfaces.md) rule 4):
-`signum` gives `-1`, `0` or `1` in the type, and a float's NaN stays NaN; `abs` gives `0.0` for
-`-0.0`. `uint` has no `abs`.
+`isZero` is a default, each type's own ([05 §1](05-interfaces.md) rule 4). What one computes
+with a number — its absolute value, its sign, a root, an angle — is no member of the type but
+`std.math`'s (design 10 B5 Z2, "Review 2026-10-12"; below): what a number *is* stands at its
+type, what one *does* with numbers in `std.math`.
 
 `Integer` says where its arithmetic would leave the type, each a default:
 
@@ -120,14 +121,10 @@ The prelude passes `Num`, `Integer` and `Float` on (design 10 B2); `Signed` is `
 `Float` describes the type in its statics (design 10 B5 Z2): `epsilon` the distance from `1.0`
 to the next value above it, `min` the most negative finite value, `max` the greatest,
 `leastPositive` the least positive one — a subnormal —, `nan` the quiet NaN with its sign clear.
-`fromBits(b)` is the value a bit pattern names, a `float32` the low 32 bits. Its methods are
-defaults over `Self`, computed in `float` and rounded once to a `float32`:
+`fromBits(b)` is the value a bit pattern names, a `float32` the low 32 bits. Its members are
+defaults over `Self`, what describes the value:
 
 - `isNan`, `isInfinite`, `isFinite`;
-- `floor`, `ceil`, `round` — a half away from zero —, `trunc`;
-- `sqrt`, `cbrt`, `exp`, `ln`, `log2`, `log10`; `sin`, `cos`, `tan`, `asin`, `acos`, `atan`,
-  `sinh`, `cosh`, `tanh`, in radians; `x.atan2(y)`, the angle of the point (x, y), -π to π;
-  `hypot(o)`, `pow(e)`;
 - `totalCompare(o): Ordering`, IEEE 754's total order: -NaN, -infinity, the negatives, `-0.0`,
   `0.0`, the positives, infinity, NaN, every value in its one place — the order `sortBy` takes,
   where `float` has no `TotalOrder` of its own;
@@ -135,9 +132,22 @@ defaults over `Self`, computed in `float` and rounded once to a `float32`:
 
 ### `std.math`, `clamp`, a `char`'s code point
 
-What describes the world rather than a type is `std.math`'s (design 10 B5 Z2): `pi`, `e` and
-`tau`, typed `float` — `math.pi as float32` for the narrow width. Beside them stand the functions
-of two numbers:
+What one computes with numbers is `std.math`'s (design 10 B5 Z2, "Review 2026-10-12"): free
+functions, generic over the tower, so that a reader finds `sqrt(x)` where every language puts
+it and the type keeps what describes it. The elementary functions over `Float` are computed in
+`float` by C's library and rounded once to a `float32`:
+
+- `floor(x)`, `ceil(x)`, `round(x)` — a half away from zero —, `trunc(x)`;
+- `sqrt(x)`, `cbrt(x)`, `exp(x)`, `ln(x)`, `log2(x)`, `log10(x)`; `sin`, `cos`, `tan`, `asin`,
+  `acos`, `atan`, `sinh`, `cosh`, `tanh`, in radians; `atan2(y, x)`, the angle of the point
+  (x, y), -π to π; `hypot(x, y)`; `pow(x, e)` — an integer's power by squaring is its own
+  `x.pow(n)`, arithmetic in the type.
+
+Over `Signed`: `abs(x)`, `0.0` for `-0.0`, which `<` does not tell from `0.0`; `signum(x)`,
+`-1`, `0` or `1` in the type, a float's NaN staying NaN. `uint` is no `Signed`, and has neither.
+
+What describes the world rather than a type: `pi`, `e` and `tau`, typed `float` —
+`math.pi as float32` for the narrow width. Beside them stand the functions of two numbers:
 
 - `min(a, b)` and `max(a, b)` over `Ordered`, `a` where the two are equal or unordered (a NaN);
 - `gcd(a, b)` and `lcm(a, b)` over `Integer`, never negative, `gcd(0, 0)` is `0`; a result beyond
