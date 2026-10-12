@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0182
+//! since: 5.0.0
+// 03 §8.5 rule 4: setting 'down' in place would not end.
+inline fn down(n: int): int {
+    return down(n - 1);
+}
+
+fn main(): void {
+}

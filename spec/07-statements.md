@@ -34,7 +34,9 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    jumps to is warned (`LYR-SEM0103`). Labels share nothing with the names of values.
 4. A `break` or `continue` leaves or continues a loop **of its own function**: outside every loop
    it is refused (`LYR-SEM0147`). A lambda's body is a function of its own — the loops around the
-   lambda are out of its jumps' reach, and their labels name nothing in it.
+   lambda are out of its jumps' reach, and their labels name nothing in it. A lambda an inline
+   function's call sets in place is none ([03 §8.5](03-types.md#85-inline-functions)): its jumps
+   reach the loops around it, and the inline body's loops are out of their reach.
 5. **Definite assignment** follows the jumps. A branch of an `if` or an arm of a `match` that does
    not complete — it returns, throws, breaks, continues or gives `never` — adds nothing to what
    follows it: the continuation follows the branches that complete. A `loop` runs its block at
@@ -143,7 +145,8 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
 ## 4. Bindings
 
 1. **`let`** and **`var`** bind a name in the scope of the block they stand in, from their
-   statement to the end of the block; a `let` keeps its value, a `var` may be assigned.
+   statement to the end of the block; a `let` keeps its value, a `var` may be assigned. A local
+   **`fn`** binds its name likewise ([03 §8.6](03-types.md#86-local-functions)).
 2. A name is **bound once in a scope** (decided 2026-10-07): a second `let` or `var` of a name in
    the same block is refused (`LYR-SEM0176`). A **parameter** counts as bound in the body's own
    block, as in C#, Java and Go: a `let` of its name there is refused too — a lambda's parameter

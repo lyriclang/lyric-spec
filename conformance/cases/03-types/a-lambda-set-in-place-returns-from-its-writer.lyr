@@ -1,0 +1,36 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 4 -1
+//! | left
+//! | 100
+//! | left
+//! | 12
+// 03 §8.5 rule 2: a 'return' in a lambda an inline function sets in place leaves the function
+// that wrote it - std.core's forEach is inline - and leaves through the body's defer; the body's
+// own 'return' is the call's value, and a lambda's block gives its value as its last expression.
+import std.io { println };
+
+fn firstOver(xs: int[], limit: int): int {
+    xs.iter().forEach { if (it > limit) { return it; } };
+    return -1;
+}
+
+inline fn guarded(f: fn() -> int): int {
+    defer println("left");
+    return f() + 1;
+}
+
+fn useGuard(flag: bool): int {
+    let v = guarded(() => {
+        if (flag) { return 100; }
+        5
+    });
+    return v * 2;
+}
+
+fn main(): void {
+    println(f"{firstOver([1, 4, 9, 2], 3)} {firstOver([1, 2], 3)}");
+    println(f"{useGuard(true)}");
+    println(f"{useGuard(false)}");
+}

@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-PAR0060
+//! since: 5.0.0
+// 03 §8.6 rule 2: a local fn takes no type parameters, and its parameters no default and no
+// variadic rest.
+fn main(): void {
+    fn id<T>(x: T): T {
+        return x;
+    }
+    fn dflt(n: int = 3): int {
+        return n;
+    }
+    fn all(ns: int...): int {
+        return 0;
+    }
+}

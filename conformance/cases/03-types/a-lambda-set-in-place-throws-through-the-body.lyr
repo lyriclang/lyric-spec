@@ -1,0 +1,32 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 3
+//! | oops
+// 03 §8.5 rule 2: what a lambda set in place throws leaves through the inline body; the call's
+// 'try' marks it (06).
+import std.io { println };
+
+enum Oops :: [Error] { Bad; fn message(): string { return "oops"; } }
+
+fn check(x: int): int throws Oops {
+    if (x > 2) { throw Oops.Bad; }
+    return x;
+}
+
+fn sumChecked(xs: int[]): int throws Oops {
+    var total = 0;
+    try xs.iter().forEach { total += try check(it); };
+    return total;
+}
+
+fn main(): void {
+    try {
+        let small = sumChecked([1, 2]);
+        println(f"{small}");
+        let big = sumChecked([1, 5, 2]);
+        println(f"{big}");
+    } catch (_: Oops) {
+        println("oops");
+    }
+}

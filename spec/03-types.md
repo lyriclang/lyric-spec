@@ -587,7 +587,7 @@ Functions as values, and the lambdas that make them
 ([03 T17](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md),
 [01 V8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md),
 [02 M8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md),
-[08 Y11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)).
+[08 Y11, F6, F8, F9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)).
 
 **Conformance.** `conformance/cases/03-types/`.
 
@@ -619,7 +619,8 @@ Functions as values, and the lambdas that make them
 3. The body is an expression or a block; a block's last expression without `;` is its value
    (F3). An empty block is a body of no statements, a trailing one too: `labelled("row") { }`,
    `() => { }`. `return` leaves the lambda, never the enclosing function; `break` and `continue`
-   belong to loops inside the lambda (F5).
+   belong to loops inside the lambda (F5) — but in a lambda an inline function's call sets in
+   place ([§8.5](#85-inline-functions)).
 4. Without a position that expects a function type, the parameters of a bare or trailing
    lambda have no type and are refused (`LYR-SEM0045`); the parenthesized form writes them.
 5. **A brace after a name alone** is an initializer's ([§2.4](#24-construction)) or a trailing
@@ -665,6 +666,47 @@ Functions as values, and the lambdas that make them
    on a struct's copy changes the copy.
 3. `arrayOf(n, f)` of `std.core` builds an array of `n` elements, the element at `i` the value
    of `f(i)` — fresh elements each, where `[x] * n` copies one ([§5.1](#51-t)).
+
+### 8.5 Inline functions
+
+1. **`inline fn`** ([08 F6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)) declares a function whose body is **set in place** at every
+   call: a free function, a type's method or static, a block's, an enum's. The words stand
+   `[static] inline [mut] fn`; `inline static` is refused (`LYR-PAR0032`). The call is a call as
+   any other ([08 §1](08-expressions.md#1-calls)): its arguments are evaluated first, left to
+   right, each once, its type arguments are bound as a generic call binds them, and the body's
+   `return` gives the call's value. It has no frame of its own and is nothing to point at.
+2. A **lambda literal** at one of its function parameters is set in place where the body calls the
+   parameter — no closure is made. Its `return` leaves the function that **wrote** it, through the
+   body's `defer`s; its `break` and `continue` reach that function's loops and never the body's;
+   what it throws leaves through the body. A block gives its value as its last expression
+   (`LYR-SEM0046` where a value is wanted and none stands). So
+   `xs.iter().forEach { if (it > limit) { return it; } }` leaves the function that wrote it. A
+   function **value** at the parameter — a binding, a function's name — is called as any value is.
+3. A function parameter of an inline function is **called**, or passed on as the argument of
+   another inline function's function parameter, which sets the same lambda in place there; kept,
+   returned, captured or passed to anything else it is refused (`LYR-SEM0181`).
+4. An inline function that reaches itself through calls of inline functions is refused at the
+   call that closes the cycle (`LYR-SEM0182`): setting it in place would not end. An inline
+   function is called and is **no value** (`LYR-SEM0183`).
+5. What a body set in place cannot hold is refused at the declaration (`LYR-SEM0184`): an
+   **interface's** member — it is called through its conformer's table —, a function **without
+   a body**, a **`mut fn`** — its receiver would be the caller's place —, a **place parameter**
+   ([§2.3a](#23a-place-parameters)), a body that **yields** — a coroutine's body runs where it is
+   pulled, not where it is called.
+6. *(Informative.)* Kotlin's `inline fun` is the model: a lambda set in place is code of the
+   caller, which the C compiler sees whole. `std.core`'s `forEach` is inline
+   ([12 §Iteration](12-stdlib.md)).
+
+### 8.6 Local functions
+
+1. A **local `fn`** ([08 F8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)) in a block is a **named closure**,
+   `fn fact(n: int): int { return if (n <= 1) 1 else n * fact(n - 1); }`. It binds its name as a
+   `let` binds one ([07 §4](07-statements.md#4-bindings)) — from its statement on, once in its
+   scope — and the name is in its own body: it calls itself. It captures as a lambda does
+   ([§8.3](#83-captures)), a `var` it writes in the box the scope shares; it is a value of its
+   function type, its `throws` included; its `return`, `break` and `continue` are its own.
+2. A closure is **one function** ([08 F9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md)): a local `fn` takes no type parameters, and its
+   parameters take no default and no variadic rest (`LYR-PAR0060`).
 
 ## 9. Generics
 

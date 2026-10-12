@@ -1,0 +1,28 @@
+//! check
+//! error: LYR-SEM0184
+//! since: 5.0.0
+// 03 §8.5 rule 5: an interface's member, a function without a body, a 'mut fn', a place
+// parameter and a body that yields are no inline functions.
+interface Shape {
+    inline fn area(): int;
+}
+
+extern "C" inline fn abs(x: int32): int32;
+
+struct Counter {
+    var v: int,
+    inline mut fn bump(): void {
+        this.v += 1;
+    }
+}
+
+inline fn add(&x: int): void {
+    x += 1;
+}
+
+inline fn numbers(): Coroutine<int> {
+    yield 1;
+}
+
+fn main(): void {
+}

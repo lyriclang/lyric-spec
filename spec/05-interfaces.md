@@ -484,7 +484,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    `compare` and `totalCompare` are lexicographic,
    the first field that is not `.Equal` decides, and a `compare` that meets `null` is `null`;
    `clone` copies the value fields and clones the reference fields — an array element by
-   element, an optional's value, a tuple's elements; `default` takes every field's `default()`,
+   element, an optional's value, a tuple's elements —, and **copies a field marked `@Shared`**
+   ([11 §1](11-metaprogramming.md) rule 14) instead, whatever it holds: a parent, a service, a
+   cycle; such a field's type needs no `Clone`; `default` takes every field's `default()`,
    or the field's own initializer where it has one, `[]` for an array, `null` for an optional
    and a tuple of its elements' defaults;
    `show` on request is the `debug` form; `debug` renders `P { x = 1, y = "a" }` with every
