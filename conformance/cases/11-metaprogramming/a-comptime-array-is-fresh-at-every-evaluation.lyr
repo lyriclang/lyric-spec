@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | 99 0 9
+//! since: 5.0.0
+// 11 §2 rule 1: an array a site leaves is the program's to write, and every evaluation of the
+// site gives a fresh one — a write to the first reaches no other.
+import std.io { println };
+
+fn squares(n: int): int[] {
+    var out: int[] = [];
+    var i = 0;
+    while (i < n) {
+        out = out + [i * i];
+        i += 1;
+    }
+    return out;
+}
+
+fn table(): int[] {
+    return comptime squares(4);
+}
+
+fn main(): void {
+    let t = table();
+    t[0] = 99;
+    let u = table();
+    println(f"{t[0]} {u[0]} {u[3]}");
+}

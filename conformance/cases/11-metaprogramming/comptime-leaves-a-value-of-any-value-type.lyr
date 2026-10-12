@@ -1,0 +1,64 @@
+//! run
+//! stdout:
+//! | Point { x = 3, y = 0.5 }
+//! | [Shape.Dot, Shape.Circle(Point { x = 1, y = 2.0 }, 3.0)]
+//! | 8
+//! | Point { x = 7, y = -1.5 } null
+//! | (1, "two", 3.0) [1, 2, 3, 40] [["a"], ["b", "c"]] 0..5
+//! since: 5.0.0
+// 11 §2 rule 1: a site's value is of any value type — a struct, enums with payloads, a recursive
+// enum through Box, optionals, a tuple, an inline array, an array of arrays, a range.
+import std.io { println };
+
+struct Point {
+    x: int,
+    y: float,
+}
+
+enum Shape {
+    Dot,
+    Circle(Point, float),
+}
+
+enum Tree {
+    Leaf(int),
+    Node(Box<Tree>, Box<Tree>),
+}
+
+fn build(n: int): Tree {
+    return if (n == 0) Tree.Leaf(1) else Tree.Node(Box { value = build(n - 1) }, Box { value = build(n - 1) });
+}
+
+fn sum(t: Tree): int {
+    return match (t) {
+        .Leaf(v) => v,
+        .Node(a, b) => sum(a.value) + sum(b.value),
+    };
+}
+
+fn maybe(yes: bool): ?Point {
+    return if (yes) Point { x = 7, y = -1.5 } else null;
+}
+
+fn fixed(): int[4] {
+    var a: int[4] = [1, 2, 3, 4];
+    a[3] = 40;
+    return a;
+}
+
+fn main(): void {
+    let p = comptime Point { x = 3, y = 0.5 };
+    let shapes = comptime [Shape.Dot, Shape.Circle(Point { x = 1, y = 2.0 }, 3.0)];
+    let tree = comptime build(3);
+    let some = comptime maybe(true);
+    let none = comptime maybe(false);
+    let tuple = comptime (1, "two", 3.0);
+    let four = comptime fixed();
+    let nested = comptime [["a"], ["b", "c"]];
+    let range = comptime 0..5;
+    println(f"{p:?}");
+    println(f"{shapes:?}");
+    println(f"{sum(tree)}");
+    println(f"{some:?} {none:?}");
+    println(f"{tuple:?} {four:?} {nested:?} {range.start}..{range.end}");
+}

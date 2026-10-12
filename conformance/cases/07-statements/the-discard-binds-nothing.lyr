@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | one
+//! | two
+//! since: 5.0.0
+// 07 §4 rule 2: '_' binds nothing — 'let _ = e;' keeps a value nobody reads, as often in a block
+// as it is written.
+import std.io { println };
+
+fn said(s: string): int {
+    println(s);
+    return 0;
+}
+
+fn main(): void {
+    let _ = said("one");
+    let _ = said("two");
+}
