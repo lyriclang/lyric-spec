@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-CT0004
+//! since: 5.0.0
+// 11 §2 rule 9: a call to 'embed' the program would make at run time is refused.
+import std.core { embed };
+
+fn main(): void {
+    let _ = embed("../data/greeting.txt");
+}

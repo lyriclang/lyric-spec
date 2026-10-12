@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-CT0004
+//! since: 5.0.0
+// 11 §2 rule 9: the file 'embed' reads lies within the package's directory.
+import std.core { embed };
+
+fn main(): void {
+    let _ = comptime embed("../../outside.txt");
+}
