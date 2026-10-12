@@ -1012,3 +1012,18 @@ it. An integer writes its word (`writeInt`, `writeUint` for the unsigned), a `bo
 C8): their slots can be written. A type's own hash is synthesized ([05 §14](05-interfaces.md)).
 An object hashes by its address where its class is `Identity` ([05 §14](05-interfaces.md) rule
 8): `hashIdentityInto(o, &h)` writes it as `writeInt` does.
+
+## Benchmarks
+
+A function marked **`@Bench`** is a benchmark (design 10 X4; M8c S12b): `fn name(&b: Bench)`, in
+a module under `src/` or `tests/`, which `lyric bench` runs ([14 §4](14-cli.md)). `Bench` is
+`std.core`'s, and in the prelude as `Test` is; the bench a benchmark is handed is its measure.
+
+- **`b.iter { … }`** runs the block until its time a run is known: once to warm up, then rounds
+  of more runs until one takes a tenth of a second, then five rounds of that many. The bench keeps
+  the round of the median time — its `runs`, its `nanos`, the `allocations` this thread made in
+  it and their `allocatedBytes`. The loop's call of the block is in the time.
+- **`b.bytes(n)`** says that a run handles `n` bytes; the report gives the megabytes a second.
+- **`blackBox(x)`** of `std.core` hands `x` back through a point the compiler cannot see
+  through: what computed it is not dropped as unused, and the value that comes out is not known
+  in advance.

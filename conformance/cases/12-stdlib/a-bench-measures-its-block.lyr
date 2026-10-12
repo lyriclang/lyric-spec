@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | true true 64
+//! | true true
+//! | 42
+//! since: 5.0.0
+// 12 §Benchmarks: a bench runs its block until its time a run is known, and counts what a round of
+// runs allocates on its thread; blackBox hands a value back.
+import std.core { blackBox };
+import std.io { println };
+
+fn main(): void {
+    var b = Bench { };
+    b.bytes(64);
+    b.iter {
+        let _ = blackBox(1 + 2);
+    }
+    println(f"{b.runs > 0} {b.nanos > 0} {b.bytesPerRun}");
+    var c = Bench { };
+    c.iter {
+        let xs = List<int>.new();
+        xs.push(1);
+        let _ = blackBox(xs.length());
+    }
+    println(f"{c.allocations >= c.runs} {c.allocatedBytes > 0}");
+    println(f"{blackBox(41) + 1}");
+}
