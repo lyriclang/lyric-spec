@@ -162,7 +162,7 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    otherwise); through a constraint `T :: [I]`, `Self` is `T`. In a struct, a class or an enum,
    `Self` is the type itself — a generic one at its own parameters.
 2. An interface may declare **static members** — `static fn parse(s: StringView): Self;` and
-   `static let zero: Self;` — without a body or a value (`LYR-SEM0127`): every conforming type
+   `static let zero: Self;` — a constant without a value (`LYR-SEM0127`), a function with a body or none: every conforming type
    implements one with a static member of its own, in its body or in its conformance block
    (`LYR-SEM0042`; `LYR-SEM0020` where it has none). A `static let` answers with the type the
    interface writes, `Self` read as the conformer — `static let zero: int = 0;` in
@@ -171,7 +171,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    one that answers the member. A static member may be generic (§1 rule 5),
    `static fn exact<T :: [Integer]>(v: T): ?Self;`: `U.exact(v)` is the conformer's own at the
    call's type arguments. On a value of the parameter
-   it is not reached (`LYR-SEM0055`).
+   it is not reached (`LYR-SEM0055`). A static function **with a body is a default** (M9a S11): a
+   conformer without a static of the name takes it, set in place for the conformer as an instance
+   default is ([11 §4](11-metaprogramming.md) rule 5), `Self` the conformer — `E.m(…)` and
+   `T.m(…)` are its instance; the conformer's own static of the name replaces it.
 3. An interface that names `Self` beyond the receiver, declares a static member or a generic
    one — abstract or with a default (§1 rule 5) —, is a **constraint only** (04 D9): no value of it arises — a table would hold no one function for
    such a member — and the transition says so (`LYR-SEM0126`). A type written for a value — a
@@ -480,8 +483,8 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    program's own interfaces is [11](11-metaprogramming.md)'s question. `Equatable`, `Hashable`,
    `Ordered`, `TotalOrder` and `Clone` are std.core's defaults, written once over the
    conformer's fields and variants and set in place for each conformer ([11 §4](11-metaprogramming.md)
-   rules 5 and 10; 09 A5); `Default` — a static member of an interface declares only
-   (`LYR-SEM0127`) —, `Display`, `Debug` and `Identity` are the compiler's.
+   rules 5 and 10; 09 A5); `Default` — no form names a field's type or its written default —,
+   `Display`, `Debug` and `Identity` are the compiler's.
 2. **Field by field, declaration order.** `equals` is the conjunction of the fields' equalities;
    `hash` writes the fields into the hasher in order ([12](12-stdlib.md) §Hashing) — an
    optional as a mark and its value, a tuple's and an inline array's elements in order;

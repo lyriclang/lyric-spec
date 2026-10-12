@@ -205,7 +205,9 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    a value of the interface reaches it; a conformer that writes the member itself takes nothing
    ([05 §14](05-interfaces.md) rule 1). A generic conformer's field of a parameter's type has what
    the parameter's constraints give it: `struct Pair<T :: [ToJson]> :: [ToJson]` is written out,
-   `Pair<T>` without the constraint is refused at the default's line.
+   `Pair<T>` without the constraint is refused at the default's line. A static default is set in
+   place the same way ([05 §2](05-interfaces.md) rule 2), reached through the conformer's name
+   or a constraint.
 6. A `comptime` site is evaluated once: one that asks `std.meta` about a type known only per
    instance within a larger expression is refused (`LYR-SEM0100`); asked alone,
    `comptime fields<T>()`, the question is answered per instance.
@@ -240,3 +242,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    is wrong in one of the family's is said at the conformer's entry ([05 §14](05-interfaces.md)
    rule 6). A write through an info, `this.[f] = …`, answers to the field's word and the
    function's `mut` as a write to the field by name does (`LYR-SEM0019`).
+11. **Enum reflection is synthesis** (09 A7 R5; M9a S11): `VariantName` gives any enum `name()`,
+   the name of the variant the value holds; `Variants :: [VariantName]` gives an enum whose
+   variants all are units `all()`, every variant in declaration order, and `fromName(s): ?Self`,
+   the variant of that name or `null` — std.core's defaults over `variants<Self>()`, taken on
+   request (`enum E :: [Variants]`), both named in the prelude. A variant with a payload has no
+   value without it: `Variants` on such an enum is `LYR-SEM0135` at the entry, the variant named.
+   (`all`, not `variants`: inside the default the latter is the question itself.)

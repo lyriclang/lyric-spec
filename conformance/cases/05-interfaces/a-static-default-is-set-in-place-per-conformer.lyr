@@ -1,0 +1,40 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 2 1 2 1 2 18
+// 05 §2 rule 2: a static member of an interface may carry a default, set in place for each
+// conformer that takes it - 'P.two()' and 'T.two()' are the conformer's instance of it, and a
+// conformer's own static of the name replaces it.
+import std.io { println };
+
+interface Factory {
+    static fn make(n: int): Self;
+    static fn two(): Self[] {
+        return [Self.make(1), Self.make(2)];
+    }
+    fn value(): int;
+    fn doubled(): int {
+        return this.value() * 2;
+    }
+}
+
+struct P :: [Factory] {
+    v: int,
+    static fn make(n: int): P { return P { v = n }; }
+    fn value(): int { return this.v; }
+}
+
+struct Q :: [Factory] {
+    v: int,
+    static fn make(n: int): Q { return Q { v = n }; }
+    static fn two(): Q[] { return [Q { v = 9 }]; }
+    fn value(): int { return this.v; }
+}
+
+fn count<T :: [Factory]>(): int {
+    return T.two().length();
+}
+
+fn main(): void {
+    println(f"{P.two().length()} {Q.two().length()} {count<P>()} {count<Q>()} {P.two()[1].v} {Q.two()[0].doubled()}");
+}
