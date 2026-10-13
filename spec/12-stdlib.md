@@ -7,7 +7,7 @@
 
 ## Scope
 
-What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law.
+What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`).
 
 ## 1. The converters
 
@@ -1047,3 +1047,44 @@ a module under `src/` or `tests/`, which `lyric bench` runs ([14 §4](14-cli.md)
 - **`blackBox(x)`** of `std.core` hands `x` back through a point the compiler cannot see
   through: what computed it is not dropped as unused, and the value that comes out is not known
   in advance.
+
+## Syntax
+
+**`std.syntax`** (design 10 B13 M2; M9b S1) is the syntax tree as values: what a program can
+write, as enums and structs a `comptime` function reads, builds and writes back. The macros of
+[11 §5](11-metaprogramming.md) take and give these values (M9b S2–S5).
+
+1. **The tree is enums and structs, `Box` where a node holds its own kind.** `Expr`, `Stmt`,
+   `Decl`, `Type` and `Pattern` are enums, each form a variant, each node's last payload its
+   `Span`; `Ident { name, span }` is a name, `Literal` a literal with its suffix (`Int(uint64,
+   ?string)`, `Float`, `Str`, `Bytes`, `Char`, `Bool`, `Null`), `Block { stmts, span }` a block;
+   a declaration's body is a struct — `FnDecl`, `TypeDecl` (a struct and a class alike, the kind
+   in the variant of `Decl` that holds it), `EnumDecl`, `InterfaceDecl`, `ExtendDecl`, `LetDecl`,
+   `FieldDecl`, `AssocType`, `AliasDecl`, `ImportDecl` — as are `Param`, `GenericParam`,
+   `Attribute`, `Arg`, `FieldInit`, `WithField`, `Arm`, `Catch`, `LambdaParam` and `Variant`;
+   `Body` is an expression or a block, `Node` any of the five kinds, for a walk. A `Span` is a
+   file as the diagnostics name it, a line and a column from 1 — `""` and `0` for a node that was
+   built, not read (`Span.none()`). The enums are `@NonExhaustive` (10 B13 M3): a `match` over
+   them outside the standard library writes a `_`, and a form the compiler has that the module
+   has not — the rounds of a `comptime for` over fields ([§4](#4-type-information)), a local
+   function, a node the parser could not read — is refused where it is read (`LYR-CT0005`). Every
+   node is `Debug`; `Box<T>` is `Debug` where `T` is, and writes its value alone.
+2. **`parseExpr(s)`, `parseStmts(s)` and `parseDecls(s)` read a text as the compiler reads it**:
+   an expression; statements as a block body holds them, a last expression without its `;` the
+   tail; declarations as a module holds them. A text that is no syntax is a panic of the
+   evaluation (`LYR-CT0001`), with the parser's message and the place in the text.
+3. **`toSource()` writes a node as the formatter writes it** — on an `Expr`, a `Stmt`, a `Block`
+   (its statements, without the braces), a `Decl`, a `Type` and a `Pattern`. A tree read from a
+   text comes back as the formatter would write that text, a built tree the same way: a literal
+   from its value, so `1.5e3` is `1500.0` and `0x10u8` is `16u8`; no comments, since a tree holds
+   none. The compiler's own pin: every program of its emitter tests goes tree, values, tree and
+   gives the same text.
+4. **`children()` gives the nodes directly inside one, in source order; `walk(f)` visits a node
+   and every node below it, parents before children** — on a `Node`, and on each of the five
+   kinds.
+5. **`Ident.fresh(hint)` is a name no written name is**: `hint` and a number of its own, new at
+   every call of an evaluation; `Ident.of(name)` is a name that stands nowhere. What a `quote`
+   binds is fresh ([11 §5](11-metaprogramming.md); M9b S3).
+6. **The tree lives at compile time.** The functions of `std.syntax` that read and write source
+   run inside `comptime` only; a call the program would make at run time is refused
+   (`LYR-CG0002`), as the world is refused at compile time ([11 §2](11-metaprogramming.md) rule 3).

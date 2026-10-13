@@ -1,0 +1,63 @@
+//! run
+//! stdout:
+//! | (1 + x) * "s"
+//! | 8
+//! | a;b;
+//! | true
+//! | 1:3 0:0
+//! | let q = 2;
+//! | q
+//! since: 5.0.0
+// 12 §Syntax rules 1, 4–6 (M9b S1): a tree is built from the enums and structs of `std.syntax`
+// by hand — `Box` for a payload that holds the enum itself —, taken apart with `match`, walked
+// with `children()` and `walk(f)`, parents before children; `Ident.fresh(hint)` names what no
+// written name is; a node read from text knows its line and column, a built one stands nowhere.
+import std.io { println };
+import std.syntax { Expr, Ident, Literal, BinaryOp, Span, Node, Block, parseExpr, parseStmts };
+
+fn built(): string {
+    let one = Expr.Literal(Literal.Int(1, null), Span.none());
+    let x = Expr.Name(Ident.of("x"));
+    let sum = Expr.Binary(Box<Expr> { value = one }, BinaryOp.Add, Box<Expr> { value = x }, Span.none());
+    let s = Expr.Literal(Literal.Str("s"), Span.none());
+    return Expr.Binary(Box<Expr> { value = sum }, BinaryOp.Mul, Box<Expr> { value = s }, Span.none()).toSource();
+}
+
+fn count(): int {
+    var n = 0;
+    Node.Expr(Box<Expr> { value = parseExpr("f(a + 1, [2, 3])") }).walk(node => { n = n + 1; });
+    return n;
+}
+
+fn names(): string {
+    var out = "";
+    for (s in parseStmts("let a = 1; var b = a + 2;")) {
+        match (s) {
+            .Let(_, name, _, _, _, _) => { out = out + name.name + ";"; },
+            _ => { out = out + "?;"; },
+        }
+    }
+    return out;
+}
+
+fn freshDiffer(): bool {
+    return Ident.fresh("tmp").name != Ident.fresh("tmp").name;
+}
+
+fn places(): string {
+    let read = match (parseExpr("  foo")) {
+        .Name(id) => f"{id.span.line}:{id.span.column}",
+        _ => "?",
+    };
+    let made = Ident.of("y").span;
+    return f"{read} {made.line}:{made.column}";
+}
+
+fn main(): void {
+    println(comptime built());
+    println(comptime count());
+    println(comptime names());
+    println(comptime freshDiffer());
+    println(comptime places());
+    println(comptime Block { stmts = parseStmts("let q = 2; q"), span = Span.none() }.toSource());
+}
