@@ -1058,8 +1058,7 @@ write, as enums and structs a `comptime` function reads, builds and writes back.
    `Decl`, `Type` and `Pattern` are enums, each form a variant, each node's last payload its
    `Span`; `Ident { name, span }` is a name, `Literal` a literal with its suffix (`Int(uint64,
    ?string)`, `Float`, `Str`, `Bytes`, `Char`, `Bool`, `Null`), `Block { stmts, span }` a block;
-   a declaration's body is a struct — `FnDecl`, `TypeDecl` (a struct and a class alike, the kind
-   in the variant of `Decl` that holds it), `EnumDecl`, `InterfaceDecl`, `ExtendDecl`, `LetDecl`,
+   a declaration's body is a struct — `FnDecl`, `StructDecl`, `ClassDecl`, `EnumDecl`, `InterfaceDecl`, `ExtendDecl`, `LetDecl`,
    `FieldDecl`, `AssocType`, `AliasDecl`, `ImportDecl` — as are `Param`, `GenericParam`,
    `Attribute`, `Arg`, `FieldInit`, `WithField`, `Arm`, `Catch`, `LambdaParam` and `Variant`;
    `Body` is an expression or a block, `Node` any of the five kinds, for a walk. A `Span` is a

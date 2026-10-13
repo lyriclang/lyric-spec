@@ -260,8 +260,8 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 
 A macro (design 09 A8, Q9; 08 Y12; 13 M9b) is a function over syntax that the compiler runs at a
 site's expansion, under the interpreter's rules of [§2](#2-comptime). This section is written
-slice by slice: the declaration and the sites (M9b S2), `quote` and `#{…}` with hygiene (S3);
-attribute macros, the diagnostics of expanded code and `lyric expand` follow (S4, S5).
+slice by slice: the declaration and the sites (M9b S2), `quote` and `#{…}` with hygiene (S3),
+attribute macros (S4); the diagnostics of expanded code and `lyric expand` follow (S5).
 
 1. **A macro is a function over syntax.** `macro name(params): Ret { … }` stands at the top of a
    module as a function does, `pub` and imported like one. Its parameters and its result are
@@ -304,8 +304,9 @@ attribute macros, the diagnostics of expanded code and `lyric expand` follow (S4
    where an expression stands, an `Expr`, an `Ident` (as a name), a `Literal` or a `Block` (as a
    block expression); where a statement stands on its own, `Stmt[]` and a `Block`'s statements
    are spliced in, a `Stmt` stands, an expression, a name or a literal is the statement or the
-   tail; where a declaration's name stands (`fn #{name}()`), an `Ident`. Anything else at a
-   place is `LYR-SEM0193`. A splice statement ends at its `}`, as a block does.
+   tail; where a declaration's name stands (`fn #{name}()`), an `Ident`; where a type stands
+   (`v: #{t}`), a `Type`. Anything else at a place is `LYR-SEM0193`. A splice statement ends at
+   its `}`, as a block does.
 8. **A quote is hygienic.** Every name the content binds — a `let`, a parameter, a loop variable,
    a `catch`'s binding, a pattern's names — is fresh at every evaluation of the quote (`Ident.fresh`):
    the caller's names are never caught, and the names of two quotes are two. What `#{…}` sets in
@@ -314,3 +315,17 @@ attribute macros, the diagnostics of expanded code and `lyric expand` follow (S4
    module's imports, wherever the tree ends up, though the site's module never imported it
    (the `Ident`'s `from`, the `Named` type's). A name built with `Ident.of` is the site's, as in
    rule 3.
+9. **An attribute macro is a macro whose first parameter is a declaration** (09 A2 F2): a
+   `StructDecl`, `ClassDecl`, `FnDecl`, `EnumDecl`, `InterfaceDecl`, `ExtendDecl`, `LetDecl`, or
+   `Decl` for any; its result is a `Decl` or a `Decl[]` (`LYR-SEM0186`). It sits on a top-level
+   declaration as an attribute, with no `!` (T4): `@Builder struct P { … }`, `@Retry(3) fn f() { … }`.
+   The declaration reaches the macro as the first argument, without this attribute and with the
+   rest; the attribute's positional argument fills the parameters after it, by their kinds as at a
+   site — fields (`@A { x = 1 }`) are a data attribute's and refused (`LYR-SEM0191`); a declaration
+   of another kind than the first parameter's is refused (`LYR-SEM0191`).
+10. **The result stands in the declaration's place** (T5): a `Decl` one for one, a `Decl[]`
+   spliced into the module where the declaration stood — the declaration itself only when the
+   macro gives it back. Nothing else of the module is touched: an attribute never changes code
+   that does not carry it. A result that carries an attribute macro again is expanded in the
+   round after (rule 4); the module that declares the macro cannot carry it (`LYR-SEM0189`). A
+   `#{t}` in type position splices a `Type` (rule 7), which a declaration macro needs.

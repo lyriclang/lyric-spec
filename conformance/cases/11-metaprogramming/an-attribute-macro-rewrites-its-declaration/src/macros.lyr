@@ -1,0 +1,74 @@
+// 11 §5 rules 9–10: attribute macros; `@Builder` builds with the constructors, `@Retry` and
+// `@Logged` with quotes, `println` being this module's.
+import std.io { println };
+import std.collections { List };
+import std.syntax { Expr, Stmt, Decl, StructDecl, FnDecl, FieldDecl, Ident, Type, Span, Visibility, Literal, Block, PostfixOp, FieldInit, WithField, Param };
+
+/// `@Builder struct P { ... }`: P stays, and PBuilder is added — a `?T` field per field with
+/// null, a setter per field, `build()`.
+pub macro Builder(target: StructDecl): Decl[] {
+    let builderName = target.name.name + "Builder";
+    let builderType = Type.Named([builderName], [], [], null, Span.none());
+    let members = List<Decl>.new();
+    let inits = List<FieldInit>.new();
+    for (m in target.members) {
+        match (m) {
+            .Field(f) => {
+                members.push(Decl.Field(FieldDecl {
+                    visibility = Visibility.None, isVar = false, name = f.name,
+                    type = Type.Optional(Box<Type> { value = f.type }, Span.none()),
+                    default = Expr.Literal(Literal.Null, Span.none()), attributes = [], span = Span.none(),
+                }));
+                let v = Ident.of("v");
+                let setterBody = Block { stmts = [Stmt.Return(Expr.With(Box<Expr> { value = Expr.This(Span.none()) },
+                    [WithField { path = [f.name.name], value = Expr.Name(v) }], Span.none()), Span.none())], span = Span.none() };
+                members.push(Decl.Fn(FnDecl {
+                    visibility = target.visibility, isStatic = false, isMut = false, isInline = false,
+                    name = Ident.of("set_" + f.name.name), generics = [],
+                    params = [Param { name = v, type = f.type, default = null, isParams = false, isEllipsis = false, isPlace = false, attributes = [], span = Span.none() }],
+                    ret = builderType, retGrouped = false, throws = null, body = setterBody,
+                    externAbi = null, externSymbol = null, attributes = [], span = Span.none(),
+                }));
+                inits.push(FieldInit { name = f.name, value = Expr.Postfix(Box<Expr> { value = Expr.Member(Box<Expr> { value = Expr.This(Span.none()) }, f.name, false, Span.none()) }, PostfixOp.Unwrap, Span.none()), isShorthand = false });
+            },
+            _ => { },
+        }
+    }
+    let buildBody = Block { stmts = [Stmt.Return(Expr.StructInit([target.name.name], [], inits.toArray(), false, Span.none()), Span.none())], span = Span.none() };
+    members.push(Decl.Fn(FnDecl {
+        visibility = target.visibility, isStatic = false, isMut = false, isInline = false, name = Ident.of("build"), generics = [], params = [],
+        ret = Type.Named([target.name.name], [], [], null, Span.none()), retGrouped = false, throws = null, body = buildBody,
+        externAbi = null, externSymbol = null, attributes = [], span = Span.none(),
+    }));
+    let builder = StructDecl {
+        visibility = target.visibility, name = Ident.of(builderName), generics = [], interfaces = [], delegates = [],
+        members = members.toArray(), attributes = [], span = Span.none(),
+    };
+    return [Decl.Struct(target), Decl.Struct(builder)];
+}
+
+/// `@Retry(n) fn f() { ... }` runs the body up to n times.
+pub macro Retry(target: FnDecl, n: Expr): Decl {
+    let body: Stmt[] = quote {
+        var attempts = 0;
+        loop {
+            attempts += 1;
+            try {
+                #{target.body!}
+            } catch (e) {
+                if (attempts >= #{n}) { throw e; }
+            }
+        }
+    };
+    return Decl.Fn(target with { body = Block { stmts = body, span = target.span } });
+}
+
+/// `@Logged fn f() { ... }` prints the name on entry.
+pub macro Logged(target: FnDecl): Decl {
+    let name = Expr.Literal(Literal.Str("enter " + target.name.name), Span.none());
+    let pre: Stmt[] = quote { println(#{name}); };
+    let all = List<Stmt>.new();
+    all.pushAll(pre);
+    all.pushAll(target.body!.stmts);
+    return Decl.Fn(target with { body = Block { stmts = all.toArray(), span = target.span } });
+}
