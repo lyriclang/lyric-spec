@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0189
+//! since: 5.0.0
+// 11 §5 rule 4: a macro expands in the modules that import it, and the module that declares it
+// checks it first — a site in that module is refused.
+import std.io { println };
+import std.syntax { Expr, Span, BinaryOp };
+
+macro own(e: Expr): Expr {
+    return Expr.Binary(Box<Expr> { value = e }, BinaryOp.Mul, Box<Expr> { value = e }, Span.none());
+}
+
+fn main(): void {
+    println(own!(3));
+}

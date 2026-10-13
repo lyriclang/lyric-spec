@@ -255,3 +255,41 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    request (`enum E :: [Variants]`), both named in the prelude. A variant with a payload has no
    value without it: `Variants` on such an enum is `LYR-SEM0135` at the entry, the variant named.
    (`all`, not `variants`: inside the default the latter is the question itself.)
+
+## 5. Macros
+
+A macro (design 09 A8, Q9; 08 Y12; 13 M9b) is a function over syntax that the compiler runs at a
+site's expansion, under the interpreter's rules of [§2](#2-comptime). This section is written
+slice by slice: the declaration and the sites here (M9b S2); `quote` and `#{…}` with hygiene,
+attribute macros, the diagnostics of expanded code and `lyric expand` follow (S3–S5).
+
+1. **A macro is a function over syntax.** `macro name(params): Ret { … }` stands at the top of a
+   module as a function does, `pub` and imported like one. Its parameters and its result are
+   types of `std.syntax` ([12 §Syntax](12-stdlib.md)) — `Expr`, `Block`, `Ident`, `Literal`,
+   `Type`, `Stmt`, `Stmt[]`, `Decl`, `Decl[]` — else `LYR-SEM0186`; it has no type parameters,
+   since what a site hands over is a tree, not a value with a type. A macro is never called as a
+   function and never a value (`LYR-SEM0187`): its name stands at a site, with the `!`.
+2. **A site expands the macro.** `name!(args)`, `name!(args) { … }` and `name! { … }` are the
+   three forms: the `!` directly behind the name, before `(` or `{`, is the expansion; with a
+   space between, or before anything else, it is the unwrap postfix of [08](08-expressions.md).
+   Each argument is syntax as written, checked nowhere, and reaches the macro as the value of
+   its parameter's type: an expression as `Expr`, a block as `Block` or `Stmt[]`, a name as
+   `Ident`, a literal as `Literal`, a path as `Type`; the trailing block goes to a last `Block` or
+   `Stmt[]` parameter. The count and the kinds of the arguments are checked at the site
+   (`LYR-SEM0191`).
+3. **The result stands in place of the site.** An `Expr` replaces a site that is an expression;
+   a `Stmt`, `Stmt[]` or `Block` replaces the statement a site is on its own (`name!(…) { … }` on
+   its line ends at its block, as a call with a trailing block does) — elsewhere `LYR-SEM0188`.
+   What the result names is resolved where the site stands: a name the macro builds is the
+   caller's (until [S3's hygiene](#5-macros) for `quote`). A site inside an argument travels into
+   the macro as syntax (`Expr.Macro`) and is expanded in the round after the outer one.
+4. **Expansion is a phase per module, in import order.** A macro expands in the modules that
+   import it, before the module is checked, and the module that declares it checks it first: a
+   site of a macro of its own module is refused (`LYR-SEM0189`), a site of a name that is no
+   macro (`LYR-SEM0190`). A module whose sites are not expanded yet waits for the macros it
+   declares to be used; an expansion that has not ended after 32 rounds — a result holding a
+   site again and again — is `LYR-CT0007`. A program without a site pays nothing.
+5. **The macro runs under the interpreter's rules** ([§2](#2-comptime); 09 Q9): pure, with the
+   budget, a panic `LYR-CT0001` at the site with the chain of calls. `error(at, msg)` of
+   `std.syntax` is the macro's own error, `LYR-MAC0001`: the main span at the node the macro
+   names (`e.span()`, an argument's as written), a note at the site's `!`.

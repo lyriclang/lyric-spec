@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0186
+//! since: 5.0.0
+// 11 §5 rule 1: a macro's parameters and result are types of std.syntax — a site hands over a
+// tree, not a value with a type.
+import std.syntax { Expr, Ident };
+
+macro bad(n: int): Expr {
+    return Expr.Name(Ident.of("x"));
+}
+
+fn main(): void { }
