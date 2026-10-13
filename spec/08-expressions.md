@@ -125,6 +125,9 @@ left to right everywhere, the target before the value).
    |---|---|---|
    | postfix | `.` `?.` `[ … ]` `( … )` `!` `++` `--` `with { … }` | left |
    | prefix | `!` `-` `~` `++` `--` `&` `try` `try?` `try!` `throw` `comptime` | right |
+
+   A `!` directly behind a name, before `(` or `{`, is no postfix: it is a macro's site, `name!(args)`
+   ([11 §5](11-metaprogramming.md#5-macros)); `x! in xs` and `x!.f()` unwrap as ever.
    | cast | `as` | left |
    | multiplicative | `*` `/` `%` `*%` | left |
    | additive | `+` `-` `+%` `-%` | left |

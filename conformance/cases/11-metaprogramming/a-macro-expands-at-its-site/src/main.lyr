@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 6
+//! | 8
+//! | 16
+//! | small
+//! | x
+//! | abab
+//! since: 5.0.0
+// 11 §5 rules 2–4 (M9b S2): `twice!(x)` is replaced by what the macro gives back; a site inside
+// an argument is expanded in the round after the outer one; a `comptime` site beside it stays
+// one; the statement form takes its trailing block and ends at it; an `Ident` parameter reads a
+// name. The macros live in macros.lyr: a module's own macros are not expanded in it.
+import std.io { println };
+import app.macros { twice, unless, named };
+
+fn main(): void {
+    let x = 3;
+    println(twice!(x));
+    println(twice!(twice!(2)));
+    println(twice!(x) + comptime 10);
+    unless!(x > 5) {
+        println("small");
+    }
+    println(named!(x));
+    println(twice!("ab"));
+}

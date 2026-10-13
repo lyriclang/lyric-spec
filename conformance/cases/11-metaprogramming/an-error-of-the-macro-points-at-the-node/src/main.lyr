@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-MAC0001
+//! since: 5.0.0
+// 11 §5 rule 5: `error(at, msg)` of std.syntax is the macro's own error, at the node it names —
+// here the argument as written — with a note at the site's `!`.
+import std.io { println };
+import app.macros { positive };
+
+fn main(): void {
+    println(positive!(-1));
+}

@@ -1,0 +1,10 @@
+import std.syntax { Expr, error };
+
+/// `positive!(n)` refuses a negative literal where it is written.
+pub macro positive(n: Expr): Expr {
+    match (n) {
+        .Unary(.Neg, _, _) => { error(n.span(), "positive! takes no negative literal"); },
+        _ => { },
+    }
+    return n;
+}

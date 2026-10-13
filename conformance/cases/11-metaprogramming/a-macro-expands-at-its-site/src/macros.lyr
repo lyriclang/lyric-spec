@@ -1,0 +1,19 @@
+// 11 §5 rules 1–3: macros over std.syntax; the sites in main.lyr, since a module's own macros
+// are not expanded in it (rule 4).
+import std.syntax { Expr, Stmt, Block, Ident, Literal, BinaryOp, UnaryOp };
+
+/// `twice!(e)` is `e + e`.
+pub macro twice(e: Expr): Expr {
+    return Expr.Binary(Box<Expr> { value = e }, BinaryOp.Add, Box<Expr> { value = e }, e.span());
+}
+
+/// `unless!(c) { ... }` is `if (!c) { ... }`: the trailing block as the last parameter.
+pub macro unless(c: Expr, body: Block): Stmt[] {
+    let not = Expr.Unary(UnaryOp.Not, Box<Expr> { value = c }, c.span());
+    return [Stmt.If(not, body, null, false, c.span())];
+}
+
+/// `named!(x)` is the text of the name.
+pub macro named(id: Ident): Expr {
+    return Expr.Literal(Literal.Str(id.name), id.span);
+}
