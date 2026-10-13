@@ -1,0 +1,9 @@
+//! check
+//! since: 5.0.0
+//! error: LYR-SEM0001
+// 06 §9 rule 1: the message is a lambda, not a string - 'assert(c, "...")' is the old form and a
+// type mismatch.
+fn main(): void {
+    let n = 1;
+    assert(n > 2, "n is small");
+}

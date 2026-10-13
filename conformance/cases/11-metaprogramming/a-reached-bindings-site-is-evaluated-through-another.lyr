@@ -1,0 +1,33 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 140
+// 11 §2 rule 10: a binding reached through another binding's initializer is reached - 'total' reads
+// 'table', so both sites are evaluated.
+import std.io { println };
+
+fn squares(n: int): int[] {
+    var out = [0] * n;
+    var i = 0;
+    while (i < n) {
+        out[i] = i * i;
+        i += 1;
+    }
+    return out;
+}
+
+let table = comptime squares(8);
+
+fn sumOf(xs: int[]): int {
+    var s = 0;
+    for (x in xs) {
+        s += x;
+    }
+    return s;
+}
+
+let total = comptime sumOf(table);
+
+fn main(): void {
+    println(f"{total}");
+}

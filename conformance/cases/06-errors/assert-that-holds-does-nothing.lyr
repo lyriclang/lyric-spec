@@ -6,7 +6,7 @@
 import std.io { println };
 
 fn main(): void {
-    assert(1 < 2, "never shown");
+    assert(1 < 2) { "never shown" };
     assert(true);
     println("after");
 }

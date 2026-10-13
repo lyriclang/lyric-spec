@@ -7,5 +7,5 @@
 // program's message behind them.
 fn main(): void {
     let n = 1;
-    assert(n > 2, "n is small");
+    assert(n > 2) { "n is small" };
 }

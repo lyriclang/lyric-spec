@@ -674,7 +674,9 @@ Functions as values, and the lambdas that make them
    `[static] inline [mut] fn`; `inline static` is refused (`LYR-PAR0032`). The call is a call as
    any other ([08 §1](08-expressions.md#1-calls)): its arguments are evaluated first, left to
    right, each once, its type arguments are bound as a generic call binds them, and the body's
-   `return` gives the call's value. It has no frame of its own and is nothing to point at.
+   `return` gives the call's value. It has no frame of its own and is nothing to point at, and
+   what runs in the body stands at the call: a panic in it names the call's line in the trace
+   (M9a S12b; `assert`'s does), a lambda set in place its own.
 2. A **lambda literal** at one of its function parameters is set in place where the body calls the
    parameter — no closure is made. Its `return` leaves the function that **wrote** it, through the
    body's `defer`s; its `break` and `continue` reach that function's loops and never the body's;
