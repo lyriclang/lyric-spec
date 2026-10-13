@@ -1,0 +1,18 @@
+import std.syntax { Expr, Block, Stmt };
+
+/// `retry!(n) { body }` runs the body up to n times; the quote's own `dead` is never used.
+pub macro retry(n: Expr, body: Block): Stmt[] {
+    return quote {
+        var attempts = 0;
+        let dead = 1;
+        loop {
+            attempts += 1;
+            try {
+                #{body}
+                break;
+            } catch (e) {
+                if (attempts >= #{n}) { throw e; }
+            }
+        }
+    };
+}

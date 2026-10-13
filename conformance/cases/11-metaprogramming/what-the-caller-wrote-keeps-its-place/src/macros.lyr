@@ -1,0 +1,5 @@
+import std.syntax { Expr };
+
+pub macro twice(e: Expr): Expr {
+    return quote { #{e} + #{e} };
+}

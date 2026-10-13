@@ -49,6 +49,14 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
 5. Without a file and without a manifest at or above the directory there is nothing to build
    (`LYR-CLI0004`). A package without `src/main.lyr` is a library: `build` checks it
    ([15 §2](15-project.md)), and `run` has no program there (`LYR-CLI0005`).
+6. **`lyric expand [<file.lyr>]`** prints the program's entry module after its macros' expansion
+   ([11 §5](11-metaprogramming.md)) to standard output: the results in the sites' places, the
+   rest as written, in the formatter's form — comments fall, as do the module's header line and
+   attributes. It chooses the program as `run` does (`--bin`, `-C`, the profile and the target,
+   which `comptime` reads), builds nothing, and refuses `--emit`. The program is resolved and
+   expanded, not checked: what the expansion needs is reported with exit 1 — a site of no macro,
+   a macro's own error —, and a type error after it is `build`'s to find. Without a site, the
+   module prints as it is.
 
 ### 1.2 Where the files go
 
