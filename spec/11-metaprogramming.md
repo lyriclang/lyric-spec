@@ -260,8 +260,8 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 
 A macro (design 09 A8, Q9; 08 Y12; 13 M9b) is a function over syntax that the compiler runs at a
 site's expansion, under the interpreter's rules of [§2](#2-comptime). This section is written
-slice by slice: the declaration and the sites here (M9b S2); `quote` and `#{…}` with hygiene,
-attribute macros, the diagnostics of expanded code and `lyric expand` follow (S3–S5).
+slice by slice: the declaration and the sites (M9b S2), `quote` and `#{…}` with hygiene (S3);
+attribute macros, the diagnostics of expanded code and `lyric expand` follow (S4, S5).
 
 1. **A macro is a function over syntax.** `macro name(params): Ret { … }` stands at the top of a
    module as a function does, `pub` and imported like one. Its parameters and its result are
@@ -280,8 +280,8 @@ attribute macros, the diagnostics of expanded code and `lyric expand` follow (S3
 3. **The result stands in place of the site.** An `Expr` replaces a site that is an expression;
    a `Stmt`, `Stmt[]` or `Block` replaces the statement a site is on its own (`name!(…) { … }` on
    its line ends at its block, as a call with a trailing block does) — elsewhere `LYR-SEM0188`.
-   What the result names is resolved where the site stands: a name the macro builds is the
-   caller's (until [S3's hygiene](#5-macros) for `quote`). A site inside an argument travels into
+   What the result names is resolved where the site stands: a name the macro builds with
+   `Ident.of` is the caller's; what a `quote` wrote follows rule 8. A site inside an argument travels into
    the macro as syntax (`Expr.Macro`) and is expanded in the round after the outer one.
 4. **Expansion is a phase per module, in import order.** A macro expands in the modules that
    import it, before the module is checked, and the module that declares it checks it first: a
@@ -293,3 +293,24 @@ attribute macros, the diagnostics of expanded code and `lyric expand` follow (S3
    budget, a panic `LYR-CT0001` at the site with the chain of calls. `error(at, msg)` of
    `std.syntax` is the macro's own error, `LYR-MAC0001`: the main span at the node the macro
    names (`e.span()`, an argument's as written), a note at the site's `!`.
+6. **`quote { … }` is a tree as a value.** Its content is syntax, checked nowhere: statements —
+   a last expression without `;` is the tail, and a quote of a lone tail is an `Expr` — or
+   declarations when the block opens with one. The quote's type is its content's kind, `Expr`,
+   `Stmt[]`, `Block`, `Decl` or `Decl[]`; where the content allows two, the type the place
+   expects decides (`Stmt[]` or `Block` for a lone tail, `Decl` for a lone declaration). It needs
+   `std.syntax` in the program (`LYR-SEM0194`).
+7. **`#{e}` splices a value into the content.** The expression is the function's code, run at the
+   quote, and its value — of a type of `std.syntax` — stands in the tree at the splice's place:
+   where an expression stands, an `Expr`, an `Ident` (as a name), a `Literal` or a `Block` (as a
+   block expression); where a statement stands on its own, `Stmt[]` and a `Block`'s statements
+   are spliced in, a `Stmt` stands, an expression, a name or a literal is the statement or the
+   tail; where a declaration's name stands (`fn #{name}()`), an `Ident`. Anything else at a
+   place is `LYR-SEM0193`. A splice statement ends at its `}`, as a block does.
+8. **A quote is hygienic.** Every name the content binds — a `let`, a parameter, a loop variable,
+   a `catch`'s binding, a pattern's names — is fresh at every evaluation of the quote (`Ident.fresh`):
+   the caller's names are never caught, and the names of two quotes are two. What `#{…}` sets in
+   is the caller's, as written. A free name of the content — a function, a type, a constant the
+   content names and does not bind — is the macro's module's: it is resolved there, with that
+   module's imports, wherever the tree ends up, though the site's module never imported it
+   (the `Ident`'s `from`, the `Named` type's). A name built with `Ident.of` is the site's, as in
+   rule 3.

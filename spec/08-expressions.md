@@ -127,7 +127,9 @@ left to right everywhere, the target before the value).
    | prefix | `!` `-` `~` `++` `--` `&` `try` `try?` `try!` `throw` `comptime` | right |
 
    A `!` directly behind a name, before `(` or `{`, is no postfix: it is a macro's site, `name!(args)`
-   ([11 §5](11-metaprogramming.md#5-macros)); `x! in xs` and `x!.f()` unwrap as ever.
+   ([11 §5](11-metaprogramming.md#5-macros)); `x! in xs` and `x!.f()` unwrap as ever. `quote { … }`
+   is a primary expression, a tree as a value, and `#{e}` inside it a splice (11 §5 rules 6, 7);
+   `#` stands nowhere else.
    | cast | `as` | left |
    | multiplicative | `*` `/` `%` `*%` | left |
    | additive | `+` `-` `+%` `-%` | left |

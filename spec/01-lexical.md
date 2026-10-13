@@ -38,7 +38,7 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
    interface extend fn mut let var if else while do for in is match break continue return yield
    defer try catch throw true false null this`, and the compile-time words `comptime inline quote
    macro` ([11 §2](11-metaprogramming.md); `inline` sets a function in place,
-   [03 §8.5](03-types.md#85-inline-functions); `macro` declares a macro and `name!` is its site, [11 §5](11-metaprogramming.md#5-macros); `quote` has no form yet). One where a name belongs is refused — the
+   [03 §8.5](03-types.md#85-inline-functions); `macro` declares a macro and `name!` is its site, `quote { … }` a tree as a value with `#{…}` splices, [11 §5](11-metaprogramming.md#5-macros)). One where a name belongs is refused — the
    parser's error for a missing name, `LYR-PAR0020` for a binding, with a note that it is a word —
    and read as that name, so nothing further is reported about it.
 3. The **contextual words** are names everywhere but at their place: `type` before a type alias,
