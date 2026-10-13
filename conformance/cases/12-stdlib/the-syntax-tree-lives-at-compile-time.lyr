@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-CG0002
+//! since: 5.0.0
+// 12 §Syntax rule 6 (M9b S1): the functions of `std.syntax` that read and write source run inside
+// `comptime` only. A call the program would make at run time is refused where it stands.
+import std.io { println };
+import std.syntax { parseExpr };
+
+fn main(): void {
+    let e = parseExpr("1 + 2");
+    println(e.toSource());
+}

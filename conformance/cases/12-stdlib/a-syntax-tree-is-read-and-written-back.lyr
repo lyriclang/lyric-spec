@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 1 + 2 * x
+//! | xs.map(x => x + 1)[0]?.name ?? "none"
+//! | 3
+//! | while (x < 3) {
+//! |     x++;
+//! | }
+//! | pub fn f(a: int): int {
+//! |     return a;
+//! | }
+//! | -1500.0 + 'c' + "q\"t\n" + 16u8
+//! since: 5.0.0
+// 12 §Syntax rules 1–3 (M9b S1): `parseExpr`, `parseStmts` and `parseDecls` read a text as the
+// compiler reads it, at compile time; `toSource` writes a node back as the formatter writes it —
+// a literal from its value, so `1.5e3` comes out as `1500.0` and `0x10u8` as `16u8`.
+import std.io { println };
+import std.syntax { parseExpr, parseStmts, parseDecls };
+
+let sum: string = comptime parseExpr("1 + 2 * x").toSource();
+
+fn main(): void {
+    println(sum);
+    println(comptime parseExpr("xs.map(x => x + 1)[0]?.name ?? \"none\"").toSource());
+    println(comptime parseStmts("let x = 1; if (x > 0) { x = x - 1; } x").length());
+    println(comptime parseStmts("let x = 1;\nwhile (x < 3) { x++; }")[1].toSource());
+    println(comptime parseDecls("pub fn f(a: int): int { return a; }")[0].toSource());
+    println(comptime parseExpr("-1.5e3 + 'c' + \"q\\\"t\\n\" + 0x10u8").toSource());
+}
