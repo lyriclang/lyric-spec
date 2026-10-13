@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 3 7
+//! | 40
+//! | 42
+//! | fn hello(): int {
+//! |     return 1;
+//! | }
+//! | 4
+//! since: 5.0.0
+// 11 §5 rules 6–8 (M9b S3): `retry!(3) { … }` from a quote whose trailing block is spliced as
+// statements — the quote's `attempts` and the caller's are two names; `twice!` through
+// `#{e} + #{e}`; `helped!` names `helper` of the macro's module, which this module does not
+// import; `fn #{name}()` builds a name; `#{stmts}` splices an array.
+import std.io { println };
+import app.macros { twice, retry, helped, getterSource, spliced };
+
+class Flaky :: [Error] {
+    n: int,
+
+    fn message(): string { return f"flaky {this.n}"; }
+}
+
+var calls = 0;
+
+fn flaky(): void throws Flaky {
+    calls += 1;
+    if (calls < 3) { throw Flaky { n = calls }; }
+}
+
+fn main(): void throws Flaky {
+    let attempts = 7;
+    retry!(3) {
+        flaky();
+    }
+    println(f"{calls} {attempts}");
+    println(twice!(20));
+    println(helped!());
+    println(comptime getterSource());
+    println(comptime spliced());
+}

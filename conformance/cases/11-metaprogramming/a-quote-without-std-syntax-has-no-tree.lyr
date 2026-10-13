@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0194
+//! since: 5.0.0
+// 11 §5 rule 6: a quote builds a tree of std.syntax; a program that does not reach the module
+// has no type for it.
+fn f(): int {
+    let q = quote { 1 + 1 };
+    return 1;
+}
+
+fn main(): void { }

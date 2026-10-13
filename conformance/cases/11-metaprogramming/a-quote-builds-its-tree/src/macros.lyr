@@ -1,0 +1,43 @@
+// 11 §5 rules 6–8: quotes with splices; the free name `helper` is this module's at the site.
+import std.syntax { Expr, Block, Ident, Stmt, Decl };
+
+pub macro twice(e: Expr): Expr {
+    return quote { #{e} + #{e} };
+}
+
+/// `retry!(n) { body }` runs the body up to n times: the counter and the catch are the quote's own.
+pub macro retry(n: Expr, body: Block): Stmt[] {
+    return quote {
+        var attempts = 0;
+        loop {
+            attempts += 1;
+            try {
+                #{body}
+                break;
+            } catch (e) {
+                if (attempts >= #{n}) { throw e; }
+            }
+        }
+    };
+}
+
+pub fn helper(): int { return 41; }
+
+/// `helped!()` names a function of this module, which the site's module never imports.
+pub macro helped(): Expr {
+    return quote { helper() + 1 };
+}
+
+/// A declaration with a name splice, written back as source.
+pub fn getterSource(): string {
+    let name = Ident.of("hello");
+    let d: Decl = quote { fn #{name}(): int { return 1; } };
+    return d.toSource();
+}
+
+/// `#{stmts}` splices an array of statements.
+pub fn spliced(): int {
+    let stmts: Stmt[] = quote { let a = 1; let b = 2; };
+    let all: Stmt[] = quote { let start = 0; #{stmts}; start + a + b };
+    return all.length();
+}
