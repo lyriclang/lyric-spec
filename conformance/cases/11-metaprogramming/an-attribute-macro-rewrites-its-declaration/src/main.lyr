@@ -1,0 +1,45 @@
+//! run
+//! stdout:
+//! | 1 2
+//! | 30
+//! | enter hello
+//! | hello
+//! since: 5.0.0
+// 11 §5 rules 9–10 (M9b S4): `@Builder struct P` adds `PBuilder` beside P; `@Retry(3) fn fetch`
+// wraps the body; `@Logged fn hello` prepends a statement whose `println` is the macro module's.
+// Every other declaration stays as written (T5).
+import std.io { println };
+import app.macros { Builder, Retry, Logged };
+
+@Builder
+struct P {
+    x: int,
+    y: int,
+}
+
+class Flaky :: [Error] {
+    n: int,
+
+    fn message(): string { return "flaky"; }
+}
+
+var calls = 0;
+
+@Retry(3)
+fn fetch(): int throws Flaky {
+    calls += 1;
+    if (calls < 3) { throw Flaky { n = calls }; }
+    return calls * 10;
+}
+
+@Logged
+fn hello(): void {
+    println("hello");
+}
+
+fn main(): void throws Flaky {
+    let p = PBuilder { }.set_x(1).set_y(2).build();
+    println(f"{p.x} {p.y}");
+    println(try fetch());
+    hello();
+}

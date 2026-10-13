@@ -1,0 +1,6 @@
+import std.syntax { Decl, StructDecl };
+
+/// `@Keep` takes a struct, and gives it back as it is.
+pub macro Keep(target: StructDecl): Decl {
+    return Decl.Struct(target);
+}
