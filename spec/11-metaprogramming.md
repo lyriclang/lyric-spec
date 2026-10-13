@@ -261,7 +261,8 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 A macro (design 09 A8, Q9; 08 Y12; 13 M9b) is a function over syntax that the compiler runs at a
 site's expansion, under the interpreter's rules of [§2](#2-comptime). This section is written
 slice by slice: the declaration and the sites (M9b S2), `quote` and `#{…}` with hygiene (S3),
-attribute macros (S4); the diagnostics of expanded code and `lyric expand` follow (S5).
+attribute macros (S4), the diagnostics of expanded code (S5); `lyric expand` is
+[14 §1.1](14-cli.md) rule 6.
 
 1. **A macro is a function over syntax.** `macro name(params): Ret { … }` stands at the top of a
    module as a function does, `pub` and imported like one. Its parameters and its result are
@@ -329,3 +330,14 @@ attribute macros (S4); the diagnostics of expanded code and `lyric expand` follo
    that does not carry it. A result that carries an attribute macro again is expanded in the
    round after (rule 4); the module that declares the macro cannot carry it (`LYR-SEM0189`). A
    `#{t}` in type position splices a `Type` (rule 7), which a declaration macro needs.
+11. **An error in expanded code is said at the site.** What a macro gives back stands in a file
+   of its own, synthesized from the result as source, whose origin is the site: an error the
+   check finds in it is reported at the site — `name!(…)`, or the `@Name` — with the message
+   prefixed `in the expansion of 'name!'`, a note `synthesized as:` with the line of the
+   expansion it stood on, and, where the result came from a `quote`, a note at the quote in the
+   macro's module. What the caller wrote keeps its place: an argument's node stands where it was
+   written, through the macro and back, so an error in it is the caller's, at its line, and a
+   warning in it stays; a warning in the macro's own code is nobody's and falls. A site that an
+   expansion holds chains: the notes of the inner expansion first, then the outer's, and the
+   message names both. One mistake is said once, though a macro spliced the argument twice.
+   `error(at, msg)` stays rule 5's; a panic in the macro stays [§2](#2-comptime)'s.

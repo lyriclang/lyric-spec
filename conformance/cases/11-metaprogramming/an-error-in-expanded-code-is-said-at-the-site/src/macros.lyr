@@ -1,0 +1,6 @@
+import std.syntax { Expr };
+
+/// `bad!(e)` adds a string to whatever it gets: wrong for an int, in the quote.
+pub macro bad(e: Expr): Expr {
+    return quote { #{e} + "s" };
+}

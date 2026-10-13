@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 11 §5 rule 11: the quote adds a string to an int; the error is the site's, with the line of
+// the expansion and the quote it came from as notes (the runner checks the code).
+import std.io { println };
+import app.macros { bad };
+
+fn main(): void {
+    println(bad!(1));
+}

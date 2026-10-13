@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0002
+//! since: 5.0.0
+// 11 §5 rule 11: the unknown name is the caller's, at its own place, and said once though the
+// macro spliced the argument twice.
+import std.io { println };
+import app.macros { twice };
+
+fn main(): void {
+    println(twice!(undefined));
+}
