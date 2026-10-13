@@ -140,6 +140,12 @@ the error paths — in the toolchain's own tests (`tests/Lyric5.Tests`, `Comptim
    none, is `LYR-CT0004`. It is the one thing code run at compile time reads from outside the
    program, and a build reads the file again when it changes. A `comptime` site, or what one calls,
    makes the call; a call the program would make at run time is refused (`LYR-CT0004`).
+10. **A module binding's site is evaluated where the program reaches the binding** (09 D8; M9a
+   S12b): reached from the program's own roots, from the sites outside bindings, and through
+   the initializer of a binding that is reached. A binding nobody reaches is not evaluated —
+   its site may reach the world or exceed the budget without an error, as unreached code may
+   panic —, and the program carries nothing of it. The standard library's tables cost a build
+   only where it reads them.
 
 
 ## 3. Target, profile, `@When`

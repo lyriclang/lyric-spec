@@ -1,0 +1,30 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 49 8
+// 11 §2 rule 10: a module binding's 'comptime' site is evaluated where the program reaches the
+// binding - one nobody reaches is not, so a site that would be refused there ('unused' reaches
+// the world) is no error of a program that never reads it.
+import std.io { println };
+import std.fs { readText };
+
+fn squares(n: int): int[] {
+    var out = [0] * n;
+    var i = 0;
+    while (i < n) {
+        out[i] = i * i;
+        i += 1;
+    }
+    return out;
+}
+
+fn fromTheWorld(): string {
+    return try! readText("nowhere.txt");
+}
+
+let table = comptime squares(8);
+let unused = comptime fromTheWorld();
+
+fn main(): void {
+    println(f"{table[7]} {table.length()}");
+}

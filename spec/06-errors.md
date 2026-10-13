@@ -271,8 +271,10 @@ written here yet is decided in the design documents, not here.
    the report and the codes are the runtime's ([13 §1.4](13-abi.md#14-panics-and-crashes)).
    Besides the runtime's checks, a program panics through four functions of `std.core`, in scope
    without an import: `panic(message): never` (`LYR-RT0008`), which says the message as it is
-   written; `assert(condition, message = "")`, which panics with `LYR-RT0011` when the condition
-   is false — the message an argument like any other, evaluated before the test;
+   written; `assert(condition) { message }`, which panics with `LYR-RT0011` when the condition
+   is false — the message a lambda, `assert(n > 2) { f"n = {n}" }`, built only then (design 10
+   "Review 2026-10-12" D1, Kotlin's form; a string in its place is a type mismatch,
+   `LYR-SEM0001`); `assert` is `inline`, so the check and the message stand at the call;
    `unreachable(message = ""): never` (`LYR-RT0012`); and `todo(message = ""): never`
    (`LYR-RT0013`). The last three say their **word first** (the review's M5-14) — `assertion
    failed`, `unreachable`, `not implemented` — and the message behind it where one is given:
