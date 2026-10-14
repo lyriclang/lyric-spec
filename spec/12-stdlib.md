@@ -580,6 +580,43 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
    nanoseconds; a space for the `T`, a missing offset, a date or a time that does not exist is
    `Invalid`, an empty text `Empty`. `Date.parse` reads the full-date alone.
 
+**The zones** (design 10 Q1; M10 S11). `Zone` is UTC, a fixed offset, or a zone of the database:
+
+1. **Where a zone comes from.** `Zone.utc`; `Zone.fixed(offset)` (whole minutes under a day);
+   `Zone.load(name)` reads the IANA name's TZif file (RFC 8536, versions 1 to 4: the 64-bit block
+   of a version 2+ file, the footer's rule for the years beyond the last transition, leap seconds
+   read over) from the system's database — `TZDIR` or `/usr/share/zoneinfo` —, `TimeError {
+   kind = .NoZoneData }` where the system has none (Windows), `.NoSuchZone` where it has no such
+   zone or the name is none (empty, absolute, with `..`); `Zone.fromTzif(name, bytes)` and
+   `Zone.fromPosix(name, tz)` (a POSIX TZ string, `CET-1CEST,M3.5.0,M10.5.0/3`, `EST5EDT`,
+   `<+0330>-3:30`; the offsets west-positive as POSIX writes them; daylight time without an
+   offset one hour ahead, without a rule the US rule) take data of one's own; `Zone.local()` is
+   `TZ` where set (a name of the database, else a POSIX string), else `/etc/localtime`, else UTC.
+   `name()`, `isFixed()`, `offsetAt(instant)`, `infoAt(instant)` — `ZoneInfo { offset, isDst,
+   abbreviation }` —; `offset()` of a zone of the database is its offset now. Two zones are
+   equal by name and kind.
+2. **A moment in a zone.** `instant.toDateTime(zone)` takes the offset in force at the moment.
+   `DateTime.of(date, time, zone)` resolves a local time: once, it is that moment; in the hour
+   the clocks fall back, it is the earlier of the two moments; in the hour they spring forward,
+   it moves forward by the gap (`02:30` on the morning of the change is `03:30` at the new
+   offset). A `DateTime` keeps its zone: `zone()`, `zoneInfo()`, `withZone(zone)` the same moment
+   there, `plusDays(n)` the same local time `n` days on at the offset then in force (a day
+   across the change is 23 or 25 hours). Two date-times are equal by date, time and offset; their
+   zones' names are not compared.
+3. **Patterns** (UTS #35, English). `dateTime.format(pattern)`: `y` the year (`yy` its last two
+   digits, more `y` padded to the count), `M` the month (`MM` padded, `MMM` `Jan`, `MMMM`
+   `January`, `MMMMM` `J`), `d` the day, `H` the hour of 24, `h` of 12, `m`, `s`, `S…` the
+   fraction to as many digits, `a` `AM`/`PM`, `E` to `EEE` `Tue`, `EEEE` `Tuesday`, `EEEEE` `T`,
+   `Z` to `ZZZ` `+0100`, `ZZZZ` `GMT+01:00` (`GMT` for none), `ZZZZZ` `+01:00` (`Z` for none),
+   `X`/`XX`/`XXX` `+01`/`+0100`/`+01:00` with `Z` for none, `x`/`xx`/`xxx` the same without;
+   text in `'…'` as it is, `''` a quote, what is no letter as it is; a letter the pattern does
+   not know or a quote not closed is `TimeError`. `DateTime.parseWith(pattern, text, zone =
+   Zone.utc)` reads the same fields back: a number takes the digits it finds (a padded field at
+   least its width), a name is matched without case, a fraction as many digits as there are,
+   `yy` as 1970–2069; what the pattern does not name is 1970-01-01 00:00:00 UTC; an offset field
+   makes a fixed zone, without one the zone given resolves the local time; what does not fit is
+   `ParseError { kind = .Invalid }`.
+
 ## Paths
 
 `std.path` ([design 10 O6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6a): a path is a string, and there is no

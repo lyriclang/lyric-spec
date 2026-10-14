@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | Europe/Berlin false
+//! | 2026-03-29T01:59:59+01:00 2026-03-29T03:00:00+02:00
+//! | 2000-01-01T01:00:00+01:00 2030-07-01T02:00:00+02:00 CEST
+//! | not TZif: the magic bytes are missing
+//! | true
+//! since: 5.0.0
+// 12 §Time, the zones, rule 1: a zone from the bytes of a TZif file - its transitions, the first
+// standard type before them, the footer's rule beyond; what is no TZif; the system's database
+// where there is one agrees (or says it has none).
+import std.io { println };
+import std.encoding { Hex };
+import std.time { Zone, Instant, TimeError, TimeErrorKind };
+
+fn at(zone: Zone, text: string): string throws Error {
+    return (try Instant.parse(text)).toDateTime(zone).show();
+}
+
+fn main(): void throws Error {
+    let bytes = try Hex.decode("545a69663200000000000000000000000000000000000000000000000000000000000002000000020000000969c879906add5490010000000e10000000001c200104434554004345535400545a6966320000000000000000000000000000000000000000000000000000000000000200000002000000090000000069c87990000000006add5490010000000e10000000001c2001044345540043455354000a4345542d31434553542c4d332e352e302c4d31302e352e302f330a");
+    let zone = try Zone.fromTzif("Europe/Berlin", bytes[..]);
+    println(f"{zone.name()} {zone.isFixed()}");
+    println(f"{try at(zone, "2026-03-29T00:59:59Z")} {try at(zone, "2026-03-29T01:00:00Z")}");
+    println(f"{try at(zone, "2000-01-01T00:00:00Z")} {try at(zone, "2030-07-01T00:00:00Z")} {(try Instant.parse("2030-07-01T00:00:00Z")).toDateTime(zone).zoneInfo().abbreviation}");
+    try {
+        let _ = try Zone.fromTzif("bad", "hello".toBytes()[..]);
+    } catch (e: TimeError) {
+        println(e.message());
+    }
+    try {
+        let system = try Zone.load("Europe/Berlin");
+        println(try at(system, "2026-03-29T01:00:00Z") == try at(zone, "2026-03-29T01:00:00Z"));
+    } catch (e: TimeError) {
+        println(e.kind == TimeErrorKind.NoZoneData);
+    }
+}

@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | 2026-03-29T01:59:59+01:00 CET
+//! | 2026-03-29T03:00:00+02:00 CEST
+//! | 2026-03-29T03:30:00+02:00 gap
+//! | 2026-10-25T02:30:00+02:00 overlap
+//! | 2026-03-29T12:00:00+02:00 23
+//! | 2040-03-11T03:00:00-04:00 EDT
+//! | 2040-11-04T01:00:00-05:00 EST
+//! since: 5.0.0
+// 12 §Time, the zones, rules 1, 2: a POSIX rule zone at the change of its clocks, the gap forward,
+// the overlap earlier, a day across the change, New York by the US rule far ahead.
+import std.io { println };
+import std.time { Zone, Instant, DateTime, Date, Time };
+
+fn at(zone: Zone, text: string): string throws Error {
+    let dt = (try Instant.parse(text)).toDateTime(zone);
+    return f"{dt} {dt.zoneInfo().abbreviation}";
+}
+
+fn main(): void throws Error {
+    let cet = try Zone.fromPosix("CET", "CET-1CEST,M3.5.0,M10.5.0/3");
+    println(try at(cet, "2026-03-29T00:59:59Z"));
+    println(try at(cet, "2026-03-29T01:00:00Z"));
+    println(f"{DateTime.of(try Date.of(2026, 3, 29), try Time.of(2, 30, 0), cet)} gap");
+    println(f"{DateTime.of(try Date.of(2026, 10, 25), try Time.of(2, 30, 0), cet)} overlap");
+    let friday = DateTime.of(try Date.of(2026, 3, 28), try Time.of(12, 0, 0), cet);
+    let saturday = friday.plusDays(1);
+    println(f"{saturday} {saturday.toInstant().since(friday.toInstant()).secs() / 3600}");
+    let ny = try Zone.fromPosix("America/New_York", "EST5EDT,M3.2.0,M11.1.0");
+    println(try at(ny, "2040-03-11T07:00:00Z"));
+    println(try at(ny, "2040-11-04T06:00:00Z"));
+}
