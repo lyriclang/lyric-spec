@@ -135,7 +135,11 @@ defaults over `Self`, what describes the value:
 What one computes with numbers is `std.math`'s (design 10 B5 Z2, "Review 2026-10-12"): free
 functions, generic over the tower, so that a reader finds `sqrt(x)` where every language puts
 it and the type keeps what describes it. The elementary functions over `Float` are computed in
-`float` by C's library and rounded once to a `float32`:
+`float` and rounded once to a `float32`. `sqrt`, `floor`, `ceil`, `round` and `trunc` are exact;
+the rest — `cbrt`, `exp`, the logarithms, `pow`, the trigonometric and hyperbolic functions,
+`hypot` — are one implementation's (musl's), which the runtime carries on every platform: a
+program computes the same bits wherever it runs, and a `comptime` site computes the bits the
+program would ([11 §2](11-metaprogramming.md)):
 
 - `floor(x)`, `ceil(x)`, `round(x)` — a half away from zero —, `trunc(x)`;
 - `sqrt(x)`, `cbrt(x)`, `exp(x)`, `ln(x)`, `log2(x)`, `log10(x)`; `sin`, `cos`, `tan`, `asin`,
