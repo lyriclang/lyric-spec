@@ -1,0 +1,148 @@
+//! run
+//! stdout:
+//! | POST got 7 bytes: [payload]
+//! | PUT got 13 bytes: [streamed body]
+//! | 302 Found /hello
+//! | 200 OK hello, world
+//! | GET got 0 bytes: []
+//! | redirect: more than 2 redirects
+//! since: 5.0.0
+// 12 §HTTP rules 2, 3: a body with its length and one in chunks; redirects not followed unless
+// asked, a 303 after a POST as a GET, too many refused.
+import std.io { println, IoError, ByteBuffer };
+import std.net { IpAddr, SocketAddr, TcpListener, TcpStream };
+import std.task { spawn };
+import std.http { Client, ClientOptions, Request, Response, Method, HttpError };
+import std.uri { Uri };
+
+fn answer(method: string, path: string, id: int): string {
+    if (path == "/hello") {
+        return "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nhello, world";
+    }
+    if (path == "/redirect") {
+        return "HTTP/1.1 302 Found\r\nLocation: /hello\r\nContent-Length: 0\r\n\r\n";
+    }
+    if (path == "/see-other") {
+        return "HTTP/1.1 303 See Other\r\nLocation: /echo\r\nContent-Length: 0\r\n\r\n";
+    }
+    if (path == "/loop") {
+        return "HTTP/1.1 301 Moved Permanently\r\nLocation: /loop\r\nContent-Length: 0\r\n\r\n";
+    }
+    let body = bodies.get(id) ?? "";
+    let text = f"{method} got {body.length()} bytes: [{body}]";
+    return f"HTTP/1.1 200 OK\r\nContent-Length: {text.length()}\r\n\r\n{text}";
+}
+
+let bodies: Map<int, string> = Map<int, string>.new();
+
+/// The head and the body (Content-Length or chunked) of a request.
+fn readHead(conn: TcpStream): ?(string, string) throws Error {
+    let buf = ByteBuffer.new();
+    let piece: uint8[] = [0u8] * 1024;
+    var headEnd = -1;
+    while (headEnd < 0) {
+        let n = try conn.read(piece[..]);
+        if (n == 0) {
+            return null;
+        }
+        try buf.write(piece[0..n]);
+        let all = buf.toArray();
+        var i = 3;
+        while (i < all.length()) {
+            if (all[i - 3] == 13u8 && all[i - 2] == 10u8 && all[i - 1] == 13u8 && all[i] == 10u8) {
+                headEnd = i + 1;
+                break;
+            }
+            i = i + 1;
+        }
+    }
+    var all = buf.toArray();
+    let head = string.fromUtf8Lossy(all[0..headEnd]);
+    let lower = head.toLower();
+    var body = "";
+    if (let (_, rest) = lower.splitOnce("content-length: ")) {
+        let want = try int.parse(rest.splitOnce("\r\n")!.0);
+        while (all.length() - headEnd < want) {
+            let n = try conn.read(piece[..]);
+            if (n == 0) { break; }
+            try buf.write(piece[0..n]);
+            all = buf.toArray();
+        }
+        body = string.fromUtf8Lossy(all[headEnd..headEnd + want]);
+    } else if (lower.contains("transfer-encoding: chunked")) {
+        while (!string.fromUtf8Lossy(all[headEnd..all.length()]).contains("0\r\n\r\n")) {
+            let n = try conn.read(piece[..]);
+            if (n == 0) { break; }
+            try buf.write(piece[0..n]);
+            all = buf.toArray();
+        }
+        let raw = all[headEnd..all.length()];
+        let out = ByteBuffer.new();
+        var i = 0;
+        while (i < raw.length()) {
+            var size = 0;
+            while (i < raw.length() && raw[i] != 13u8) {
+                size = size * 16 + (((raw[i] as uint32) as char).toDigit(16) ?? 0);
+                i = i + 1;
+            }
+            i = i + 2;
+            if (size == 0) { break; }
+            try out.write(raw[i..i + size]);
+            i = i + size + 2;
+        }
+        body = string.fromUtf8Lossy(out.toArray()[..]);
+    }
+    return (head, body);
+}
+
+fn serve(listener: TcpListener): void throws Error {
+    var conns = 0;
+    loop {
+        var accepted: ?TcpStream = null;
+        try {
+            accepted = listener.accept();
+        } catch (_: IoError) {
+            return;
+        }
+        var conn = accepted!;
+        conns += 1;
+        let id = conns;
+        let _ = spawn(() => {
+            while (let (head, body) = try readHead(conn)) {
+                bodies[id] = body;
+                let line = head.splitOnce("\r\n")!.0.toString();
+                let parts = line.splitN(' ', 3).toArray();
+                try conn.writeAll(answer(parts[0].toString(), parts[1].toString(), id).toBytes()[..]);
+            }
+            try conn.close();
+        });
+    }
+}
+
+fn main(): void throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try listener.localAddr();
+    let _ = spawn(() => { try serve(listener); });
+    let base = f"http://127.0.0.1:{at.port}";
+    let u = (p: string) => try! Uri.parse(base + p);
+    var client = Client.new();
+    println(try (try client.send(Request.post(u("/post"), "payload".toBytes()[..], "text/plain"))).text());
+    var streamed = Request { method = Method.Put, uri = u("/echo") };
+    let src = ByteBuffer.new();
+    try src.write("streamed body".toBytes()[..]);
+    streamed.body = src;
+    println(try (try client.send(streamed)).text());
+    let r = try client.get(u("/redirect"));
+    println(f"{r.status.show()} {r.headers.get("Location") ?? "-"}");
+    var following = Client.new(ClientOptions { followRedirects = true, maxRedirects = 2 });
+    println(f"{(try following.get(u("/redirect"))).status.show()} {try (try following.get(u("/redirect"))).text()}");
+    println(try (try following.send(Request.post(u("/see-other"), "x".toBytes()[..]))).text());
+    try {
+        let _ = try following.get(u("/loop"));
+    } catch (e: HttpError) {
+        println(e.message());
+    }
+    client.close();
+    following.close();
+    try listener.close();
+}

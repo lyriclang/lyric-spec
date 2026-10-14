@@ -1,0 +1,124 @@
+//! run
+//! stdout:
+//! | unsupported: the scheme 'ftp'
+//! | unsupported: https needs a transport
+//! | unsupported: the URI names no host
+//! | not HTTP: the status line is 'HTTP/9 x'
+//! | not HTTP: 'many' is no Content-Length
+//! | io: the body ended 41 bytes early
+//! | timed out
+//! | 404 Not Found
+//! since: 5.0.0
+// 12 §HTTP rule 3: a scheme that is none, a peer that does not speak HTTP, a body that ends
+// early, a timeout; the client goes on after each.
+import std.io { println, IoError, ByteBuffer };
+import std.net { IpAddr, SocketAddr, TcpListener, TcpStream };
+import std.task { spawn, sleep, TimedOut };
+import std.time { Duration };
+import std.http { Client, ClientOptions, Request, Response, HttpError };
+import std.uri { Uri };
+
+fn answer(method: string, path: string, id: int): string {
+    if (path == "/garbage") {
+        return "HTTP/9 x\r\n\r\n";
+    }
+    if (path == "/badlength") {
+        return "HTTP/1.1 200 OK\r\nContent-Length: many\r\n\r\n";
+    }
+    if (path == "/short") {
+        return "HTTP/1.1 200 OK\r\nContent-Length: 50\r\nConnection: close\r\n\r\nonly this";
+    }
+    if (path == "/slow") {
+        try! sleep(Duration.ofMillis(400));
+        return "HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nslow";
+    }
+    return f"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nX-Conn: {id}\r\n\r\n";
+}
+
+/// A server on a loopback port: one task per connection, each request answered by its path, the
+/// connection's number in X-Conn.
+fn readHead(conn: TcpStream): ?string throws Error {
+    let buf = ByteBuffer.new();
+    let piece: uint8[] = [0u8] * 1024;
+    while (true) {
+        let n = try conn.read(piece[..]);
+        if (n == 0) {
+            return null;
+        }
+        try buf.write(piece[0..n]);
+        let all = buf.toArray();
+        var i = 3;
+        while (i < all.length()) {
+            if (all[i - 3] == 13u8 && all[i - 2] == 10u8 && all[i - 1] == 13u8 && all[i] == 10u8) {
+                return string.fromUtf8Lossy(all[0..i + 1]);
+            }
+            i = i + 1;
+        }
+    }
+}
+
+fn serve(listener: TcpListener): void throws Error {
+    var conns = 0;
+    loop {
+        var accepted: ?TcpStream = null;
+        try {
+            accepted = listener.accept();
+        } catch (_: IoError) {
+            return;
+        }
+        var conn = accepted!;
+        conns += 1;
+        let id = conns;
+        let _ = spawn(() => {
+            while (let head = try readHead(conn)) {
+                let line = head.splitOnce("\r\n")!.0.toString();
+                let parts = line.splitN(' ', 3).toArray();
+                let method = parts[0].toString();
+                let path = parts[1].toString();
+                let out = answer(method, path, id);
+                try conn.writeAll(out.toBytes()[..]);
+                if (path == "/short" || path == "/garbage" || path == "/badlength") {
+                    break;
+                }
+            }
+            try conn.close();
+        });
+    }
+}
+
+fn start(): (TcpListener, string) throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try listener.localAddr();
+    let _ = spawn(() => { try serve(listener); });
+    return (listener, f"http://127.0.0.1:{at.port}");
+}
+
+fn main(): void throws Error {
+    let (listener, base) = try start();
+    var client = Client.new();
+    for (bad in ["ftp://x/", "https://x/", "http:///p"]) {
+        try {
+            let _ = try client.get(try Uri.parse(bad));
+        } catch (e: HttpError) {
+            println(e.message());
+        }
+    }
+    for (path in ["/garbage", "/badlength", "/short"]) {
+        try {
+            let _ = try (try client.get(try Uri.parse(base + path))).text();
+        } catch (e: HttpError) {
+            println(e.message());
+        } catch (e: IoError) {
+            println(f"io: {e.detail}");
+        }
+    }
+    var hasty = Client.new(ClientOptions { timeout = Duration.ofMillis(100) });
+    try {
+        let _ = try hasty.get(try Uri.parse(base + "/slow"));
+    } catch (_: TimedOut) {
+        println("timed out");
+    }
+    println((try client.get(try Uri.parse(base + "/none"))).status.show());
+    client.close();
+    try listener.close();
+}
