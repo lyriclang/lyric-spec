@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | lit 1000 255 3 w pear
+//! | 1979-05-27T07:32:00Z 1979-05-27 07:32:00.5
+//! | first second
+//! | the key 'a' is defined twice at 2:6
+//! | the table 't' is defined twice at 2:4
+//! | a leading zero is not allowed at 1:7
+//! | ',' or ']' was expected in the array at 1:8
+//! | no such date: there is no month 13 at 1:15
+//! since: 5.0.0
+// 12 §TOML rules 3, 4: comments, literal strings, underscores and prefixes in integers, arrays over
+// lines, inline tables with dotted keys, date-times, arrays of tables, a multi-line string's
+// line-ending backslash; what is refused is refused with line and column.
+import std.io { println };
+import std.toml;
+import std.toml { TomlError };
+
+fn refused(text: string): string {
+    try {
+        let _ = toml.parse(text);
+        return "accepted";
+    } catch (e: TomlError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let doc = try toml.parse("# a comment\ntitle = 'lit'\nn = 1_000\nh = 0xff\n[a.b]\nc = [1, 2,\n  3, # trailing\n]\nd = { x = 1, y.z = \"w\" }\ndt = 1979-05-27T07:32:00Z\nld = 1979-05-27\nlt = 07:32:00.5\nml = \"\"\"\nfirst \\\n   second\"\"\"\n[[fruit]]\nname = \"apple\"\n[[fruit]]\nname = \"pear\"\n");
+    println(f"{doc.path("title")?.asString() ?? "-"} {doc.path("n")?.asInt() ?? -1} {doc.path("h")?.asInt() ?? -1} {doc.path("a.b.c[2]")?.asInt() ?? -1} {doc.path("a.b.d.y.z")?.asString() ?? "-"} {doc.path("fruit[1].name")?.asString() ?? "-"}");
+    println(f"{doc.path("a.b.dt")?.asDatetime()?.show() ?? "-"} {doc.path("a.b.ld")?.asDatetime()?.show() ?? "-"} {doc.path("a.b.lt")?.asDatetime()?.show() ?? "-"}");
+    println(doc.path("a.b.ml")?.asString() ?? "-");
+    println(refused("a = 1\na = 2"));
+    println(refused("[t]\n[t]"));
+    println(refused("x = 01"));
+    println(refused("x = [1 2]"));
+    println(refused("x = 1979-13-01"));
+}

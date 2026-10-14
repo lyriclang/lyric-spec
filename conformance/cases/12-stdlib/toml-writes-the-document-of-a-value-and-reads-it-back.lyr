@@ -1,0 +1,54 @@
+//! run
+//! stdout:
+//! | title = "Example"
+//! | debug = true
+//! |
+//! | [[servers]]
+//! | host = "a"
+//! | port = 1
+//! |
+//! | [[servers]]
+//! | host = "b"
+//! | port = 2
+//! |
+//! | [owner]
+//! | name = "ada"
+//! |
+//! | true
+//! | a TOML document is a table: encode a struct or a map
+//! since: 5.0.0
+// 12 §TOML rules 1, 2: a struct as a document - plain pairs, then the sub-tables and the arrays
+// of tables under their headers -, a null field left out, read back; a value that is no table
+// has no document.
+import std.io { println };
+import std.toml;
+import std.codec { Codable, EncodeError };
+
+struct Server :: [Codable, Equatable] {
+    host: string,
+    port: int,
+}
+
+struct Owner :: [Codable, Equatable] {
+    name: string,
+    bio: ?string,
+}
+
+struct Config :: [Codable, Equatable] {
+    title: string,
+    debug: bool,
+    servers: Server[],
+    owner: Owner,
+}
+
+fn main(): void throws Error {
+    let c = Config { title = "Example", debug = true, servers = [Server { host = "a", port = 1 }, Server { host = "b", port = 2 }], owner = Owner { name = "ada", bio = null } };
+    let text = try toml.encode(c);
+    println(text);
+    println((try toml.decode<Config>(text)) == c);
+    try {
+        let _ = toml.encode(3);
+    } catch (e: EncodeError) {
+        println(e.message());
+    }
+}

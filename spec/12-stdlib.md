@@ -7,7 +7,7 @@
 
 ## Scope
 
-What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`), serialization as a pair (`std.codec`), JSON (`std.json`).
+What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`), serialization as a pair (`std.codec`), JSON (`std.json`), TOML (`std.toml`).
 
 ## 1. The converters
 
@@ -1151,6 +1151,52 @@ conformances of the core types, and `Value`, the tree of the forms that any form
    widened)/`asString`/`asBool`/`asArray`/`asObject`/`isNull` ask. A `JsonValue` is `Codable`
    itself: it writes its forms into any format and reads any value's forms from one; `v.read<T>()`
    reads a value out of the tree, `v.reader()` is the decoder to pass on.
+
+## TOML
+
+**`std.toml`** (design 10 B10 E8; M10 S4) is TOML 1.0: an encoder and a decoder of
+[§Codecs](#codecs)' model, and `TomlValue`, the tree. The toolchain's manifest reader is not
+it (15 §1): `std.toml` is for programs.
+
+1. **The document of a value.** `toml.encode(v)` writes any `Encode` value whose form is a table
+   — a struct, a map — as a document; another form is an `EncodeError`. A table's plain pairs
+   come first, then its sub-tables under `[a.b]` headers (a table that holds sub-tables alone
+   gets no header of its own), then its arrays of tables under `[[a.b]]`; a sequence is an
+   array, a map a table whose keys are strings — a number's digits for a number; another key an
+   `EncodeError` —, bytes an array of integers, a unit variant its name, a variant with a
+   payload a table of one key (inline inside an array), a float `inf`, `-inf` or `nan` where it
+   is no number. A key is bare where it is `[A-Za-z0-9_-]+`, quoted else; a string is a basic
+   string with the quote, the backslash, the control characters escaped. A `null` field is left
+   out of its table (TOML has no null); a `null` elsewhere is an `EncodeError`. `toml.encodeTo(v,
+   &w)` writes into a `Writer`.
+2. **The value of a document.** `toml.decode<T>(text)` reads any `Decode` value out of a document;
+   a text that is no TOML is `TomlError { line, column, detail }`, a value the type cannot read a
+   `DecodeError` of [§Codecs](#codecs) rule 5 whose path names the structs, the keys and the
+   indices — `Config.servers[0].Server.port`. A struct reads from a table by its keys, a map from
+   a table (a key as the number it spells where the key type is one), a sequence from an array,
+   a variant from a string or a table of one key, bytes from an array of integers 0..255; a
+   string reads from a string or from a date-time's text, so an `Instant` reads from an offset
+   date-time; an absent key is absent (an optional reads `null`). A float read as an integer is
+   `Invalid`. `toml.decodeFrom<T>(&r)` reads a `Reader` to its end first.
+3. **TOML 1.0** (toml.io/en/v1.0.0): comments; bare, quoted and dotted keys; basic strings with
+   their escapes (`\b \t \n \f \r \" \\ \uXXXX \UXXXXXXXX`), literal strings, both
+   multi-line (the first newline dropped, a line-ending backslash dropping the whitespace up to
+   the next character); integers decimal, `0x`, `0o`, `0b` with underscores and without a leading
+   zero; floats with fraction, exponent, `inf`, `nan`; booleans; the four date-times (offset,
+   local, date, time, with a fraction and `T` or a space); arrays over lines with a trailing
+   comma; inline tables on one line; `[table]` and `[[array]]` headers. Refused with line and
+   column: a key defined twice, a table defined twice, a header for a table a dotted key made, a
+   dotted key into a table a header or an inline table made, a header where a value stands, a
+   header for an array of tables and the reverse, a trailing comma in an inline table, a leading
+   zero, a bare underscore, a signed prefixed integer, a date that is none.
+4. **`TomlValue`** is the tree: `String`, `Int`, `Float`, `Bool`, `Datetime(TomlDatetime)`,
+   `Array(List)`, `Table(TomlTable)`; **`TomlTable`** keeps its keys in the order written
+   (`get`, `set`, `keys`, `pairs`, `length`); **`TomlDatetime`** is `Offset(DateTime)`,
+   `Local(Date, Time)`, `LocalDate(Date)` or `LocalTime(Time)`, its text TOML's. `Equatable` by
+   content, `Display` and `Debug` a table's document or a value's text. `toml.parse(text)` reads a
+   document into a table; `v["key"]`, `v.at(i)`, `v.path("a.b[0]")`, `asString`/`asInt`/`asFloat`
+   (an `Int` widened)/`asBool`/`asDatetime`/`asArray`/`asTable` ask. A `TomlValue` is `Codable`
+   itself; `v.read<T>()` reads a value out of the tree, `v.reader()` is the decoder to pass on.
 
 ## Syntax
 
