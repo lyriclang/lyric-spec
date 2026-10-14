@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 4613303445314885481 4612367379483415830 13829223199258964887 4609047870845172685 4612488097114038738 4613937818241073152
+//! | true true true true true true
+//! since: 5.0.0
+// 12 §std.math (M10 S12; design 09 D7): the elementary functions that no standard pins to the bit
+// are one implementation's on every platform — these are the bits of exp(1), ln(10), sin(1e22),
+// pow(2, 0.5), atan2(1, -1) and cbrt(27) — and a comptime site computes the bits the program does.
+import std.io { println };
+import std.math { exp, ln, sin, pow, atan2, cbrt };
+
+fn main(): void {
+    println(f"{exp(1.0).toBits()} {ln(10.0).toBits()} {sin(1.0e22).toBits()} {pow(2.0, 0.5).toBits()} {atan2(1.0, -1.0).toBits()} {cbrt(27.0).toBits()}");
+    let ce = comptime exp(1.0);
+    let cl = comptime ln(10.0);
+    let cs = comptime sin(1.0e22);
+    let cp = comptime pow(2.0, 0.5);
+    let ca = comptime atan2(1.0, -1.0);
+    let cc = comptime cbrt(27.0);
+    println(f"{ce.toBits() == exp(1.0).toBits()} {cl.toBits() == ln(10.0).toBits()} {cs.toBits() == sin(1.0e22).toBits()} {cp.toBits() == pow(2.0, 0.5).toBits()} {ca.toBits() == atan2(1.0, -1.0).toBits()} {cc.toBits() == cbrt(27.0).toBits()}");
+}
