@@ -992,6 +992,50 @@ so `["a\"b", "c"]` shows as it is written.
 negative `n` panics with `LYR-RT0007`, as `[x] * n` does; `n * s` is refused, the one order of
 [03 §5.1](03-types.md).
 
+## Regular expressions
+
+**`std.regex`** (design 10 S8, B1; M10 S6) is RE2's syntax matched in linear time: a pattern
+is a tree, the tree a Thompson NFA, the NFA run by a Pike VM that carries the captures with
+each thread — every character of the text meets each instruction at most once, so the time is
+the text's length times the pattern's, whatever the pattern. What makes a backtracker's time
+exponential is not here: no backreferences, no lookaround.
+
+1. **The syntax** (`Regex.new(pattern)`): literals; `.` (no newline unless `s`); classes
+   `[a-z]`, `[^…]` (a `]` first and a `-` last are themselves), `\d \w \s` and their capitals
+   (ASCII, as RE2: `0-9`, `0-9A-Za-z_`, `\t \n \v \f \r` and the space), `[:alpha:]` and the
+   other POSIX names inside a class (`[:^alpha:]` negated), `\pL`, `\p{Lu}`, `\PL` over the
+   Unicode categories by their one- or two-letter names (no scripts); groups `(…)`, `(?:…)`,
+   `(?P<name>…)` and `(?<name>…)`; alternation `|`; the repetitions `* + ? {n} {n,} {n,m}`, each
+   lazy with a `?` after it, a count at most 1000, a `{` that is no count a literal; the anchors
+   `^` and `$` (the text's ends; the lines' under `m`), `\A`, `\z`, `\b`, `\B` (ASCII word
+   characters); the escapes `\n \t \r \f \v \a \0`, `\xHH`, `\x{H…}`, and `\` before a
+   punctuation mark; the flags `i`, `m`, `s` as `(?i)` for the rest of the group, `(?i:…)` for
+   a group, `(?-i)` off. A pattern outside this is `RegexError { offset, detail }`: a group or
+   class not closed, an unmatched `)`, a repetition of a repetition or of nothing, a range
+   reversed, an escape that is none (a backreference `\1` among them), a flag that is none (a
+   lookaround `(?=` among them), a name twice, a category or POSIX class that is none, a code
+   point beyond U+10FFFF, a repetition beyond 1000.
+2. **The match.** Alternation is leftmost-first as in Perl and RE2: of the matches starting at
+   the leftmost position the first alternative's wins, a greedy repetition takes the most and a
+   lazy one the least, so `a|ab` finds `a` in `ab` and `ab|a` finds `ab`. A `Match` is `start`
+   and `end` (byte offsets, as a string's indices are; a character beyond ASCII is one character
+   to `.` and to a class), `value` (its text, also its `show()`), `group(i)` and `span(i)` for
+   the groups (0 the whole; `null` for one that took no part or does not exist — the last
+   iteration's capture stands), `named(name)`, `groups()`. The empty pattern matches the empty
+   text at every position.
+3. **The verbs.** `isMatch(text)`; `find(text)` the leftmost match with its groups, `findFrom(text,
+   at)` from a byte offset; `findAll(text)` the matches in turn, left to right, none overlapping,
+   an empty match right after a match skipped (as Go does); `replace(text, template)` the first
+   and `replaceAll` every match replaced by the template — `$1`, `${1}`, `${name}` the groups, `$0`
+   the whole, `$$` a `$`, an unmatched group empty, a `$` before anything else itself;
+   `split(text)` the pieces between the matches (Go's `Split` with no limit: an empty text is
+   one empty piece, a match at the start adds no empty piece before it). `pattern()`,
+   `groupCount()`, `groupNames()`.
+4. **The time is linear.** `(a*)*b` over a hundred thousand `a`, `(x+x+)+y` over twenty
+   thousand `x`, `(a?){30}a{30}` over thirty `a`: each ends in the time of one pass. *(A lazy
+   DFA for `isMatch` and `find` without captures is a door the plan opens at Messpunkt 4; a
+   `comptime Regex.new` is one of the macro line.)*
+
 ## Collections
 
 `std.collections` holds the containers (design 10 B7); none is safe across threads (C11). An

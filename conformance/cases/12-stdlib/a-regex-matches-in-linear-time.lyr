@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | false
+//! | false
+//! | true
+//! | done
+//! since: 5.0.0
+// 12 §Regular expressions rule 4: the patterns that make a backtracker's time exponential end in
+// one pass each (the runner's timeout is the clock).
+import std.io { println };
+import std.regex { Regex };
+
+fn main(): void throws Error {
+    println((try Regex.new("(a*)*b")).isMatch("a" * 100000));
+    println((try Regex.new("(x+x+)+y")).isMatch("x" * 20000));
+    println((try Regex.new("(a?){30}a{30}")).isMatch("a" * 30));
+    println("done");
+}

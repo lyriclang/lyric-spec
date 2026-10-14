@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | [abc] [123] [ab] [é] [BC] [ABC] [b] [foo] [a\.c]
+//! | the group is not closed at offset 0
+//! | a repetition of a repetition: group it at offset 0
+//! | '\1' is no escape at offset 4
+//! | '=' is no flag: 'i', 'm' and 's' are at offset 2
+//! | 'Greek' is no Unicode category: L, Lu, N, Nd, P, S, Z, M, C and their kinds are at offset 0
+//! | a repetition beyond 1000 at offset 7
+//! since: 5.0.0
+// 12 §Regular expressions rule 1: classes, POSIX names, Unicode categories, flags, anchors,
+// escapes; what is outside the syntax is refused with its offset - a backreference and a
+// lookaround among it.
+import std.io { println };
+import std.regex { Regex, RegexError };
+
+fn first(p: string, s: string): string throws Error {
+    if (let m = (try Regex.new(p)).find(s)) {
+        return f"[{m.value}]";
+    }
+    return "null";
+}
+
+fn refused(p: string): string {
+    try {
+        let _ = Regex.new(p);
+        return "accepted";
+    } catch (e: RegexError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    println(f"{try first("[a-c]+", "xabcy")} {try first("\\d+", "ab123")} {try first("[[:alpha:]]+", "12ab")} {try first("\\pL+", "1 é2")} {try first("\\p{Lu}+", "aBCd")} {try first("(?i)abc", "xABCx")} {try first("(?m)^b", "a\nb")} {try first("\\bfoo\\b", "a foo b")} {try first("a\\\\.c", "a\\.c")}");
+    println(refused("("));
+    println(refused("a**"));
+    println(refused("(a)\\1"));
+    println(refused("(?=a)"));
+    println(refused("\\p{Greek}"));
+    println(refused("a{1001}"));
+}
