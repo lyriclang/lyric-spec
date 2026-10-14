@@ -1,0 +1,75 @@
+//! run
+//! stdout:
+//! | Value.Struct("User", [("id", Value.Int(7)), ("name", Value.String("ada")), ("mail", Value.Null), ("tags", Value.Seq([Value.String("x"), Value.String("y")]))])
+//! | 7 ada - 2
+//! | Value.Variant("Shape", "Circle", 1, Value.Int(3))
+//! | true
+//! | Value.Map([(Value.String("a"), Value.Int(1))])
+//! | Value.Seq([Value.Int(1), Value.String("two")])
+//! since: 5.0.0
+// 12 §Codecs rules 1, 3, 4, 6: a conformance writes with the layer over the model, the core types
+// conform, and `Value` is the tree any format could write — read back into the value.
+import std.io { println };
+import std.codec { Codable, Encoder, Decoder, Value, DecodeError, EncodeError };
+import std.collections { Map };
+
+struct User :: [Codable] {
+    id: int,
+    name: string,
+    mail: ?string,
+    tags: string[],
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        try e.beginStruct("User", 4);
+        try e.field("id", this.id);
+        try e.field("name", this.name);
+        try e.field("mail", this.mail);
+        try e.field("tags", this.tags);
+        try e.endStruct();
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): User throws DecodeError {
+        try d.beginStruct("User", ["id", "name", "mail", "tags"]);
+        let u = User {
+            id = try d.field<int>("id"),
+            name = try d.field<string>("name"),
+            mail = try d.optional<string>("mail"),
+            tags = try d.field<string[]>("tags"),
+        };
+        try d.endStruct(false);
+        return u;
+    }
+}
+
+enum Shape :: [Codable, Equatable] {
+    Dot,
+    Circle(int);
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        match (this) {
+            .Dot => { try e.encodeUnitVariant("Shape", "Dot", 0); },
+            .Circle(r) => { try e.encodeVariant("Shape", "Circle", 1, r); },
+        }
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): Shape throws DecodeError {
+        let i = try d.beginVariant("Shape", ["Dot", "Circle"]);
+        let s = if (i == 0) Shape.Dot else Shape.Circle(try int.decode(&d));
+        try d.endVariant();
+        return s;
+    }
+}
+
+fn main(): void throws Error {
+    let u = User { id = 7, name = "ada", mail = null, tags = ["x", "y"] };
+    let v = try Value.of(u);
+    println(v.debug());
+    let back = try v.read<User>();
+    println(f"{back.id} {back.name} {back.mail ?? "-"} {back.tags.length()}");
+    println((try Value.of(Shape.Circle(3))).debug());
+    println((try Value.of(Shape.Dot).read<Shape>()) == Shape.Dot);
+    let m = Map<string, int>.new();
+    m["a"] = 1;
+    println((try Value.of(m)).debug());
+    println((try Value.of((1, "two"))).debug());
+}

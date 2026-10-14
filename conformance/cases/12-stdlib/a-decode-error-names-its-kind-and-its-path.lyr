@@ -1,0 +1,91 @@
+//! run
+//! stdout:
+//! | missing: field 'name' (at User)
+//! | invalid: 300 does not fit int8
+//! | type mismatch: expected an int, got a string
+//! | unknown variant: 'Blob' of Shape
+//! | unknown field: field 'more' (at Strict)
+//! | 1
+//! since: 5.0.0
+// 12 §Codecs rules 3, 5: a missing field is Missing with its path, an integer that does not fit
+// Invalid, another form TypeMismatch, a variant the enum has not UnknownVariant; an unknown field
+// passes unless the struct ends with endStruct(true).
+import std.io { println };
+import std.codec { Codable, Encoder, Decoder, Value, DecodeError, EncodeError };
+import std.collections { List };
+
+struct User :: [Codable] {
+    id: int,
+    name: string,
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        try e.beginStruct("User", 2);
+        try e.field("id", this.id);
+        try e.field("name", this.name);
+        try e.endStruct();
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): User throws DecodeError {
+        try d.beginStruct("User", ["id", "name"]);
+        let u = User { id = try d.field<int>("id"), name = try d.field<string>("name") };
+        try d.endStruct(false);
+        return u;
+    }
+}
+
+struct Strict :: [Codable] {
+    id: int,
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        try e.beginStruct("Strict", 1);
+        try e.field("id", this.id);
+        try e.endStruct();
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): Strict throws DecodeError {
+        try d.beginStruct("Strict", ["id"]);
+        let s = Strict { id = try d.field<int>("id") };
+        try d.endStruct(true);
+        return s;
+    }
+}
+
+enum Shape :: [Codable] {
+    Dot,
+    Circle(int);
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        match (this) {
+            .Dot => { try e.encodeUnitVariant("Shape", "Dot", 0); },
+            .Circle(r) => { try e.encodeVariant("Shape", "Circle", 1, r); },
+        }
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): Shape throws DecodeError {
+        let i = try d.beginVariant("Shape", ["Dot", "Circle"]);
+        let s = if (i == 0) Shape.Dot else Shape.Circle(try int.decode(&d));
+        try d.endVariant();
+        return s;
+    }
+}
+
+fn said(f: fn() -> void throws DecodeError): string {
+    try {
+        f();
+        return "nothing thrown";
+    } catch (e: DecodeError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let missing = Value.Struct("User", List.of([("id", Value.Int(1))]));
+    println(said(() => { let _ = try missing.read<User>(); }));
+    println(said(() => { let _ = try Value.Int(300).read<int8>(); }));
+    println(said(() => { let _ = try Value.String("x").read<int>(); }));
+    println(said(() => { let _ = try Value.Variant("Shape", "Blob", 9, null).read<Shape>(); }));
+    let extra = Value.Struct("Strict", List.of([("id", Value.Int(1)), ("more", Value.Int(2))]));
+    println(said(() => { let _ = try extra.read<Strict>(); }));
+    let lenient = Value.Struct("User", List.of([("id", Value.Int(1)), ("name", Value.String("n")), ("more", Value.Int(2))]));
+    println((try lenient.read<User>()).id);
+}

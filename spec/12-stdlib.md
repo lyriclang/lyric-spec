@@ -7,7 +7,7 @@
 
 ## Scope
 
-What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`).
+What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`), serialization as a pair (`std.codec`).
 
 ## 1. The converters
 
@@ -1047,6 +1047,59 @@ a module under `src/` or `tests/`, which `lyric bench` runs ([14 §4](14-cli.md)
 - **`blackBox(x)`** of `std.core` hands `x` back through a point the compiler cannot see
   through: what computed it is not dropped as unused, and the value that comes out is not known
   in advance.
+
+## Codecs
+
+**`std.codec`** (design 10 B10 E1–E2, E5–E6; M10 S1) is serialization as a pair: `Encode`
+writes a value into an encoder, `Decode` reads one out of a decoder, `Codable` is both. A
+format — `std.json`, `std.toml` — is an encoder and a decoder of its own; `std.codec` holds the
+pair, the model a format implements, the layer a conformance writes with, the errors, the
+conformances of the core types, and `Value`, the tree of the forms that any format could write.
+
+1. **The pair.** `Encode { fn encode<E :: [Encoder]>(&e: E): void throws EncodeError; }`,
+   `Decode { static fn decode<D :: [Decoder]>(&d: D): Self throws DecodeError; }`, `Codable ::
+   [Encode, Decode]`. A conformance is generic over the format's type, and the format is passed by
+   reference, as a hasher is ([§Hashing](#hashing)): the format keeps its state, and a `mut`
+   method of the layer hands `&this` on.
+2. **The model has ten forms**, and a format implements them as primitives: `encodeNull`,
+   `encodeBool`, `encodeInt`, `encodeUint`, `encodeFloat`, `encodeString`, `encodeBytes`, and
+   `beginSeq(n)`/`endSeq()`, `beginMap(n)`/`beginKey()`/`endMap()`, `beginStruct(name, n)`/
+   `beginField(name)`/`endStruct()`, `beginVariant(enum, name, index, hasPayload)`/`endVariant()`;
+   the decoder mirrors them, pull-based: `isNull()` peeks, `decodeInt()` and the others take,
+   `beginSeq(): ?int` answers the count where the format knows it and `seqHasNext()` whether an
+   element follows, `beginMap()`/`mapHasNext()` the same with a key and a value read in turn,
+   `beginStruct(name, fields)` positions on a struct and `structField(name)` on a field — `false`
+   where the data has none —, `endStruct(denyUnknown)` leaves it, `beginVariant(enum, variants)`
+   answers the index of the variant the data holds and `variantHasPayload()` whether one follows.
+   `path()` says where the format stands, for an error. The sequence of calls is the contract: a
+   format that cannot hold a form throws.
+3. **The layer** is what a conformance writes with, on the format itself: `e.field(name, v)`,
+   `e.element(v)`, `e.entry(k, v)`, `e.encodeUnitVariant(…)`, `e.encodeVariant(…, payload)`;
+   `d.field<T>(name)` reads a field the data must have — a missing one is `Missing` —,
+   `d.optional<T>(name)` one it may lack (`null` then, as for a `null` in the data), `d.next<T>()`
+   the next element or `null` at the end, `d.nextKey<K>()` and `d.value<V>()` a map's entry,
+   `d.decodeNullable<T>()` a value that may be null.
+4. **The core types conform.** The integers (a narrower one through `int`, refused as `Invalid`
+   where it does not fit; a `uint` the same), `float` and `float32`, `bool`, `string`, `char` (a
+   string of one character), `Instant` (its RFC 3339 text), `?T` (`null` or the value), `T[]`,
+   `Slice<T>` (writes alone), `List<T>`, `Deque<T>`, `Set<T>` (a sequence, in the set's order),
+   `Map<K, V>` (a map; the keys go to the format as values, which holds them or not), the tuples
+   of two and three (a sequence of that length, `Missing` where shorter). A `uint8[]` is a
+   sequence of numbers; **`Bytes { value }`** is the byte form the format holds its own way
+   (design 10 E6: Base64 in JSON). A format reads a number as the form asked for: an `int`
+   where a `uint` fits, a `float` from an integer.
+5. **The errors.** `DecodeError { kind, path, detail }` with the kinds `Missing`,
+   `TypeMismatch`, `Invalid`, `UnknownField`, `UnknownVariant`; its message is the kind, the
+   detail and the path — `missing: field 'name' (at User)`, `type mismatch: expected an int, got a
+   string (at Team.[].User)`. `EncodeError { path, detail, inner }`. A format never panics on
+   its input ([design 10 B3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)).
+   An unknown field passes unless the conformance ends its struct with `endStruct(true)`.
+6. **`Value`** is the tree: `Null`, `Bool`, `Int`, `Uint`, `Float`, `String`, `Bytes`, `Seq`, `Map`
+   (entries in the order written), `Struct(name, fields)`, `Variant(enum, name, index,
+   payload)`; `Equatable` and `Debug`. `Value.of(v)` is the tree a value writes, `tree.read<T>()`
+   the value a tree reads as, `Value.encoder()` and `tree.decoder()` the two formats to pass on.
+   A `Value` is itself `Codable`: it writes its forms into any format, and reads the scalars and
+   the two anonymous containers from one — a struct or a variant it cannot read without its name.
 
 ## Syntax
 
