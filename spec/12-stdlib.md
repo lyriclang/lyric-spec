@@ -839,6 +839,51 @@ component, `Query` the pairs of a query. WHATWG's URL is a browser's leniency an
    writes `key=value` joined by `&`, each encoded for `Pair` (a space is `%20`). `uri.queryPairs()`
    is the query parsed, empty where there is none.
 
+## HTTP
+
+**`std.http`** (design 10 Q6; M10 S7 the client, S8 the server) is HTTP/1.1 over `Reader` and
+`Writer`: the message types and a client that keeps its connections. No TLS of its own (a
+package's transport brings it), no HTTP/2, no cookies.
+
+1. **The message types.** `Method` (`Get`, `Head`, `Post`, `Put`, `Delete`, `Patch`, `Options`,
+   `Other(token)`; `Method.of("GET")`, its `show()` the token); `Status { code, reason }` with
+   `Status.of(code)` giving RFC 9110's phrase, `isSuccess`, `isRedirect`, `isClientError`,
+   `isServerError`, `isInformational`, its `show()` `404 Not Found`; **`Headers`**, the fields in
+   the order written, names compared without case: `get` (the first value), `all`, `has`, `set`
+   (this value alone), `add`, `remove`, `length`, `pairs`. **`Request { method, uri, headers,
+   body: ?Reader, contentLength: ?int }`**, `Request.get(uri)`, `Request.post(uri, bytes,
+   contentType)`, `setBody(bytes)`, `setText(text)`. **`Response { status, headers, body }`** with
+   `bytes()`, `text()` (UTF-8, a wrong byte U+FFFD) and `json<T>()` (`std.json` into a `Decode`
+   type); `body` is a `Reader` that ends where the message does.
+2. **The client.** `Client.new(options)` with `ClientOptions { followRedirects = false,
+   maxRedirects = 10, timeout = null, keepAlive = true, userAgent = "lyric5", transport = null
+   }`; `client.get(uri)` and `client.send(request)` give the response once its head is read.
+   The request goes out as RFC 9112 writes it: the request target is the path (`/` for none) and
+   the query, `Host` the authority (the port where it is not the scheme's), `User-Agent` where
+   none is set, a body with `Content-Length` where its length is known and in chunks
+   (`Transfer-Encoding: chunked`) else, `Content-Length: 0` for a POST, PUT or PATCH without one.
+   The response's body is framed by the head: none for HEAD, 204 and 304; `Transfer-Encoding:
+   chunked` (extensions ignored, trailers read away); `Content-Length`; up to the connection's
+   close else (HTTP/1.0 among them). An interim response (100, 103) is read away. A connection is
+   kept for the next request to the same scheme, host and port once the body has been read to its
+   end, unless a side said `Connection: close`, the body ran to the close, or `keepAlive` is off —
+   a body left unread gives the connection up; an idle connection the peer closed meanwhile is
+   tried again on a new one (a request without a body). `client.close()` drops the idle ones.
+3. **Redirects, time, transport.** With `followRedirects`, a 301, 302, 303, 307 or 308 with a
+   `Location` is followed, the target resolved against the request's URI (§URIs), up to
+   `maxRedirects` — more is `HttpError { kind = .Redirects }`; a 303, and a 301 or 302 after a
+   POST, go on as a GET without the body; a 307 or 308 keep the method, and with a body are
+   refused (it cannot be sent again). `timeout` spans the whole exchange — the connection, the
+   request, the head — and ends it with `TimedOut`, the connection closed. `transport` is a
+   `fn(host, port) -> Stream` (`Stream :: [Reader, Writer, Closeable]`; a `TcpStream` is one)
+   that makes the connection; `http` connects over TCP where it is `null`, `https` needs one.
+   What is refused: a scheme that is neither (`HttpError { kind = .Unsupported }`), a URI
+   without a host, a status line or header line that is not HTTP/1.1's (`.Protocol`: a version
+   that is none, a `Content-Length` that is no number, a folded line, more than 256 lines or a
+   line beyond 64 KiB), a body that ends early or a chunk that is none (`IoError`,
+   `UnexpectedEof` or `InvalidData`). The errors of the connection are `IoError`, a cancel
+   `Cancelled`. `http.get(text)` is a GET with the defaults and redirects followed.
+
 ## Processes
 
 `std.process` ([design 10 O8, Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S12a): a child started, its

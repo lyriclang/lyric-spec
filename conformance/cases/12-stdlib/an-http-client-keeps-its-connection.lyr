@@ -1,0 +1,115 @@
+//! run
+//! stdout:
+//! | 200 OK text/plain [hello, world] conn 1
+//! | 200 OK [hello, world] conn 1
+//! | 200 OK [chunk one, chunk two] conn 1
+//! | 200 OK [] conn 1 head
+//! | 200 OK [bye] conn 1
+//! | 200 OK [hello, world] conn 2
+//! | 200 OK [hello, world] conn 3
+//! since: 5.0.0
+// 12 §HTTP rules 1, 2: a GET, its head and its body; the connection kept for the next request
+// (chunked and HEAD among them) until a side says close or a body stays unread.
+import std.io { println, IoError, ByteBuffer };
+import std.net { IpAddr, SocketAddr, TcpListener, TcpStream };
+import std.task { spawn };
+import std.http { Client, Request, Response, Method };
+import std.uri { Uri };
+
+fn answer(method: string, path: string, id: int): string {
+    if (path == "/hello" && method == "HEAD") {
+        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 12\r\nX-Conn: {id}\r\n\r\n";
+    }
+    if (path == "/hello") {
+        return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 12\r\nX-Conn: {id}\r\n\r\nhello, world";
+    }
+    if (path == "/chunked") {
+        return f"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nX-Conn: {id}\r\n\r\na;ext=1\r\nchunk one,\r\nA\r\n chunk two\r\n0\r\nX-Trailer: t\r\n\r\n";
+    }
+    if (path == "/close") {
+        return f"HTTP/1.1 200 OK\r\nConnection: close\r\nX-Conn: {id}\r\n\r\nbye";
+    }
+    return f"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nX-Conn: {id}\r\n\r\n";
+}
+
+/// A server on a loopback port: one task per connection, each request answered by its path, the
+/// connection's number in X-Conn.
+fn readHead(conn: TcpStream): ?string throws Error {
+    let buf = ByteBuffer.new();
+    let piece: uint8[] = [0u8] * 1024;
+    while (true) {
+        let n = try conn.read(piece[..]);
+        if (n == 0) {
+            return null;
+        }
+        try buf.write(piece[0..n]);
+        let all = buf.toArray();
+        var i = 3;
+        while (i < all.length()) {
+            if (all[i - 3] == 13u8 && all[i - 2] == 10u8 && all[i - 1] == 13u8 && all[i] == 10u8) {
+                return string.fromUtf8Lossy(all[0..i + 1]);
+            }
+            i = i + 1;
+        }
+    }
+}
+
+fn serve(listener: TcpListener): void throws Error {
+    var conns = 0;
+    loop {
+        var accepted: ?TcpStream = null;
+        try {
+            accepted = listener.accept();
+        } catch (_: IoError) {
+            return;
+        }
+        var conn = accepted!;
+        conns += 1;
+        let id = conns;
+        let _ = spawn(() => {
+            while (let head = try readHead(conn)) {
+                let line = head.splitOnce("\r\n")!.0.toString();
+                let parts = line.splitN(' ', 3).toArray();
+                let method = parts[0].toString();
+                let path = parts[1].toString();
+                let out = answer(method, path, id);
+                try conn.writeAll(out.toBytes()[..]);
+                if (path == "/close") {
+                    break;
+                }
+            }
+            try conn.close();
+        });
+    }
+}
+
+fn start(): (TcpListener, string) throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try listener.localAddr();
+    let _ = spawn(() => { try serve(listener); });
+    return (listener, f"http://127.0.0.1:{at.port}");
+}
+
+fn show(r: Response, note: string = ""): string throws Error {
+    let text = try r.text();
+    let tail = if (note.isEmpty()) "" else f" {note}";
+    return f"{r.status.show()} [{text}] conn {r.headers.get("X-Conn") ?? "-"}{tail}";
+}
+
+fn main(): void throws Error {
+    let (listener, base) = try start();
+    let u = (p: string) => try! Uri.parse(base + p);
+    var client = Client.new();
+    let first = try client.get(u("/hello"));
+    println(f"{first.status.show()} {first.headers.get("content-type") ?? "-"} [{try first.text()}] conn {first.headers.get("X-Conn") ?? "-"}");
+    println(try show(client.get(u("/hello"))));
+    println(try show(client.get(u("/chunked"))));
+    println(try show(client.send(Request { method = Method.Head, uri = u("/hello") }), "head"));
+    println(try show(client.get(u("/close"))));
+    println(try show(client.get(u("/hello"))));
+    let unread = try client.get(u("/hello"));
+    let _ = unread;
+    println(try show(client.get(u("/hello"))));
+    client.close();
+    try listener.close();
+}
