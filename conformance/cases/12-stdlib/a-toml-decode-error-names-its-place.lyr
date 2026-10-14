@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | type mismatch: expected an integer, got a string (at Config.servers[0].Server.port)
+//! | missing: field 'servers' (at Config)
+//! since: 5.0.0
+// 12 §TOML rule 2: a decode error's path names the structs, the keys and the indices; an absent key
+// the type needs is Missing.
+import std.io { println };
+import std.toml;
+import std.codec { Codable, DecodeError };
+
+struct Server :: [Codable] {
+    host: string,
+    port: int,
+}
+
+struct Config :: [Codable] {
+    title: string,
+    servers: Server[],
+}
+
+fn main(): void {
+    try {
+        let _ = toml.decode<Config>("title = \"t\"\n[[servers]]\nhost = \"h\"\nport = \"no\"");
+    } catch (e: DecodeError) {
+        println(e.message());
+    } catch (_: Error) {
+        println("no toml");
+    }
+    try {
+        let _ = toml.decode<Config>("title = \"t\"");
+    } catch (e: DecodeError) {
+        println(e.message());
+    } catch (_: Error) {
+        println("no toml");
+    }
+}
