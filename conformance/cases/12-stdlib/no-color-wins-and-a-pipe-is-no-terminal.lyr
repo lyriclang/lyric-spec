@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | false [x]
+//! | false [x]
+//! | true [[1mx[0m]
+//! | false
+//! | out false size null
+//! since: 5.0.0
+// 12 §The terminal rules 1, 3: NO_COLOR over FORCE_COLOR, an empty NO_COLOR nothing, TERM=dumb
+// off, and under the runner the standard output is a pipe: no terminal, no size.
+import std.io { println };
+import std.os { setEnv };
+import std.term { Style, StdStream, isTerminal, size, colorsEnabled };
+
+fn plain(s: string): string {
+    return s.replace("\u{1b}", "");
+}
+
+fn show(): void {
+    println(f"{colorsEnabled()} [{plain(Style { bold = true }.apply("x"))}]");
+}
+
+fn main(): void {
+    setEnv("TERM", "xterm");
+    setEnv("NO_COLOR", "1");
+    setEnv("FORCE_COLOR", "1");
+    show();
+    setEnv("FORCE_COLOR", "");
+    show();
+    setEnv("NO_COLOR", "");
+    setEnv("FORCE_COLOR", "1");
+    setEnv("TERM", "dumb");
+    show();
+    setEnv("FORCE_COLOR", "");
+    println(colorsEnabled());
+    let sz = size();
+    println(f"out {isTerminal(StdStream.Stdout)} size {if (sz == null) "null" else "some"}");
+}

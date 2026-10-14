@@ -725,6 +725,35 @@ error.
    such signal (Windows), the write is dropped and the program goes on; where a host embeds the
    program ([13](13-abi.md)), the host's signals decide.
 
+## The terminal
+
+**`std.term`** (design 10 Q7; M10 S10) is the terminal as ECMA-48 writes it: questions about the
+standard streams, styles as SGR sequences, the cursor and the screen as sequences to print. No
+raw mode (a door).
+
+1. **The questions.** `isTerminal(stream)` for `StdStream.Stdin`, `Stdout` or `Stderr`: whether
+   the stream is a terminal (a pipe, a file or nothing is none). `size()`: the columns and rows
+   of the terminal on the standard output, `null` where it is none. Under Windows the runtime
+   switches a console to virtual-terminal processing when it first writes to it, so the same
+   bytes mean the same there.
+2. **Styles.** `Style { fg: ?Color, bg: ?Color, bold, dim, italic, underline, inverse, strike }`
+   with `Color` the 16 (`Black` … `White`, `BrightBlack` … `BrightWhite`), `Index(n)` of the 256
+   and `Rgb(r, g, b)` (each clamped to 0..255). `style.sgr()` is the sequence that turns it on —
+   `ESC [` the parameters in the order bold 1, dim 2, italic 3, underline 4, inverse 7, strike 9,
+   the foreground (30–37, 90–97, `38;5;n`, `38;2;r;g;b`), the background (40–47, 100–107,
+   `48;5;n`, `48;2;r;g;b`), `m` — empty for a plain style; `reset()` is `ESC [0m`. `style.apply
+   (text)` is the text between the sequence and the reset where styles are on, the text itself
+   else; `style.force(text)` wraps whatever the terminal is; a plain style changes nothing.
+3. **When styles are on.** `colorsEnabled()`: `NO_COLOR` set and not empty says no; else
+   `FORCE_COLOR` set and not empty says yes; else `TERM=dumb` says no; else the standard output
+   being a terminal decides. An empty value counts as not set (`std.os` sets, it does not unset).
+4. **The cursor and the screen**, each the sequence to print: `cursorUp(n = 1)` `ESC [nA`,
+   `cursorDown` `B`, `cursorForward` `C`, `cursorBack` `D`, `cursorNextLine(n)` `E`,
+   `cursorTo(row, column)` `ESC [row;columnH` (both from 1), `cursorHide()` `ESC [?25l`,
+   `cursorShow()` `ESC [?25h`, `cursorSave()` `ESC [s`, `cursorRestore()` `ESC [u`,
+   `clearScreen()` `ESC [2J ESC [H`, `clearToEnd()` `ESC [0J`, `eraseLine()` `ESC [2K` and a
+   carriage return, `eraseToEndOfLine()` `ESC [0K`.
+
 ## The system
 
 `std.os` ([design 10 Q9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S9): the program's arguments, its environment, its
