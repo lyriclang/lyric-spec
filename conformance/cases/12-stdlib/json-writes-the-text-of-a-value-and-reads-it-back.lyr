@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | {"user_id":7,"name":"ada \"q\"","mail":null,"tags":["x","y"]}
+//! | true
+//! | {"Rect":[2,5]}
+//! | "Dot"
+//! | {"3":"three"}
+//! | {
+//! |   "a": [
+//! |     1,
+//! |     2.5
+//! |   ]
+//! | }
+//! since: 5.0.0
+// 12 §JSON rules 1, 2: a struct as an object of its wire names, a variant as its name or an object
+// of one member, a map's keys as strings, the pretty form.
+import std.io { println };
+import std.json;
+import std.json { JsonOptions };
+import std.codec { Codable, Codec };
+import std.collections { Map };
+
+@Codec { rename = .SnakeCase }
+struct User :: [Codable, Equatable] {
+    userId: int,
+    name: string,
+    mail: ?string,
+    tags: string[],
+}
+
+enum Shape :: [Codable] {
+    Dot,
+    Rect(int, int),
+}
+
+fn main(): void throws Error {
+    let u = User { userId = 7, name = "ada \"q\"", mail = null, tags = ["x", "y"] };
+    let text = try json.encode(u);
+    println(text);
+    println((try json.decode<User>(text)) == u);
+    println(try json.encode(Shape.Rect(2, 5)));
+    println(try json.encode(Shape.Dot));
+    let m = Map<int, string>.new();
+    m[3] = "three";
+    println(try json.encode(m));
+    println(try json.encode(try json.parse("{\"a\": [1, 2.5]}"), JsonOptions { pretty = true }));
+}

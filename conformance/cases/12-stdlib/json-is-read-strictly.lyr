@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | the text ends where a value was expected at 1:1
+//! | a value was expected at 1:4
+//! | text follows the value at 1:2
+//! | a digit was expected at 1:3
+//! | an unknown escape at 1:4
+//! | a lone surrogate is no character at 1:8
+//! | a control character stands in a string unescaped at 1:5
+//! | ',' or ']' was expected at 2:1
+//! | accepted
+//! since: 5.0.0
+// 12 §JSON rule 3: what RFC 8259 does not allow is refused with the line and the column.
+import std.io { println };
+import std.json;
+import std.json { JsonError };
+
+fn refused(text: string): string {
+    try {
+        let _ = json.parse(text);
+        return "accepted";
+    } catch (e: JsonError) {
+        return e.message();
+    }
+}
+
+fn main(): void {
+    let bads: string[] = ["", "[1,]", "01", "1.", "\"\\x\"", "\"\\ud800\"", "\"tab\there\"", "[1\n2]", "  [ ]  "];
+    for (bad in bads) {
+        println(refused(bad));
+    }
+}
