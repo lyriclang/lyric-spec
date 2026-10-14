@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 4 8 x=12 x 12 -
+//! | x 12
+//! | x=12 y=345
+//! | x:12, y:345
+//! | [x=12], y=345
+//! | ["x", "y", "", "z"]
+//! | a|ab:[a] ab|a:[ab] a+?:[a] <.+?>:[<a>]
+//! since: 5.0.0
+// 12 §Regular expressions rules 2, 3: a match's place and groups, named groups, findAll, the
+// replacement template, split; leftmost-first alternation, greedy and lazy repetition.
+import std.io { println };
+import std.regex { Regex };
+
+fn first(p: string, s: string): string throws Error {
+    if (let m = (try Regex.new(p)).find(s)) {
+        return f"{p}:[{m.value}]";
+    }
+    return f"{p}:null";
+}
+
+fn main(): void throws Error {
+    let r = try Regex.new("(?P<k>\\w+)=(\\d+)");
+    let m = r.find("ab, x=12, y=345")!;
+    println(f"{m.start} {m.end} {m.value} {m.group(1) ?? "-"} {m.group(2) ?? "-"} {m.group(3) ?? "-"}");
+    println(f"{m.named("k") ?? "-"} {m.named("v") ?? m.group(2) ?? "-"}");
+    var it = r.findAll("ab, x=12, y=345");
+    var seen = "";
+    while (let each = it.next()) {
+        seen = seen + (if (seen.isEmpty()) "" else " ") + each.value;
+    }
+    println(seen);
+    println(r.replaceAll("x=12, y=345", "${k}:$2"));
+    println(r.replace("x=12, y=345", "[$0]"));
+    println((try Regex.new(",")).split("x,y,,z"));
+    println(f"{try first("a|ab", "ab")} {try first("ab|a", "ab")} {try first("a+?", "aaa")} {try first("<.+?>", "<a><b>")}");
+}
