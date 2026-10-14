@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9
+//! | true
+//! | aQ aWo aWpr
+//! | the text ends inside a group of four at offset 5
+//! | bits past the last byte at offset 1
+//! | no Base64 digit at offset 2
+//! since: 5.0.0
+// 12 §Encodings rule 2: Base64url without padding as RFC 7515 writes it (the header of appendix
+// A.1), as strict as the padded form.
+import std.io { println };
+import std.encoding { Base64Url, EncodingError };
+
+fn said(text: string): string {
+    try {
+        let _ = Base64Url.decodeUnpadded(text);
+        return "decoded";
+    } catch (e: EncodingError) {
+        return e.message();
+    }
+}
+
+fn main(): void throws Error {
+    let header = "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}".toBytes();
+    let text = Base64Url.encodeUnpadded(header[..]);
+    println(text);
+    println((try Base64Url.decodeUnpadded(text)) == header);
+    println(f"{Base64Url.encodeUnpadded([105u8])} {Base64Url.encodeUnpadded([105u8, 106u8])} {Base64Url.encodeUnpadded([105u8, 106u8, 107u8])}");
+    println(said("abcde"));
+    println(said("aR"));
+    println(said("aQ=="));
+}
