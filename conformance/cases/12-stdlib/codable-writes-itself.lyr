@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | Value.Struct("Plain", [("id", Value.Int(7)), ("name", Value.String("ada")), ("mail", Value.Null), ("tags", Value.Seq([Value.String("x")]))])
+//! | true
+//! | Value.Variant("Shape", "Rect", 2, Value.Seq([Value.Int(2), Value.Int(5)]))
+//! | Shape.Rect(2, 5)
+//! | Value.Variant("Shape", "Dot", 0, null)
+//! | missing: field 'name' (at Plain)
+//! since: 5.0.0
+// 12 §Codecs rule 7: a struct and an enum conform to Codable without a line - the fields in
+// declaration order, private ones included; a variant as its name with its payload.
+import std.io { println };
+import std.codec { Codable, Value, DecodeError };
+import std.collections { List };
+
+struct Plain :: [Codable, Equatable] {
+    id: int,
+    name: string,
+    mail: ?string,
+    tags: string[],
+}
+
+enum Shape :: [Codable, Equatable, Debug] {
+    Dot,
+    Circle(int),
+    Rect(int, int),
+}
+
+fn main(): void throws Error {
+    let p = Plain { id = 7, name = "ada", mail = null, tags = ["x"] };
+    let v = try Value.of(p);
+    println(v.debug());
+    println((try v.read<Plain>()) == p);
+    println((try Value.of(Shape.Rect(2, 5))).debug());
+    println((try Value.of(Shape.Rect(2, 5)).read<Shape>()).debug());
+    println((try Value.of(Shape.Dot)).debug());
+    try {
+        let _ = Value.Struct("Plain", List.of([("id", Value.Int(1))])).read<Plain>();
+    } catch (e: DecodeError) {
+        println(e.message());
+    }
+}

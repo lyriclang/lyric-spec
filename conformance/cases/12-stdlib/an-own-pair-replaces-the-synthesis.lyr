@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | Value.String("21.5C")
+//! | 3.0
+//! since: 5.0.0
+// 12 §Codecs rule 7: a conformer that writes encode and decode keeps them.
+import std.io { println };
+import std.codec { Codable, Encoder, Decoder, Value, DecodeError, EncodeError };
+import std.core { ParseError };
+
+struct Celsius :: [Codable] {
+    degrees: float,
+
+    fn encode<E :: [Encoder]>(&e: E): void throws EncodeError {
+        try e.encodeString(f"{this.degrees}C");
+    }
+
+    static fn decode<D :: [Decoder]>(&d: D): Celsius throws DecodeError {
+        let s = try d.decodeString();
+        try {
+            return Celsius { degrees = float.parse(s[..(s.length() - 1)]) };
+        } catch (_: ParseError) {
+            throw DecodeError { kind = .Invalid, path = d.path(), detail = s };
+        }
+    }
+}
+
+fn main(): void throws Error {
+    println((try Value.of(Celsius { degrees = 21.5 })).debug());
+    println((try Value.String("3.0C").read<Celsius>()).degrees);
+}
