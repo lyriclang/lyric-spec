@@ -1,0 +1,50 @@
+//! run
+//! stdout:
+//! | hello hello hello hello, world
+//! | a a a
+//! | one,two
+//! | not a gzip stream: the magic bytes are missing
+//! | the gzip CRC-32 does not match
+//! | a block of type 3
+//! | a stored block's length does not match its complement
+//! | the zlib header's check fails
+//! | the level 10 is none: 0 to 9
+//! since: 5.0.0
+// 12 §Compression rules 1, 3: zlib's own bytes, gzip's with a name and an extra field, two members
+// in a row; what is not the format is refused with the reason.
+import std.io { println, IoError };
+import std.compress { Gzip, Zlib, Deflate, CompressError };
+import std.encoding { Hex };
+
+fn refusedGzip(hex: string): string throws Error {
+    try {
+        let _ = try Gzip.decompress((try Hex.decode(hex))[..]);
+        return "accepted";
+    } catch (e: IoError) {
+        return e.detail;
+    }
+}
+
+fn main(): void throws Error {
+    println(string.fromUtf8Lossy((try Zlib.decompress((try Hex.decode("78dacb48cdc9c957c840277514caf38b725200ad6f0b25"))[..]))[..]));
+    let a = string.fromUtf8Lossy((try Deflate.decompress((try Hex.decode("4b0400"))[..]))[..]);
+    let b = string.fromUtf8Lossy((try Gzip.decompress((try Hex.decode("1f8b08000000000002ff4b040043beb7e801000000"))[..]))[..]);
+    let c = string.fromUtf8Lossy((try Gzip.decompress((try Hex.decode("1f8b081c0000000002ff0300010203686900636f6d6d656e74004b040043beb7e801000000"))[..]))[..]);
+    println(f"{a} {b} {c}");
+    let two = (try Gzip.compress("one,".toBytes()[..], 6)) + (try Gzip.compress("two".toBytes()[..], 6));
+    println(string.fromUtf8Lossy((try Gzip.decompress(two[..]))[..]));
+    println(try refusedGzip("68656c6c6f"));
+    println(try refusedGzip("1f8b08000000000002ff4b040043beb7e901000000"));
+    println(try refusedGzip("1f8b08000000000000ff07000000000000000000000000"));
+    println(try refusedGzip("1f8b08000000000000ff0105000000006162636465"));
+    try {
+        let _ = try Zlib.decompress((try Hex.decode("789d0300"))[..]);
+    } catch (e: IoError) {
+        println(e.detail);
+    }
+    try {
+        let _ = try Gzip.compress([], 10);
+    } catch (e: CompressError) {
+        println(e.message());
+    }
+}

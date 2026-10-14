@@ -1,0 +1,56 @@
+//! run
+//! stdout:
+//! | 0 true 66298
+//! | 1 true
+//! | 2 true
+//! | 6 true
+//! | 9 true
+//! | zlib true 120 156
+//! | deflate true
+//! | shrinks true
+//! since: 5.0.0
+// 12 §Compression rules 1, 2: a text through gzip at the levels and back, the stored form's size,
+// zlib's header, raw deflate; the text shrinks.
+import std.io { println, ByteBuffer };
+import std.compress { Gzip, Zlib, Deflate };
+
+fn same(a: uint8[], b: uint8[]): bool {
+    if (a.length() != b.length()) {
+        return false;
+    }
+    var i = 0;
+    while (i < a.length()) {
+        if (a[i] != b[i]) {
+            return false;
+        }
+        i = i + 1;
+    }
+    return true;
+}
+
+fn main(): void throws Error {
+    let words = ["lyric", "deflate", "window", "huffman", "lazy", "match", "block", "stream"];
+    let buf = ByteBuffer.new();
+    var i = 0;
+    var x = 17;
+    while (i < 10000) {
+        x = (x * 1103515245 + 12345) & 0x7FFFFFFF;
+        try buf.write(words[(x >> 8) % words.length()].toBytes()[..]);
+        try buf.write(" ".toBytes()[..]);
+        i = i + 1;
+    }
+    let text = buf.toArray();
+    for (level in [0, 1, 2, 6, 9]) {
+        let packed = try Gzip.compress(text[..], level);
+        let back = try Gzip.decompress(packed[..]);
+        if (level == 0) {
+            println(f"{level} {same(back, text)} {packed.length()}");
+        } else {
+            println(f"{level} {same(back, text)}");
+        }
+    }
+    let z = try Zlib.compress(text[..], 6);
+    println(f"zlib {same(try Zlib.decompress(z[..]), text)} {z[0]} {z[1]}");
+    println(f"deflate {same(try Deflate.decompress((try Deflate.compress(text[..], 6))[..]), text)}");
+    println(f"shrinks {(try Gzip.compress(text[..], 6)).length() < text.length() / 2}");
+}

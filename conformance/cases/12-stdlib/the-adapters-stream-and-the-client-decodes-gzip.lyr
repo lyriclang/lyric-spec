@@ -1,0 +1,64 @@
+//! run
+//! stdout:
+//! | true true
+//! | first half second half
+//! | [the body was gzipped] - 200
+//! | raw 31 139 gzip
+//! since: 5.0.0
+// 12 §Compression rules 1, 4: a GzipWriter fed in pieces and a GzipReader read in pieces; a flush
+// in the middle; the client decoding Content-Encoding: gzip, and not where asked not to.
+import std.io { println, IoError, ByteBuffer };
+import std.net { IpAddr, SocketAddr };
+import std.task { spawn };
+import std.compress { Gzip, GzipReader, GzipWriter, ZlibReader, ZlibWriter };
+import std.http { Client, ClientOptions, Request, Response, Server };
+import std.uri { Uri };
+
+fn handle(req: Request): Response throws Error {
+    var r = Response.of(200, (try Gzip.compress("the body was gzipped".toBytes()[..], 6))[..], "text/plain");
+    r.headers.set("Content-Encoding", "gzip");
+    return r;
+}
+
+fn main(): void throws Error {
+    let text = ByteBuffer.new();
+    var i = 0;
+    while (i < 3000) {
+        try text.write(f"line {i} of the stream\n".toBytes()[..]);
+        i = i + 1;
+    }
+    let data = text.toArray();
+    let packed = ByteBuffer.new();
+    var w = try GzipWriter<ByteBuffer>.new(packed, 6);
+    var at = 0;
+    while (at < data.length()) {
+        let n = if (at + 777 > data.length()) data.length() - at else 777;
+        try w.write(data[at..at + n]);
+        at = at + n;
+    }
+    try w.close();
+    var r = GzipReader<ByteBuffer>.new(packed);
+    let back = try r.readToEnd();
+    println(f"{packed.toArray().length() < data.length() / 4} {back == data}");
+    let mid = ByteBuffer.new();
+    var zw = try ZlibWriter<ByteBuffer>.new(mid, 6);
+    try zw.write("first half ".toBytes()[..]);
+    try zw.flush();
+    try zw.write("second half".toBytes()[..]);
+    try zw.close();
+    var zr = ZlibReader<ByteBuffer>.new(mid);
+    println(try zr.readToString());
+    var server = try Server.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let base = f"http://127.0.0.1:{(try server.localAddr()).port}";
+    let _ = spawn(() => { try server.serve(handle); });
+    var client = Client.new();
+    let decoded = try client.get(try Uri.parse(base + "/"));
+    println(f"[{try decoded.text()}] {decoded.headers.get("Content-Encoding") ?? "-"} {decoded.status.code}");
+    var plain = Client.new(ClientOptions { decompress = false });
+    let raw = try plain.get(try Uri.parse(base + "/"));
+    let bytes = try raw.bytes();
+    println(f"raw {bytes[0]} {bytes[1]} {raw.headers.get("Content-Encoding") ?? "-"}");
+    client.close();
+    plain.close();
+    server.shutdown();
+}

@@ -1083,6 +1083,44 @@ so `["a\"b", "c"]` shows as it is written.
 negative `n` panics with `LYR-RT0007`, as `[x] * n` does; `n * s` is refused, the one order of
 [03 §5.1](03-types.md).
 
+## Compression
+
+**`std.compress`** (design 10 Q8; M10 S9) is DEFLATE (RFC 1951), zlib (RFC 1950) and gzip (RFC
+1952), whole in Lyric: an inflater, a deflater at the levels 0 to 9, the two wrappings, each as a
+stream adapter and whole in memory.
+
+1. **The formats.** `Gzip.compress(bytes, level = 6)` and `Gzip.decompress(bytes)`, `Zlib.*` and
+   `Deflate.*` (raw) over bytes in memory; **`GzipWriter<W :: [Writer]>`**, `ZlibWriter`,
+   `DeflateWriter` (`new(inner, level = 6)`; `Writer` and `Closeable` — `close` writes the final
+   block and the trailer and flushes `inner`, a second `close` does nothing, a `write` after it is
+   `IoError { kind = .Closed }`; `flush` ends the block under way and writes an empty stored block
+   so the bytes so far are whole) and **`GzipReader<R :: [Reader]>`**, `ZlibReader`,
+   `DeflateReader` (`new(inner)`; `Reader`, 0 at the stream's end; `DeflateReader.bytesOut()`,
+   `GzipWriter.bytesIn()`). gzip's header is the ten bytes with no name, no time, `OS` 255 and
+   `XFL` 2 at level 9 and 4 at level 1; its trailer CRC-32 and the size, both checked; a header
+   with an extra field, a name, a comment or a header CRC is read over; members in a row read as
+   one. zlib's header is `78` with the level's `FLEVEL` (0 below 2, 1 below 6, 2 at 6, 3 above)
+   and the check; its trailer the Adler-32, checked; a preset dictionary is refused.
+2. **The deflater.** Level 0 stores (blocks of at most 65535 bytes, a final empty one); 1 the
+   fixed tables over a greedy LZ77; 2 and above dynamic tables (the code lengths from the block's
+   frequencies, at most 15 bits, 7 for the code length code; the lengths run-length coded) — a
+   block is written with the fixed tables or stored where that is smaller; 4 and above lazy
+   matching, the chains longer and the nice length higher with the level (zlib's table). The
+   window is 32 KiB, a block at most 16384 symbols. A level outside 0..9 is `CompressError`; -1
+   is 6. What the deflater writes, zlib and the platform's `gzip` read; what they write, the
+   inflater reads (the artifact: `programs/gzipfile.lyr` against .NET's `GZipStream` and `gzip
+   -d`).
+3. **The inflater** reads stored, fixed and dynamic blocks (an over-subscribed code, a block of
+   type 3, a stored length that does not match its complement, a distance before the start, a
+   length or distance code beyond the tables, a stream that ends inside a block are each
+   `IoError { kind = .InvalidData }` with a `CompressError` inside, its `detail` the reason). It
+   takes from `inner` what it needs and, once a block could be the last, one byte at a time, so
+   a wrapper reads its trailer where the stream ended.
+4. **In the client.** With `ClientOptions.decompress` (the default), `std.http`'s client says
+   `Accept-Encoding: gzip, deflate` and decodes a response's `Content-Encoding: gzip` (or
+   `x-gzip`, or `deflate` as zlib) as the body is read; the response's headers then lose
+   `Content-Encoding` and `Content-Length`; the connection returns as the raw body ends.
+
 ## Regular expressions
 
 **`std.regex`** (design 10 S8, B1; M10 S6) is RE2's syntax matched in linear time: a pattern
