@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | Value.Seq([Value.Uint(1), Value.Uint(2)])
+//! | Value.Bytes([1, 2])
+//! | 2
+//! since: 5.0.0
+// 12 §Codecs rule 4: a uint8[] is a sequence of numbers; Bytes { value } is the byte form the
+// format holds its own way.
+import std.io { println };
+import std.codec { Value, Bytes };
+
+fn main(): void throws Error {
+    let bytes: uint8[] = [1u8, 2u8];
+    println((try Value.of(bytes)).debug());
+    println((try Value.of(Bytes { value = bytes })).debug());
+    println((try Value.Bytes(bytes).read<Bytes>()).value.length());
+}
