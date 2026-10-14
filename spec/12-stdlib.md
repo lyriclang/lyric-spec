@@ -7,7 +7,7 @@
 
 ## Scope
 
-What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`), serialization as a pair (`std.codec`).
+What of the standard library is language: the prelude, the core interfaces and their contracts (hash, order, clone), the answer forms and the panic rule, the naming law, the syntax tree as values (`std.syntax`), serialization as a pair (`std.codec`), JSON (`std.json`).
 
 ## 1. The converters
 
@@ -1115,6 +1115,42 @@ conformances of the core types, and `Value`, the tree of the forms that any form
    variant as a struct of the tag and the payload's fields, named by position (`"0"`, `"1"`),
    and reads it by the tag. `default` is not read in 5.0: a field marked so reads as absent.
 
+
+## JSON
+
+**`std.json`** (design 10 B10 E7; M10 S3) is RFC 8259, strictly: an encoder and a decoder of
+[§Codecs](#codecs)' model, and `JsonValue`, the tree.
+
+1. **The text of a value.** `json.encode<T :: [Encode]>(v, opts = JsonOptions { })` writes any
+   `Encode` value as text; `json.encodeTo(v, &w, opts)` writes it into a `Writer`. A struct is an
+   object of its wire names, a sequence an array, a map an object whose keys are strings — a
+   number's digits where the key is a number; another key is an `EncodeError` —, bytes a Base64
+   string, a unit variant its name, a variant with a payload `{"Name": payload}`; `null`,
+   `true`/`false`, numbers as `int` or the shortest float text. `NaN` and the infinities have no
+   JSON text (RFC 8259 §6): writing one is an `EncodeError`. The quote, the backslash and the
+   control characters are escaped (`\n`, `\t`, `\r`, `\u00XX`), everything else stands as it is.
+   `JsonOptions`: `pretty` writes newlines and `indent` spaces per level (default 2), `sortKeys`
+   an object's keys in order.
+2. **The value of a text.** `json.decode<T :: [Decode]>(text)` reads any `Decode` value; a text
+   that is no JSON is `JsonError { line, column, detail }`, a value the type cannot read a
+   `DecodeError` of [§Codecs](#codecs) rule 5 whose path names the structs, the members and the
+   indices — `Team.members[0].User.id`. `json.decodeFrom<T>(&r)` reads a `Reader` to its end first. A struct
+   reads from an object by its members' names (the rest ignored unless the type denies them), a
+   sequence from an array, a map from an object (a key as the number it spells where the key
+   type is one), a variant from its name or from an object of one member, bytes from Base64. A
+   number with a fraction or an exponent read as an `int` is `Invalid`; one beyond `int` is a
+   float in the tree and `Invalid` as an `int`; a number read as a `float` may be an integer.
+3. **Strict.** One value, whitespace (space, tab, CR, LF) around it, nothing else: a trailing
+   comma, a leading zero, `+`, `.5`, `1.`, an unknown escape, a lone surrogate, a control
+   character unescaped, a text after the value are refused with the line and column. A member
+   repeated keeps the last value. The document may nest 512 levels.
+4. **`JsonValue`** is the tree: `Null`, `Bool`, `Int`, `Float`, `String`, `Array(List)`,
+   `Object(Map)`; `Equatable` by content (an object's order aside), `Display` and `Debug` the
+   compact text. `json.parse(text)` reads a text into it; `v["key"]` is a member or `null`,
+   `v.at(i)` an element or `null`, `v.path("a.b[0]")` walks both, `asInt`/`asFloat` (an `Int`
+   widened)/`asString`/`asBool`/`asArray`/`asObject`/`isNull` ask. A `JsonValue` is `Codable`
+   itself: it writes its forms into any format and reads any value's forms from one; `v.read<T>()`
+   reads a value out of the tree, `v.reader()` is the decoder to pass on.
 
 ## Syntax
 

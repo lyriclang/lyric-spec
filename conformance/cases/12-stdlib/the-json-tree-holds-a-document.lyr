@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | {"a":[1,2.5,true,null,"sé\n"],"b":{"c":-50.0}}
+//! | 2.5
+//! | -50.0
+//! | true
+//! | type mismatch: expected an int, got a string (at Team.members[0].User.id)
+//! since: 5.0.0
+// 12 §JSON rules 2, 4: the tree, its paths, and a decode error's path into the document.
+import std.io { println };
+import std.json;
+import std.codec { Codable, DecodeError };
+
+struct User :: [Codable] {
+    id: int,
+}
+
+struct Team :: [Codable] {
+    members: User[],
+}
+
+fn main(): void throws Error {
+    let v = try json.parse(" {\"a\": [1, 2.5, true, null, \"s\\u00e9\\n\"], \"b\": {\"c\": -0.5e2}} ");
+    println(v.show());
+    println(v.path("a[1]")?.asFloat() ?? -1.0);
+    println(v.path("b.c")?.asFloat() ?? -1.0);
+    println((try json.parse(v.show())) == v);
+    try {
+        let _ = json.decode<Team>("{\"members\": [{\"id\": \"x\"}]}");
+    } catch (e: DecodeError) {
+        println(e.message());
+    }
+}
