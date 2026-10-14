@@ -1,0 +1,65 @@
+//! run
+//! stdout:
+//! | HTTP/1.1 200 OK|Content-Length: 12||hello, worldHTTP/1.1 201 Created|Content-Length: 4|Connection: close|Location: /x||made
+//! | HTTP/1.1 100 Continue||HTTP/1.1 200 OK|Content-Length: 5|Connection: close||got 2
+//! | HTTP/1.1 200 OK|Content-Length: 12|Connection: close||hello, world
+//! | 400 bad request: the request line is 'GARBAGE'
+//! | 400 bad request: no Host
+//! | 400 bad request: 'many' is no Content-Length
+//! | 400 bad request: a folded header line (obs-fold)
+//! | []
+//! since: 5.0.0
+// 12 §HTTP rule 4: two requests on one connection, the second closing; Expect: 100-continue
+// answered before the body; HTTP/1.0 closed; what is no request answered 400 with its reason;
+// an empty connection answered nothing.
+import std.io { println };
+import std.net { IpAddr, SocketAddr, TcpStream };
+import std.task { spawn };
+import std.http { Request, Response, Server };
+
+fn handle(req: Request): Response throws Error {
+    if (req.uri.path == "/echo") {
+        return Response.withText(f"got {(try req.bytes()).length()}");
+    }
+    if (req.uri.path == "/created") {
+        var r = Response.withText("made", 201);
+        r.headers.set("Location", "/x");
+        return r;
+    }
+    return Response.withText("hello, world");
+}
+
+/// The lines of the reply that matter, joined by '|'.
+fn raw(at: SocketAddr, text: string): string throws Error {
+    var conn = try TcpStream.connect(at);
+    try conn.writeAll(text.toBytes()[..]);
+    try conn.shutdown(.Write);
+    let back = try conn.readToString();
+    try conn.close();
+    var out = "";
+    for (line in back.split("\r\n")) {
+        let l = line.toString();
+        if (l.startsWith("Server:") || l.startsWith("Content-Type:")) {
+            continue;
+        }
+        out = out + (if (out.isEmpty()) "" else "|") + l;
+    }
+    return out;
+}
+
+fn main(): void throws Error {
+    var server = try Server.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try server.localAddr();
+    let _ = spawn(() => { try server.serve(handle); });
+    println(try raw(at, "GET /hello HTTP/1.1\r\nHost: x\r\n\r\nGET /created HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n"));
+    println(try raw(at, "POST /echo HTTP/1.1\r\nHost: x\r\nExpect: 100-continue\r\nContent-Length: 2\r\nConnection: close\r\n\r\nhi"));
+    println(try raw(at, "GET /hello HTTP/1.0\r\n\r\n"));
+    for (bad in ["GARBAGE\r\n\r\n", "GET /x HTTP/1.1\r\n\r\n", "GET /x HTTP/1.1\r\nHost: x\r\nContent-Length: many\r\n\r\n", "GET /x HTTP/1.1\r\nHost: x\r\n folded\r\n\r\n"]) {
+        let back = try raw(at, bad);
+        let status = back.splitOnce("|")!.0.toString().splitOnce(" ")!.1.toString().splitOnce(" ")!.0.toString();
+        let body = back.splitOnce("||")!.1.toString();
+        println(f"{status} {body}");
+    }
+    println(f"[{try raw(at, "")}]");
+    server.shutdown();
+}

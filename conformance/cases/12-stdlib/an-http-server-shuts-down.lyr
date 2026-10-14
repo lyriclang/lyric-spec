@@ -1,0 +1,49 @@
+//! run
+//! stdout:
+//! | hello, world
+//! | slow
+//! | refused
+//! | close -
+//! since: 5.0.0
+// 12 §HTTP rule 4: shutdown lets the request under way be answered, closes the idle connection
+// and accepts nothing new; with keep-alive off every response says close and no Server header.
+import std.io { println, IoError };
+import std.net { IpAddr, SocketAddr };
+import std.task { spawn, sleep };
+import std.time { Duration };
+import std.http { Client, Request, Response, Server, ServerOptions };
+import std.uri { Uri };
+
+fn handle(req: Request): Response throws Error {
+    if (req.uri.path == "/slow") {
+        try sleep(Duration.ofMillis(200));
+        return Response.withText("slow");
+    }
+    return Response.withText("hello, world");
+}
+
+fn main(): void throws Error {
+    var server = try Server.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let base = f"http://127.0.0.1:{(try server.localAddr()).port}";
+    let _ = spawn(() => { try server.serve(handle); });
+    var client = Client.new();
+    println(try (try client.get(try Uri.parse(base + "/hello"))).text());
+    let slow = spawn(() => try (try client.get(try Uri.parse(base + "/slow"))).text());
+    try sleep(Duration.ofMillis(50));
+    server.shutdown();
+    println(try slow.await());
+    var fresh = Client.new();
+    try {
+        let _ = try fresh.get(try Uri.parse(base + "/hello"));
+        println("accepted");
+    } catch (_: IoError) {
+        println("refused");
+    }
+    var once = try Server.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 }, ServerOptions { keepAlive = false, serverName = "" });
+    let base2 = f"http://127.0.0.1:{(try once.localAddr()).port}";
+    let _ = spawn(() => { try once.serve(handle); });
+    let r = try fresh.get(try Uri.parse(base2 + "/hello"));
+    println(f"{r.headers.get("Connection") ?? "-"} {r.headers.get("Server") ?? "-"}");
+    let _ = try r.text();
+    once.shutdown();
+}
