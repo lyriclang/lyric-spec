@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | [1m [31m [44m [92;100m [1;2;3;4;7;9;37m [38;5;208m [48;2;0;255;7m [0m
+//! | [1;31mwarn[0m plain
+//! | true
+//! since: 5.0.0
+// 12 §The terminal rules 2, 3: the SGR sequences of styles and colors, the reset, a plain style;
+// FORCE_COLOR turns styles on where the output is no terminal. The escape is shown as nothing:
+// what the lines hold is ESC before each '['.
+import std.io { println };
+import std.os { setEnv };
+import std.term { Style, Color, reset, colorsEnabled };
+
+fn plain(s: string): string {
+    return s.replace("\u{1b}", "");
+}
+
+fn main(): void {
+    let a = Style { bold = true }.sgr();
+    let b = Style { fg = Color.Red }.sgr();
+    let c = Style { bg = Color.Blue }.sgr();
+    let d = Style { fg = Color.BrightGreen, bg = Color.BrightBlack }.sgr();
+    let e = Style { bold = true, dim = true, italic = true, underline = true, inverse = true, strike = true, fg = Color.White }.sgr();
+    let f = Style { fg = Color.Index(208) }.sgr();
+    let g = Style { bg = Color.Rgb(-5, 300, 7) }.sgr();
+    println(plain(f"{a} {b} {c} {d} {e} {f} {g} {reset()}"));
+    setEnv("NO_COLOR", "");
+    setEnv("FORCE_COLOR", "1");
+    println(plain(f"{Style { bold = true, fg = Color.Red }.apply("warn")} {Style { }.apply("plain")}"));
+    println(colorsEnabled());
+}

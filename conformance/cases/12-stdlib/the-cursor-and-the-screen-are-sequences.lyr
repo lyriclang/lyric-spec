@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | [1A [3A [2B [4C [5D [10;20H [1E
+//! | [?25l [?25h [s [u
+//! | [2J[H [0J [2K. [0K
+//! since: 5.0.0
+// 12 §The terminal rule 4: the sequences of the cursor and the screen (ESC shown as nothing, the
+// carriage return as a dot).
+import std.io { println };
+import std.term { cursorUp, cursorDown, cursorForward, cursorBack, cursorTo, cursorNextLine, cursorHide, cursorShow, cursorSave, cursorRestore, clearScreen, clearToEnd, eraseLine, eraseToEndOfLine };
+
+fn plain(s: string): string {
+    return s.replace("\u{1b}", "").replace("\r", ".");
+}
+
+fn main(): void {
+    println(plain(f"{cursorUp()} {cursorUp(3)} {cursorDown(2)} {cursorForward(4)} {cursorBack(5)} {cursorTo(10, 20)} {cursorNextLine()}"));
+    println(plain(f"{cursorHide()} {cursorShow()} {cursorSave()} {cursorRestore()}"));
+    println(plain(f"{clearScreen()} {clearToEnd()} {eraseLine()} {eraseToEndOfLine()}"));
+}
