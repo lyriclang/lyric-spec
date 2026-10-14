@@ -468,7 +468,10 @@ space: `Base64.encode(bytes)`.
    is strict: a text whose length is no multiple of four fails at its end; a character outside the
    alphabet — whitespace and the other alphabet's two among them — or a `=` before the end fails
    where it stands; bits past the last byte that are not zero fail at their character (RFC 4648
-   §3.5).
+   §3.5). **`Base64Url.encodeUnpadded`** and **`decodeUnpadded`** (M10 S5; design 10 S4a) are the
+   same alphabet without the `=` padding, as JOSE writes it (RFC 7515 §2): the text's length is
+   4k, 4k + 2 or 4k + 3 — a length of 4k + 1 fails at its end —, a `=` is no digit here, and the
+   bits past the last byte are checked as above.
 3. **`Hex`** encodes two digits a byte, in small letters, and decodes either case; an odd count
    of digits fails at the end.
 4. **`Utf16`** encodes a text as code units, `uint16[]`, a codepoint past `U+FFFF` as a surrogate
@@ -785,6 +788,56 @@ poll requests on the thread's completion port (M8b S11).
    resolver knows, or an address's own text — each once, in the resolver's order, as a
    `List<IpAddr>`; a name nobody knows is `NotFound`. It runs on the I/O pool as a file's call does
    (§Files rule 5): no wait in the sense of 10 §1 rule 7.
+
+## URIs
+
+**`std.uri`** (design 10 O11; M10 S5) is RFC 3986, strictly: `Uri` is a reference in its five
+parts, `Uri.parse` reads one as the grammar allows, `show` writes it back, `resolve` and
+`normalize` are the RFC's algorithms, `percentEncode`/`percentDecode` the encoding per
+component, `Query` the pairs of a query. WHATWG's URL is a browser's leniency and not this.
+
+1. **The parts.** `Uri { scheme: ?string, userinfo: ?string, host: ?string, port: ?int, path:
+   string, query: ?string, fragment: ?string }`, each `null` where it was not written; the host
+   stands without its brackets, `""` for an empty authority (`file:///etc`), `null` for none; a
+   port written empty is `null`. `authority()` is the text between `//` and the path,
+   `isAbsolute()` whether there is a scheme. `show()` is §5.3: the parts recomposed, an address
+   with a `:` in brackets — `parse` and `show` round-trip every text the grammar takes. A `Uri` is
+   `Equatable`, `Hashable`, `Debug`, `Display`, `Parse` and `Codable` (its text, as an `Instant`
+   is).
+2. **`Uri.parse(text)`** is §3 and appendix B: the scheme up to the first `:` where its characters
+   are a scheme's and no `/`, `?` or `#` comes first; after `//` the authority up to the next
+   `/`, `?`, `#`, split at the last `@` and the port's `:`, a host in brackets an IPv6 address
+   (an IPvFuture is refused); the path up to `?` or `#`; the query up to `#`; the fragment. Each
+   part is checked against its grammar: `ParseError { kind = .Invalid }` for a character a part
+   does not take — a space, a control character, one beyond ASCII, `<`, `>`, `"`, `{`, `}`, `\`,
+   a `%` without two hex digits, a port beyond 65535 or with a letter, a second `@` or `#`, a
+   first segment holding `:` where there is no scheme and no authority (path-noscheme, §4.2). The
+   empty text is the empty reference, `Uri {}`.
+3. **`base.resolve(ref)`** is §5.2.2, strict (a reference with the base's scheme is absolute, no
+   backward compatibility): the reference's scheme or authority takes over, an empty path keeps
+   the base's path and, where the reference has no query, its query, a relative path merges after
+   the base's last `/` (at the root where the base has an authority and no path), dot segments go
+   (§5.2.4; `removeDotSegments(path)` alone), the fragment is the reference's. The examples of
+   §5.4.1 and §5.4.2 hold, each. A relative base gives a relative result (§5.2.1 asks for an
+   absolute one; the algorithm does not need it). `normalize()` is §6.2.2 and §6.2.3: the scheme
+   and the host in small letters, a percent-encoding of an unreserved character decoded, the
+   others' digits in capitals, the dot segments of a path removed where there is a scheme or an
+   authority, an empty path with an authority `/`, the scheme's default port dropped — 80 for
+   `http` and `ws`, 443 for `https` and `wss`, 21 for `ftp`.
+4. **The encoding.** `percentEncode(text, component)` keeps what the component takes as it is and
+   writes every other byte as `%` and two capital hex digits, a character beyond ASCII as the
+   bytes of its UTF-8: `Component.Userinfo` keeps unreserved, sub-delims and `:`; `Host`
+   unreserved and sub-delims; `Path` pchar and `/`; `Segment` pchar (a `/` is encoded); `Query`
+   and `Fragment` pchar, `/` and `?`; `Pair` unreserved alone, for a key or a value of a query.
+   `percentDecode(text)` reads `%XX` back and is `ParseError { kind = .Invalid }` for a `%`
+   without two hex digits or bytes that are no UTF-8; a `+` stays. **`Query`** is the pairs of a
+   query in the order written, a key more than once allowed: `Query.parse(text)` splits at `&`
+   and the first `=` (a part without `=` is a key with an empty value, an empty part is skipped),
+   reads a `+` as a space and the percent-encodings; `get(key)` is the first value, `all(key)`
+   every one, `has`, `length`, `isEmpty`, `pairs()`; `add` appends, `set` replaces the key's first
+   pair and drops its others (appends where the key is new), `remove` drops the key; `show()`
+   writes `key=value` joined by `&`, each encoded for `Pair` (a space is `%20`). `uri.queryPairs()`
+   is the query parsed, empty where there is none.
 
 ## Processes
 
