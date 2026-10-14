@@ -842,7 +842,7 @@ component, `Query` the pairs of a query. WHATWG's URL is a browser's leniency an
 ## HTTP
 
 **`std.http`** (design 10 Q6; M10 S7 the client, S8 the server) is HTTP/1.1 over `Reader` and
-`Writer`: the message types and a client that keeps its connections. No TLS of its own (a
+`Writer`: the message types, a client that keeps its connections, a server with a task per connection. No TLS of its own (a
 package's transport brings it), no HTTP/2, no cookies.
 
 1. **The message types.** `Method` (`Get`, `Head`, `Post`, `Put`, `Delete`, `Patch`, `Options`,
@@ -883,6 +883,52 @@ package's transport brings it), no HTTP/2, no cookies.
    line beyond 64 KiB), a body that ends early or a chunk that is none (`IoError`,
    `UnexpectedEof` or `InvalidData`). The errors of the connection are `IoError`, a cancel
    `Cancelled`. `http.get(text)` is a GET with the defaults and redirects followed.
+
+4. **The server** (M10 S8). `Server.bind(addr, options)` with `ServerOptions { keepAlive = true,
+   serverName = "lyric5" }`, `localAddr()`, `serve(handler)` — `handler: fn(Request) -> Response
+   throws Error` — and `shutdown()`. `serve` accepts until the listener is closed and takes a task
+   per connection; on it each request is read as the client writes one: the request line
+   (origin-form, absolute-form or `*`; HTTP/1.1 or 1.0), the headers (§3's limits), the body
+   framed by `Content-Length` or `Transfer-Encoding: chunked` and given to the handler as the
+   request's `body` (a `Reader`; `request.bytes()`, `text()`, `json<T>()` read it whole; a body
+   the handler leaves is read away before the next request). `Expect: 100-continue` is answered
+   with `100 Continue` before the handler runs. The handler's response goes out as `HTTP/1.1`
+   with `Server`, `Content-Length` where the body's length is known and in chunks else, nothing
+   for a HEAD, a 204, a 304 or a 1xx; `Response.of(status, bytes, contentType)`,
+   `Response.withText(text, status)`, `Response.withJson(value, status)`, `Response.stream(status,
+   reader, length)` and `Response.empty(status)` make one, its `headers` are the handler's to
+   set. A handler that throws answers `500` with the error's message as text. The connection
+   stays for the next request unless the request was HTTP/1.0 without `keep-alive`, a side said
+   `Connection: close`, `keepAlive` is off, or the server is shutting down; it is closed after
+   the peer's remaining bytes are read away (a close with bytes unread would reset it and lose the
+   answer). A request that is none — a request line or version that is none, no `Host` under
+   HTTP/1.1, a target that is no URI, a `Content-Length` that is no number, a transfer encoding
+   that is not chunked, a folded line — is answered `400 Bad Request` with the reason as text and
+   the connection closed. `shutdown()` closes the listener (`serve` returns), closes the
+   connections waiting for a request, and lets a request under way be answered first.
+
+4. **The server** (M10 S8). `Server.bind(addr, options)` with `ServerOptions { keepAlive = true,
+   serverName = "lyric5" }`, `localAddr()`, `serve(handler)` — `handler: fn(Request) -> Response
+   throws Error` — and `shutdown()`. `serve` accepts until the listener is closed and takes a task
+   per connection; on it each request is read as the client writes one: the request line
+   (origin-form, absolute-form or `*`; HTTP/1.1 or 1.0), the headers (§3's limits), the body
+   framed by `Content-Length` or `Transfer-Encoding: chunked` and given to the handler as the
+   request's `body` (a `Reader`; `request.bytes()`, `text()`, `json<T>()` read it whole; a body
+   the handler leaves is read away before the next request). `Expect: 100-continue` is answered
+   with `100 Continue` before the handler runs. The handler's response goes out as `HTTP/1.1`
+   with `Server`, `Content-Length` where the body's length is known and in chunks else, nothing
+   for a HEAD, a 204, a 304 or a 1xx; `Response.of(status, bytes, contentType)`,
+   `Response.withText(text, status)`, `Response.withJson(value, status)`, `Response.stream(status,
+   reader, length)` and `Response.empty(status)` make one, its `headers` are the handler's to
+   set. A handler that throws answers `500` with the error's message as text. The connection
+   stays for the next request unless the request was HTTP/1.0 without `keep-alive`, a side said
+   `Connection: close`, `keepAlive` is off, or the server is shutting down; it is closed after
+   the peer's remaining bytes are read away (a close with bytes unread would reset it and lose the
+   answer). A request that is none — a request line or version that is none, no `Host` under
+   HTTP/1.1, a target that is no URI, a `Content-Length` that is no number, a transfer encoding
+   that is not chunked, a folded line — is answered `400 Bad Request` with the reason as text and
+   the connection closed. `shutdown()` closes the listener (`serve` returns), closes the
+   connections waiting for a request, and lets a request under way be answered first.
 
 ## Processes
 
