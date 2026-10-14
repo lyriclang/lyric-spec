@@ -1100,6 +1100,21 @@ conformances of the core types, and `Value`, the tree of the forms that any form
    the value a tree reads as, `Value.encoder()` and `tree.decoder()` the two formats to pass on.
    A `Value` is itself `Codable`: it writes its forms into any format, and reads the scalars and
    the two anonymous containers from one — a struct or a variant it cannot read without its name.
+7. **`Codable` writes itself** (design 10 E3; [11 §4](11-metaprogramming.md) rule 10): a struct
+   or a class conforming without the members gets `encode` and `decode` over its fields in
+   declaration order — every field, whatever its word —, each under its wire name; a field the
+   data lacks reads as `decodeAbsent` gives it (`null` for an optional, `Missing` else); an
+   unknown field passes. An enum gets its variant: a unit one as the name, one payload field as
+   the value, several as a sequence in their order; reading, an unknown name is
+   `UnknownVariant`. The struct's name on the wire is `typeName`'s. An own `encode` or `decode`
+   replaces the synthesized one ([05 §14](05-interfaces.md)).
+8. **`@Codec` steers it** (E4): on a field, `name` writes it under that name and `skip` leaves it
+   out — it reads as absent, so it is an optional or it is `Missing` —; on a struct or a class,
+   `rename = .SnakeCase` or `.CamelCase` rewrites every field's name and `denyUnknown` refuses a
+   field the data has and the type has not (`UnknownField`); on an enum, `tag = "kind"` writes a
+   variant as a struct of the tag and the payload's fields, named by position (`"0"`, `"1"`),
+   and reads it by the tag. `default` is not read in 5.0: a field marked so reads as absent.
+
 
 ## Syntax
 

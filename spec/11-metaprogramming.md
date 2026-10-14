@@ -242,9 +242,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    `c`, the chosen arm alone is checked and is the value; otherwise both arms, of one type
    (`LYR-SEM0100`), and the site chooses.
 10. **The family asks with the conformer's module.** The defaults of `Equatable`, `Hashable`,
-   `Ordered`, `TotalOrder` and `Clone` in std.core ([05 §14](05-interfaces.md)) see every field
-   of the conformer, whatever its word: a type's internal and private fields compare, hash and
-   clone as its `pub` ones do. Every other interface's default sees what rule 2 gives it. What
+   `Ordered`, `TotalOrder` and `Clone` in std.core ([05 §14](05-interfaces.md)), and of `Encode`
+   and `Decode` in std.codec ([12 §Codecs](12-stdlib.md) rule 7; M10 S2), see every field of
+   the conformer, whatever its word: a type's internal and private fields compare, hash, clone
+   and serialize as its `pub` ones do. Every other interface's default sees what rule 2 gives it. What
    is wrong in one of the family's is said at the conformer's entry ([05 §14](05-interfaces.md)
    rule 6). A write through an info, `this.[f] = …`, answers to the field's word and the
    function's `mut` as a write to the field by name does (`LYR-SEM0019`).

@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | Value.Struct("User", [("user_id", Value.Int(7)), ("mail", Value.Null), ("tags", Value.Seq([]))])
+//! | 7 -1
+//! | unknown field: field 'zzz' (at User)
+//! | Value.Struct("Event", [("kind", Value.String("Moved")), ("0", Value.Int(1)), ("1", Value.Int(2))])
+//! | Event.Moved(1, 2)
+//! since: 5.0.0
+// 12 §Codecs rule 8: @Codec names a field, skips one, renames all in snake_case, refuses unknown
+// fields; on an enum the tag writes a variant as a struct.
+import std.io { println };
+import std.codec { Codable, Codec, Value, DecodeError };
+import std.collections { List };
+
+@Codec { rename = .SnakeCase, denyUnknown = true }
+struct User :: [Codable] {
+    userId: int,
+    @Codec { name = "mail" }
+    eMail: ?string,
+    tags: string[],
+    @Codec { skip = true }
+    cached: ?int,
+}
+
+@Codec { tag = "kind" }
+enum Event :: [Codable, Equatable, Debug] {
+    Started,
+    Moved(int, int),
+}
+
+fn main(): void throws Error {
+    let v = try Value.of(User { userId = 7, eMail = null, tags = [], cached = 5 });
+    println(v.debug());
+    let back = try v.read<User>();
+    println(f"{back.userId} {back.cached ?? -1}");
+    try {
+        let _ = Value.Struct("User", List.of([("user_id", Value.Int(1)), ("tags", Value.Seq(List.new())), ("zzz", Value.Int(0))])).read<User>();
+    } catch (e: DecodeError) {
+        println(e.message());
+    }
+    println((try Value.of(Event.Moved(1, 2))).debug());
+    println((try Value.of(Event.Moved(1, 2)).read<Event>()).debug());
+}
