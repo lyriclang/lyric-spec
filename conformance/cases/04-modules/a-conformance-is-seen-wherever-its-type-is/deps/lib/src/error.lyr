@@ -1,0 +1,11 @@
+pub enum CliErrorKind :: [Equatable, Hashable, Ordered, Clone, Debug] { NoCommand, UnknownOption }
+
+pub struct Thing :: [Default] { pub n: int = 3 }
+
+extend Thing :: [Display] {
+    fn show(): string { return f"thing {this.n}"; }
+}
+
+pub interface Fill :: [Default] {
+    static fn fill(): Self { return Self.default(); }
+}
