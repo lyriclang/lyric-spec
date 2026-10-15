@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | true true true
+//! | true true true true
+//! | CliErrorKind.NoCommand thing 3 3
+//! | 8080
+//! since: 5.0.0
+// 04 rule 10 (the sweep after M10, W7): a conformance block - a synthesized one among them - is
+// seen wherever its type is; here the type comes through a re-export, and the module that declares
+// it and its blocks is never imported.
+import std.io { println };
+import lib { CliErrorKind, Thing, Fill };
+
+fn hashes<T :: [Hashable]>(x: T): bool { return true; }
+fn clones<T :: [Clone]>(x: T): bool { return true; }
+fn orders<T :: [Ordered]>(x: T): bool { return true; }
+fn shows<T :: [Display]>(x: T): bool { return true; }
+
+pub struct Start :: [Fill, Default] { pub port: int = 8080 }
+
+fn main(): void {
+    let k = CliErrorKind.NoCommand;
+    println(f"{k == CliErrorKind.NoCommand} {k != CliErrorKind.UnknownOption} {k < CliErrorKind.UnknownOption}");
+    println(f"{hashes(k)} {clones(k)} {orders(k)} {shows(Thing { })}");
+    println(f"{k.clone().debug()} {Thing { }.show()} {Thing.default().n}");
+    println(f"{Start.fill().port}");
+}

@@ -139,9 +139,13 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 9. An **`extend` block's** word is the default of the methods in it: `private extend Point { … }`
    keeps them to its module; a method's own word wins. A method of a block that a module may not
    name is not there for it (S5).
-10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type and its
-    interface are, its methods with it; a word on the block or on one of its methods is refused
-    (`LYR-SEM0150`) (S5).
+10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type is, its
+    methods with it, whether or not the module that holds the block is imported: the conformance
+    is the program's ([05 §13](05-interfaces.md) rule 4), so a type that comes through a
+    re-export, a return value or a field brings every conformance its modules give it, the
+    synthesized ones ([05 §14](05-interfaces.md) rule 9) among them, and std.codec's blocks on
+    std.time's types reach a program that names neither module (the sweep after M10, W7). A
+    word on the block or on one of its methods is refused (`LYR-SEM0150`) (S5).
 
 10a. A member that **answers an interface** for its type from outside a conformance block — a
     method, a static function or a constant in the type's body, or in a block of rule 9 — is
