@@ -513,7 +513,13 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    `Equatable` synthesized too, `TotalOrder` brings `Ordered` and `Equatable` — unless the
    type lists them or writes their member. A conformance written in a block of its own beside
    such a list meets the synthesized one as two sites ([§13](#13-generic-extends) rule 4,
-   `LYR-SEM0133`): list it, and the block is the one site.
+   `LYR-SEM0133`): list it, and the block is the one site. A parent an interface of the
+   program implies comes along the same way where the compiler writes the member —
+   `interface Args :: [Default]` gives `struct Start :: [Args]` its `default`, through the whole
+   chain of parents, the interface another module's or not —, while the std.core defaults a
+   parent brings are inherited as every default is ([§1](#1-interfaces-and-conformance) rule 3). A type that lists
+   the implied interface itself, writes the member, or gives the interface in a block of its own
+   module has that one (the sweep after M10, W8).
 6. **What is refused is said at the declaration.** A field whose type lacks the conformance
    the synthesis needs is the diagnostic of the missing operation, with its own code, at the
    type's conformance-list entry — `'Equatable' is not synthesized for 'P': …` —, the field's
