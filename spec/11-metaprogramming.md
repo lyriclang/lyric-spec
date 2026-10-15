@@ -56,7 +56,8 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 7. **The compiler instructions** — in the prelude — are the closed list of `std.core` the compiler
    reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
    (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
-   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14) and `@When` (§3). What one says holds for
+   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14),
+   `@SeesConformer` (rule 15) and `@When` (§3). What one says holds for
    every instance, so beside `@Test` they sit on a generic declaration too, where data may not
    (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
@@ -92,6 +93,11 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 14. **`@Shared`** on a field: the `clone()` a `Clone` synthesis writes copies the field instead of
     cloning it ([05 §14](05-interfaces.md#14-conformance-synthesis) rule 2) — the reference, where
     the field holds one. A `clone()` the type writes itself is its own.
+15. **`@SeesConformer`** on an interface: its defaults ask with the module of the conformer they
+    are set in place for ([§4](#4-type-information) rule 10), and so see every field of it, whatever
+    its word. std.core's family and std.codec's `Encode` and `Decode` carry it; an interface of the
+    program that builds or reads a conformer whole — a parser of arguments, a codec — says so with
+    it, and its documentation says that it does (the sweep after M10, W10).
 
 ## 2. `comptime`
 
@@ -258,12 +264,14 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    `!`, `&&` and `||` over them (M10 S3). **`comptime if (c) a else b` is a value** too: where a round decides
    `c`, the chosen arm alone is checked and is the value; otherwise both arms, of one type
    (`LYR-SEM0100`), and the site chooses.
-10. **The family asks with the conformer's module.** The defaults of `Equatable`, `Hashable`,
-   `Ordered`, `TotalOrder` and `Clone` in std.core ([05 §14](05-interfaces.md)), and of `Encode`
-   and `Decode` in std.codec ([12 §Codecs](12-stdlib.md) rule 7; M10 S2), see every field of
-   the conformer, whatever its word: a type's internal and private fields compare, hash, clone
-   and serialize as its `pub` ones do. Every other interface's default sees what rule 2 gives it. What
-   is wrong in one of the family's is said at the conformer's entry ([05 §14](05-interfaces.md)
+10. **An interface marked `@SeesConformer` asks with the conformer's module** (§1 rule 15; the
+   sweep after M10, W10). The defaults of such an interface — std.core's `Equatable`, `Hashable`,
+   `Ordered`, `TotalOrder`, `Clone`, `VariantName` and `Variants` ([05 §14](05-interfaces.md)),
+   std.codec's `Encode` and `Decode` ([12 §Codecs](12-stdlib.md) rule 7; M10 S2), and a
+   program's that carries the marker — see every field of the conformer, whatever its word: a
+   type's internal and private fields compare, hash, clone and serialize as its `pub` ones do, and
+   a library's parser fills them. Every other interface's default sees what rule 2 gives it. What
+   is wrong in one of std.core's family's is said at the conformer's entry ([05 §14](05-interfaces.md)
    rule 6). A write through an info, `this.[f] = …`, answers to the field's word and the
    function's `mut` as a write to the field by name does (`LYR-SEM0019`).
 11. **Enum reflection is synthesis** (09 A7 R5; M9a S11): `VariantName` gives any enum `name()`,

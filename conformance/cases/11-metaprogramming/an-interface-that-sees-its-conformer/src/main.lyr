@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | a;b;c;
+//! | a;b;
+//! since: 5.0.0
+// 11 §1 rule 15, §4 rule 10 (the sweep after M10, W10): an interface marked @SeesConformer asks with
+// the conformer's module and sees its private field; one without sees what its own module may
+// name of another module's type.
+import std.io { println };
+import app.args { Whole, Seen };
+
+struct Start :: [Whole, Seen] {
+    pub a: int,
+    b: int,
+    private c: int,
+}
+
+fn main(): void {
+    let s = Start { a = 1, b = 2, c = 3 };
+    println(s.whole());
+    println(s.seen());
+}

@@ -1,0 +1,18 @@
+import std.meta { fields };
+
+@SeesConformer
+pub interface Whole {
+    fn whole(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) { out = out + f.name + ";"; }
+        return out;
+    }
+}
+
+pub interface Seen {
+    fn seen(): string {
+        var out = "";
+        comptime for (f in fields<Self>()) { out = out + f.name + ";"; }
+        return out;
+    }
+}
