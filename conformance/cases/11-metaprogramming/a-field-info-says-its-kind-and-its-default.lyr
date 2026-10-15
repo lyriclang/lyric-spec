@@ -9,10 +9,10 @@
 //! | pair:TypeKind.Tuple:false:req
 //! | hello:TypeKind.Interface:false:req
 //! | text:TypeKind.Primitive:true:d
-//! | w:false
+//! | w:true
 //! | h:false
-// 11 §4 rules 1 and 9 (the sweep after M10, W9): a field's info says whether its declaration
-// writes a default and what its type is, and a round decides on both - an optional argument from
+// 11 §4 rules 1 and 9 (the sweep after M10, W9, X2): a field's info says whether its declaration
+// writes a default - a payload's field's too - and what its type is, and a round decides on both - an optional argument from
 // a required one, a flag from a value.
 import std.io { println };
 import std.meta { fields, variants, TypeKind };

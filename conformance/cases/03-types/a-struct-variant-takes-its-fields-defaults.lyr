@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | Shape.Box { w = 7, h = 2, label = null }
+//! | Shape.Box { w = 3, h = 4, label = "big" }
+//! | Ev.Hit { v = 5, times = [5, 5] }
+//! | Ev.Hit { v = "x", times = [] }
+//! | Shape.Origin { x = 1, y = null }
+//! since: 5.0.0
+// 03 §4 rule 2 under §2.4, 11 §4 rule 8 (the sweep after M10, X2): a struct variant's field may
+// write a default, and an initializer that leaves it out takes it - evaluated where the variant is
+// built, a '?T' without one null, a generic enum's default under its instance; an initializer over
+// infos alike.
+import std.io { println };
+import std.meta { variants };
+
+enum Shape :: [Debug] {
+    Dot,
+    Box { w: int = 7, h: int, label: ?string },
+    Origin { x: int = 1, y: ?int },
+}
+
+enum Ev<T> :: [Debug] {
+    Hit { v: T, times: T[] = [] },
+}
+
+fn twice<T>(v: T): Ev<T> {
+    return Ev<T>.Hit { v = v, times = [v, v] };
+}
+
+fn main(): void {
+    println(Shape.Box { h = 2 }.debug());
+    println(Shape.Box { w = 3, h = 4, label = "big" }.debug());
+    println(twice(5).debug());
+    println(Ev<string>.Hit { v = "x" }.debug());
+    comptime for (v in variants<Shape>()) {
+        comptime if (v.name == "Origin") {
+            let o: Shape = Shape.[v] { };
+            println(o.debug());
+        }
+    }
+}

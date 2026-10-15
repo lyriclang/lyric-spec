@@ -371,7 +371,9 @@ One of several variants, each with a payload or none
 2. A value of the enum is exactly one variant with that variant's payload. A unit variant is
    written by its name, `Signal.Red`; a tuple variant is called, `Shape.Num(3)`; a struct
    variant is built with the initializer, `Shape.Rect { w = 1, h = 2 }`, under the rules of
-   [§2.4](#24-construction). A variant is not a type: `Num` names no type, and a payload is
+   [§2.4](#24-construction): a payload's field may write a default, checked against its type with
+   the enum's parameters in scope, and an initializer that leaves the field out takes it (the
+   sweep after M10, X2). A variant is not a type: `Num` names no type, and a payload is
    read by a pattern ([09](09-patterns.md)) and in no other way.
 3. An enum is a **value** ([§2.1](#21-values-and-references)): stored inline, copied by a
    binding, an assignment, an argument and a return, without identity. `this` in a method is
