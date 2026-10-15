@@ -213,7 +213,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    has the body as its own: `f` is that field's info, a constant a `comptime` site of the round may
    read (`comptime if (f.isVar)`), and **`e.[f]`** is the field of `e` that `f` names, of the
    field's own type — read, written and a place as `e.name` is (R2). `e` is a value of the type `f`
-   walks the fields of (`LYR-SEM0185`). Where `T` is known only per instance — a type parameter of
+   walks the fields of (`LYR-SEM0185`). **`T.[f]`** in a type's place is the type of that field —
+   `variants<Self.[f]>()` walks an enum field's variants, `fields<T.[f]>()` a struct field's
+   fields, `let x: T.[f] = e.[f]` binds it —, `T` the type the round walks; anywhere else
+   `LYR-SEM0185` (the sweep after M10, X5). Where `T` is known only per instance — a type parameter of
    a generic function — the rounds share one body, checked once: `f` is a `FieldInfo`, and no field
    is read through it (`LYR-SEM0185`).
 4. **`attribute<A>(f)`** is the attribute of type `A` that the field `f` names carries, its value,

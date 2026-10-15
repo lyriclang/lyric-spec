@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 3 (the sweep after M10, X5): 'T.[f]' names the type the round walks - a round over
+// the fields of 'Opts' gives no field of 'Other'.
+import std.meta { fields };
+
+struct Opts { a: int }
+struct Other { a: int }
+
+fn wrongOwner(): void {
+    comptime for (f in fields<Opts>()) {
+        let x: Other.[f] = 0;
+    }
+}
+
+fn main(): void {
+}

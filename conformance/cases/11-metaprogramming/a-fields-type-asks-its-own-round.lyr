@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 3 (the sweep after M10, X5): 'T.[f]' is the type of the field a round's variable
+// names - a plain local names no field.
+import std.meta { FieldInfo };
+
+struct Opts { a: int }
+
+fn outside(f: FieldInfo): void {
+    let x: Opts.[f] = 1;
+}
+
+fn main(): void {
+}
