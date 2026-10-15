@@ -170,12 +170,13 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
    and none inherits from itself (`LYR-PKG0002`). Only the root manifest's profiles count: the
    program is built one way. `out/<profile>/` is named after the profile
    ([14 §1.2](14-cli.md)).
-2. A profile sets **fields**: `opt`, the C optimization level from 0 to 3, and `debugInfo`,
-   `lto`, `denyWarnings`, `overflowChecks`, `fastMath`, each `true` or `false` (`LYR-PKG0002` for
-   another type, `LYR-PKG0003` for another key). A field a profile does not set is the one it
-   inherits — as the manifest has that profile. The built-in ones: `debug` `opt = 0`, `release`
-   `opt = 2`, the sanitizers' `opt = 1`; all four with `debugInfo` and `overflowChecks`, none with
-   `lto`, `denyWarnings` or `fastMath`.
+2. A profile sets **fields**: `opt`, the C optimization level from 0 to 3; `debugInfo`, `lto`,
+   `denyWarnings`, `overflowChecks`, `fastMath`, each `true` or `false`; and `gc`, `"immix"` or
+   `"boehm"` (`LYR-PKG0002` for another type or value, `LYR-PKG0003` for another key). A field a
+   profile does not set is the one it inherits — as the manifest has that profile. The built-in
+   ones: `debug` `opt = 0`, `release` `opt = 2`, the sanitizers' `opt = 1`; all four with
+   `debugInfo` and `overflowChecks`, none with `lto`, `denyWarnings` or `fastMath`, all with
+   `gc = "immix"`.
 3. **`overflowChecks = false`** makes integer overflow wrap instead of panicking, for the whole
    program ([03 §1.6](03-types.md)). Nothing is without the checks unless a profile says so.
 4. **`denyWarnings = true`** fails a compilation that warns: the warnings stay warnings, and an
@@ -186,6 +187,11 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
    ([§5](#5-the-native-part)) and the runtime as they are linked — ThinLTO. A target whose linker
    takes none — macOS, with the toolchain's C compiler — is built without it, not refused. What a
    program does is the same either way.
+7. **`gc`** chooses the runtime's collector
+   ([01 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)):
+   `"immix"`, its own, or `"boehm"`, the Boehm–Demers–Weiser collector it began with, kept to
+   compare against. What a program does is the same under either; what it costs in time and
+   memory is not.
 
 ## 5. The native part
 

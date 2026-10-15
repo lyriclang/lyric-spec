@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | kept 20 of 2000000
+//! since: 5.0.0
+// 15 §4 rules 2 and 7: a profile names the runtime's collector; the program does under Boehm what
+// it does under the own one — here it lets most of what it makes die and keeps every 100000th.
+import std.io { println };
+
+class Node { next: ?Node, value: int }
+
+fn main(): void {
+    var kept: ?Node = null;
+    var made = 0;
+    for (i in 0..2000000) {
+        let node = Node { next = null, value = i };
+        made += 1;
+        if (node.value % 100000 == 0) {
+            kept = Node { next = kept, value = i };
+        }
+    }
+    var count = 0;
+    var at = kept;
+    while (at != null) {
+        count += 1;
+        at = at.next;
+    }
+    println(f"kept {count} of {made}");
+}
