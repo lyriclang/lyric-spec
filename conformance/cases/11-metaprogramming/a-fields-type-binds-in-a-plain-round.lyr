@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | true
+//! | true
+//! since: 5.0.0
+// 11 §4 rule 3 (the sweep after M10, X5): a round whose body names 'T.[f]' in a type alone - no
+// other read of the field - is a round of its own: each binding takes its field's type.
+import std.io { println };
+import std.meta { fields };
+
+struct Opts { a: int, b: string }
+
+fn main(): void {
+    comptime for (f in fields<Opts>()) {
+        let none: ?Opts.[f] = null;
+        println(f"{none == null}");
+    }
+}

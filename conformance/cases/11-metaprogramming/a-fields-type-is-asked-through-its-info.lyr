@@ -1,0 +1,69 @@
+//! run
+//! stdout:
+//! | mode: Fast Slow
+//! | level: Low High
+//! | Opts: mode=Fast!|Slow level=Low|High
+//! | Inner 1 a b
+//! since: 5.0.0
+// 11 §4 rule 3 (the sweep after M10, X5): in a round over 'fields<T>()', 'T.[f]' is the type of
+// the field 'f' names - a question asks it of the field's type: the choices of an enum field, the
+// fields of a struct field; in a default over 'Self' too, a variant's attribute read there; a binding
+// writes it.
+import std.io { println };
+import std.meta { fields, variants, typeName, variantAttribute };
+import std.core { OnVariant };
+
+struct Label :: [OnVariant] { text: string }
+
+enum Mode { @Label("!") Fast, Slow }
+enum Level { Low, High }
+
+struct Inner { a: int, b: string }
+
+struct Opts :: [Choices] {
+    mode: Mode = .Fast,
+    level: Level,
+    name: string,
+    inner: Inner,
+}
+
+interface Choices {
+    fn choices(): string {
+        var out = "Opts:";
+        comptime for (f in fields<Self>()) {
+            comptime if (f.type.kind == .Enum) {
+                var names = "";
+                comptime for (v in variants<Self.[f]>()) {
+                    names = if (names == "") v.name else names + "|" + v.name;
+                    names = names + (variantAttribute<Label>(v)?.text ?? "");
+                }
+                out = out + " " + f.name + "=" + names;
+            }
+        }
+        return out;
+    }
+}
+
+fn main(): void {
+    let o = Opts { level = .High, name = "n", inner = Inner { a = 1, b = "x" } };
+    comptime for (f in fields<Opts>()) {
+        comptime if (f.type.kind == .Enum) {
+            var line = f.name + ":";
+            comptime for (v in variants<Opts.[f]>()) {
+                line = line + " " + v.name;
+            }
+            println(line);
+        }
+    }
+    println(o.choices());
+    comptime for (f in fields<Opts>()) {
+        comptime if (f.name == "inner") {
+            let held: Opts.[f] = o.[f];
+            var line = typeName<Opts.[f]>() + f" {held.a}";
+            comptime for (g in fields<Opts.[f]>()) {
+                line = line + " " + g.name;
+            }
+            println(line);
+        }
+    }
+}
