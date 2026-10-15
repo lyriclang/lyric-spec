@@ -192,8 +192,12 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    declaration writes an initializer — the type's own default counts for nothing; a payload's
    field as a struct's (the sweep after M10, W9, X2); `variants<E>()`, a
    `VariantInfo { name, index, payload }` per variant, the payload's fields named by their position
-   where they have no names; `members<T>()`, a `MemberInfo { name, visibility, isStatic, isMut }` per
-   function of the type's own body; `conformances<T>()` and `hasConformance<T, I>()`;
+   where they have no names; `members<T>()`, a
+   `MemberInfo { name, visibility, isStatic, isMut, kind, parameters }` per function, constant
+   and associated type of the type's own body, in declaration order — `kind` a `MemberKind`
+   (`Function`, `Constant`, `AssociatedType`), `parameters` a function's
+   `ParameterInfo { name, type, index, hasDefault }`, none of a constant or an associated type,
+   which are static (the sweep after M10, X4); `conformances<T>()` and `hasConformance<T, I>()`;
    `typeName<T>()`; `isStruct`, `isClass`, `isEnum`, `isInterface<T>()`. A `Type` holds its name
    and its `kind`, a `TypeKind`: `Primitive` (the scalars, `string`), `Struct`, `Class`, `Enum`,
    `Interface`, `Opaque`, `Optional`, `Array`, `InlineArray`, `Slice` (a view), `Tuple`,
@@ -225,8 +229,13 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    value of the type the round walks, and **`T.[m](…)`** a static one on `T`: the call by the
    member's name, `e.name(…)`, among overloads the arguments choose, checked in the round as it
    stands — outside such a round, or on a value of another type, `LYR-SEM0185` (the sweep after
-   M10, X3). Each reader asks its own loop's variable (`LYR-SEM0185`; the sweep after M10, W6). **`typeAttribute<T, A>()`** is the one `T`'s declaration carries — written as
-   an alias, the alias's own, not its target's.
+   M10, X3). **`comptime for (p in m.parameters)`** in such a round has a body per parameter of
+   the function `m` names, `p` that parameter's info, and **`parameterAttribute<A>(p)`** is the
+   attribute it carries (X4). Each reader asks its own loop's variable (`LYR-SEM0185`; the sweep
+   after M10, W6). **`typeAttribute<T, A>()`** is the one `T`'s declaration carries — written as
+   an alias, the alias's own, not its target's. What stands at a module's top level — its
+   header, a function, an `extend`, a binding — no question of std.meta reads: a macro reads it
+   and its attributes through std.syntax ([§5](#5-macros); X4).
 5. **A default that walks `Self`'s fields is set in place for each conformer that takes it** (A5):
    checked as the conformer's — `Self` and `this` the conformer, its names those of the
    interface's module —, each round's `this.[f]` of the conformer's field's type. What is wrong
@@ -259,9 +268,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 9. **A `comptime if` a round decides** checks the chosen branch alone — against [§2](#2-comptime)
    rule 7, which checks every branch: the other may name what this field's type has not, a
    `clone()` of a `@Shared` field. A round decides a condition made of its variables' `isVar`,
-   `index`, `name` and `hasDefault`, a variant's `index` and `name`, a member's `name`, `isStatic`
-   and `isMut`, `attribute<A>(f)`, `variantAttribute<A>(v)` and `memberAttribute<A>(m)` against
-   `null`, `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`) and
+   `index`, `name` and `hasDefault`, a variant's `index` and `name`, a member's `name`, `isStatic`,
+   `isMut` and `kind` against a `MemberKind`, a parameter's `name`, `index` and `hasDefault`,
+   `attribute<A>(f)`, `variantAttribute<A>(v)`, `memberAttribute<A>(m)` and
+   `parameterAttribute<A>(p)` against `null`, `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`) and
    its `kind` against a `TypeKind` (`f.type.kind == .Optional`; W9), a payload's
    `length()`, `startsWith` over such a string, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`,
    `!`, `&&` and `||` over them (M10 S3). **`comptime if (c) a else b` is a value** too: where a round decides

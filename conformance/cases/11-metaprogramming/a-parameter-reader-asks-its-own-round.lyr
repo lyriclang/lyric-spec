@@ -1,0 +1,31 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 4 (the sweep after M10, X4): 'parameterAttribute<A>(p)' reads the parameter a round
+// over a member's parameters names, and nothing else: a loop of the run over an info's parameters
+// has no rounds.
+import std.meta { members, parameterAttribute, MemberInfo };
+import std.core { OnParameter };
+
+struct Help :: [OnParameter] { text: string }
+
+struct Api {
+    fn go(@Help("x") n: int): int { return n; }
+}
+
+fn inARound(): void {
+    comptime for (m in members<Api>()) {
+        comptime for (p in m.parameters) {
+            let _ = parameterAttribute<Help>(p);
+        }
+    }
+}
+
+fn outside(info: MemberInfo): void {
+    for (q in info.parameters) {
+        let _ = parameterAttribute<Help>(q);
+    }
+}
+
+fn main(): void {
+}

@@ -1,0 +1,52 @@
+//! run
+//! stdout:
+//! | MAX MemberKind.Constant static
+//! | Item MemberKind.AssociatedType static
+//! | next MemberKind.Function mut
+//! | take MemberKind.Function n=-:0:false label=lbl:1:true
+//! | MAX limit
+//! since: 5.0.0
+// 11 §4 rules 1, 4 and 9 (the sweep after M10, X4): 'members<T>()' lists the functions, constants
+// and associated types of a type's own body in declaration order, each with its kind; a
+// function's parameters are walked by a round over 'm.parameters', and a parameter's attribute
+// and a constant's are read there.
+import std.io { println };
+import std.meta { members, memberAttribute, parameterAttribute, MemberKind };
+import std.core { OnParameter, OnMember };
+
+struct Help :: [OnParameter] { text: string }
+struct Note :: [OnMember] { text: string }
+
+struct Count :: [Iterator] {
+    @Note("limit") static let MAX: int = 3;
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == Count.MAX) { return null; }
+        this.n = this.n + 1;
+        return this.n;
+    }
+
+    fn take(n: int, @Help("lbl") label: string = "x"): int { return n; }
+}
+
+fn main(): void {
+    comptime for (m in members<Count>()) {
+        var line = m.name + " " + m.kind.debug();
+        comptime if (m.kind == .Function) {
+            comptime if (m.isMut) { line = line + " mut"; }
+            comptime for (p in m.parameters) {
+                line = line + " " + p.name + "=" + (parameterAttribute<Help>(p)?.text ?? "-") + ":" + f"{p.index}:{p.hasDefault}";
+            }
+        } else {
+            comptime if (m.isStatic) { line = line + " static"; }
+        }
+        println(line);
+    }
+    comptime for (m in members<Count>()) {
+        comptime if (m.kind == MemberKind.Constant) {
+            println(m.name + " " + (memberAttribute<Note>(m)?.text ?? "-"));
+        }
+    }
+}
