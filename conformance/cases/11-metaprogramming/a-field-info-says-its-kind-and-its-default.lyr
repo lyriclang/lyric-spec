@@ -1,0 +1,47 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | port:TypeKind.Primitive:true:d
+//! | name:TypeKind.Optional:false:o:req
+//! | verbose:TypeKind.Primitive:true:d
+//! | tags:TypeKind.Array:false:req
+//! | color:TypeKind.Enum:true:d:e
+//! | pair:TypeKind.Tuple:false:req
+//! | hello:TypeKind.Interface:false:req
+//! | text:TypeKind.Primitive:true:d
+//! | w:false
+//! | h:false
+// 11 §4 rules 1 and 9 (the sweep after M10, W9): a field's info says whether its declaration
+// writes a default and what its type is, and a round decides on both - an optional argument from
+// a required one, a flag from a value.
+import std.io { println };
+import std.meta { fields, variants, TypeKind };
+
+enum Color { Red, Green, Box { w: int = 1, h: int } }
+
+interface Greets { fn greet(): string; }
+
+struct Opts {
+    port: int = 8080,
+    name: ?string,
+    verbose: bool = false,
+    tags: string[],
+    color: Color = .Red,
+    pair: (int, int),
+    hello: Greets,
+    text: string = "",
+}
+
+fn main(): void {
+    comptime for (f in fields<Opts>()) {
+        var out = f.name + ":" + f.type.kind.debug() + ":" + f"{f.hasDefault}";
+        comptime if (f.hasDefault) { out = out + ":d"; }
+        comptime if (f.type.kind == .Optional) { out = out + ":o"; }
+        comptime if (f.type.kind == TypeKind.Enum) { out = out + ":e"; }
+        comptime if (f.type.kind != .Primitive && !f.hasDefault) { out = out + ":req"; }
+        println(out);
+    }
+    comptime for (v in variants<Color>()) {
+        comptime for (p in v.payload) { println(p.name + ":" + f"{p.hasDefault}"); }
+    }
+}

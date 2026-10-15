@@ -181,12 +181,17 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 **Conformance.** `conformance/cases/11-metaprogramming/`.
 
 1. **`std.meta`** answers questions about a type as constants (R1): `fields<T>()`, a
-   `FieldInfo { name, type, index, visibility, isVar }` per field of a struct or a class, in
-   declaration order, `index` its place in the answer; `variants<E>()`, a
+   `FieldInfo { name, type, index, visibility, isVar, hasDefault }` per field of a struct or a
+   class, in declaration order, `index` its place in the answer, `hasDefault` whether the
+   declaration writes an initializer — the type's own default counts for nothing, and a
+   payload's field has none (the sweep after M10, W9); `variants<E>()`, a
    `VariantInfo { name, index, payload }` per variant, the payload's fields named by their position
    where they have no names; `members<T>()`, a `MemberInfo { name, visibility, isStatic, isMut }` per
    function of the type's own body; `conformances<T>()` and `hasConformance<T, I>()`;
-   `typeName<T>()`; `isStruct`, `isClass`, `isEnum`, `isInterface<T>()`. A `Type` holds its name.
+   `typeName<T>()`; `isStruct`, `isClass`, `isEnum`, `isInterface<T>()`. A `Type` holds its name
+   and its `kind`, a `TypeKind`: `Primitive` (the scalars, `string`), `Struct`, `Class`, `Enum`,
+   `Interface`, `Opaque`, `Optional`, `Array`, `InlineArray`, `Slice` (a view), `Tuple`,
+   `Function`, `Parameter` (a type parameter), `Other` (W9).
    Each answer is a constant of the type at the instance it is asked at — in a generic function or a
    default, of each instance (R3). Nothing is reflected at run time (R6): a program reads a type
    through such constants alone.
@@ -245,9 +250,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 9. **A `comptime if` a round decides** checks the chosen branch alone — against [§2](#2-comptime)
    rule 7, which checks every branch: the other may name what this field's type has not, a
    `clone()` of a `@Shared` field. A round decides a condition made of its variables' `isVar`,
-   `index` and `name`, a variant's `index` and `name`, a member's `name`, `isStatic` and `isMut`,
-   `attribute<A>(f)`, `variantAttribute<A>(v)` and `memberAttribute<A>(m)` against `null`,
-   `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`), a payload's
+   `index`, `name` and `hasDefault`, a variant's `index` and `name`, a member's `name`, `isStatic`
+   and `isMut`, `attribute<A>(f)`, `variantAttribute<A>(v)` and `memberAttribute<A>(m)` against
+   `null`, `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`) and
+   its `kind` against a `TypeKind` (`f.type.kind == .Optional`; W9), a payload's
    `length()`, `startsWith` over such a string, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`,
    `!`, `&&` and `||` over them (M10 S3). **`comptime if (c) a else b` is a value** too: where a round decides
    `c`, the chosen arm alone is checked and is the value; otherwise both arms, of one type
