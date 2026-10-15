@@ -1,0 +1,53 @@
+//! run
+//! stdout:
+//! | 8080 0
+//! | Labelled { n = 4 } Kind.B(3)
+//! | 1 7 9
+//! since: 5.0.0
+// 05 §14 rule 5 (the sweep after M10, W8): a parent an interface of the program implies - Default
+// through Args, Display through Shown and Named - is synthesized as a listed one is; a type that
+// lists it too, writes the member, or gives it in a block of its own, has that one.
+import std.io { println };
+
+interface Args :: [Default] {
+    static fn fill(): Self {
+        return Self.default();
+    }
+}
+
+interface Named :: [Display] { }
+interface Shown :: [Named] { }
+
+struct Start :: [Args] {
+    port: int = 8080,
+    count: int,
+}
+
+struct Labelled :: [Shown] {
+    n: int,
+}
+
+struct Both :: [Args, Default] {
+    port: int = 1,
+}
+
+struct Own :: [Args] {
+    port: int = 2,
+    static fn default(): Own { return Own { port = 7 }; }
+}
+
+struct Blocked :: [Args] {
+    port: int = 3,
+}
+
+extend Blocked :: [Default] {
+    static fn default(): Blocked { return Blocked { port = 9 }; }
+}
+
+enum Kind :: [Shown] { A, B(int) }
+
+fn main(): void {
+    println(f"{Start.fill().port} {Start.fill().count}");
+    println(f"{Labelled { n = 4 }.show()} {Kind.B(3).show()}");
+    println(f"{Both.fill().port} {Own.fill().port} {Blocked.fill().port}");
+}
