@@ -221,8 +221,11 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    round over `variants<E>()`; **`memberAttribute<A>(m)`** the one the member `m` carries, `m`
    the variable of a round over `members<T>()`: **`comptime for (m in members<T>())`** has a body
    per member as rule 3 has one per field, where `T` is a type the loop's place knows and the
-   body reads through `m`. Each reader asks its own loop's variable (`LYR-SEM0185`; the sweep
-   after M10, W6). **`typeAttribute<T, A>()`** is the one `T`'s declaration carries — written as
+   body reads through `m`. In such a round **`e.[m](…)`** calls the member `m` names on `e`, a
+   value of the type the round walks, and **`T.[m](…)`** a static one on `T`: the call by the
+   member's name, `e.name(…)`, among overloads the arguments choose, checked in the round as it
+   stands — outside such a round, or on a value of another type, `LYR-SEM0185` (the sweep after
+   M10, X3). Each reader asks its own loop's variable (`LYR-SEM0185`; the sweep after M10, W6). **`typeAttribute<T, A>()`** is the one `T`'s declaration carries — written as
    an alias, the alias's own, not its target's.
 5. **A default that walks `Self`'s fields is set in place for each conformer that takes it** (A5):
    checked as the conformer's — `Self` and `this` the conformer, its names those of the

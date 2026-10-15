@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 4 (the sweep after M10, X3): 'e.[m](…)' calls the member a round over a known type's
+// members names - over a type parameter there are no rounds.
+import std.meta { members };
+
+fn callAll<T>(x: T): int {
+    comptime for (m in members<T>()) {
+        let _ = x.[m]();
+    }
+    return 0;
+}
+
+fn main(): void {
+}

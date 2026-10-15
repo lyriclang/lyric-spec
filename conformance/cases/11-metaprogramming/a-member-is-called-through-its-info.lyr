@@ -1,0 +1,64 @@
+//! run
+//! stdout:
+//! | hi
+//! | 3
+//! | made
+//! | 404
+//! | hey!
+//! since: 5.0.0
+// 11 §4 rule 4 (the sweep after M10, X3): in a round over 'members<T>()', 'e.[m](…)' calls the
+// member 'm' names on a value and 'T.[m](…)' a static one - a router that reads '@Route' and calls
+// what carries it; a default over 'members<Self>()' calls its conformer's.
+import std.io { println };
+import std.meta { members, memberAttribute };
+import std.core { OnMethod };
+
+struct Route :: [OnMethod] { path: string }
+
+struct Api {
+    hits: int,
+    @Route("/hello") fn hello(): string { return "hi"; }
+    @Route("/count") fn count(): string { return f"{this.hits}"; }
+    fn plain(): string { return "plain"; }
+    @Route("/make") static fn make(): string { return "made"; }
+}
+
+fn dispatch(api: Api, path: string): string {
+    comptime for (m in members<Api>()) {
+        comptime if (memberAttribute<Route>(m) != null) {
+            if (path == memberAttribute<Route>(m)!.path) {
+                comptime if (m.isStatic) {
+                    return Api.[m]();
+                } else {
+                    return api.[m]();
+                }
+            }
+        }
+    }
+    return "404";
+}
+
+interface Shout {
+    fn shout(): string {
+        var out = "";
+        comptime for (m in members<Self>()) {
+            comptime if (m.name == "hello") {
+                out = this.[m]() + "!";
+            }
+        }
+        return out;
+    }
+}
+
+struct Loud :: [Shout] {
+    fn hello(): string { return "hey"; }
+}
+
+fn main(): void {
+    let api = Api { hits = 3 };
+    println(dispatch(api, "/hello"));
+    println(dispatch(api, "/count"));
+    println(dispatch(api, "/make"));
+    println(dispatch(api, "/nope"));
+    println(Loud { }.shout());
+}
