@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0106
+//! since: 5.0.0
+// 11 §4 rule 8 (the sweep after M10, X2): 'E.[v] { … }' leaves out a payload field as a written
+// initializer does - one with a default or of a '?T' type, and no other.
+import std.meta { variants };
+
+enum Shape {
+    Dot,
+    Box { w: int = 7, h: int },
+}
+
+fn build(): ?Shape {
+    comptime for (v in variants<Shape>()) {
+        comptime if (v.name == "Box") {
+            let b: Shape = Shape.[v] { };
+            return b;
+        }
+    }
+    return null;
+}
+
+fn main(): void {
+}

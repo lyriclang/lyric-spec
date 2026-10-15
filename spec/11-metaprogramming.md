@@ -189,8 +189,8 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 1. **`std.meta`** answers questions about a type as constants (R1): `fields<T>()`, a
    `FieldInfo { name, type, index, visibility, isVar, hasDefault }` per field of a struct or a
    class, in declaration order, `index` its place in the answer, `hasDefault` whether the
-   declaration writes an initializer — the type's own default counts for nothing, and a
-   payload's field has none (the sweep after M10, W9); `variants<E>()`, a
+   declaration writes an initializer — the type's own default counts for nothing; a payload's
+   field as a struct's (the sweep after M10, W9, X2); `variants<E>()`, a
    `VariantInfo { name, index, payload }` per variant, the payload's fields named by their position
    where they have no names; `members<T>()`, a `MemberInfo { name, visibility, isStatic, isMut }` per
    function of the type's own body; `conformances<T>()` and `hasConformance<T, I>()`;

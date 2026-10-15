@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §4 rule 2 under §2.4 (the sweep after M10, X2): a payload field's default is checked against
+// the field's type, as a struct field's is.
+enum Shape {
+    Box { w: int = "seven", h: int },
+}
+
+fn main(): void {
+}
