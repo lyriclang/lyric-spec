@@ -282,7 +282,11 @@ ParseError` (design 10 B4, B5 Z6): every number type through `Num`, and `bool`. 
 taken whole — no whitespace, nothing after the value — and what is wrong with it is thrown,
 never panicked (10 B3): a **`ParseError`**, whose `kind` is a **`ParseErrorKind`** — `Empty` for
 no text, `Invalid` for a text not of the type's form, `Overflow` for a number beyond the type's
-range. All three are `std.core`'s.
+range. All three are `std.core`'s. Beside the kind a parser says what it can: **`detail`** — what
+it expected where it stopped, empty where it says nothing more — and **`offset`**, the byte of
+the text the refusal points at, `null` where it knows none; `message()` carries both. The number
+parsers say nothing more; `Uri.parse`, `percentDecode`, the address parsers and the time parsers
+fill them.
 
 - An **integer** is an optional `+` or `-` and ASCII digits, `_` only between two digits.
   `parse(s, radix)` stands beside `parse(s)` ([08 §1.2](08-expressions.md)) and reads digits in
@@ -572,7 +576,8 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
    100 (`isLeapYear()`). `plusDays(n)` moves a date, `dayOfWeek()` is a `Weekday`, `Monday` first.
    Dates and times compare and order; a date's text is ISO 8601's `YYYY-MM-DD` — a year outside
    0000–9999 with its sign and at least four digits —, a time's `HH:MM:SS` and the fraction
-   without trailing zeros.
+   without trailing zeros. Both read back from their texts (`Parse`): `Time.parse("09:30:00.5")`
+   takes up to nine digits of fraction and refuses an offset, which is a `DateTime`'s.
 6. **A zone** is a fixed offset from UTC: `Zone.utc`, `Zone.fixed(offset)` — whole minutes under
    a day, else `TimeError`. *(Informative.)* The zones of a database come with M10.
 7. **`DateTime`** is a date and a time of day at an offset: `DateTime.of(date, time, zone)`,
@@ -1378,6 +1383,8 @@ conformances of the core types, and `Value`, the tree of the forms that any form
 4. **The core types conform.** The integers (a narrower one through `int`, refused as `Invalid`
    where it does not fit; a `uint` the same), `float` and `float32`, `bool`, `string`, `char` (a
    string of one character), `Instant` (its RFC 3339 text), `?T` (`null` or the value), `T[]`,
+   `Duration`, `Date`, `Time` and `DateTime` (their texts: as Go writes a duration, RFC 3339's
+   full-date, `HH:MM:SS` with the fraction, RFC 3339's date-time with its offset),
    `Slice<T>` (writes alone), `List<T>`, `Deque<T>`, `Set<T>` (a sequence, in the set's order),
    `Map<K, V>` (a map; the keys go to the format as values, which holds them or not), the tuples
    of two and three (a sequence of that length, `Missing` where shorter). A `uint8[]` is a

@@ -202,8 +202,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    a generic function — the rounds share one body, checked once: `f` is a `FieldInfo`, and no field
    is read through it (`LYR-SEM0185`).
 4. **`attribute<A>(f)`** is the attribute of type `A` that the field `f` names carries, its value,
-   or `null` (R4); `f` is a round's variable (`LYR-SEM0185`). **`typeAttribute<T, A>()`** is the
-   one `T`'s declaration carries.
+   or `null` (R4); `f` is a round's variable (`LYR-SEM0185`) — of a default's round over `Self`:
+   a generic helper over `T` with `comptime for (f in fields<T>())` does not read attributes
+   (`LYR-SEM0185` there too), so a synthesis keeps its attribute reads in the defaults (M10 S2).
+   **`typeAttribute<T, A>()`** is the one `T`'s declaration carries.
 5. **A default that walks `Self`'s fields is set in place for each conformer that takes it** (A5):
    checked as the conformer's — `Self` and `this` the conformer, its names those of the
    interface's module —, each round's `this.[f]` of the conformer's field's type. What is wrong
@@ -237,8 +239,9 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    rule 7, which checks every branch: the other may name what this field's type has not, a
    `clone()` of a `@Shared` field. A round decides a condition made of its variables' `isVar`,
    `index` and `name`, a variant's `index` and `name`, `attribute<A>(f)` against `null`,
-   `isEnum<T>()` and its kin of a known type, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`, `!`,
-   `&&` and `||` over them. **`comptime if (c) a else b` is a value** too: where a round decides
+   `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`), a payload's
+   `length()`, `startsWith` over such a string, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`,
+   `!`, `&&` and `||` over them (M10 S3). **`comptime if (c) a else b` is a value** too: where a round decides
    `c`, the chosen arm alone is checked and is the value; otherwise both arms, of one type
    (`LYR-SEM0100`), and the site chooses.
 10. **The family asks with the conformer's module.** The defaults of `Equatable`, `Hashable`,
