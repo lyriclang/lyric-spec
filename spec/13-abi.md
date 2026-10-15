@@ -145,8 +145,10 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    on. A yield goes back to the coroutine's resumer — the thread's own stack, or the coroutine
    that resumed it — and nowhere else (asymmetric), and nothing interrupts a coroutine between a
    resume and its next yield (cooperative).
-2. A coroutine's stack is reserved at its first resume — 256 KiB unless its creation says
-   otherwise — and costs memory only as its pages are reached. A guard page below it makes
+2. A coroutine's stack is reserved at its first resume — 256 KiB in the release profile and
+   2 MiB in the others, whose unoptimized frames are some four times as large, unless its
+   creation says otherwise (the sweep after M10, W5) — and costs memory only as its pages are
+   reached. A guard page below it makes
    running out of it a stack overflow (`LYR-RT0006`), as on a thread's stack.
 3. A coroutine runs on the thread that first resumed it, and only there.
 4. A coroutine is an object. While it is suspended, what its frames hold lives as long as the
