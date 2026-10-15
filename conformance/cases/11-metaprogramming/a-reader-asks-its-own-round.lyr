@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0185
+//! since: 5.0.0
+// 11 §4 rule 4: 'memberAttribute<A>(m)' asks a round's variable - a type parameter's loop over
+// 'members' has no rounds, as one over 'fields' has none.
+import std.meta { members, memberAttribute };
+import std.core { OnMethod };
+
+struct Route :: [OnMethod] { path: string }
+
+fn routesOf<T>(): int {
+    comptime for (m in members<T>()) {
+        let r = memberAttribute<Route>(m);
+    }
+    return 0;
+}
+
+fn main(): void {
+}

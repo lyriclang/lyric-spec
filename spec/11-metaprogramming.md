@@ -36,7 +36,7 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    names its parameter by name (`LYR-SEM0155`). Beside it a parameter takes what its marker
    admits there (rule 4).
 4. **Every declaration takes attributes** (09 T7): the module header (`module;`, §3 rule 4), a function, a method, a
-   field, a `static let`, a variant, a parameter, a struct, a class, an enum, an interface, an
+   field (a variant's payload's too), a `static let`, a variant, a parameter, a struct, a class, an enum, an interface, an
    alias, an `extend` block, a module-level binding, an associated type. A marker names one kind
    or a set of them (09 F1): `OnModule`; `OnFunction` (a function at the top level), `OnMethod`,
    `OnField`, `OnParameter`, `OnVariant`; `OnType` (a struct, a class, an enum), `OnInterface`,
@@ -205,7 +205,14 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    or `null` (R4); `f` is a round's variable (`LYR-SEM0185`) — of a default's round over `Self`:
    a generic helper over `T` with `comptime for (f in fields<T>())` does not read attributes
    (`LYR-SEM0185` there too), so a synthesis keeps its attribute reads in the defaults (M10 S2).
-   **`typeAttribute<T, A>()`** is the one `T`'s declaration carries.
+   A payload's field carries attributes as a struct's does, and a round over `v.payload` reads
+   them. **`variantAttribute<A>(v)`** is the one the variant `v` carries, `v` the variable of a
+   round over `variants<E>()`; **`memberAttribute<A>(m)`** the one the member `m` carries, `m`
+   the variable of a round over `members<T>()`: **`comptime for (m in members<T>())`** has a body
+   per member as rule 3 has one per field, where `T` is a type the loop's place knows and the
+   body reads through `m`. Each reader asks its own loop's variable (`LYR-SEM0185`; the sweep
+   after M10, W6). **`typeAttribute<T, A>()`** is the one `T`'s declaration carries — written as
+   an alias, the alias's own, not its target's.
 5. **A default that walks `Self`'s fields is set in place for each conformer that takes it** (A5):
    checked as the conformer's — `Self` and `this` the conformer, its names those of the
    interface's module —, each round's `this.[f]` of the conformer's field's type. What is wrong
@@ -238,7 +245,8 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 9. **A `comptime if` a round decides** checks the chosen branch alone — against [§2](#2-comptime)
    rule 7, which checks every branch: the other may name what this field's type has not, a
    `clone()` of a `@Shared` field. A round decides a condition made of its variables' `isVar`,
-   `index` and `name`, a variant's `index` and `name`, `attribute<A>(f)` against `null`,
+   `index` and `name`, a variant's `index` and `name`, a member's `name`, `isStatic` and `isMut`,
+   `attribute<A>(f)`, `variantAttribute<A>(v)` and `memberAttribute<A>(m)` against `null`,
    `isEnum<T>()` and its kin of a known type, a field's type's `name` (`f.type.name`), a payload's
    `length()`, `startsWith` over such a string, literals, and `==`, `!=`, `<`, `<=`, `>`, `>=`,
    `!`, `&&` and `||` over them (M10 S3). **`comptime if (c) a else b` is a value** too: where a round decides
