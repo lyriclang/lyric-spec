@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 512: parsed true 1024
+//! | 513: refused
+//! | 100000: refused
+//! since: 5.0.0
+// 12 §JSON rule 3, 13 rule 2 (the sweep after M10, W5): a document may nest 512 levels, the
+// outermost the first, and the library holds it in a task's default stack - in every profile;
+// the 513th level is refused, not overflowed.
+import std.io { println };
+import std.json;
+import std.json { JsonError };
+import std.string { StringBuilder };
+import std.task { spawn };
+
+fn nested(n: int): string {
+    let b = StringBuilder.new();
+    for (_ in 0..n) { b.append("["); }
+    for (_ in 0..n) { b.append("]"); }
+    return b.toString();
+}
+
+fn main(): void throws Error {
+    for (n in [512, 513, 100000]) {
+        let text = nested(n);
+        let t = spawn(() => {
+            try {
+                let v = json.parse(text[..]);
+                return f"parsed {v == v} {json.encode(v).length()}";
+            } catch (_: JsonError) {
+                return "refused";
+            }
+        });
+        println(f"{n}: {try t.await()}");
+    }
+}

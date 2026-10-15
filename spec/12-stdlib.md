@@ -1446,7 +1446,10 @@ conformances of the core types, and `Value`, the tree of the forms that any form
 3. **Strict.** One value, whitespace (space, tab, CR, LF) around it, nothing else: a trailing
    comma, a leading zero, `+`, `.5`, `1.`, an unknown escape, a lone surrogate, a control
    character unescaped, a text after the value are refused with the line and column. A member
-   repeated keeps the last value. The document may nest 512 levels.
+   repeated keeps the last value. The document may nest 512 levels, its outermost value the
+   first; one deeper is refused before what nests deeper is read, and a document the parser
+   takes is compared, written and shown in any task ([13](13-abi.md) rule 2; the sweep after
+   M10, W5).
 4. **`JsonValue`** is the tree: `Null`, `Bool`, `Int`, `Float`, `String`, `Array(List)`,
    `Object(Map)`; `Equatable` by content (an object's order aside), `Display` and `Debug` the
    compact text. `json.parse(text)` reads a text into it; `v["key"]` is a member or `null`,
@@ -1491,7 +1494,12 @@ it (15 §1): `std.toml` is for programs.
    column: a key defined twice, a table defined twice, a header for a table a dotted key made, a
    dotted key into a table a header or an inline table made, a header where a value stands, a
    header for an array of tables and the reverse, a trailing comma in an inline table, a leading
-   zero, a bare underscore, a signed prefixed integer, a date that is none.
+   zero, a bare underscore, a signed prefixed integer, a date that is none. The document may nest
+   **128 levels**: the root table the first, each segment of a header or a key one more, an array
+   of tables one more for its element, an array's elements and an inline table's values one below
+   them; one deeper is refused before what nests deeper is read. 128, not JSON's 512: a
+   `TomlValue` is several times a `JsonValue`, and a document the parser takes is compared,
+   written and shown in any task ([13](13-abi.md) rule 2; the sweep after M10, W5).
 4. **`TomlValue`** is the tree: `String`, `Int`, `Float`, `Bool`, `Datetime(TomlDatetime)`,
    `Array(List)`, `Table(TomlTable)`; **`TomlTable`** keeps its keys in the order written
    (`get`, `set`, `keys`, `pairs`, `length`); **`TomlDatetime`** is `Offset(DateTime)`,

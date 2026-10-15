@@ -1,0 +1,61 @@
+//! run
+//! stdout:
+//! | 128 arrays: parsed true
+//! | 128 tables: parsed true
+//! | 128 header: parsed true
+//! | 129 arrays: refused
+//! | 129 tables: refused
+//! | 129 header: refused
+//! | 100000 arrays: refused
+//! since: 5.0.0
+// 12 §TOML rule 3 (the sweep after M10, W5): a document may nest 128 levels, the root table the
+// first - each segment of a header or a key one more, an array's elements and an inline table's
+// values one below them -, and the library holds it in a task's default stack in every profile;
+// the 129th level is refused, not overflowed.
+import std.io { println };
+import std.toml;
+import std.toml { TomlError };
+import std.string { StringBuilder };
+import std.task { spawn };
+
+fn arrays(n: int): string {
+    let b = StringBuilder.new();
+    b.append("a = ");
+    for (_ in 0..n - 1) { b.append("["); }
+    for (_ in 0..n - 1) { b.append("]"); }
+    b.append("\n");
+    return b.toString();
+}
+
+fn tables(n: int): string {
+    let b = StringBuilder.new();
+    b.append("a = ");
+    for (_ in 0..n - 2) { b.append("{b = "); }
+    b.append("1");
+    for (_ in 0..n - 2) { b.append("}"); }
+    b.append("\n");
+    return b.toString();
+}
+
+fn header(n: int): string {
+    let b = StringBuilder.new();
+    b.append("[k");
+    for (_ in 0..n - 3) { b.append(".k"); }
+    b.append("]\nx = 1\n");
+    return b.toString();
+}
+
+fn main(): void throws Error {
+    for (c in [(128, "arrays"), (128, "tables"), (128, "header"), (129, "arrays"), (129, "tables"), (129, "header"), (100000, "arrays")]) {
+        let text = if (c.1 == "arrays") arrays(c.0) else if (c.1 == "tables") tables(c.0) else header(c.0);
+        let t = spawn(() => {
+            try {
+                let v = toml.parse(text[..]);
+                return f"parsed {v == v}";
+            } catch (_: TomlError) {
+                return "refused";
+            }
+        });
+        println(f"{c.0} {c.1}: {try t.await()}");
+    }
+}
