@@ -1,0 +1,63 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | st
+//! | iface
+//! | alias
+//! | Dot#1;Box#2 width=w height=-;Line#0 0=-;
+//! | make->/make;make!;
+// 11 §4 rule 4: what a declaration carries, a round reads - a variant's attribute, a member's, a
+// payload field's; a type's, an interface's and an alias's own through 'typeAttribute'.
+import std.io { println };
+import std.meta { variants, members, attribute, variantAttribute, memberAttribute, typeAttribute };
+import std.core { OnField, OnVariant, OnMethod, OnTypeLike };
+
+struct Tag :: [OnTypeLike] { name: string }
+struct Mark :: [OnField] { to: string }
+struct Wire :: [OnVariant] { code: int }
+struct Route :: [OnMethod] { path: string }
+
+@Tag("iface")
+interface Greets { fn greet(): string; }
+
+@Tag("alias")
+type Id = int;
+
+@Tag("st")
+struct S :: [Greets] {
+    @Mark("k") key: int,
+    fn greet(): string { return "hi"; }
+    @Route("/make") static fn make(): S { return S { key = 1 }; }
+}
+
+enum Shape {
+    @Wire(1) Dot,
+    @Wire(2) Box { @Mark("w") width: int, height: int },
+    Line(int),
+}
+
+fn main(): void {
+    println(typeAttribute<S, Tag>()?.name ?? "none");
+    println(typeAttribute<Greets, Tag>()?.name ?? "none");
+    println(typeAttribute<Id, Tag>()?.name ?? "none");
+    var out = "";
+    comptime for (v in variants<Shape>()) {
+        let code = variantAttribute<Wire>(v)?.code ?? 0;
+        out = out + v.name + "#" + f"{code}";
+        comptime for (p in v.payload) {
+            out = out + " " + p.name + "=" + (attribute<Mark>(p)?.to ?? "-");
+        }
+        out = out + ";";
+    }
+    println(out);
+    var routes = "";
+    comptime for (m in members<S>()) {
+        comptime if (memberAttribute<Route>(m) != null) {
+            routes = routes + m.name + "->" + (memberAttribute<Route>(m)?.path ?? "") + ";";
+        }
+        comptime if (m.isStatic) {
+            routes = routes + m.name + "!;";
+        }
+    }
+    println(routes);
+}
