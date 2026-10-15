@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | "1h30m0s" "2026-10-15" "09:30:00.5" "2026-10-15T09:30:00.5Z"
+//! | true true true true
+//! | 09:30:00.5 Invalid
+//! since: 5.0.0
+// 12 §Codecs rule 4 and §Time rule 5 (the review of M10, M15): a Duration, a Date, a Time and a
+// DateTime are their texts in every format, and read back the same; a Time reads from its text.
+// The blocks stand in std.codec, which the program that encodes names.
+import std.io { println };
+import std.json;
+import std.codec;
+import std.core { ParseError, ParseErrorKind };
+import std.time { Duration, Date, Time, DateTime, Zone };
+
+fn main(): void throws Error {
+    let d = Duration.ofMillis(5400000);
+    let day = try Date.of(2026, 10, 15);
+    let t = try Time.of(9, 30, 0, 500000000);
+    let dt = DateTime.of(day, t, Zone.utc);
+    let texts = [try json.encode(d), try json.encode(day), try json.encode(t), try json.encode(dt)];
+    println(f"{texts[0]} {texts[1]} {texts[2]} {texts[3]}");
+    let back = (try json.decode<Duration>(texts[0][..]), try json.decode<Date>(texts[1][..]), try json.decode<Time>(texts[2][..]), try json.decode<DateTime>(texts[3][..]));
+    println(f"{back.0 == d} {back.1 == day} {back.2 == t} {back.3 == dt}");
+    var refused = "";
+    try { let _ = Time.parse("9:30"); } catch (e: ParseError) { refused = if (e.kind == ParseErrorKind.Invalid) "Invalid" else "other"; }
+    println(f"{try Time.parse("09:30:00.500")} {refused}");
+}

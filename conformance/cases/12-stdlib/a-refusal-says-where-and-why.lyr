@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | Invalid an '[' without its ']' 7
+//! | Invalid the port is beyond 65535 9
+//! | Invalid a '%' without two hexadecimal digits after it 1
+//! | Invalid neither an IPv4 address (four decimal octets) nor an IPv6 one (RFC 4291 section 2.2) 0
+//! | Invalid the time of day is HH:MM:SS 11
+//! | Invalid  -
+//! | the text is not a value of the type: an '[' without its ']' (at byte 7)
+//! since: 5.0.0
+// 12 §Parsing (the review of M10, M14): beside the kind a parser says what it can - a detail and
+// the byte the refusal points at -, and message() carries both; a number parser says nothing more.
+import std.io { println };
+import std.core { ParseError, ParseErrorKind };
+import std.uri { Uri, percentDecode };
+import std.net { IpAddr };
+import std.time { DateTime };
+
+fn kindText(k: ParseErrorKind): string {
+    return match (k) {
+        .Empty => "Empty",
+        .Invalid => "Invalid",
+        .Overflow => "Overflow",
+    };
+}
+
+fn said(e: ParseError): string {
+    let o = e.offset ?? -1;
+    let at = if (o < 0) "-" else f"{o}";
+    return f"{kindText(e.kind)} {e.detail} {at}";
+}
+
+fn main(): void {
+    try { let _ = Uri.parse("http://[::1"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = Uri.parse("http://h:99999/"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = percentDecode("a%2"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = IpAddr.parse("nowhere"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = DateTime.parse("2026-10-15T09-30-00Z"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = int.parse("12x"); } catch (e: ParseError) { println(said(e)); }
+    try { let _ = Uri.parse("http://[::1"); } catch (e: ParseError) { println(e.message()); }
+}
