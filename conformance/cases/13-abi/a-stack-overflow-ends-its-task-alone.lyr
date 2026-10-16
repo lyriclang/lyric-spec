@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | the task: panicked LYR-RT0006 stack overflow
+//! | main goes on
+//! since: 5.0.0
+// 13 §1.4 item 7, §1.6 rule 10; 10 §5 rule 1: a stack overflow is a panic. In a task it leaves the
+// task's coroutine as any panic does — the task is panicked, with the overflow's code and message —
+// and the program goes on. The recursion reads after its call, so no compiler makes a loop of it.
+import std.io { println };
+import std.task { spawn, yieldNow, TaskStatus };
+
+fn down(n: int, xs: int[]): int {
+    let r = down(n + 1, xs);
+    return r + xs[n % xs.length()];
+}
+
+fn said(s: TaskStatus<int>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code} {info.message}",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let xs = [1, 2, 3];
+    let t = spawn(() => down(0, xs));
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(f"the task: {said(t.status())}");
+    println("main goes on");
+}

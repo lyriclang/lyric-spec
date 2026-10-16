@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | the task: panicked LYR-RT0006
+//! | main goes on
+//! since: 5.0.0
+// 13 §1.4 item 7: a stack overflow is a panic also where one frame holds more than a few pages —
+// here 32 KiB of an inline array, larger than what a stack keeps below its bound: the function
+// checks for its whole frame before it writes any of it.
+import std.io { println };
+import std.task { spawn, yieldNow, TaskStatus };
+
+fn wide(n: int): int {
+    var buf: int[4096] = [0] * 4096;
+    buf[n % 4096] = n;
+    let r = wide(n + 1);
+    return r + buf[(n * 7) % 4096];
+}
+
+fn said(s: TaskStatus<int>): string {
+    return match (s) {
+        .Panicked(info) => f"panicked {info.code}",
+        _ => "another status",
+    };
+}
+
+fn main(): void throws Error {
+    let t = spawn(() => wide(0));
+    while (!t.isDone()) {
+        try yieldNow();
+    }
+    println(f"the task: {said(t.status())}");
+    println("main goes on");
+}

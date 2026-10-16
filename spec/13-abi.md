@@ -119,7 +119,13 @@ The first element sits at offset 16, aligned to 16 bytes.
    arithmetic fault or an abort. When the runtime installed its handlers (§1.5), it writes `crash: ` and a
    description, then the frames from the faulting one outward, in the form of item 2; then the
    process ends the way the operating system ends it for that fault — not with 101.
-7. A stack overflow is a panic (`LYR-RT0006`), not a crash.
+7. A stack overflow is a panic (`LYR-RT0006`), not a crash. A compiled function finds it at its
+   entry, before it writes its frame: below the stack's end it keeps a reserve the panic runs in
+   ([01 S3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)). In a
+   coroutine the panic leaves it as any panic does (§1.6 rule 10) — a task that overflows ends
+   alone —, and what the output holds is written before the report, as for any panic. A guard
+   page below each stack is the net under frames that do not check — the runtime's own and
+   foreign code —: running into it ends the process with the same report.
 
 ### 1.5 Program start and end
 
@@ -148,8 +154,8 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
 2. A coroutine's stack is reserved at its first resume — 256 KiB in the release profile and
    2 MiB in the others, whose unoptimized frames are some four times as large, unless its
    creation says otherwise (the sweep after M10, W5) — and costs memory only as its pages are
-   reached. A guard page below it makes
-   running out of it a stack overflow (`LYR-RT0006`), as on a thread's stack.
+   reached. Running out of it is a stack overflow (`LYR-RT0006`, §1.4 item 7), as on a thread's
+   stack.
 3. A coroutine runs on the thread that first resumed it, and only there.
 4. A coroutine is an object. While it is suspended, what its frames hold lives as long as the
    coroutine: one that nothing references any more is collected with its stack, and nothing on

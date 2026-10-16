@@ -1,0 +1,19 @@
+//! run
+//! panic: LYR-RT0006
+//! stdout:
+//! | before the overflow
+//! since: 5.0.0
+// 13 §1.4 item 7; 12 §The console, rule 2: an overflow in main is a panic like any other — what
+// the output holds is written before its report, also when the output is a pipe.
+import std.io { println };
+
+fn down(n: int, xs: int[]): int {
+    let r = down(n + 1, xs);
+    return r + xs[n % xs.length()];
+}
+
+fn main(): void {
+    println("before the overflow");
+    let xs = [1, 2, 3];
+    println(down(0, xs));
+}
