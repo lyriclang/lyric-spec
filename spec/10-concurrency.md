@@ -273,12 +273,16 @@ values of their types.
 `std.sync`'s **`Atomic<T>`** holds a value that every thread reads and writes in one step
 ([06 G4, K6, N7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)).
 
-1. `Atomic<T>.new(value)` makes one. `T` is an **`AtomicValue`**: `int` or `bool`. The interface
-   is sealed, so no other type becomes one (`LYR-SEM0132`), and an `Atomic` of another type is
-   refused (`LYR-SEM0028`).
+1. `Atomic<T>.new(value)` makes one. `T` is an **`AtomicValue`**: `int`, `bool`, a class, or an
+   optional of a class (`?Node`) — a reference is one word, which the machine reads and writes in
+   one step. The interface is sealed, so no other type becomes one (`LYR-SEM0132`), and an `Atomic`
+   of another type — a string, a struct, an optional of anything but a class — is refused
+   (`LYR-SEM0028`).
 2. **`load()`** gives the value, **`store(v)`** sets it, **`exchange(v)`** sets it and gives the
    value it replaced, and **`compareAndSet(expected, desired)`** sets `desired` where the value is
-   `expected` and answers whether it did. Each is one step.
+   `expected` and answers whether it did. Each is one step. For a class `compareAndSet` compares
+   identity ([03 §2.6](03-types.md#26-identity-and-equality)): it sets where the value is the same
+   object as `expected` (or both are `null`), whatever `==` would say.
 3. An `Atomic<int>` also adds: **`fetchAndAdd(n)`** gives the value before, **`addAndFetch(n)`**
    the value after. The sum wraps around, as `+%` does.
 4. Every operation is sequentially consistent (N7 P2): all threads see the operations in one

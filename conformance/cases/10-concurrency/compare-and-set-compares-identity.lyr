@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | false true
+//! | true true
+//! | true false
+//! since: 5.0.0
+// 10 §8 rule 2: on a class compareAndSet compares identity — an object with the same contents is
+// another object, and null matches null.
+import std.io { println };
+import std.sync { Atomic };
+
+class Box { value: int }
+
+fn main(): void {
+    let first = Box { value = 1 };
+    let twin = Box { value = 1 };
+    let held = Atomic<Box>.new(first);
+    let missed = held.compareAndSet(twin, Box { value = 2 });
+    println(f"{missed} {same(held.load(), first)}");
+    let swapped = held.compareAndSet(first, twin);
+    println(f"{swapped} {same(held.load(), twin)}");
+    let maybe = Atomic<?Box>.new(null);
+    let filled = maybe.compareAndSet(null, first);
+    println(f"{filled} {maybe.load() == null}");
+}

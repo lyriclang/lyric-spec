@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | 4000 7998000
+//! since: 5.0.0
+// 10 §8 rules 1, 2, 4: an Atomic of an optional class — a stack after Treiber, four threads pushing
+// a thousand nodes each through compareAndSet, then the stack walked.
+import std.io { println };
+import std.sync { Atomic };
+import std.thread { Thread };
+
+class Node { value: int, next: ?Node }
+
+fn push(top: Atomic<?Node>, value: int): void {
+    while (true) {
+        let seen = top.load();
+        let node = Node { value = value, next = seen };
+        if (top.compareAndSet(seen, node)) { return; }
+    }
+}
+
+fn pushAll(top: Atomic<?Node>, from: int): void {
+    for (i in from..from + 1000) {
+        push(top, i);
+    }
+}
+
+fn main(): void throws Error {
+    let top = Atomic<?Node>.new(null);
+    let a = Thread.spawn(() => pushAll(top, 0));
+    let b = Thread.spawn(() => pushAll(top, 1000));
+    let c = Thread.spawn(() => pushAll(top, 2000));
+    let d = Thread.spawn(() => pushAll(top, 3000));
+    try a.await();
+    try b.await();
+    try c.await();
+    try d.await();
+    var count = 0;
+    var sum = 0;
+    var at = top.load();
+    while (at != null) {
+        count += 1;
+        sum += at.value;
+        at = at.next;
+    }
+    println(f"{count} {sum}");
+}
