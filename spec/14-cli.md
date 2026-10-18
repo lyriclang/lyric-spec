@@ -40,8 +40,9 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    fetched, and a package read from git comes from the user's cache ([15 §2](15-project.md)).
    `--locked` takes none either: `build`, `run` and `test` take the lock as it is
    ([15 §3](15-project.md) rule 4).
-   A profile's fields change for one build with `--opt <0-3>` and `--lto`, `--debug-info`,
-   `--deny-warnings`, `--overflow-checks`, `--fast-math`, each with its `--no-` form; a field flag
+   A profile's fields change for one build with `--opt <0-3>`, `--gc <immix|boehm>` and `--lto`,
+   `--debug-info`, `--deny-warnings`, `--overflow-checks`, `--fast-math`, each with its `--no-`
+   form; a field flag
    is over the profile ([11 C4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)), and a flag with its `--no-` form is refused.
 3. The command line is strict: an unknown verb, option or value is refused.
 4. A binary for a target that is not this machine is built and not run: `run` refuses it and
