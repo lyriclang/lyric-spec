@@ -1,7 +1,7 @@
 //! check
 //! error: LYR-SEM0028
 //! since: 5.0.0
-// 10 §8 rule 1: an Atomic holds an int or a bool — another type is refused.
+// 10 §8 rule 1: an Atomic holds an int, a bool or a class — a string is refused.
 import std.sync { Atomic };
 
 fn main(): void {

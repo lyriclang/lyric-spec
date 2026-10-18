@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 10 §8 rule 1: an optional of anything but a class is no AtomicValue — it is two words, a flag
+// beside the value.
+import std.sync { Atomic };
+
+fn main(): void {
+    let count = Atomic<?int>.new(null);
+}
