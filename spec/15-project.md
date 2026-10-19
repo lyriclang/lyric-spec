@@ -180,7 +180,7 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
 3. **`overflowChecks = false`** makes integer overflow wrap instead of panicking, for the whole
    program ([03 §1.6](03-types.md)). Nothing is without the checks unless a profile says so.
 4. **`denyWarnings = true`** fails a compilation that warns: the warnings stay warnings, and an
-   error says why the build failed (`LYR-CLI0006`).
+   error says why the build failed (`LYR-CLI0016`).
 5. **`fastMath = true`** lets the C compiler treat the program's floating point as not
    IEEE-exact ([03 §1.6](03-types.md)); the runtime's stays exact.
 6. **`lto = true`** lets the C compiler optimize across the program, the native parts
