@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0002
+//! since: 5.0.0
+// 16 §2.1: 'main' does not parse — its first 'let' has no value —, and what the checker would say
+// about the rest of it (a string where an int is declared) is not said.
+fn main(): void {
+    let a = ;
+    let b: int = "text";
+}

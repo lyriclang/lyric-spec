@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-PAR0002
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 16 §2.1: 'broken' does not parse and says only that; 'main' beside it parsed and reports its own
+// mistake.
+fn broken(): void {
+    let a = ;
+}
+
+fn main(): void {
+    let b: int = "text";
+}
