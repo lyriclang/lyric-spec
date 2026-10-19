@@ -1,5 +1,5 @@
 //! check
-//! error: LYR-CLI0006
+//! error: LYR-CLI0016
 //! since: 5.0.0
 // 15 §4 rule 4: denyWarnings fails a compilation that warns.
 import std.io { println };
