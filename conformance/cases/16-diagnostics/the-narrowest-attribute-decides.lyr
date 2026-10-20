@@ -1,0 +1,15 @@
+//! check
+//! since: 5.0.0
+// 16 §5 rule 5: a member's '@Allow' decides within it over its type's '@Deny'.
+@Deny("warnings")
+struct Holder {
+    @Allow("unused-variable")
+    fn quiet(): void {
+        let unused = 1;
+    }
+}
+
+fn main(): void {
+    let holder = Holder { };
+    holder.quiet();
+}

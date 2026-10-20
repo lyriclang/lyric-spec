@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0071
+//! since: 5.0.0
+// 16 §5 rule 5: '@Warn' on a declaration decides within it over the manifest's 'allow'.
+@Warn("unused-variable")
+fn loud(): void {
+    let unused = 1;
+}
+
+fn main(): void {
+    loud();
+}

@@ -289,8 +289,8 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0176 | E | [07-statements](07-statements.md) | a name is bound twice in one scope | A `let` or `var` binds a name that the same block already binds, or a name of a parameter directly in the function body's block. `_` binds nothing and is exempt. |
 | LYR-SEM0177 | E | [11-metaprogramming](11-metaprogramming.md) | '@AlwaysInline' and '@NoInline' on one function | A function carries both `@AlwaysInline` and `@NoInline`. |
 | LYR-SEM0178 | W | [11-metaprogramming](11-metaprogramming.md) | the value of a '@MustUse' call is dropped | An expression statement drops the non-void value of a call to a function marked `@MustUse`, or a value whose type is marked `@MustUse` (such as a `Result` or a task handle from `std.task.spawn`). |
-| LYR-SEM0179 | E | [11-metaprogramming](11-metaprogramming.md) | '@Allow' names no diagnostic code | The argument of `@Allow` is not a diagnostic code such as `LYR-SEM0071`; for example, it is a lint name such as `unused`. |
-| LYR-SEM0180 | W | [11-metaprogramming](11-metaprogramming.md) | an '@Allow' that suppresses nothing | An `@Allow` names a code that no diagnostic inside the declaration it sits on reports. |
+| LYR-SEM0179 | E | [16-diagnostics](16-diagnostics.md) | a lint attribute names no lint | The argument of `@Allow`, `@Warn` or `@Deny` is no lint's name or code, no group, and not `warnings`. |
+| LYR-SEM0180 | W | [16-diagnostics](16-diagnostics.md) | an '@Allow' that takes back nothing | An `@Allow` names a lint that nothing inside the declaration or module it sits on reports. |
 | LYR-SEM0181 | E | [03-types](03-types.md) | an inline function keeps a function parameter | Inside an `inline fn`, a parameter of function type is used other than by calling it or passing it to another `inline fn`: returned, stored, captured or passed to an ordinary function. |
 | LYR-SEM0182 | E | [03-types](03-types.md) | an inline function reaches itself | An `inline fn` calls itself, directly or through other `inline fn`s; reported at the call that closes the cycle. |
 | LYR-SEM0183 | E | [03-types](03-types.md) | an inline function used as a value | An `inline fn` is named anywhere other than as the callee of a call: bound to a variable, passed as an argument, returned. |
@@ -389,7 +389,7 @@ The driver's options and verbs.
 | LYR-CLI0013 | E | [14-cli](14-cli.md) | the stub was started without a program *(retired)* | Reported by the 4.x packed-executable stub when it was started directly and carried no program. Retired: Lyric 5: binaries are native and there is no stub; the constant has no use outside its declaration |
 | LYR-CLI0014 | E | [14-cli](14-cli.md) | a packed executable is damaged *(retired)* | Reported by the 4.x stub when the footer of a packed executable did not hold together, as after a truncated download. Retired: Lyric 5: binaries are native and there are no packs; the constant has no use outside its declaration |
 | LYR-CLI0015 | E | [14-cli](14-cli.md) | no stub to pack into *(retired)* | Reported by the 4.x `lyrpack` when no stub executable was found through `--stub`, `LYRIC_STUB` or beside the binary. Retired: Lyric 5: binaries are native and there is no stub; the constant has no use outside its declaration |
-| LYR-CLI0016 | E | [15-project](15-project.md) | warnings under a profile that denies them | Reported after a compilation that warned when the profile has `denyWarnings` — set in the manifest's `[profile.<name>]` or with `--deny-warnings`. The warnings stay warnings; this error makes the build fail with exit 1. |
+| LYR-CLI0016 | E | [15-project](15-project.md) | warnings under a profile that denies them *(retired)* | Reported after a compilation that warned when the profile had `denyWarnings`: one error that counted the warnings, which stayed warnings. Retired: M12a S5: a profile that denies warnings is `-D warnings` — each warning is the error, with a note naming the profile. |
 | LYR-CLI0017 | W | [14-cli](14-cli.md) | a `lyric.json` holds something suspect *(retired)* | Reported by the 4.x toolchain for a `lyric.json` that loaded but held something suspect, such as an unknown key. Retired: Lyric 5: the manifest is lyric.toml, where an unknown key is the error LYR-PKG0003; the constant has no use outside its declaration |
 | LYR-CLI0018 | E | [14-cli](14-cli.md) | a `lyric.json` asks for a newer toolchain *(retired)* | Reported by the 4.x toolchain when a `lyric.json` named a minimum toolchain version above its own. Retired: Lyric 5: a toolchain pin in lyric.toml is LYR-PKG0009; only the 4.x lyric.json reader (Lyric.Core ProjectFile) reports it |
 | LYR-CLI0019 | E | [14-cli](14-cli.md) | `--only` named an artifact the build script did not declare *(retired)* | Reported by the 4.x `lyrbuild` when `--only <name>` named no artifact of the build script. Retired: Lyric 5: lyric5 has no --only option; programs are chosen with --bin (LYR-CLI0003 for an unknown one); the constant has no use outside its declaration |
@@ -437,3 +437,30 @@ A panic ends the program with exit code 101 and a backtrace; the compile-time ev
 | LYR-RT0017 | P | [06-errors](06-errors.md) | control reached code the compiler holds unreachable | Control arrived where the compiler knows it cannot arrive — behind a call that does not return, behind a match that covers every case. That is a bug in the compiler: the debug profile panics with this code; the release profile stops with the processor's trap, which the runtime reports as a crash. Report it with the program. |
 | LYR-RT0018 | P | [10-concurrency](10-concurrency.md) | a deadlock | Every task of a thread waits — for a channel, a lock, another task — and nothing can wake one: no task is ready, none sleeps, no other thread lives. The wait panics in the waiting task. |
 | LYR-RT0019 | P | [10-concurrency](10-concurrency.md) | a lock poisoned by a panic | A task acquires a `Mutex`, `RwLock` or `Once` whose holder panicked while it held it. The scheduler released the lock and poisoned it; the panic names the first panic's code and message. |
+
+## A.14 Lints
+
+Every warning is a lint (16 §5): its name, its code, its group and its level unless said. `warnings` names them all.
+
+| Lint | Code | Group | Level | Title |
+|---|---|---|---|---|
+| `blanket-shadowing` | LYR-SEM0168 | correctness | warn | a type's member hides a blanket member |
+| `build-script-warning` | LYR-BLD0003 | correctness | warn | a warning a build script reported |
+| `builtin-type-shadowing` | LYR-SEM0077 | correctness | warn | an import that shadows a builtin type |
+| `closeable-never-closed` | LYR-SEM0144 | resources | warn | a Closeable value nothing closes |
+| `deprecated` | LYR-SEM0076 | deprecation | warn | a use of a deprecated declaration |
+| `generator-copies-this` | LYR-SEM0172 | correctness | warn | a 'mut fn' generator on a value type changes a copy |
+| `irrefutable-pattern` | LYR-SEM0104 | correctness | warn | a pattern that cannot fail where a test is promised |
+| `iterator-reused` | LYR-SEM0162 | correctness | warn | a second loop over the same iterator |
+| `prelude-shadowing` | LYR-SEM0153 | correctness | warn | a name hides one of the prelude's |
+| `unreachable-catch` | LYR-SEM0171 | unused | warn | a catch-all clause that nothing reaches |
+| `unreachable-code` | LYR-SEM0073 | unused | warn | an unreachable statement |
+| `unreachable-pattern` | LYR-SEM0112 | unused | warn | a match arm no value can reach |
+| `unused-import` | LYR-SEM0072 | unused | warn | an import that is never used |
+| `unused-label` | LYR-SEM0103 | unused | warn | a loop label nothing jumps to |
+| `unused-result` | LYR-SEM0178 | unused | warn | the value of a '@MustUse' call is dropped |
+| `unused-variable` | LYR-SEM0071 | unused | warn | a local that is never used |
+| `useless-allow` | LYR-SEM0180 | unused | warn | an '@Allow' that takes back nothing |
+| `useless-try` | LYR-SEM0139 | style | warn | a 'try' mark over nothing that can throw |
+| `visibility-leak` | LYR-SEM0152 | correctness | warn | a member is written wider than its type |
+| `void-binding` | LYR-SEM0173 | correctness | warn | a binding or parameter holds a 'void' |

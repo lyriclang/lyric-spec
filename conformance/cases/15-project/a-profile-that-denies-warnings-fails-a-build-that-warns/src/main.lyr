@@ -1,7 +1,7 @@
 //! check
-//! error: LYR-CLI0016
+//! error: LYR-SEM0072
 //! since: 5.0.0
-// 15 §4 rule 4: denyWarnings fails a compilation that warns.
+// 15 §4 rule 4: denyWarnings fails a compilation that warns — the unused import is the error.
 import std.io { println };
 
 fn main(): void {

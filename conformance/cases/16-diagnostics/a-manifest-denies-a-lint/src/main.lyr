@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0071
+//! since: 5.0.0
+// 16 §5 rule 4: the manifest's '[lints] deny' makes the lint an error in the package's files.
+fn main(): void {
+    let unused = 1;
+}

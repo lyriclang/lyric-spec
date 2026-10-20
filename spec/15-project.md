@@ -35,11 +35,10 @@ in `ProgramTests`.
 4. A key or a section the toolchain does not know is refused (`LYR-PKG0003`), as an unknown option
    is ([14 §1.1](14-cli.md)). `[dependencies]`, `[override]`, `include` and `exclude` are §2's.
    `[profile]` is §4's, `[native]` §5's, `[build-dependencies]` and `[trust]` §8's. `[lints]`
-   holds `allow`, the warning codes the package's files do not report
-   ([11 §1](11-metaprogramming.md) rule 13): `[lints] allow = ["LYR-SEM0071"]`, a code each
-   (`LYR-PKG0002`). The levels beside it, `warn` and `deny`
-   ([11 L1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)),
-   are refused the same way until [16](16-diagnostics.md) writes them.
+   holds `allow`, `warn` and `deny`, each an array of lints, groups or `warnings` — the levels of the
+   package's lints in its files ([16 §5](16-diagnostics.md#5-lints)): `[lints] deny = ["unused"]`; a
+   selector that names nothing, or stands in two of them, is refused (`LYR-PKG0002`), another key
+   (`LYR-PKG0003`).
 5. A package's **programs** are its `src/main.lyr`, whose binary is named after the package
    ([14 §1.2](14-cli.md)), and each `[[bin]]`: `name = "tool"` — a lowercase letter, then
    letters, digits, `_` and `-` —, its binary's, and `entry = "src/tool.lyr"`, a module of the
@@ -179,8 +178,8 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
    `gc = "immix"`.
 3. **`overflowChecks = false`** makes integer overflow wrap instead of panicking, for the whole
    program ([03 §1.6](03-types.md)). Nothing is without the checks unless a profile says so.
-4. **`denyWarnings = true`** fails a compilation that warns: the warnings stay warnings, and an
-   error says why the build failed (`LYR-CLI0016`).
+4. **`denyWarnings = true`** fails a compilation that warns: it is `-D warnings`
+   ([16 §5](16-diagnostics.md#5-lints) rule 8) — each warning is an error, its note naming the profile.
 5. **`fastMath = true`** lets the C compiler treat the program's floating point as not
    IEEE-exact ([03 §1.6](03-types.md)); the runtime's stays exact.
 6. **`lto = true`** lets the C compiler optimize across the program, the native parts
