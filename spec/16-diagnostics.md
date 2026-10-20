@@ -1,6 +1,6 @@
 # Diagnostics
 
-> **Partly written.** §1–§2 were written with milestone **M12a** of the Lyric 5 plan (slice S2); the
+> **Partly written.** §1–§3 were written with milestone **M12a** of the Lyric 5 plan (slices S2, S3); the
 > rest follows, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [11 Tooling and interop W6/W7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -53,3 +53,20 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 2. **`--max-errors N`** draws the first `N` errors, 50 unless said, all of them for `0`; what comes
    after is counted, and one closing line, `note: …`, says how many errors and other findings were
    not drawn. The exit code is what it would be without the limit.
+
+## 3. Codes and the catalogue
+
+([11 G9, G10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** Every rejecting case names its codes; the catalogue against the compiler in the toolchain's
+own tests (`tests/Lyric5.Tests`, `CatalogTests`).
+
+1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `CT`, `CG`, `PKG`, `BLD`, `CLI`, `ICE`,
+   `RT`, and `IR`, retired —, and four digits. The code and its severity are contract; the message's wording is not.
+2. Every code the toolchain reports stands in [Appendix A](appendix-a-diagnostics.md), generated from the
+   toolchain's catalogue, with its severity, the chapter whose rule it is, and when it is reported. A code no
+   longer reported is **retired** there: its number is not given to another finding.
+3. **`lyric explain CODE`** prints the catalogue's entry — for an error or a warning an explanation, a
+   program that reports it and the program put right. A code is read as `LYR-SEM0001`, `SEM0001` or
+   `sem0001`; one the catalogue does not hold is a usage error (exit 2, [14 §1.1](14-cli.md)).
+4. A message begins in lowercase and ends without a period; it names the program's own names in quotes.
