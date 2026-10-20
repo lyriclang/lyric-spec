@@ -1,0 +1,9 @@
+//! check
+//! option: -D
+//! option: unused
+//! error: LYR-SEM0071
+//! since: 5.0.0
+// 16 §5 rules 3, 4: '-D' with a group on the command line denies every lint of it.
+fn main(): void {
+    let unused = 1;
+}

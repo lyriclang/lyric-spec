@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0071
+//! since: 5.0.0
+// 16 §5 rules 2, 4: '@Deny' makes the lint an error within the declaration it sits on.
+@Deny("unused-variable")
+fn strict(): void {
+    let denied = 1;
+}
+
+fn main(): void {
+    strict();
+}

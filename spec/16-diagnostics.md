@@ -1,6 +1,6 @@
 # Diagnostics
 
-> **Partly written.** §1–§4 were written with milestone **M12a** of the Lyric 5 plan (slices S2–S4); the
+> **Partly written.** §1–§5 were written with milestone **M12a** of the Lyric 5 plan (slices S2–S5); the
 > rest follows, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [11 Tooling and interop W6/W7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -98,3 +98,38 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 6. **`summary`** closes the command — `errors` and `warnings`, the findings said — once; `run` writes it
    before its program runs. **`ice`**: the toolchain's own failure (`LYR-ICE…`) — `code`, `message`, where
    it was (`while`) and its `trace`.
+
+## 5. Lints
+
+([11 W7 L1–L5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md),
+[09 A10, A11](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/09-metaprogrammierung.md))
+
+**Conformance.** `conformance/cases/16-diagnostics/`; the places and the precedence in the toolchain's own tests
+(`tests/Lyric5.Tests`, `LintTests`).
+
+1. **Every warning is a lint**: a name — lowercase words joined by `-`, as `unused-variable` —, a group, and a
+   level of its own; [Appendix A](appendix-a-diagnostics.md) lists them, `lyric explain NAME` prints one. The
+   groups are `unused`, `correctness`, `resources`, `concurrency`, `deprecation`, `style`, `perf` and `docs`;
+   `warnings` names every lint. A warning that is no lint does not exist.
+2. A lint's **level** is `allow` — it is not said —, `warn` — it is said as a warning —, or `deny` — it is said as
+   an error, with a note that names who denied it, and the build fails (exit 1, [14 §1.1](14-cli.md)).
+3. A **selector** names a lint, by its name or its code, a group, or `warnings`. One that names nothing is
+   refused: in an attribute `LYR-SEM0179`, in a manifest `LYR-PKG0002`, on the command line as a usage error
+   (exit 2) — each with the selector closest to it in spelling, where one is.
+4. **Three places, one mechanism**: `@Allow`, `@Warn`, `@Deny` with a selector on a declaration set the level
+   in what the declaration holds ([11 §1](11-metaprogramming.md) rule 13); `allow`, `warn`, `deny` of a
+   package's `[lints]`, each an array of selectors, set it in the package's files
+   ([15 §1](15-project.md) rule 4) — a selector in one of them; `-A`, `-W`, `-D` with a selector on the command
+   line of `build`, `run`, `expand`, `test` and `bench` set it in the files of the package built.
+5. **Precedence**: the narrowest attribute around the finding decides; without one the command line, then the
+   manifest, then the lint's own level. Within one place the more specific selector decides — a lint over its
+   group over `warnings` —, and of two alike the later.
+6. The warnings of a **dependency** and of **`std`** are not said; `--warn-deps` says them, at the
+   dependency's own levels — but never as errors: another package's levels do not fail this build. Their
+   errors always are.
+7. An `@Allow` that decides no warning — none of its lints is met in what it sits on, or a narrower level
+   decides each — warns: `useless-allow` (`LYR-SEM0180`). The `@Allow` itself never decides that warning.
+8. **Warnings as errors** is a switch: a profile's `denyWarnings` ([15 §4](15-project.md) rule 4) and
+   `--deny-warnings` are `-D warnings` for the package built, in front of the command line's own levels —
+   each warning is an error, and its note names the profile. A build script's warnings are the lint
+   `build-script-warning` and denied the same way.

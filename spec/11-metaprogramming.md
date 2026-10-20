@@ -84,12 +84,11 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
     `match` covers it with a `_` or binding arm alone (`LYR-SEM0050`; [09 §3](09-patterns.md)) — a
     later version may add to it; inside, its variants or conformers cover it.
     `std.io.IoErrorKind` carries it.
-13. **`@Allow("LYR-SEM0071")`** takes back the warnings with that code within the declaration it
-    sits on, or in the module whose header carries it; **`[lints] allow`** in a package's manifest
-    takes them back in the package's files ([15 §1](15-project.md)) — two places, one mechanism.
-    An error is never taken back. An `@Allow` that takes back nothing warns (`LYR-SEM0180`), and a
-    value that is no code is refused (`LYR-SEM0179`): the lints' names come with
-    [16](16-diagnostics.md).
+13. **`@Allow`, `@Warn` and `@Deny`** with a lint, its code, its group or `warnings` —
+    `@Allow("unused-variable")` — set the lint's level within the declaration they sit on: not said, a
+    warning, an error ([16 §5](16-diagnostics.md#5-lints)). An error that is no lint is never taken back.
+    An `@Allow` that takes back nothing warns (`useless-allow`, `LYR-SEM0180`), and a selector that names
+    nothing is refused (`LYR-SEM0179`).
 14. **`@Shared`** on a field: the `clone()` a `Clone` synthesis writes copies the field instead of
     cloning it ([05 §14](05-interfaces.md#14-conformance-synthesis) rule 2) — the reference, where
     the field holds one. A `clone()` the type writes itself is its own.

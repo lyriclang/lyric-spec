@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0179
+//! since: 5.0.0
+// 16 §5 rule 3: a selector that names no lint, no group and not 'warnings' is refused — it would set
+// nothing, silently.
+@Warn("unused-varable")
+fn f(): void {
+}
+
+fn main(): void {
+    f();
+}
