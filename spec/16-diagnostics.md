@@ -1,6 +1,6 @@
 # Diagnostics
 
-> **Partly written.** §1–§3 were written with milestone **M12a** of the Lyric 5 plan (slices S2, S3); the
+> **Partly written.** §1–§4 were written with milestone **M12a** of the Lyric 5 plan (slices S2–S4); the
 > rest follows, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [11 Tooling and interop W6/W7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -13,7 +13,7 @@ The diagnostic record, codes and areas, severities, lints and their levels, fixe
 
 What the toolchain writes to the standard error for a person to read
 ([11 G5, C7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)). A
-program reads the JSON form instead (to come, M12a S4).
+program reads the JSON form instead (§4).
 
 **Conformance.** The suite reads the head lines (rule 1) of every rejecting case; the layout in the
 toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
@@ -70,3 +70,31 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    program that reports it and the program put right. A code is read as `LYR-SEM0001`, `SEM0001` or
    `sem0001`; one the catalogue does not hold is a usage error (exit 2, [14 §1.1](14-cli.md)).
 4. A message begins in lowercase and ends without a period; it names the program's own names in quotes.
+
+## 4. The JSON form
+
+([11 G8, C6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `JsonFormTests`; `tests/Lyric.Tests.Core`,
+`EventWriterTests`).
+
+1. **`--json`** on `build`, `run` and `test` writes, in place of the text form, one JSON object a line on
+   the standard output — a reader takes a line at a time while the command runs. Nothing else is written
+   there, but the output of the program `run` runs, after the build's lines; the standard error stays
+   empty. (`metadata --json` is a document of its own, 14 §2.)
+2. Every line holds `"type"` and `"version"`, the schema's version, `1`. A reader skips a type it does not
+   know and refuses a version it does not know.
+3. **`diagnostic`**: `code`, `severity` (`error`, `warning`, `hint`), `message`, `span`, the primary
+   `label` where there is one, `labels` (each `span` and `label`), `notes` (each `kind` — `note`, `help`,
+   `suggestion`, `category` —, `message`, `span`, and for a suggestion its `fix`: `span`, `text`,
+   `applicability` `safe` or `needs-review`), and `rendered`, the finding in the text form without colour.
+   A span is `null` or `{file, start, end}`, `start` and `end` each `{line, column, offset}`, the file as
+   the text form says it (§1 rule 5). Every finding is a line — §2's limit is the text form's.
+4. **`artifact`**: what a build wrote — `kind` (`binary`), `name`, `path`.
+5. **`test`**: a test of `lyric test` as it ends — `name`, `outcome` (`passed`, `failed`, `skipped`), and
+   where there is one a `message` (why it was skipped, what ended it) and the `panic`'s code. **`tests`**:
+   the run's count — `passed`, `failed`, `skipped`. **`output`**: a line the program wrote that is no event
+   — `stream` (`stdout`, `stderr`) and `text`.
+6. **`summary`** closes the command — `errors` and `warnings`, the findings said — once; `run` writes it
+   before its program runs. **`ice`**: the toolchain's own failure (`LYR-ICE…`) — `code`, `message`, where
+   it was (`while`) and its `trace`.
