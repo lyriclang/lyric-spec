@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 3 a
+//! since: 5.0.0
+// 03 §9.2 rule 1: 'T' is in no parameter type, and the fixation of 'I''s constraint binds it from
+// the argument's iterator; a fixed structure binds 'K' and 'V' by matching.
+import std.io { println };
+
+fn countOf<I :: [Iterator<Item = T>], T>(it: I): int throws I.Error {
+    var walk = it;
+    var n = 0;
+    while ((try walk.next()) != null) {
+        n = n + 1;
+    }
+    return n;
+}
+
+fn firstKey<I :: [Iterator<Item = (K, V)>], K, V>(it: I): ?K throws I.Error {
+    var walk = it;
+    if (let (k, _) = try walk.next()) {
+        return k;
+    }
+    return null;
+}
+
+fn main(): void {
+    let xs = [3, 4, 5];
+    let pairs = [("a", 1), ("b", 2)];
+    println(f"{countOf(xs.iter())} {firstKey(pairs.iter()) ?? "none"}");
+}
