@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-RES0003
+//! since: 5.0.0
+// 04 §4 rule 8: a module that does not exist is refused; its note suggests 'app.shapes'.
+import app.shapse;
+
+fn main(): void {
+}

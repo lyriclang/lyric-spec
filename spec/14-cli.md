@@ -228,12 +228,15 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
+| `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
+| `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
 | `update` | `[<package>…]` | `-C <dir>`, `--offline` | — | — |
 | `add` | `<name>` | `--path <dir>`, `--git <url>`, `--tag <tag>`, `--branch <branch>`, `--rev <commit>`, `-C <dir>`, `--offline` | — | — |
 | `remove` | `<name>` | `-C <dir>`, `--offline` | — | — |
 | `clean` | — | `-C <dir>` | — | — |
 | `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
 | `explain` | `<code>` | — | — | — |
+| `completions` | `<bash|zsh|fish|pwsh>` | — | — | — |
 | `version` | — | — | — | — |
 | `help` | `[<verb>]` | `--markdown` | — | — |
 
@@ -252,3 +255,27 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 2. It takes the options that change a setting — `-C`, `--profile`, the profile's fields,
    `--target` — so that it says what the build with them would read. **`--json`** writes one
    document instead: `{"version": 1, "settings": [{"name", "value", "origin"}, …]}`.
+
+## 7. `new`, `init` and `completions`
+
+([11 C2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `NewCommandTests`).
+
+1. **`lyric new <name>`** makes the directory `<name>` and a package in it; **`lyric init`** makes
+   the package in the directory it runs in — `-C` names another —, named after the directory unless
+   `--name <name>` names it. The files: `lyric.toml` (`[package]` with `name` and
+   `version = "0.1.0"`), `src/main.lyr` printing `Hello, world!` — or, with **`--lib`**, a library's
+   `src/lib.lyr` —, and `.gitignore` holding `out/`; no build script. A file `init` finds there is
+   kept.
+2. A name that is no package name ([15 §1](15-project.md) rule 2) is refused with exit 2, and with
+   the name it would be where there is one (`My-App` → `my_app`). `new` into a directory that is
+   there, and `init` where a `lyric.toml` is, are refused (`LYR-CLI0021`, exit 2).
+3. **git**: `--git` makes a repository in the package's directory, `--no-git` none; without either,
+   the environment's **`LYRIC_GIT_ON_NEW`** decides — `1` or `true` makes one where no repository
+   holds the directory already and git is found. The command line is over the environment (§6).
+   A `--git` that git refuses, or that finds no git, fails the command (`LYR-CLI0021`) after the
+   files are written.
+4. **`lyric completions <bash|zsh|fish|pwsh>`** prints the shell's completion script — the verbs,
+   and for each its options and the options every verb takes, as §5's table has them — and runs
+   nothing. Another shell is refused (exit 2).

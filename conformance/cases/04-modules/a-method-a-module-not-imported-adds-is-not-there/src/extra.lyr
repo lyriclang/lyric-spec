@@ -1,0 +1,7 @@
+import app.shapes { Point };
+
+pub extend Point {
+    pub fn norm(): int {
+        return this.x;
+    }
+}
