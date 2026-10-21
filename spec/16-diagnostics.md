@@ -89,7 +89,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 **Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `JsonFormTests`; `tests/Lyric.Tests.Core`,
 `EventWriterTests`).
 
-1. **`--json`** on `build`, `run`, `test` and `fix` writes, in place of the text form, one JSON object a line on
+1. **`--json`** on `build`, `run`, `check`, `test` and `fix` writes, in place of the text form, one JSON object a line on
    the standard output — a reader takes a line at a time while the command runs. Nothing else is written
    there, but the output of the program `run` runs, after the build's lines; the standard error stays
    empty. (`metadata --json` is a document of its own, 14 §2.)
@@ -133,7 +133,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    in what the declaration holds ([11 §1](11-metaprogramming.md) rule 13); `allow`, `warn`, `deny` of a
    package's `[lints]`, each an array of selectors, set it in the package's files
    ([15 §1](15-project.md) rule 4) — a selector in one of them; `-A`, `-W`, `-D` with a selector on the command
-   line of `build`, `run`, `expand`, `test`, `bench` and `fix` set it in the files of the package built.
+   line of `build`, `run`, `check`, `expand`, `test`, `bench` and `fix` set it in the files of the package built.
 5. **Precedence**: the narrowest attribute around the finding decides; without one the command line, then the
    manifest, then the lint's own level. Within one place the more specific selector decides — a lint over its
    group over `warnings` —, and of two alike the later.
