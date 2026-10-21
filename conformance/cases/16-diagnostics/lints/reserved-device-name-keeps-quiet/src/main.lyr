@@ -1,0 +1,9 @@
+//! check
+//! clean: reserved-device-name
+//! since: 5.0.0
+// 16 §5: a module named console, not con, as Windows keeps the one for a device and not the other.
+import app.console;
+
+fn main(): void {
+    let _ = console.width();
+}

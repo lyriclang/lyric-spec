@@ -1,0 +1,24 @@
+//! check
+//! warning: LYR-SEM0221
+//! since: 5.0.0
+// 16 §5: a large struct passed by value — 'large-value-copy' says it.
+struct Frame {
+    a: int,
+    b: int,
+    c: int,
+    d: int,
+    e: int,
+    f: int,
+    g: int,
+    h: int,
+    i: int,
+}
+
+@Warn("large-value-copy")
+fn total(frame: Frame): int {
+    return frame.a + frame.i;
+}
+
+fn main(): void {
+    let _ = total(Frame { a = 1, b = 2, c = 3, d = 4, e = 5, f = 6, g = 7, h = 8, i = 9 });
+}

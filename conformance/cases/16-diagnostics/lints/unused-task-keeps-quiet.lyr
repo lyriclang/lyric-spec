@@ -1,0 +1,10 @@
+//! check
+//! clean: unused-task
+//! since: 5.0.0
+// 16 §5: 'unused-task' says nothing where the program is put right.
+import std.task { spawn };
+
+fn main(): void throws Error {
+    let task = spawn(() => 1);
+    let _ = try task.await();
+}

@@ -1,0 +1,12 @@
+//! check
+//! clean: global-var-without-sync
+//! since: 5.0.0
+// 16 §5: 'global-var-without-sync' says nothing where the program is put right.
+import std.thread { Thread };
+
+fn main(): void {
+    var hits = 0;
+    hits = hits + 1;
+    let _ = hits;
+    let _ = Thread.spawn(() => 1);
+}

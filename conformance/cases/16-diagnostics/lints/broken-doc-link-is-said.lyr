@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0224
+//! since: 5.0.0
+// 16 §5: a doc link that names nothing — 'broken-doc-link' says it.
+/// Twice `x`; [halve] goes the other way.
+fn twice(x: int): int {
+    return x * 2;
+}
+
+fn main(): void {
+    let _ = twice(1);
+}

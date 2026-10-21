@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0215
+//! since: 5.0.0
+// 16 §5: a name against the naming convention — 'naming' says it.
+struct point_2d {
+    x: int,
+}
+
+fn main(): void {
+    let p = point_2d { x = 1 };
+    let _ = p.x;
+}

@@ -19,4 +19,4 @@ jobs:
         run: python3 tools/run_conformance.py --parse-only
 
       - name: Every lint of the groups so far has a red and a green case
-        run: python3 tools/check_lints.py --groups unused,correctness
+        run: python3 tools/check_lints.py

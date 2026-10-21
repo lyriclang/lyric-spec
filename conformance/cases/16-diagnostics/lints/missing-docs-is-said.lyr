@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0223
+//! since: 5.0.0
+// 16 §5: a pub declaration without documentation — 'missing-docs' says it.
+@Warn("missing-docs")
+pub fn area(w: int, h: int): int {
+    return w * h;
+}
+
+fn main(): void {
+    let _ = area(2, 3);
+}

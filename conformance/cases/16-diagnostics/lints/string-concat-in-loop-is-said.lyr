@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0220
+//! since: 5.0.0
+// 16 §5: a string grown with '+' in a loop — 'string-concat-in-loop' says it.
+fn main(): void {
+    var line = "";
+    for (i in 0..3) {
+        line = line + f"{i}";
+    }
+    let _ = line;
+}

@@ -1,0 +1,9 @@
+//! check
+//! clean: redundant-clone
+//! since: 5.0.0
+// 16 §5: 'redundant-clone' says nothing where the program is put right.
+fn main(): void {
+    let name = "lyric";
+    let copy = name;
+    let _ = copy;
+}

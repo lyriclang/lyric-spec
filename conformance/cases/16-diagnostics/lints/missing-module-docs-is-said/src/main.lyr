@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0225
+//! since: 5.0.0
+// 16 §5: a module without module documentation — 'missing-module-docs' says it.
+import app.shapes;
+
+fn main(): void {
+    let _ = shapes.area(2, 3);
+}

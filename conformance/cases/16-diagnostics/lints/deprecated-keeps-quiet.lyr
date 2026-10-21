@@ -1,0 +1,16 @@
+//! check
+//! clean: deprecated
+//! since: 5.0.0
+// 16 §5: 'deprecated' says nothing where the program is put right.
+@Deprecated { message = "use 'next'" }
+fn old(): int {
+    return 1;
+}
+
+fn next(): int {
+    return 2;
+}
+
+fn main(): void {
+    let _ = next();
+}

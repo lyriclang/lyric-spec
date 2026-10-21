@@ -1,0 +1,8 @@
+//! check
+//! clean: needless-return
+//! since: 5.0.0
+// 16 §5: 'needless-return' says nothing where the program is put right.
+@Warn("needless-return")
+fn main(): void {
+    let _ = 1;
+}

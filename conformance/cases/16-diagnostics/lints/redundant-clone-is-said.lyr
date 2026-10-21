@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0217
+//! since: 5.0.0
+// 16 §5: 'clone()' of a value a copy makes whole — 'redundant-clone' says it.
+fn main(): void {
+    let name = "lyric";
+    let copy = name.clone();
+    let _ = copy;
+}

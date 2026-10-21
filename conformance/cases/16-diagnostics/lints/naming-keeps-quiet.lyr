@@ -1,0 +1,12 @@
+//! check
+//! clean: naming
+//! since: 5.0.0
+// 16 §5: 'naming' says nothing where the program is put right.
+struct Point2d {
+    x: int,
+}
+
+fn main(): void {
+    let p = Point2d { x = 1 };
+    let _ = p.x;
+}

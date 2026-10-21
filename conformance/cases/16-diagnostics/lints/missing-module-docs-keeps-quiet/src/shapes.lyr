@@ -1,0 +1,6 @@
+//! Areas of shapes.
+
+/// The area of a rectangle `w` wide and `h` high.
+pub fn area(w: int, h: int): int {
+    return w * h;
+}

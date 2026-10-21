@@ -321,6 +321,20 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0209 | W | [08-expressions](08-expressions.md) | a block's implicit 'it' that hides the 'it' around it | A trailing block that uses its implicit `it` stands inside another trailing block with an implicit `it`. |
 | LYR-SEM0210 | W | [14-cli](14-cli.md) | an exit code outside 0 to 255 | `fn main(): int` returns an integer literal below 0 or above 255; the process leaves with it modulo 256. |
 | LYR-SEM0211 | W | [05-interfaces](05-interfaces.md) | a conformance of another package's type to another package's interface | A conformance block is written for a type of another package to an interface of another package (`std` among them). |
+| LYR-SEM0212 | W | [10-concurrency](10-concurrency.md) | a task's handle dropped | An expression statement starts a task with `spawn` or `Thread.spawn` and drops the `Task` it gives; a scope's `spawn` is left alone, the scope awaits it. |
+| LYR-SEM0213 | W | [10-concurrency](10-concurrency.md) | a module 'var' in a program that starts threads | A module of a program that imports `std.thread` declares a module-level `var`. |
+| LYR-SEM0214 | W | [16-diagnostics](16-diagnostics.md) | a construct an edition retires | The name for the warning on a construct a newer edition retires. There is no edition yet, so nothing says it. |
+| LYR-SEM0215 | W | [16-diagnostics](16-diagnostics.md) | a name against the naming convention | A type, a type parameter or a variant not in PascalCase; a function, a field, a parameter, a local or a constant not in camelCase; a module with capitals in its name. |
+| LYR-SEM0216 | W | [04-modules](04-modules.md) | a module named as a Windows device | A module is named `con`, `prn`, `aux`, `nul`, `com0` to `com9` or `lpt0` to `lpt9`, in any case. |
+| LYR-SEM0217 | W | [08-expressions](08-expressions.md) | 'clone()' of a value a copy makes whole | `clone()` is called on a number, a `bool`, a `char`, a `string`, or a struct or an enum made of only such. |
+| LYR-SEM0218 | W | [07-statements](07-statements.md) | a 'return;' that ends a body | The last statement of a function's or a lambda's body is `return;`. Not said unless the lint is set to `warn`. |
+| LYR-SEM0219 | W | [07-statements](07-statements.md) | 'while (true)' where 'loop' is meant | A `while` loop's condition is the literal `true`. Not said unless the lint is set to `warn`. |
+| LYR-SEM0220 | W | [08-expressions](08-expressions.md) | a string grown with '+' in a loop | In a loop, a string kept across its rounds is assigned itself with something added: `s = s + x` or `s += x`. |
+| LYR-SEM0221 | W | [03-types](03-types.md) | a large struct passed by value | A parameter's type is a struct of more than 64 bytes, counted without padding. Not said unless the lint is set to `warn`. |
+| LYR-SEM0222 | W | [05-interfaces](05-interfaces.md) | a value boxed as an interface in a loop | In a loop, a number or a struct or enum value is passed where the parameter's type is an interface. Not said unless the lint is set to `warn`. |
+| LYR-SEM0223 | W | [01-lexical](01-lexical.md) | a pub declaration without documentation | A `pub` function, type, field, method or module binding has no `///` above it; a method a conformance answers is documented by its interface. Not said unless the lint is set to `warn`. |
+| LYR-SEM0224 | W | [01-lexical](01-lexical.md) | a doc link that names nothing | A `///` links `[Name]` or `[Type.member]`, and nothing of that name is visible where the documented declaration stands. |
+| LYR-SEM0225 | W | [01-lexical](01-lexical.md) | a module without module documentation | A module that declares something `pub` does not begin with `//!` lines. Not said unless the lint is set to `warn`. |
 
 ## A.5 MAC — Macros
 
@@ -460,24 +474,37 @@ Every warning is a lint (16 §5): its name, its code, its group and its level un
 |---|---|---|---|---|
 | `assignment-in-condition` | LYR-SEM0202 | correctness | warn | an assignment written as a condition |
 | `blanket-shadowing` | LYR-SEM0168 | correctness | warn | a type's member hides a blanket member |
+| `boxed-interface-in-hot-loop` | LYR-SEM0222 | perf | allow | a value boxed as an interface in a loop |
+| `broken-doc-link` | LYR-SEM0224 | docs | warn | a doc link that names nothing |
 | `build-script-warning` | LYR-BLD0003 | correctness | warn | a warning a build script reported |
 | `builtin-type-shadowing` | LYR-SEM0077 | correctness | warn | an import that shadows a builtin type |
 | `closeable-never-closed` | LYR-SEM0144 | resources | warn | a Closeable value nothing closes |
 | `comparison-always` | LYR-SEM0204 | correctness | warn | a comparison of an unsigned value with 0 that cannot fail |
 | `dead-code` | LYR-SEM0201 | unused | warn | a declaration nothing uses |
 | `deprecated` | LYR-SEM0076 | deprecation | warn | a use of a deprecated declaration |
+| `deprecated-edition` | LYR-SEM0214 | deprecation | warn | a construct an edition retires |
 | `exit-code-range` | LYR-SEM0210 | correctness | warn | an exit code outside 0 to 255 |
 | `float-equality` | LYR-SEM0205 | correctness | allow | an equality test on floats |
 | `foreign-conformance` | LYR-SEM0211 | correctness | warn | a conformance of another package's type to another package's interface |
 | `generator-copies-this` | LYR-SEM0172 | correctness | warn | a 'mut fn' generator on a value type changes a copy |
+| `global-var-without-sync` | LYR-SEM0213 | concurrency | warn | a module 'var' in a program that starts threads |
 | `int-literal-adapts` | LYR-SEM0208 | correctness | allow | an integer literal that takes another type than int |
 | `irrefutable-pattern` | LYR-SEM0104 | correctness | warn | a pattern that cannot fail where a test is promised |
 | `iterator-reused` | LYR-SEM0162 | correctness | warn | a second loop over the same iterator |
+| `large-value-copy` | LYR-SEM0221 | perf | allow | a large struct passed by value |
+| `loop-instead-of-while-true` | LYR-SEM0219 | style | allow | 'while (true)' where 'loop' is meant |
+| `missing-docs` | LYR-SEM0223 | docs | allow | a pub declaration without documentation |
+| `missing-module-docs` | LYR-SEM0225 | docs | allow | a module without module documentation |
 | `module-shadowing` | LYR-SEM0207 | correctness | allow | a local that hides a module the file imports |
+| `naming` | LYR-SEM0215 | style | warn | a name against the naming convention |
+| `needless-return` | LYR-SEM0218 | style | allow | a 'return;' that ends a body |
 | `prelude-shadowing` | LYR-SEM0153 | correctness | warn | a name hides one of the prelude's |
+| `redundant-clone` | LYR-SEM0217 | style | warn | 'clone()' of a value a copy makes whole |
+| `reserved-device-name` | LYR-SEM0216 | style | deny | a module named as a Windows device |
 | `self-assignment` | LYR-SEM0203 | correctness | warn | an assignment of a value to itself |
 | `shadowed-it` | LYR-SEM0209 | correctness | warn | a block's implicit 'it' that hides the 'it' around it |
 | `shadowed-local` | LYR-SEM0206 | correctness | allow | a local that hides one of the same name |
+| `string-concat-in-loop` | LYR-SEM0220 | perf | warn | a string grown with '+' in a loop |
 | `unreachable-catch` | LYR-SEM0171 | unused | warn | a catch-all clause that nothing reaches |
 | `unreachable-code` | LYR-SEM0073 | unused | warn | an unreachable statement |
 | `unreachable-pattern` | LYR-SEM0112 | unused | warn | a match arm no value can reach |
@@ -487,6 +514,7 @@ Every warning is a lint (16 §5): its name, its code, its group and its level un
 | `unused-label` | LYR-SEM0103 | unused | warn | a loop label nothing jumps to |
 | `unused-parameter` | LYR-SEM0198 | unused | warn | a parameter that is never used |
 | `unused-result` | LYR-SEM0178 | unused | warn | the value of a '@MustUse' call is dropped |
+| `unused-task` | LYR-SEM0212 | resources | warn | a task's handle dropped |
 | `unused-var` | LYR-SEM0075 | unused | warn | a 'var' that is never reassigned |
 | `unused-variable` | LYR-SEM0071 | unused | warn | a local that is never used |
 | `useless-allow` | LYR-SEM0180 | unused | warn | an '@Allow' that takes back nothing |

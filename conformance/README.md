@@ -39,7 +39,7 @@ Exactly one of `run` / `check` leads the header. `error:` implies rejection (com
 with exactly the listed error codes — every one reported, none besides them, so a cascade behind
 the one mistake fails the case; warnings are not compared in a rejected case. `check` without
 `error:` expects silence — no diagnostics at all. `tools/check_lints.py` holds the suite to a
-case with `warning:` and a case with `clean:` for every lint of the groups it checks. A `|` line is the text after the bar less one
+case with `warning:` and a case with `clean:` for every lint, the two that 16 §5 rule 9 names aside. A `|` line is the text after the bar less one
 space, so `|   suppressed: second` keeps the report's two.
 
 ## What a case may use
