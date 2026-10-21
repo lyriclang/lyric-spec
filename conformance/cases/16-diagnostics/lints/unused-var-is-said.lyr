@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0075
+//! since: 5.0.0
+// 16 §5: a 'var' that is never reassigned — 'unused-var' says it.
+import std.io { println };
+
+fn main(): void {
+    var count = 3;
+    println(count);
+}

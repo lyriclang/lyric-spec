@@ -1,0 +1,17 @@
+//! check
+//! clean: unreachable-pattern
+//! since: 5.0.0
+// 16 §5: 'unreachable-pattern' says nothing where the program is put right.
+enum Signal { Red, Yellow, Green }
+
+fn code(s: Signal): int {
+    return match (s) {
+        .Red => 0,
+        .Yellow => 1,
+        _ => 2,
+    };
+}
+
+fn main(): void {
+    let _ = code(Signal.Green);
+}

@@ -1,0 +1,10 @@
+//! check
+//! clean: prelude-shadowing
+//! since: 5.0.0
+// 16 §5: 'prelude-shadowing' says nothing where the program is put right.
+fn check(_x: bool): void {
+}
+
+fn main(): void {
+    check(true);
+}

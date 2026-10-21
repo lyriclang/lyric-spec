@@ -1,0 +1,11 @@
+//! check
+//! clean: assignment-in-condition
+//! since: 5.0.0
+// 16 §5: 'assignment-in-condition' says nothing where the program is put right.
+fn main(): void {
+    var ready = false;
+    if (ready == true) {
+        ready = false;
+    }
+    let _ = ready;
+}

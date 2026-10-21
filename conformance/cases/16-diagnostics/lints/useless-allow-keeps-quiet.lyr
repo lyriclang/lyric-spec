@@ -1,0 +1,12 @@
+//! check
+//! clean: useless-allow
+//! since: 5.0.0
+// 16 §5: 'useless-allow' says nothing where the program is put right.
+fn tidy(): int {
+    let used = 1;
+    return used;
+}
+
+fn main(): void {
+    let _ = tidy();
+}

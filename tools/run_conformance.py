@@ -26,7 +26,7 @@ PROGRAM_TIMEOUT = 60
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None, "stdin": None,
             "errors": [], "warnings": [], "since": None, "until": None, "bin": None, "options": [],
-            "update": False}
+            "update": False, "clean": []}
     lines = path.read_text(encoding="utf-8").splitlines()
     out = None
     for line in lines:
@@ -61,6 +61,10 @@ def parse_header(path):
             spec["bin"] = body[4:].strip()
         elif body.startswith("option:"):
             spec["options"].append(body[7:].strip())
+        # A lint's green case (16 §5): the program says nothing, the lint among it. The check is
+        # the one every warning-free case has; the name is for tools/check_lints.py.
+        elif body.startswith("clean:"):
+            spec["clean"].append(body[6:].strip())
         elif body == "update":
             spec["update"] = True
         else:

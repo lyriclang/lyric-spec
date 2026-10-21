@@ -1,0 +1,28 @@
+//! check
+//! clean: blanket-shadowing
+//! since: 5.0.0
+// 16 §5: 'blanket-shadowing' says nothing where the program is put right.
+interface Named {
+    fn name(): string;
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+
+    fn sound(): string {
+        return "meow";
+    }
+}
+
+extend<T :: [Named]> T {
+    fn greeting(): string {
+        return "hello " + this.name();
+    }
+}
+
+fn main(): void {
+    let _ = Cat {}.greeting();
+    let _ = Cat {}.sound();
+}

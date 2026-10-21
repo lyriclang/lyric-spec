@@ -1,0 +1,18 @@
+//! check
+//! clean: foreign-conformance
+//! since: 5.0.0
+// 16 §5: 'foreign-conformance' says nothing where the program is put right.
+import geo { Point };
+import std.io { println };
+
+struct Shown :: [Display] {
+    point: Point,
+
+    fn show(): string {
+        return f"({this.point.x})";
+    }
+}
+
+fn main(): void {
+    println(Shown { point = Point { x = 1 } });
+}

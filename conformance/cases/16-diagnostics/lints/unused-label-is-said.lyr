@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0103
+//! since: 5.0.0
+// 16 §5: a loop label nothing jumps to — 'unused-label' says it.
+fn main(): void {
+    var n = 0;
+    outer: while (n < 3) {
+        n += 1;
+    }
+}

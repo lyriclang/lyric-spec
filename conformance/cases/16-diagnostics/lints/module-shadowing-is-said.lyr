@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0207
+//! since: 5.0.0
+// 16 §5: a local that hides a module the file imports — 'module-shadowing' says it.
+import std.io;
+
+@Warn("module-shadowing")
+fn main(): void {
+    let io = 1;
+    let _ = io;
+}

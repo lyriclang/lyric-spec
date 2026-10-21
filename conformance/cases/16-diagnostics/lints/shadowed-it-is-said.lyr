@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0209
+//! since: 5.0.0
+// 16 §5: a block's implicit 'it' that hides the 'it' around it — 'shadowed-it' says it.
+fn apply(f: fn(int) -> int): int {
+    return f(1);
+}
+
+fn main(): void {
+    let _ = apply { apply { it + 1 } + it };
+}

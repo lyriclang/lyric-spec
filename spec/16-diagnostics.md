@@ -133,3 +133,6 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    `--deny-warnings` are `-D warnings` for the package built, in front of the command line's own levels —
    each warning is an error, and its note names the profile. A build script's warnings are the lint
    `build-script-warning` and denied the same way.
+9. **Every lint is held by two cases** of the suite: a red one, whose program the lint reads (`warning:`
+   its code), and a green one, the same program put right, which compiles in silence (`clean:` its name).
+   The suite holds the groups `unused` and `correctness` so far; the others follow.

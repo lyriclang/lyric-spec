@@ -1,0 +1,9 @@
+//! check
+//! clean: int-literal-adapts
+//! since: 5.0.0
+// 16 §5: 'int-literal-adapts' says nothing where the program is put right.
+@Warn("int-literal-adapts")
+fn main(): void {
+    let small = 3u8;
+    let _ = small;
+}

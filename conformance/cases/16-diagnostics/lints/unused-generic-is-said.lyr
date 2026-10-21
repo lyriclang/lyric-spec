@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0200
+//! since: 5.0.0
+// 16 §5: a type parameter that is never used — 'unused-generic' says it.
+fn first<T, U>(xs: T[]): T {
+    return xs[0];
+}
+
+fn main(): void {
+    let _ = first<int, string>([1, 2]);
+}

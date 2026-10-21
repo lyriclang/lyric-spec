@@ -1,0 +1,28 @@
+//! check
+//! clean: unreachable-catch
+//! since: 5.0.0
+// 16 §5: 'unreachable-catch' says nothing where the program is put right.
+struct NotFound :: [Error] {
+    path: string,
+
+    fn message(): string {
+        return f"no {this.path}";
+    }
+}
+
+fn find(p: string): int throws NotFound {
+    if (p == "") {
+        throw NotFound { path = "empty" };
+    }
+    return 1;
+}
+
+fn main(): void {
+    var n = 0;
+    try {
+        n = find("");
+    } catch (e: NotFound) {
+        n = e.path.length();
+    }
+    assert(n == 5);
+}

@@ -1,0 +1,10 @@
+//! check
+//! clean: float-equality
+//! since: 5.0.0
+// 16 §5: 'float-equality' says nothing where the program is put right.
+@Warn("float-equality")
+fn main(): void {
+    let a = 0.1 + 0.2;
+    let d = a - 0.3;
+    let _ = d < 0.000001 && d > -0.000001;
+}

@@ -1,7 +1,7 @@
 //! check
 //! since: 5.0.0
 // 03 §1.1: int64, uint64 and float64 are aliases; a value flows between the names freely.
-fn takes(x: int64, y: uint64, z: float64): int { return x; }
+fn takes(x: int64, _y: uint64, _z: float64): int { return x; }
 
 fn main(): int {
     let a: int = 1;

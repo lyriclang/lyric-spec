@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0198
+//! since: 5.0.0
+// 16 §5: a parameter that is never used — 'unused-parameter' says it.
+fn twice(x: int, unused: int): int {
+    return x * 2;
+}
+
+fn main(): void {
+    let _ = twice(1, 2);
+}

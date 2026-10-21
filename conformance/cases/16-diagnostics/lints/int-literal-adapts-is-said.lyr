@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0208
+//! since: 5.0.0
+// 16 §5: an integer literal that takes another type than int — 'int-literal-adapts' says it.
+@Warn("int-literal-adapts")
+fn main(): void {
+    let small: uint8 = 3;
+    let _ = small;
+}

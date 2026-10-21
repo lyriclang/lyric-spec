@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0073
+//! since: 5.0.0
+// 16 §5: an unreachable statement — 'unreachable-code' says it.
+import std.io { println };
+
+fn main(): void {
+    return;
+    println("never");
+}

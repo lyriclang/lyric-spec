@@ -1,0 +1,9 @@
+//! check
+//! clean: builtin-type-shadowing
+//! since: 5.0.0
+// 16 §5: 'builtin-type-shadowing' says nothing where the program is put right.
+import std.string { fromInt };
+
+fn main(): void {
+    let _ = fromInt(42);
+}

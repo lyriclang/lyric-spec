@@ -1,0 +1,16 @@
+//! check
+//! warning: LYR-SEM0211
+//! since: 5.0.0
+// 16 §5: a conformance of another package's type to another package's interface — 'foreign-conformance' says it.
+import geo { Point };
+import std.io { println };
+
+extend Point :: [Display] {
+    fn show(): string {
+        return f"({this.x})";
+    }
+}
+
+fn main(): void {
+    println(Point { x = 1 });
+}

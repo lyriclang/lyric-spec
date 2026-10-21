@@ -1,0 +1,7 @@
+//! check
+//! clean: exit-code-range
+//! since: 5.0.0
+// 16 §5: 'exit-code-range' says nothing where the program is put right.
+fn main(): int {
+    return 1;
+}
