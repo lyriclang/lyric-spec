@@ -60,6 +60,11 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    module prints as it is.
 7. **`lyric fix [<file.lyr>]`** makes the safe changes the findings suggest in the package's own
    files, and **`--dry-run`** prints them as a diff instead ([16 §6](16-diagnostics.md)).
+8. **`lyric check [<file.lyr>]`** takes the programs `build` would take — or checks the library, as
+   `build` does — through everything a build does before the C: the build scripts, for what they
+   write into `gen/` ([15 §8](15-project.md)), the front end and the lints, `comptime`, and the
+   lowering. It says what `build` says, exits as `build` does (§1.3), and makes neither C nor a
+   binary. It takes `build`'s options but `--emit`.
 
 ### 1.2 Where the files go
 
@@ -74,7 +79,9 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    —, and `out/cache/` holds what the build keeps between runs (P4; 01 L7).
 3. An unchanged program compiles nothing twice: the same sources — every module of the program,
    the standard library's included —, toolchain and options reuse the cache, and the binary is
-   linked only when an input to it changed (11 C9).
+   linked only when an input to it changed (11 C9). A build that reuses the cache **says again
+   what the build that filled it said**: the same findings, in the form and the colour the command
+   line asks for now, counted in its `summary` ([16 §4](16-diagnostics.md)).
 4. A build holds **`out/.lock`** while it writes into `out/`
    ([11 P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a second build of the package waits for the first, and says so
    once. The lock is the operating system's on an open file; it ends with its process.
@@ -192,3 +199,56 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
    `, was 400.1 ns/op: +3.0%`.
 4. The exit is 0, and 1 where the file to compare with or to save to could not be read or
    written, or the program was refused (§1.3).
+
+## 5. The verbs and their options
+
+([11 C2, C3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `VerbTableTests`).
+
+1. The verbs and their options are **one table**: the command line is read by it, `lyric help`
+   prints it, and the table below is printed from it (`lyric help --markdown`). An option the table
+   does not give a verb is refused with exit 2 (§1.1 rule 3), as is a value missing or a value given
+   to a flag (`--lto=yes`).
+2. **`lyric help`** lists the verbs and the options every verb takes; **`lyric help <verb>`** and
+   **`lyric <verb> --help`** (`-h`) list the verb's own. A `--help` after `run`'s `--` is the
+   program's.
+3. The options every verb takes, before or after the verb: `--color <auto|always|never>`,
+   `--absolute-paths`, `--max-errors <n>` ([16 §1](16-diagnostics.md)); where the table marks the
+   verb, `--json` ([16 §4](16-diagnostics.md)) and the lint options `-A`, `-W`, `-D <lint>` and
+   `--warn-deps` ([16 §5](16-diagnostics.md)). A field of the profile is `--x` and `--no-x`.
+
+| verb | words | options | lints | `--json` |
+|---|---|---|---|---|
+| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--emit <ir|c>` | yes | yes |
+| `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
+| `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
+| `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | — |
+| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>` | yes | yes |
+| `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
+| `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
+| `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
+| `update` | `[<package>…]` | `-C <dir>`, `--offline` | — | — |
+| `add` | `<name>` | `--path <dir>`, `--git <url>`, `--tag <tag>`, `--branch <branch>`, `--rev <commit>`, `-C <dir>`, `--offline` | — | — |
+| `remove` | `<name>` | `-C <dir>`, `--offline` | — | — |
+| `clean` | — | `-C <dir>` | — | — |
+| `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
+| `explain` | `<code>` | — | — | — |
+| `version` | — | — | — | — |
+| `help` | `[<verb>]` | `--markdown` | — | — |
+
+## 6. `env`
+
+([11 C4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `VerbTableTests`).
+
+1. **`lyric env`** says every setting a build of the package here reads — the toolchain, the
+   standard library, the manifest, the C compiler, the cache, the profile and each of its fields,
+   the target, and each `LYRIC_*` variable that is set — with its value and **where it comes
+   from**: `command line`, the variable's name (`LYRIC_PROFILE`), `lyric.toml`, or `default`. The
+   command line is over the environment, the environment over the manifest, the manifest over the
+   default.
+2. It takes the options that change a setting — `-C`, `--profile`, the profile's fields,
+   `--target` — so that it says what the build with them would read. **`--json`** writes one
+   document instead: `{"version": 1, "settings": [{"name", "value", "origin"}, …]}`.
