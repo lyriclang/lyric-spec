@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 3 20 3 none
+//! | 2
+//! since: 5.0.0
+// 03 §9.2 rule 1: a plain value where '?U' is asked binds 'U' with it — an argument, and a lambda
+// whose body gives an 'int' at 'fn(int) -> ?U', which is then a 'fn(int) -> ?int'.
+import std.io { println };
+
+fn orNone<U>(x: ?U): ?U {
+    return x;
+}
+
+fn apply<U>(f: fn(int) -> ?U): ?U {
+    return f(2);
+}
+
+fn main(): void throws Error {
+    let a = apply((n) => n * 10);
+    let b = apply((n) => {
+        if (n > 1) {
+            return n + 1;
+        }
+        return n;
+    });
+    let c = apply((n) => if (n > 5) "big" else null);
+    println(f"{orNone(3) ?? 0} {a ?? 0} {b ?? 0} {c ?? "none"}");
+    let parsed = try ["1", "2"].iter().mapNotNull((s) => try int.parse(s)).toArray();
+    println(f"{parsed.length()}");
+}

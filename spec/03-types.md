@@ -774,7 +774,13 @@ Type parameters, their inference, and what an instance is
    a **fixation** names takes the answer of the parameter it constrains, as in a block
    ([05 §13](05-interfaces.md) rule 2): in `fn countOf<I :: [Iterator<Item = T>], T>(it: I)` the
    argument binds `I`, and `T` is `I`'s `Item`; a fixed structure, `Item = (K, V)`, binds what it
-   names by matching.
+   names by matching. A plain value where `?U` is asked binds `U` with it, the widening an
+   assignment makes: `orNone(3)` binds `U = int`, and a lambda whose body gives an `int` at
+   `fn(string) -> ?U` is a `fn(string) -> ?int` — `mapNotNull((s) => try int.parse(s))`. `null`
+   binds nothing. An **array literal** at a parameter that still holds a type parameter is
+   checked after the other arguments, with the type they bound as its target (T8): in
+   `assertEq(x.toBytesBE(), [2u8, 1u8])` the literal is a `uint8[2]`, and so it is in
+   `assertEq([2u8, 1u8], x.toBytesBE())`; where they bind nothing, it binds as any argument.
 2. What the arguments leave open, the **expected type** of the call's position binds (T8):
    `let xs: int[] = empty();`, `return empty();`, `count(empty())`. The arguments bind first
    and the position never overrides them: `let xs: int[] = ident("x");` is the assignment's

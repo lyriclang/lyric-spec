@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | true true
+//! since: 5.0.0
+// 03 §9.2 rule 1: the literal is checked after the other argument, with 'T = uint8[2]' as its target.
+import std.io { println };
+import std.encoding { Hex };
+
+fn equal<T :: [Equatable]>(a: T, b: T): bool {
+    return a == b;
+}
+
+fn main(): void {
+    let x: uint16 = 513;
+    println(f"{equal(x.toBytesBE(), [2u8, 1u8])} {equal([2u8, 1u8], x.toBytesBE())}");
+}
