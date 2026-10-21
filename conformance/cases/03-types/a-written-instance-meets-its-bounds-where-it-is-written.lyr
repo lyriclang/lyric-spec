@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 03 §9.1 rule 3: 'Set<NoHash>' in a signature is refused there, though no call builds one.
+struct NoHash {
+    v: int,
+}
+
+fn size(s: Set<NoHash>): int {
+    return s.length();
+}
+
+fn main(): void {
+}

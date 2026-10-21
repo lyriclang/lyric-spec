@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 03 §9.1 rule 3: the alias asks nothing of 'K'; its use with 'NoHash' is the Map's bound unmet.
+struct NoHash {
+    v: int,
+}
+
+type Table<K> = Map<K, int>;
+
+fn count(t: Table<NoHash>): int {
+    return t.length();
+}
+
+fn main(): void {
+}

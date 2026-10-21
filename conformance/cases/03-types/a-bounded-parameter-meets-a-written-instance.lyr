@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 1
+//! since: 5.0.0
+// 03 §9.1 rule 3: a parameter whose constraints are the bound's meets it in a written instance.
+import std.io { println };
+
+fn size<T :: [Hashable, Equatable]>(s: Set<T>): int {
+    return s.length();
+}
+
+fn main(): void {
+    let s: Set<int> = Set.new();
+    s.insert(4);
+    println(f"{size(s)}");
+}
