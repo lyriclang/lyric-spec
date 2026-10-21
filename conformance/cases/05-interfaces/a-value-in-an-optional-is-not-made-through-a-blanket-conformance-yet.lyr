@@ -1,5 +1,5 @@
 //! check
-//! error: LYR-SEM0047
+//! error: LYR-SEM0230
 //! since: 5.0.0
 // 05 §13 rule 8: an optional of the interface holds a value of it, which is not made through a
 // blanket conformance yet.

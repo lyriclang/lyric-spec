@@ -1,6 +1,6 @@
 //! check
-//! error: LYR-SEM0001
-//! error: LYR-SEM0001
+//! error: LYR-SEM0228
+//! error: LYR-SEM0228
 //! error: LYR-SEM0001
 //! since: 5.0.0
 // 03 §5.3: a literal of another length, a repetition of another count, and an array where an

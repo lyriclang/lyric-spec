@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0226
+//! since: 5.0.0
+// 07: a function that returns a value returns one on every path; 'return;' leaves without it.
+fn twice(x: int): int {
+    if (x < 0) {
+        return;
+    }
+    return x * 2;
+}
+
+fn main(): void {
+    let _ = twice(1);
+}
