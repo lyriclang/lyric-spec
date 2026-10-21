@@ -764,12 +764,17 @@ Type parameters, their inference, and what an instance is
 1. A call of a generic function may **omit** the type arguments: `ident(3)` is `ident<int>(3)`.
    Each argument's type binds the parameters that occur in the parameter type it is passed
    to, at any depth — `firstOf([1, 2])` binds `T = int` through `T[]` — and a lambda's type
-   binds through `fn(T) -> U` once its own parameters are known from the position.
+   binds through `fn(T) -> U` once its own parameters are known from the position. A parameter
+   a **fixation** names takes the answer of the parameter it constrains, as in a block
+   ([05 §13](05-interfaces.md) rule 2): in `fn countOf<I :: [Iterator<Item = T>], T>(it: I)` the
+   argument binds `I`, and `T` is `I`'s `Item`; a fixed structure, `Item = (K, V)`, binds what it
+   names by matching.
 2. What the arguments leave open, the **expected type** of the call's position binds (T8):
    `let xs: int[] = empty();`, `return empty();`, `count(empty())`. The arguments bind first
    and the position never overrides them: `let xs: int[] = ident("x");` is the assignment's
    error, not a different instance.
-3. A parameter that occurs in no argument and not in the expected type is not inferred:
+3. A parameter that occurs in no argument, in no fixation of a bound parameter's constraint, and
+   not in the expected type is not inferred:
    `let xs = empty();` is refused (`LYR-SEM0060`), with the instruction to write it.
 4. Type arguments may be **written**, `empty<int>()`, at a method as at a function:
    `it.collect<List<int>>()`, `s.parse<int>()` — without a `::` before them. Written ones bind
