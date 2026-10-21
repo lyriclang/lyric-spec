@@ -1,0 +1,14 @@
+//! check
+//! clean: loop-instead-of-while-true
+//! since: 5.0.0
+// 16 §5: 'loop-instead-of-while-true' says nothing where the program is put right.
+@Warn("loop-instead-of-while-true")
+fn main(): void {
+    var n = 0;
+    loop {
+        n = n + 1;
+        if (n > 2) {
+            break;
+        }
+    }
+}

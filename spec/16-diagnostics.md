@@ -135,4 +135,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    `build-script-warning` and denied the same way.
 9. **Every lint is held by two cases** of the suite: a red one, whose program the lint reads (`warning:`
    its code), and a green one, the same program put right, which compiles in silence (`clean:` its name).
-   The suite holds the groups `unused` and `correctness` so far; the others follow.
+   Two lints are held otherwise: `reserved-device-name` by its green case alone, as its red program is a
+   file Windows cannot hold — the toolchain's own tests read it where such a file can be made —, and
+   `deprecated-edition` by neither, as it names the warning on a construct an edition retires and there is
+   no edition yet.

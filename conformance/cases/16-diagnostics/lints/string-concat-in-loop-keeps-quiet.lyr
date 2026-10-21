@@ -1,0 +1,13 @@
+//! check
+//! clean: string-concat-in-loop
+//! since: 5.0.0
+// 16 §5: 'string-concat-in-loop' says nothing where the program is put right.
+import std.string { StringBuilder };
+
+fn main(): void {
+    let line = StringBuilder.new();
+    for (i in 0..3) {
+        line.append(i);
+    }
+    let _ = line.toString();
+}

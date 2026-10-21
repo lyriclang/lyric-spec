@@ -1,0 +1,9 @@
+//! check
+//! clean: useless-try
+//! since: 5.0.0
+// 16 §5: 'useless-try' says nothing where the program is put right.
+fn safe(): int { return 1; }
+
+fn main(): void {
+    let _ = safe();
+}

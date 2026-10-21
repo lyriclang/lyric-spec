@@ -1,0 +1,14 @@
+//! check
+//! warning: LYR-SEM0219
+//! since: 5.0.0
+// 16 §5: 'while (true)' where 'loop' is meant — 'loop-instead-of-while-true' says it.
+@Warn("loop-instead-of-while-true")
+fn main(): void {
+    var n = 0;
+    while (true) {
+        n = n + 1;
+        if (n > 2) {
+            break;
+        }
+    }
+}

@@ -1,0 +1,9 @@
+//! check
+//! clean: missing-module-docs
+//! since: 5.0.0
+// 16 §5: 'missing-module-docs' says nothing where the program is put right.
+import app.shapes;
+
+fn main(): void {
+    let _ = shapes.area(2, 3);
+}

@@ -145,8 +145,9 @@ scheduler runs another task meanwhile. The functions this section names are `std
    `(Task<T> throws E)`, one that throws itself `(Task<T>) throws E`. So behind the return type
    of a lambda and of a function type. A generator writes none: its clause is its coroutine's
    (§1 rule 6). `spawn` is `@MustUse` ([11 §1](11-metaprogramming.md) rule 11): the handle alone
-   carries the task's error, so a statement that drops it warns — `spawnDetached` (rule 3) is the
-   task nobody awaits.
+   carries the task's error, so a statement that drops it warns, under the lint `unused-task`
+   ([16 §5](16-diagnostics.md)) — and so does one that drops `Thread.spawn`'s; a scope's `spawn` is
+   awaited by the scope. `spawnDetached` (rule 3) is the task nobody awaits.
 9. **`task.await()`** waits until the body has ended (06 T2) and gives its value, or throws its
    error: it throws what the handle's type says and, as every wait, `Cancelled` — marked and
    covered as any call that throws (`LYR-SEM0138`, `LYR-SEM0034`). The tasks waiting for one

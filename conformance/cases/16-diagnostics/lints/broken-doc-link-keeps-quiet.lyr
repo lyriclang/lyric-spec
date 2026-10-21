@@ -1,0 +1,17 @@
+//! check
+//! clean: broken-doc-link
+//! since: 5.0.0
+// 16 §5: 'broken-doc-link' says nothing where the program is put right.
+/// Half of `x`.
+fn halve(x: int): int {
+    return x / 2;
+}
+
+/// Twice `x`; [halve] goes the other way.
+fn twice(x: int): int {
+    return x * 2;
+}
+
+fn main(): void {
+    let _ = twice(halve(4));
+}

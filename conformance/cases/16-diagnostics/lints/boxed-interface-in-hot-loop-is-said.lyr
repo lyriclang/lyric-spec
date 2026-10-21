@@ -1,0 +1,14 @@
+//! check
+//! warning: LYR-SEM0222
+//! since: 5.0.0
+// 16 §5: a value boxed as an interface in a loop — 'boxed-interface-in-hot-loop' says it.
+fn show(d: Display): string {
+    return d.show();
+}
+
+@Warn("boxed-interface-in-hot-loop")
+fn main(): void {
+    for (i in 0..3) {
+        let _ = show(i);
+    }
+}

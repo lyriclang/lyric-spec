@@ -1,0 +1,6 @@
+//! The width of the console, as a program sees it.
+
+/// The columns of the console.
+pub fn width(): int {
+    return 80;
+}

@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0218
+//! since: 5.0.0
+// 16 §5: a 'return;' that ends a body — 'needless-return' says it.
+@Warn("needless-return")
+fn main(): void {
+    let _ = 1;
+    return;
+}

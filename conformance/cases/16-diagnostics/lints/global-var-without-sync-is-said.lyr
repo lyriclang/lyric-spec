@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0213
+//! since: 5.0.0
+// 16 §5: a module 'var' in a program that starts threads — 'global-var-without-sync' says it.
+import std.thread { Thread };
+
+var hits = 0;
+
+fn main(): void {
+    hits = hits + 1;
+    let _ = Thread.spawn(() => 1);
+}

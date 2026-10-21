@@ -1,8 +1,8 @@
 //! check
-//! warning: LYR-SEM0178
+//! warning: LYR-SEM0212
 //! since: 5.0.0
 // 10 §2 rule 8: 'spawn' is '@MustUse' — its handle alone carries the task's error, so a statement
-// that drops it warns.
+// that drops it warns, as 'unused-task'.
 import std.task { spawn };
 
 fn main(): void {

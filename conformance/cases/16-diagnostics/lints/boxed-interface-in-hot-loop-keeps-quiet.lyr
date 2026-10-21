@@ -1,0 +1,14 @@
+//! check
+//! clean: boxed-interface-in-hot-loop
+//! since: 5.0.0
+// 16 §5: 'boxed-interface-in-hot-loop' says nothing where the program is put right.
+fn show<T :: [Display]>(d: T): string {
+    return d.show();
+}
+
+@Warn("boxed-interface-in-hot-loop")
+fn main(): void {
+    for (i in 0..3) {
+        let _ = show(i);
+    }
+}
