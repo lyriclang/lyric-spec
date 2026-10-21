@@ -78,7 +78,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 **Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `JsonFormTests`; `tests/Lyric.Tests.Core`,
 `EventWriterTests`).
 
-1. **`--json`** on `build`, `run` and `test` writes, in place of the text form, one JSON object a line on
+1. **`--json`** on `build`, `run`, `test` and `fix` writes, in place of the text form, one JSON object a line on
    the standard output — a reader takes a line at a time while the command runs. Nothing else is written
    there, but the output of the program `run` runs, after the build's lines; the standard error stays
    empty. (`metadata --json` is a document of its own, 14 §2.)
@@ -95,7 +95,9 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    where there is one a `message` (why it was skipped, what ended it) and the `panic`'s code. **`tests`**:
    the run's count — `passed`, `failed`, `skipped`. **`output`**: a line the program wrote that is no event
    — `stream` (`stdout`, `stderr`) and `text`.
-6. **`summary`** closes the command — `errors` and `warnings`, the findings said — once; `run` writes it
+6. **`fix`**: a change `lyric fix` made (§6) — `path`, the `line` and `column` where it begins, the `code`
+   of the finding it answers, and the `text` put in.
+7. **`summary`** closes the command — `errors` and `warnings`, the findings said — once; `run` writes it
    before its program runs. **`ice`**: the toolchain's own failure (`LYR-ICE…`) — `code`, `message`, where
    it was (`while`) and its `trace`.
 
@@ -120,7 +122,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    in what the declaration holds ([11 §1](11-metaprogramming.md) rule 13); `allow`, `warn`, `deny` of a
    package's `[lints]`, each an array of selectors, set it in the package's files
    ([15 §1](15-project.md) rule 4) — a selector in one of them; `-A`, `-W`, `-D` with a selector on the command
-   line of `build`, `run`, `expand`, `test` and `bench` set it in the files of the package built.
+   line of `build`, `run`, `expand`, `test`, `bench` and `fix` set it in the files of the package built.
 5. **Precedence**: the narrowest attribute around the finding decides; without one the command line, then the
    manifest, then the lint's own level. Within one place the more specific selector decides — a lint over its
    group over `warnings` —, and of two alike the later.
@@ -139,3 +141,31 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    file Windows cannot hold — the toolchain's own tests read it where such a file can be made —, and
    `deprecated-edition` by neither, as it names the warning on a construct an edition retires and there is
    no edition yet.
+
+## 6. Fixes and `lyric fix`
+
+([11 G7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `FixTests`): the suite compiles and runs
+programs; it does not change them.
+
+1. A finding may carry a **suggestion**: a note with a change — a span and the text put in its place — and
+   its **applicability**, `safe` or `needs-review`. A safe change is the finding's whole remedy and leaves
+   the program's meaning as it was; one that needs a reader is a guess, or a remedy among others. The
+   text form draws the line as the change would leave it (§1); the JSON form carries the change (§4 rule 3).
+2. **`lyric fix [<file.lyr>]`** makes the safe changes of the findings in the package's own files —
+   under its `src/`; a file alone, its own — and none in a dependency's or in `std`. A pass checks the
+   program as `build` does, without building it, and makes in each file the changes that do not overlap
+   one before them, in source order; the next pass checks the changed text, until a pass finds nothing to
+   change. Then it says what stays — the findings without a safe change, each change that needs a reader
+   among them —, and exits 1 where an error stays, else 0. A second `fix` changes nothing.
+3. `fix` takes `-C`, `--offline`, the lint options of §5 rule 4 — a lint set to `allow` says nothing and
+   so suggests nothing — and `--json` (§4). **`--dry-run`** makes one pass and writes nothing: it prints
+   the changes as a unified diff on the standard output.
+4. The safe changes: `unused-import` takes the import out, or the one name out of its list;
+   `unused-var` writes `let` for `var`; `useless-try` takes a plain `try` out (`try?` and `try!` change the
+   value's type, and a `catch` is code); `needless-return` takes the `return;` out; `self-assignment`
+   writes `x++` for `x = x++`; `deprecated` writes the `@Deprecated`'s `replacement` where it is a name.
+   A change that needs a reader: `naming`'s new name, written where the name is declared (its uses are an
+   editor's rename); `self-assignment`'s removal of `x = x`, which may stand for an assignment meant
+   otherwise; an unknown name's closest known one (`did you mean`).

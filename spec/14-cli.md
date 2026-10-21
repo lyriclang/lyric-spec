@@ -58,6 +58,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    expanded, not checked: what the expansion needs is reported with exit 1 — a site of no macro,
    a macro's own error —, and a type error after it is `build`'s to find. Without a site, the
    module prints as it is.
+7. **`lyric fix [<file.lyr>]`** makes the safe changes the findings suggest in the package's own
+   files, and **`--dry-run`** prints them as a diff instead ([16 §6](16-diagnostics.md)).
 
 ### 1.2 Where the files go
 
