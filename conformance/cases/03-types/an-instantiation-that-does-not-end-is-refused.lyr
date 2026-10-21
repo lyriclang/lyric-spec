@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0197
+//! since: 5.0.0
+// 03 §9.1 rule 4: every level asks for 'grow<W<T>>', a chain without end; refused at depth 128,
+// whatever 'n' is when the program runs.
+struct W<T> {
+    v: T,
+}
+
+fn grow<T>(x: T, n: int): int {
+    if (n == 0) {
+        return 0;
+    }
+    return grow(W<T> { v = x }, n - 1);
+}
+
+fn main(): void {
+    let _ = grow(1, 3);
+}
