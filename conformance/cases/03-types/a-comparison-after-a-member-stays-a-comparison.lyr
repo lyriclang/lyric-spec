@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 5.0.0
+// 03 §9.2 rule 4: after a member, '<' is a comparison where no '(' follows a '>'.
+import std.io { println };
+
+fn main(): void {
+    let xs = [1, 2, 3];
+    let limit = 5;
+    let short = xs.length() < limit && limit > 0;
+    let long = xs.length() > limit;
+    println(f"{short} {long}");
+}

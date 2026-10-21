@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0028
+//! since: 5.0.0
+// 03 §9.2 rule 4: a list of strings is no FromIterator<int>, and written arguments are no way
+// around the constraint.
+fn main(): void {
+    let xs = [1, 2, 3];
+    let wrong = xs.iter().collect<List<string>>();
+    let _ = wrong;
+}

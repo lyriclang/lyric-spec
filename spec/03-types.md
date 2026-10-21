@@ -771,8 +771,13 @@ Type parameters, their inference, and what an instance is
    error, not a different instance.
 3. A parameter that occurs in no argument and not in the expected type is not inferred:
    `let xs = empty();` is refused (`LYR-SEM0060`), with the instruction to write it.
-4. Type arguments may be **written**, `empty<int>()`; written ones bind before any argument,
-   and an argument that does not fit them is the argument's error, `ident<int>("x")`. A
+4. Type arguments may be **written**, `empty<int>()`, at a method as at a function:
+   `it.collect<List<int>>()`, `s.parse<int>()` — without a `::` before them. Written ones bind
+   before any argument, and an argument that does not fit them is the argument's error,
+   `ident<int>("x")`; they meet their constraints with the parameters of the block the method
+   stands in bound by its receiver (`collect`'s `C :: [FromIterator<I.Item>]` with `I` the
+   receiver's iterator). After a member, `<` opens type arguments where a `(` follows its `>`;
+   else it is a comparison. A
    **placeholder** `_` stands for one argument the inference fills (T8): `collect<_, string>(1, f)`
    writes `U` and infers `T`. A placeholder nothing determines is refused as in rule 3.
 5. `_` stands only in a list of type arguments — of a call, of an initializer ([§9.3](#93-generic-types-in-an-initializer)),
