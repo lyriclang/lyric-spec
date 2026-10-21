@@ -1,0 +1,14 @@
+//! check
+//! since: 5.0.0
+// 16 §2 rule 2: 'name: loop' in a trailing block is a label, not an initializer's field.
+fn apply(f: fn() -> void): void {
+    f();
+}
+
+fn main(): void {
+    apply {
+        outer: loop {
+            break outer;
+        }
+    };
+}

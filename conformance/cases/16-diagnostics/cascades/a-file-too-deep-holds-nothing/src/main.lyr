@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0045
+//! since: 5.0.0
+// 16 §2 rule 3: the file the parser cannot carry holds nothing, and its importer is not told so again.
+import app.deep { deep };
+
+fn main(): void {
+    let _ = deep();
+}

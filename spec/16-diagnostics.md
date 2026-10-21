@@ -50,7 +50,18 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 1. A declaration the parser cannot read whole reports its lexical and syntax errors (`LYR-LEX…`,
    `LYR-PAR…`) and nothing that follows from them: no finding whose place lies inside it. The other
    declarations of the file report as they would.
-2. **`--max-errors N`** draws the first `N` errors, 50 unless said, all of them for `0`; what comes
+2. **A mistake is said once.** What follows from it is not said again: an instance whose type
+   arguments an annotation got wrong, refused there and not again where an initializer takes them;
+   the names an or-pattern's alternative does not bind, in one finding; the parser's recovery, which
+   skips the rest of an unclosed interpolation and reads `T { x: 1 }` as the initializer it is
+   (`LYR-PAR0037`, with `=` as its fix); a literal's suffix the lexer refused, which the parser does
+   not refuse again; a conformance written twice (`LYR-SEM0133`), whose second block the calls do not
+   see; a compile-time-only call, said where the program makes it and not again inside the standard
+   library.
+3. A file the parser reads as holding nothing — nesting it does not carry (`LYR-PAR0045`) — holds
+   nothing for the rest of the build: neither its missing `main` nor a name its importers do not
+   find is said.
+4. **`--max-errors N`** draws the first `N` errors, 50 unless said, all of them for `0`; what comes
    after is counted, and one closing line, `note: …`, says how many errors and other findings were
    not drawn. The exit code is what it would be without the limit.
 

@@ -1,0 +1,28 @@
+//! check
+//! error: LYR-SEM0133
+//! since: 5.0.0
+// 16 §2 rule 2: the second block is refused, and a call does not meet it.
+interface Named {
+    fn name(): string;
+}
+
+struct Dog {
+    n: int,
+}
+
+extend Dog :: [Named] {
+    fn name(): string {
+        return "dog";
+    }
+}
+
+extend Dog :: [Named] {
+    fn name(): string {
+        return "hound";
+    }
+}
+
+fn main(): void {
+    let d = Dog { n = 1 };
+    let _ = d.name();
+}
