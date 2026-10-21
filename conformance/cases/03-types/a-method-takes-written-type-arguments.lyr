@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 4 3 42
+//! since: 5.0.0
+// 03 §9.2 rule 4: type arguments are written at a method as at a function; 'collect' meets
+// 'FromIterator<I.Item>' with 'I' the receiver's iterator.
+import std.io { println };
+
+fn main(): void throws Error {
+    let xs = [1, 2, 3, 2];
+    let all = xs.iter().collect<List<int>>();
+    let distinct = xs.iter().collect<Set<int>>();
+    let n = try "42".parse<int>();
+    println(f"{all.length()} {distinct.length()} {n}");
+}
