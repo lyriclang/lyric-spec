@@ -1,5 +1,5 @@
 //! check
-//! error: LYR-SEM0001
+//! error: LYR-SEM0229
 //! since: 5.0.0
 // 03 §2.3a rule 2: nothing widens into a place — an int8 variable is no place of an int.
 

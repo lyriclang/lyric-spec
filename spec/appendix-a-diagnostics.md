@@ -125,7 +125,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
-| LYR-SEM0001 | E | [03-types](03-types.md) | a value of another type than the place takes | An expression's type does not fit where it stands: an initializer, an argument, a return value, an assignment. A bare `return;` in a function that returns a value, an integer literal too large for `int`, and an inline-array literal of the wrong length are reported under this code too. |
+| LYR-SEM0001 | E | [03-types](03-types.md) | a value of another type than the place takes | An expression's type does not fit where it stands: an initializer, an argument, a return value, an assignment. |
 | LYR-SEM0002 | E | [04-modules](04-modules.md) | a name that nothing in scope declares | An identifier in an expression names no local, parameter, function, global or imported item visible at that point. The message may carry a did-you-mean note. |
 | LYR-SEM0003 | E | [03-types](03-types.md) | an operator its operands do not provide | An operator is applied to a type it is not defined for: arithmetic on a `bool` or `char`, `<` on a type without `Ordered`, `+` on a type without the operator interface, `same` on values that are not references, or a compound assignment through an operator interface on a field or element. |
 | LYR-SEM0004 | E | [07-statements](07-statements.md) | a condition that is not a bool | The condition of an `if`, `while`, `do … while` or a guard has a type other than `bool`. |
@@ -166,7 +166,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0043 | E | [05-interfaces](05-interfaces.md) | one member defaulted by two interfaces | A type conforms to two interfaces that both provide a default for a member of one name, and the type implements the member itself nowhere. |
 | LYR-SEM0045 | E | [03-types](03-types.md) | a lambda parameter whose type nothing gives | A lambda parameter has no written type and the lambda stands where no function type is expected, or a trailing lambda's implicit `it` stands where the expected function does not take exactly one parameter. |
 | LYR-SEM0046 | E | [10-concurrency](10-concurrency.md) | a lambda that can end without its value | A block lambda whose result is not `void` — a generator lambda with a result, or a lambda an inline function sets in place — has a path that ends its body without returning the value. |
-| LYR-SEM0047 | E | [05-interfaces](05-interfaces.md) | an extend target or conversion not supported | An `extend` block targets an inline array `T[N]`, or a value is made into an interface it conforms to only through a block on a shape or a blanket conformance, which is not built yet. |
+| LYR-SEM0047 | E | [05-interfaces](05-interfaces.md) | an extend target or conversion not supported | An `extend` block targets an inline array `T[N]`, or something that is no named type and no built-in constructor. |
 | LYR-SEM0050 | E | [09-patterns](09-patterns.md) | a match that does not cover every value | The arms of a `match` leave values of the scrutinee's type unmatched: a variant, `null`, a conformer of a sealed interface, a length class of an array, or the rest of an open type. The message names a missing pattern. Guarded arms do not count. |
 | LYR-SEM0051 | E | [13-abi](13-abi.md) | a function without a body | A function declaration outside the standard library has no body and is not an `extern` declaration. |
 | LYR-SEM0052 | E | [03-types](03-types.md) | a type, module or generic function used as a value | A name that is not a value — a type, a module, an interface — stands where a value is wanted, or the bare name of a generic function is used as a function value. |
@@ -335,6 +335,11 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0223 | W | [01-lexical](01-lexical.md) | a pub declaration without documentation | A `pub` function, type, field, method or module binding has no `///` above it; a method a conformance answers is documented by its interface. Not said unless the lint is set to `warn`. |
 | LYR-SEM0224 | W | [01-lexical](01-lexical.md) | a doc link that names nothing | A `///` links `[Name]` or `[Type.member]`, and nothing of that name is visible where the documented declaration stands. |
 | LYR-SEM0225 | W | [01-lexical](01-lexical.md) | a module without module documentation | A module that declares something `pub` does not begin with `//!` lines. Not said unless the lint is set to `warn`. |
+| LYR-SEM0226 | E | [07-statements](07-statements.md) | a 'return' without the value the function returns | A bare `return;` stands in a function, a lambda or a coroutine whose result is not `void`. |
+| LYR-SEM0227 | E | [01-lexical](01-lexical.md) | an integer literal too large for 'int' | An integer literal without a suffix whose type is `int` is greater than `int.max`. |
+| LYR-SEM0228 | E | [03-types](03-types.md) | an inline array of another length | An array literal or a repetition `[x] * n` that is to be an inline array `T[N]` makes another number of elements than `N`. |
+| LYR-SEM0229 | E | [03-types](03-types.md) | a place of another type than the place parameter | A place argument `&x` is of another type than the place parameter `&p: T` it is passed to; nothing widens into a place. |
+| LYR-SEM0230 | E | [05-interfaces](05-interfaces.md) | an interface value made through a shape's or a blanket block | A value is made into an interface it conforms to only through a block on a shape or a blanket conformance: such a value is not built in this release. |
 
 ## A.5 MAC — Macros
 
@@ -364,7 +369,7 @@ What the C backend does not take.
 
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
-| LYR-CG0001 | E | [16-diagnostics](16-diagnostics.md) | a construct the C backend does not translate | The backend's subset gate meets something in the IR it has no translation for: a native function of the standard library without a runtime call, a host type, an IR instruction or type the emitter does not know. The message names the construct and the milestone that brings it, or says that it is a compiler bug. |
+| LYR-CG0001 | E | [16-diagnostics](16-diagnostics.md) | a construct the C backend does not translate | The backend's subset gate meets something in the IR it has no translation for: a native function of the standard library without a runtime call, a host type, an IR instruction or type the emitter does not know. The message names the construct, and says where it is a compiler bug. |
 | LYR-CG0002 | E | [12-stdlib](12-stdlib.md) | a compile-time-only function called at run time | The program would call, at run time, a function of `std.syntax` that reads, builds or writes a syntax tree. Reported at every such call the built program reaches, the standard library's own among them. |
 
 ## A.8 PKG — Packages and manifests
@@ -422,6 +427,7 @@ The driver's options and verbs.
 | LYR-CLI0018 | E | [14-cli](14-cli.md) | a `lyric.json` asks for a newer toolchain *(retired)* | Reported by the 4.x toolchain when a `lyric.json` named a minimum toolchain version above its own. Retired: Lyric 5: a toolchain pin in lyric.toml is LYR-PKG0009; only the 4.x lyric.json reader (Lyric.Core ProjectFile) reports it |
 | LYR-CLI0019 | E | [14-cli](14-cli.md) | `--only` named an artifact the build script did not declare *(retired)* | Reported by the 4.x `lyrbuild` when `--only <name>` named no artifact of the build script. Retired: Lyric 5: lyric5 has no --only option; programs are chosen with --bin (LYR-CLI0003 for an unknown one); the constant has no use outside its declaration |
 | LYR-CLI0020 | E | [14-cli](14-cli.md) | an internal failure of the 4.x compiler *(retired)* | Reported by the 4.x drivers when the compiler reached a state it believed impossible. Retired: Lyric 5: lyric5 reports its own failures as LYR-ICE0001 (exit 101); nothing in lyric5 calls CliDiagnostics.FailInternal |
+| LYR-CLI0021 | E | [14-cli](14-cli.md) | no package can be made here | `lyric new` names a directory that exists already, `lyric init` runs where a `lyric.toml` is, or the `git init` the command asked for failed. The exit code is 2. |
 
 ## A.11 IR — The lowering
 
@@ -465,6 +471,7 @@ A panic ends the program with exit code 101 and a backtrace; the compile-time ev
 | LYR-RT0017 | P | [06-errors](06-errors.md) | control reached code the compiler holds unreachable | Control arrived where the compiler knows it cannot arrive — behind a call that does not return, behind a match that covers every case. That is a bug in the compiler: the debug profile panics with this code; the release profile stops with the processor's trap, which the runtime reports as a crash. Report it with the program. |
 | LYR-RT0018 | P | [10-concurrency](10-concurrency.md) | a deadlock | Every task of a thread waits — for a channel, a lock, another task — and nothing can wake one: no task is ready, none sleeps, no other thread lives. The wait panics in the waiting task. |
 | LYR-RT0019 | P | [10-concurrency](10-concurrency.md) | a lock poisoned by a panic | A task acquires a `Mutex`, `RwLock` or `Once` whose holder panicked while it held it. The scheduler released the lock and poisoned it; the panic names the first panic's code and message. |
+| LYR-RT0020 | P | [16-diagnostics](16-diagnostics.md) | the runtime found its own invariant broken | The runtime met a state its own rules exclude — a thread allocating that the collector does not know, an object whose descriptor gives no size, a pointer the collector's map of a type does not name, a young object stored without its barrier, a coroutine whose descriptor is no coroutine's. That is a bug in the runtime or in the compiler, never in the program. |
 
 ## A.14 Lints
 

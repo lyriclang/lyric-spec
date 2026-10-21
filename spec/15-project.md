@@ -266,8 +266,9 @@ each operating system from any host — compared byte for byte.
 5. **When it runs**: before the compile, where the script changed — `build.lyr`, `build/`, its
    dependencies, the toolchain, the target, the profile —, where a file it named with `rerunIfChanged` changed, or
    where `gen/` is not as it left it; else what its last run asked stands. A script that does not
-   compile, or that ends with an exit other than 0, stops the build (`LYR-BLD0002`), with what it
-   wrote.
+   compile, that ends with an exit other than 0, or that does not end within 10 minutes, stops the
+   build (`LYR-BLD0002`), with what it wrote — exit 1, as a program refused ([14 §1.3](14-cli.md)):
+   the package's code failed, not the environment.
 6. **Trust**: the root package's script always runs; a dependency's only where the root
    manifest's **`[trust] build-scripts = ["geo"]`** names the package. Else the build stops before
    anything runs (`LYR-PKG0012`), at the line that declares the dependency.

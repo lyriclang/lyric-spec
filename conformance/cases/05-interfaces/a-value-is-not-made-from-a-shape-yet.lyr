@@ -1,5 +1,5 @@
 //! check
-//! error: LYR-SEM0047
+//! error: LYR-SEM0230
 //! since: 5.0.0
 // 05 §13 rule 6: a value of the interface is not made from a shape yet.
 

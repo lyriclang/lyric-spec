@@ -1,5 +1,5 @@
 //! check
-//! error: LYR-SEM0001
+//! error: LYR-SEM0226
 //! since: 5.0.0
 // 10 §1.3: a bare 'return;' is refused in a coroutine whose 'R' is not void.
 fn gen(): Coroutine<int, int> {

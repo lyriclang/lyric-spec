@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0227
+//! since: 5.0.0
+// 01: a literal whose type is int and that is beyond int.max does not fit, and never wraps.
+fn main(): void {
+    let big = 9223372036854775808;
+    let _ = big;
+}
