@@ -1,0 +1,5 @@
+import std.build;
+
+fn main(): void {
+    build.warn("the schema is out of date");
+}

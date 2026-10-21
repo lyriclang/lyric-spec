@@ -1,0 +1,11 @@
+//! check
+//! clean: unused-parameter
+//! since: 5.0.0
+// 16 §5: 'unused-parameter' says nothing where the program is put right.
+fn twice(x: int, _unused: int): int {
+    return x * 2;
+}
+
+fn main(): void {
+    let _ = twice(1, 2);
+}

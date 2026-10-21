@@ -1,0 +1,10 @@
+//! check
+//! clean: unused-variable
+//! since: 5.0.0
+// 16 §5: 'unused-variable' says nothing where the program is put right.
+import std.io { println };
+
+fn main(): void {
+    let count = 3;
+    println(count);
+}

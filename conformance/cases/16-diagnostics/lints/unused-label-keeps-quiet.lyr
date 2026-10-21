@@ -1,0 +1,10 @@
+//! check
+//! clean: unused-label
+//! since: 5.0.0
+// 16 §5: 'unused-label' says nothing where the program is put right.
+fn main(): void {
+    var n = 0;
+    while (n < 3) {
+        n += 1;
+    }
+}

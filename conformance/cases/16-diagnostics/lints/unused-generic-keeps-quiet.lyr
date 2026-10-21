@@ -1,0 +1,11 @@
+//! check
+//! clean: unused-generic
+//! since: 5.0.0
+// 16 §5: 'unused-generic' says nothing where the program is put right.
+fn first<T>(xs: T[]): T {
+    return xs[0];
+}
+
+fn main(): void {
+    let _ = first([1, 2]);
+}

@@ -1,0 +1,11 @@
+//! check
+//! clean: unused-assignment
+//! since: 5.0.0
+// 16 §5: 'unused-assignment' says nothing where the program is put right.
+import std.io { println };
+
+fn main(): void {
+    var last = 0;
+    last = 2;
+    println(last);
+}

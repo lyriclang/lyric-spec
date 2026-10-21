@@ -1,0 +1,9 @@
+//! check
+//! clean: unreachable-code
+//! since: 5.0.0
+// 16 §5: 'unreachable-code' says nothing where the program is put right.
+import std.io { println };
+
+fn main(): void {
+    println("always");
+}

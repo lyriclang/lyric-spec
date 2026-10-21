@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0206
+//! since: 5.0.0
+// 16 §5: a local that hides one of the same name — 'shadowed-local' says it.
+@Warn("shadowed-local")
+fn main(): void {
+    let x = 1;
+    if (x > 0) {
+        let x = 2;
+        let _ = x;
+    }
+}

@@ -1,0 +1,10 @@
+//! check
+//! clean: irrefutable-pattern
+//! since: 5.0.0
+// 16 §5: 'irrefutable-pattern' says nothing where the program is put right.
+import std.io { println };
+
+fn main(): void {
+    let value = 5;
+    println(f"{value}");
+}

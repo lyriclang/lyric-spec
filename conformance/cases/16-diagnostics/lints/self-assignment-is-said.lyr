@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0203
+//! since: 5.0.0
+// 16 §5: an assignment of a value to itself — 'self-assignment' says it.
+fn main(): void {
+    var x = 1;
+    x = x;
+    let _ = x;
+}

@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0201
+//! since: 5.0.0
+// 16 §5: a declaration nothing uses — 'dead-code' says it.
+fn helper(): int {
+    return 1;
+}
+
+fn main(): void {
+}

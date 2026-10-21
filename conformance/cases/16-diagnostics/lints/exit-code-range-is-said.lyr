@@ -1,0 +1,7 @@
+//! check
+//! warning: LYR-SEM0210
+//! since: 5.0.0
+// 16 §5: an exit code outside 0 to 255 — 'exit-code-range' says it.
+fn main(): int {
+    return 300;
+}

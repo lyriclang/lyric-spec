@@ -1,0 +1,12 @@
+//! check
+//! clean: module-shadowing
+//! since: 5.0.0
+// 16 §5: 'module-shadowing' says nothing where the program is put right.
+import std.io;
+
+@Warn("module-shadowing")
+fn main(): void {
+    let count = 1;
+    let _ = count;
+    io.println("x");
+}

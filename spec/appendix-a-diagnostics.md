@@ -192,7 +192,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0072 | W | [04-modules](04-modules.md) | an import that is never used | A name an import binds is never referred to in the file. |
 | LYR-SEM0073 | W | [07-statements](07-statements.md) | an unreachable statement | A statement follows one that always leaves the block (`return`, `throw`, `break`, `continue`, a panic) and can never run; reported once per block. |
 | LYR-SEM0074 | E | [05-interfaces](05-interfaces.md) | a static extension called on a value | A `static` function added by an `extend` block is called through a value instead of through the type. |
-| LYR-SEM0075 | H | [07-statements](07-statements.md) | a 'var' that is never reassigned | A `var` with an initializer is read but never reassigned, written through, or used for a `mut fn` call; `let` would do. |
+| LYR-SEM0075 | W | [07-statements](07-statements.md) | a 'var' that is never reassigned | A `var` with an initializer is read but never reassigned, written through, or used for a `mut fn` call; `let` would do. |
 | LYR-SEM0076 | W | [11-metaprogramming](11-metaprogramming.md) | a use of a deprecated declaration | A declaration or module marked `@Deprecated` is used or imported outside another deprecated declaration. |
 | LYR-SEM0077 | W | [04-modules](04-modules.md) | an import that shadows a builtin type | An import binds a name that is also a builtin type, such as `import std.string;` binding `string`. |
 | LYR-SEM0078 | E | [05-interfaces](05-interfaces.md) | a conformance or parent list entry that does not fit | A `::` list of a type, an `extend` block or an interface names something that is not an interface, repeats an entry, or makes an interface inherit itself; an associated type's bound names a non-interface. |
@@ -307,6 +307,20 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0195 | E | [12-stdlib](12-stdlib.md) | a part of the standard library the lowering needs is missing | The lowering translates a construct through the standard library (`for` through `std.iter`, string `+` and f-strings through `std.string`, `panic` through `std.core`) and does not find that part on the module path. |
 | LYR-SEM0196 | E | [05-interfaces](05-interfaces.md) | a delegation the lowering cannot express yet | A type delegates an interface to a field whose type is another interface (`[A by inner]` with `inner: B`), or a generic member of an interface is reached on a type that forwards it to a field. |
 | LYR-SEM0197 | E | [03-types](03-types.md) | the monomorphization does not terminate | The set of generic instances a program asks for is not finite: each instance asks for a further one, typically a method whose result type is built from its own element type (`Wrap<T>.deeper(): Wrap<Wrap<T>>` called on its own result). |
+| LYR-SEM0198 | W | [07-statements](07-statements.md) | a parameter that is never used | A function's parameter is never named in its body. A method of a type with a conformance list, and a parameter whose name begins with `_`, are not reported. |
+| LYR-SEM0199 | W | [07-statements](07-statements.md) | a 'var' that is written and never read | Every use of a `var` is the target of an assignment: what it stores is never read. |
+| LYR-SEM0200 | W | [03-types](03-types.md) | a type parameter that is never used | A function's or a type's type parameter is named nowhere in it — not in a parameter, the result, a field or the body. |
+| LYR-SEM0201 | W | [04-modules](04-modules.md) | a declaration nothing uses | A declaration of a module that is not `pub` and carries no attribute is named nowhere in the compilation. `main` is not reported. |
+| LYR-SEM0202 | W | [08-expressions](08-expressions.md) | an assignment written as a condition | The condition of an `if`, a `while` or a `do … while` is an assignment, where a comparison with `==` is usually meant. |
+| LYR-SEM0203 | W | [08-expressions](08-expressions.md) | an assignment of a value to itself | An `=` whose value is its own target — `x = x`, `a.b = a.b` — or `x = x++`, which keeps the old value. |
+| LYR-SEM0204 | W | [08-expressions](08-expressions.md) | a comparison of an unsigned value with 0 that cannot fail | An unsigned value compared with the literal 0 in a way that is always true (`n >= 0`) or always false (`n < 0`). |
+| LYR-SEM0205 | W | [08-expressions](08-expressions.md) | an equality test on floats | `==` or `!=` with a `float` or `float32` on both sides. Not said unless the lint is set to `warn`. |
+| LYR-SEM0206 | W | [07-statements](07-statements.md) | a local that hides one of the same name | A local binding in an inner block takes the name of a local or a parameter around it. Not said unless the lint is set to `warn`. |
+| LYR-SEM0207 | W | [04-modules](04-modules.md) | a local that hides a module the file imports | A local or a parameter takes the name a whole-module import binds — `import std.io;` binds `io`. Not said unless the lint is set to `warn`. |
+| LYR-SEM0208 | W | [03-types](03-types.md) | an integer literal that takes another type than int | An integer literal without a suffix takes a type other than `int` from its context. Not said unless the lint is set to `warn`. |
+| LYR-SEM0209 | W | [08-expressions](08-expressions.md) | a block's implicit 'it' that hides the 'it' around it | A trailing block that uses its implicit `it` stands inside another trailing block with an implicit `it`. |
+| LYR-SEM0210 | W | [14-cli](14-cli.md) | an exit code outside 0 to 255 | `fn main(): int` returns an integer literal below 0 or above 255; the process leaves with it modulo 256. |
+| LYR-SEM0211 | W | [05-interfaces](05-interfaces.md) | a conformance of another package's type to another package's interface | A conformance block is written for a type of another package to an interface of another package (`std` among them). |
 
 ## A.5 MAC — Macros
 
@@ -444,21 +458,36 @@ Every warning is a lint (16 §5): its name, its code, its group and its level un
 
 | Lint | Code | Group | Level | Title |
 |---|---|---|---|---|
+| `assignment-in-condition` | LYR-SEM0202 | correctness | warn | an assignment written as a condition |
 | `blanket-shadowing` | LYR-SEM0168 | correctness | warn | a type's member hides a blanket member |
 | `build-script-warning` | LYR-BLD0003 | correctness | warn | a warning a build script reported |
 | `builtin-type-shadowing` | LYR-SEM0077 | correctness | warn | an import that shadows a builtin type |
 | `closeable-never-closed` | LYR-SEM0144 | resources | warn | a Closeable value nothing closes |
+| `comparison-always` | LYR-SEM0204 | correctness | warn | a comparison of an unsigned value with 0 that cannot fail |
+| `dead-code` | LYR-SEM0201 | unused | warn | a declaration nothing uses |
 | `deprecated` | LYR-SEM0076 | deprecation | warn | a use of a deprecated declaration |
+| `exit-code-range` | LYR-SEM0210 | correctness | warn | an exit code outside 0 to 255 |
+| `float-equality` | LYR-SEM0205 | correctness | allow | an equality test on floats |
+| `foreign-conformance` | LYR-SEM0211 | correctness | warn | a conformance of another package's type to another package's interface |
 | `generator-copies-this` | LYR-SEM0172 | correctness | warn | a 'mut fn' generator on a value type changes a copy |
+| `int-literal-adapts` | LYR-SEM0208 | correctness | allow | an integer literal that takes another type than int |
 | `irrefutable-pattern` | LYR-SEM0104 | correctness | warn | a pattern that cannot fail where a test is promised |
 | `iterator-reused` | LYR-SEM0162 | correctness | warn | a second loop over the same iterator |
+| `module-shadowing` | LYR-SEM0207 | correctness | allow | a local that hides a module the file imports |
 | `prelude-shadowing` | LYR-SEM0153 | correctness | warn | a name hides one of the prelude's |
+| `self-assignment` | LYR-SEM0203 | correctness | warn | an assignment of a value to itself |
+| `shadowed-it` | LYR-SEM0209 | correctness | warn | a block's implicit 'it' that hides the 'it' around it |
+| `shadowed-local` | LYR-SEM0206 | correctness | allow | a local that hides one of the same name |
 | `unreachable-catch` | LYR-SEM0171 | unused | warn | a catch-all clause that nothing reaches |
 | `unreachable-code` | LYR-SEM0073 | unused | warn | an unreachable statement |
 | `unreachable-pattern` | LYR-SEM0112 | unused | warn | a match arm no value can reach |
+| `unused-assignment` | LYR-SEM0199 | unused | warn | a 'var' that is written and never read |
+| `unused-generic` | LYR-SEM0200 | unused | warn | a type parameter that is never used |
 | `unused-import` | LYR-SEM0072 | unused | warn | an import that is never used |
 | `unused-label` | LYR-SEM0103 | unused | warn | a loop label nothing jumps to |
+| `unused-parameter` | LYR-SEM0198 | unused | warn | a parameter that is never used |
 | `unused-result` | LYR-SEM0178 | unused | warn | the value of a '@MustUse' call is dropped |
+| `unused-var` | LYR-SEM0075 | unused | warn | a 'var' that is never reassigned |
 | `unused-variable` | LYR-SEM0071 | unused | warn | a local that is never used |
 | `useless-allow` | LYR-SEM0180 | unused | warn | an '@Allow' that takes back nothing |
 | `useless-try` | LYR-SEM0139 | style | warn | a 'try' mark over nothing that can throw |

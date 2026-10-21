@@ -1,0 +1,8 @@
+//! check
+//! warning: LYR-SEM0199
+//! since: 5.0.0
+// 16 §5: a 'var' that is written and never read — 'unused-assignment' says it.
+fn main(): void {
+    var last = 0;
+    last = 2;
+}

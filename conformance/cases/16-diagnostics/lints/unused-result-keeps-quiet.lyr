@@ -1,0 +1,12 @@
+//! check
+//! clean: unused-result
+//! since: 5.0.0
+// 16 §5: 'unused-result' says nothing where the program is put right.
+@MustUse
+fn token(): int {
+    return 7;
+}
+
+fn main(): void {
+    let _ = token();
+}

@@ -1,0 +1,6 @@
+//! check
+//! warning: LYR-BLD0003
+//! since: 5.0.0
+// 16 §5: a warning a build script reported — 'build-script-warning' says it.
+fn main(): void {
+}

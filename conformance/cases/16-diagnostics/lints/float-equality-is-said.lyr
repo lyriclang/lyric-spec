@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0205
+//! since: 5.0.0
+// 16 §5: an equality test on floats — 'float-equality' says it.
+@Warn("float-equality")
+fn main(): void {
+    let a = 0.1 + 0.2;
+    let _ = a == 0.3;
+}

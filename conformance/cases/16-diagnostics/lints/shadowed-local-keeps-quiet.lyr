@@ -1,0 +1,12 @@
+//! check
+//! clean: shadowed-local
+//! since: 5.0.0
+// 16 §5: 'shadowed-local' says nothing where the program is put right.
+@Warn("shadowed-local")
+fn main(): void {
+    let x = 1;
+    if (x > 0) {
+        let y = 2;
+        let _ = y;
+    }
+}

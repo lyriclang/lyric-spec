@@ -1,0 +1,9 @@
+//! check
+//! clean: self-assignment
+//! since: 5.0.0
+// 16 §5: 'self-assignment' says nothing where the program is put right.
+fn main(): void {
+    var x = 1;
+    x = x + 1;
+    let _ = x;
+}

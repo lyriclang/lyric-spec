@@ -1,0 +1,12 @@
+//! check
+//! clean: visibility-leak
+//! since: 5.0.0
+// 16 §5: 'visibility-leak' says nothing where the program is put right.
+struct Wide {
+    x: int,
+}
+
+fn main(): void {
+    let w = Wide { x = 1 };
+    let _ = w.x;
+}

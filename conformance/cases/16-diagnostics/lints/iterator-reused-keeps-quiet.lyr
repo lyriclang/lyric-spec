@@ -1,0 +1,21 @@
+//! check
+//! clean: iterator-reused
+//! since: 5.0.0
+// 16 §5: 'iterator-reused' says nothing where the program is put right.
+class Ticker :: [Iterator] {
+    type Item = int;
+    var n: int,
+
+    mut fn next(): ?int {
+        if (this.n == 0) { return null; }
+        this.n = this.n - 1;
+        return this.n;
+    }
+}
+
+fn main(): void {
+    var sum = 0;
+    for (x in Ticker { n = 3 }) { sum = sum + x; }
+    for (x in Ticker { n = 3 }) { sum = sum + x; }
+    assert(sum == 6);
+}

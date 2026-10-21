@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-SEM0204
+//! since: 5.0.0
+// 16 §5: a comparison of an unsigned value with 0 that cannot fail — 'comparison-always' says it.
+fn main(): void {
+    let n: uint = 3;
+    if (n >= 0) {
+        let _ = n;
+    }
+}

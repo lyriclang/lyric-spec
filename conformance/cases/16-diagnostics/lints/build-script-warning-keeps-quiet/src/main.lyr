@@ -1,0 +1,6 @@
+//! check
+//! clean: build-script-warning
+//! since: 5.0.0
+// 16 §5: 'build-script-warning' says nothing where the program is put right.
+fn main(): void {
+}

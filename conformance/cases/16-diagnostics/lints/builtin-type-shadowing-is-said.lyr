@@ -1,0 +1,9 @@
+//! check
+//! warning: LYR-SEM0077
+//! since: 5.0.0
+// 16 §5: an import that shadows a builtin type — 'builtin-type-shadowing' says it.
+import std.string;
+
+fn main(): void {
+    let _ = string.fromInt(42);
+}

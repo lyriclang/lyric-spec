@@ -1,0 +1,10 @@
+//! check
+//! clean: void-binding
+//! since: 5.0.0
+// 16 §5: 'void-binding' says nothing where the program is put right.
+fn nothing(): void {
+}
+
+fn main(): void {
+    nothing();
+}

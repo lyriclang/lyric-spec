@@ -1,0 +1,6 @@
+//! check
+//! clean: unused-import
+//! since: 5.0.0
+// 16 §5: 'unused-import' says nothing where the program is put right.
+fn main(): void {
+}

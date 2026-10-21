@@ -1,0 +1,11 @@
+//! check
+//! warning: LYR-SEM0202
+//! since: 5.0.0
+// 16 §5: an assignment written as a condition — 'assignment-in-condition' says it.
+fn main(): void {
+    var ready = false;
+    if (ready = true) {
+        ready = false;
+    }
+    let _ = ready;
+}

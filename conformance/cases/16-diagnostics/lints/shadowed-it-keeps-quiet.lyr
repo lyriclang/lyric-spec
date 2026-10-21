@@ -1,0 +1,11 @@
+//! check
+//! clean: shadowed-it
+//! since: 5.0.0
+// 16 §5: 'shadowed-it' says nothing where the program is put right.
+fn apply(f: fn(int) -> int): int {
+    return f(1);
+}
+
+fn main(): void {
+    let _ = apply { x => apply { it + 1 } + x };
+}
