@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0121
+//! since: 5.0.0
+// 05 §3 rule 1: one function per name and count; a default widens 'twice' to one and two arguments.
+struct P {
+    v: int,
+}
+
+extend P {
+    fn twice(a: int, b: int = 0): int {
+        return a + b;
+    }
+}
+
+extend P {
+    fn twice(a: int): int {
+        return a;
+    }
+}
+
+fn main(): void {
+}
