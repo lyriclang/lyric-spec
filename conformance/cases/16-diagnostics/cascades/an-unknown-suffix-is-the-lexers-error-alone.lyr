@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0003
+//! since: 5.0.0
+// 16 §2 rule 2: the lexer refuses the suffix; the parser does not refuse it again.
+fn main(): void {
+    let x = 10i7;
+    let _ = x;
+}

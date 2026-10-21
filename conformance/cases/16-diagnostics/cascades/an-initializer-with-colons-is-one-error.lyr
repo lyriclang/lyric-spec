@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-PAR0037
+//! since: 5.0.0
+// 16 §2 rule 2: 'Point { x: 1 }' is an initializer written with a type's ':', one error.
+struct Point {
+    x: int,
+}
+
+fn main(): void {
+    let p = Point { x: 1 };
+    let _ = p;
+}

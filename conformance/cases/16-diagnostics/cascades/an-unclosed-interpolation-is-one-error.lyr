@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0014
+//! since: 5.0.0
+// 16 §2 rule 2: the rest of an unclosed interpolation is skipped, not parsed on.
+fn main(): void {
+    let n = 1;
+    let m = 2;
+    let _ = f"{n m}";
+}
