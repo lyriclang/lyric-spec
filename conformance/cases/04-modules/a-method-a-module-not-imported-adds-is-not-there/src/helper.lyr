@@ -1,0 +1,6 @@
+import app.extra;
+import app.shapes { Point };
+
+pub fn normOf(p: Point): int {
+    return p.norm();
+}

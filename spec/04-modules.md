@@ -212,6 +212,14 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    module `geo.lib`. An import that binds a module under its own name — `pub import geo.shapes;`
    in `geo` — is that module, and one meaning. `std` is the
    standard library's name: a single file `std.lyr` is refused (`LYR-RES0013`) (D1).
+8. What a failed lookup could not see is said in a **note** of its error (M7-3, M7-11, K4, K7):
+   an import of a module that does not exist (`LYR-RES0003`) suggests the module path a typo away,
+   as a change that needs a reader ([16 §6](16-diagnostics.md)); a member a local does not have
+   (`LYR-SEM0012`), where the local hides a module the file imports whole or a type of the
+   prelude that has the member, says that the name is the local here and what it hides — hiding is
+   legal and silent until then (rule 5 warns of a declaration or an import, never of a local); a
+   method a block adds to the type in a module this one cannot see — not imported, or kept to its
+   module — names it, its module and why.
 
 ## 5. A type's members by their bare names
 

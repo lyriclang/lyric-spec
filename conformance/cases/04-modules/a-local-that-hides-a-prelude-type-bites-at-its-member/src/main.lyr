@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 04 §4 rule 8: the local 'List' hides the prelude's type, and 'List.new()' asks the local.
+fn main(): void {
+    let List = 3;
+    let _ = List.new();
+}

@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 04 §4 rule 8: a block's method reaches the modules that import its module; here it is not
+// there, and the note names the module that adds it.
+import app.helper { normOf };
+import app.shapes { Point };
+
+fn main(): void {
+    let p = Point { x = 1 };
+    let _ = normOf(p);
+    let _ = p.norm();
+}

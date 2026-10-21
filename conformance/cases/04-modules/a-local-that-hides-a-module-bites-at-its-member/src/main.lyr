@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0012
+//! since: 5.0.0
+// 04 §4 rule 8: the local 'geo' hides the module; legal and silent until 'geo.area()' asks the
+// local for a member it has not — the error's note says what it hides.
+import app.geo;
+
+fn main(): void {
+    let _ = geo.area();
+    let geo = 2;
+    let _ = geo.area();
+}
