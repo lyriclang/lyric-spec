@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0232
+//! since: 5.0.0
+// 07 §2 rule 1: a string is no Iterable; '.chars()' walks its characters.
+fn main(): void {
+    let line = "ab";
+    for (c in line) {
+        let _ = c;
+    }
+}

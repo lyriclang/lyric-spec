@@ -63,7 +63,9 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
 
 1. **`for (x in e) { … }`** walks an **`Iterable`** (design 10 B6 I2): `e.iter()` gives the
    iterator, once, and the loop calls its `next()` before every pass, running the block with `x`
-   bound to the value until `next()` answers `null`. Anything else is refused (`LYR-SEM0007`).
+   bound to the value until `next()` answers `null`. Anything else is refused (`LYR-SEM0007`). A
+   `string` is no `Iterable`: its characters and its lines are two walks, `s.chars()` and
+   `s.lines()`, and `for (c in s)` is refused (`LYR-SEM0232`, with `.chars()` as its fix).
    An `Iterator` is iterable as itself ([12 §Iteration](12-stdlib.md)), its `iter()` the iterator
    as a value: a loop over a struct iterator walks a copy and leaves the variable where it was;
    over a class iterator it walks the object, and a second loop goes on where the first stopped.
