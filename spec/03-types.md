@@ -768,7 +768,7 @@ Type parameters, their inference, and what an instance is
    `void` is a type like any other — `?void`, `void[]` — but a **name** for its one value says
    nothing: a binding that holds a `void` and a parameter written with it are warned about
    (`LYR-SEM0173`; the review's M6-5). In generic code there is no warning: the binding is a
-   `T`.
+   `T`. `==` and `!=` on a `void` are refused (`LYR-SEM0003`): there is nothing to compare.
 
 ### 9.2 Inference at a call
 
@@ -834,7 +834,8 @@ Type parameters, their inference, and what an instance is
 
 1. A generic function with its arguments written, `ident<int>`, is a **value** of the
    instance's type, `fn(int) -> int` (T17): held, passed and called like any function value
-   ([§8](#8-function-values)). A static method through its type likewise, `Counter.make<bool>`;
+   ([§8](#8-function-values)). A static method through its type likewise, `Counter.make<bool>`,
+   and through an instance of a generic type, `Pair<int>.of`;
    an instance method through its type is no value (`LYR-SEM0055`) — it becomes one through
    its object, `obj.method` ([§8.4](#84-functions-and-methods-as-values)).
 2. A placeholder in the list is filled from the **function type the position expects**:

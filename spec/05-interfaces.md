@@ -122,6 +122,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    call cannot (§3.4), and it is checked as the member call it is: a `mut fn` writes `x`
    itself — no copy of a struct stands in for it —, so `x` is a place as the receiver of
    `x.m(…)` is (`LYR-SEM0019`).
+2. A **static** member is not called through its interface: `Make.make<Item>(s)` is refused
+   (`LYR-SEM0231`) — the interface has no value to call it for, and a type argument written after
+   it does not make it one. It is called on a type that conforms, `Item.make(s)`, or through a
+   type parameter the interface bounds, `T.make(s)` ([§7](#7-self-and-static-members)).
 
 ## 5. Delegation
 

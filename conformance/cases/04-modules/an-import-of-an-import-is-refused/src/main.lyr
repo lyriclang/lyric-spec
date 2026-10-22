@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0009
+//! since: 5.0.0
+// 04 §3 rule 4: 'helper' is the facade's import, its own; a selective import does not reach it.
+import app.facade { helper };
+
+fn main(): void {
+    let _ = helper();
+}

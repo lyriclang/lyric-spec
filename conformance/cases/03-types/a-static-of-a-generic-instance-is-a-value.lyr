@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 6
+//! since: 5.0.0
+// 03 §9.4 rule 1: 'Pair<int>.of' is a value of type 'fn(int) -> Pair<int>'.
+import std.io { println };
+
+struct Pair<T> {
+    a: T,
+    b: T,
+
+    static fn of(x: T): Pair<T> {
+        return Pair { a = x, b = x };
+    }
+}
+
+fn main(): void {
+    let make = Pair<int>.of;
+    let p = make(3);
+    println(f"{p.a + p.b}");
+}

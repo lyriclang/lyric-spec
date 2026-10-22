@@ -1,0 +1,7 @@
+//! The facade.
+import app.util { helper };
+
+/// Twice the helper.
+pub fn twice(): int {
+    return helper() * 2;
+}
