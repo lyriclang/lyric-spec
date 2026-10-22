@@ -283,7 +283,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    test is **exact**: `5 as int8` is no `int` and nothing widens, an alias is the type it names
    (`int64` is `int`), and a `string` is no `StringView`. For an interface `T` that is a value type
    ([§7](#7-self-and-static-members) rule 3), whether the concrete type conforms to it — a
-   search of the conformance list behind that descriptor. `is` stands at the comparison level
+   search of the conformance list behind that descriptor, which holds what a constraint sees:
+   the type's own list, its blocks, and a blanket's or a shape's block that gives it the
+   interface ([§13](#13-generic-extends) rules 6, 8). `a is Describe` holds for a `Cat` a block
+   makes a `Describe` through `Named`, whether or not the program made one a `Describe` before. `is` stands at the comparison level
    and does not chain.
 3. The operand's static type is an **interface**. On a known type (`c is Circle` with
    `c: Circle`), on an optional (`?Shape`: test for `null` first), against a type parameter

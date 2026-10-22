@@ -1,0 +1,71 @@
+//! run
+//! stdout:
+//! | named cat
+//! | ?
+//! | 5!
+//! | quiet
+//! | named cat
+//! | nothing
+//! since: 5.0.0
+// 05 §9 rule 2: 'is' and a type pattern see the conformance a blanket block gives - a 'Cat' is a
+// 'Describe' through 'Named', '5' a 'Loud' through 'Display' - though no value was made one.
+import std.io { println };
+import std.core { Any };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Describe {
+    fn describe(): string;
+}
+
+extend<T :: [Named]> T :: [Describe] {
+    fn describe(): string {
+        return "named " + this.name();
+    }
+}
+
+interface Loud {
+    fn loud(): string;
+}
+
+extend<T :: [Display]> T :: [Loud] {
+    fn loud(): string {
+        return f"{this}!";
+    }
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+struct Rock {
+    weight: int,
+}
+
+fn label(a: Any): string {
+    if (a is Describe) {
+        return a.describe();
+    }
+    return "?";
+}
+
+fn main(): void {
+    println(label(Cat {}));
+    println(label(Rock { weight = 3 }));
+    let n: Any = 5;
+    println(if (n is Loud) n.loud() else "quiet");
+    let r: Any = Rock { weight = 2 };
+    println(if (r is Loud) r.loud() else "quiet");
+    let things: Any[] = [Cat {}, Rock { weight = 1 }];
+    for (t in things) {
+        let said = match (t) {
+            d: Describe => d.describe(),
+            _ => "nothing",
+        };
+        println(said);
+    }
+}
