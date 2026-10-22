@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | ann
+//! | ann
+//! since: 5.0.0
+// 05 §5 rule 1: the field holds a value of a child of the delegated interface; the forwarder
+// reaches the member through the parent's table.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Greeter :: [Named] {
+    fn greet(): string;
+}
+
+struct Person :: [Greeter] {
+    n: string,
+
+    fn name(): string {
+        return this.n;
+    }
+
+    fn greet(): string {
+        return "hi " + this.n;
+    }
+}
+
+struct Badge :: [Named by holder] {
+    holder: Greeter,
+}
+
+fn main(): void {
+    let b = Badge { holder = Person { n = "ann" } };
+    println(b.name());
+    let n: Named = b;
+    println(n.name());
+}

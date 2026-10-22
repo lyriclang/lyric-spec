@@ -66,7 +66,8 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    class or an enum: `let d: Damageable = Player.new(100);`,
    or of a **built-in type** that conforms through
    `std.core`'s blocks — a number, `bool`, `char`, `string`, a string's view: `let d: Display = 5;`,
-   `f(1, "two")` for `f(xs: Display...)` (design 01 V7). The transition happens at the
+   `f(1, "two")` for `f(xs: Display...)` (design 01 V7) —, or of a **shape** or a type that conforms
+   through a block on its shape or a blanket block ([§13](#13-generic-extends) rules 6, 8). The transition happens at the
    positions of 03 T8 — a binding with a type, an argument, a return, a field, an array element
    under a context. *(Informative.)* It is a fat pointer: the data and the table of the concrete
    type's implementations, two words, by value (V7).
@@ -126,10 +127,12 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 
 1. A struct or a class may conform **by delegating** to one of its fields: `class Dog ::
    [Walker by legs] { var legs: Legs, … }` (D1). The field exists and conforms to the
-   interface, or holds a value of it (`LYR-SEM0123` otherwise). Every abstract member of the
-   interface's chain that the type does not write itself is **forwarded** to the field, as if
-   `fn walk(d) { this.legs.walk(d); }` were written. A generic member is not forwarded yet: the
-   type writes it (`LYR-SEM0020`). A forwarded `mut fn` writes the field as that function would:
+   interface, or holds a value of it or of a child of it (`LYR-SEM0123` otherwise) — a child's
+   value is one of the parent ([§11](#11-the-child-interface-value-as-a-parent-value)). Every
+   abstract member of the interface's chain that the type does not write itself is **forwarded**
+   to the field, as if `fn walk(d) { this.legs.walk(d); }` were written; a **generic** member too
+   (R4b), as if `fn tag<U>(u: U) { return this.inner.tag(u); }` were written — one forwarder per
+   use, called on the type or through a constraint. A forwarded `mut fn` writes the field as that function would:
    a value in the field — a struct, an enum, a builtin — is written where it lies, so its field
    is a `var` (`LYR-SEM0019`); a class, and a value of the interface, are written through. And
    what the field's implementation throws leaves the forwarded member as it would leave that
@@ -438,7 +441,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    — each interface under its own condition, as 04 D7 synthesizes them (N2a). A shape that conforms to `Equatable` so compares with `==` and `!=`
    through its block's `equals`, and one that conforms to `Display` or `Debug` renders in an
    f-string hole, as a named type does — std.core's arrays and views do (10 C9; M8a S14). A
-   value of the interface is not made from a shape yet (`LYR-SEM0047`).
+   **value of the interface** is made from the shape in a box, as from a built-in ([§2](#2-interface-values)):
+   `let d: Describe = [1, 2];`, its table the block's members and, where the block writes none,
+   the interface's defaults.
 7. **Blanket blocks** (04 D15): a block whose target is its own parameter, `extend<T :: [I]> T
    { … }`, adds its members to **every type its constraints admit** — the receiver binds `T`,
    `this` is the receiver: `x.greeting()` on every `Named`. A member of the type's own, of
@@ -460,8 +465,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    conformance to one of the chain where it reaches the type (X4); a shape's block giving one
    where it reaches the shape — the shape, or an overlapping one another block names, meeting
    its constraints, which a shape does through a block naming them alone (rule 6); and another
-   blanket block giving one, even where no type could meet both (`LYR-SEM0133`). A value of
-   `J` is not made through a blanket conformance yet (`LYR-SEM0047`).
+   blanket block giving one, even where no type could meet both (`LYR-SEM0133`). A **value of
+   `J`** is made from a type the block reaches, with the block's members in its table:
+   `let d: J = cat;`.
 9. **A parameter only the conformance names** (design 10 B4): in `extend<T, U :: [From<T>]> T ::
    [Into<U>] { … }` the target does not name `U`, nor does a fixation; the block's conformance
    does. The instance a constraint asks for binds it: `Meters` satisfies `Into<Centimeters>`

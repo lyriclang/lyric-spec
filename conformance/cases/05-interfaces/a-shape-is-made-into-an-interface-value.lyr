@@ -1,0 +1,71 @@
+//! run
+//! stdout:
+//! | (1|a)(1|a)
+//! | f(2)=3f(2)=3
+//! | some 4some 4
+//! | nonenone
+//! | 2 items2 items
+//! | (1|a)
+//! | f(2)=3
+//! | some 4
+//! | 3 items
+//! since: 5.0.0
+// 05 §13 rule 6: a value of the interface from a tuple, a function, an optional and an array, each
+// in a box; 'twice' is the interface's default, reached through the box's table.
+import std.io { println };
+
+interface Describe {
+    fn describe(): string;
+
+    fn twice(): string {
+        return this.describe() + this.describe();
+    }
+}
+
+extend<A :: [Display], B :: [Display]> (A, B) :: [Describe] {
+    fn describe(): string {
+        let (a, b) = this;
+        return f"({a}|{b})";
+    }
+}
+
+extend fn(int) -> int :: [Describe] {
+    fn describe(): string {
+        return f"f(2)={this(2)}";
+    }
+}
+
+extend<T :: [Display]> ?T :: [Describe] {
+    fn describe(): string {
+        if (let v = this) {
+            return f"some {v}";
+        }
+        return "none";
+    }
+}
+
+extend<T> T[] :: [Describe] {
+    fn describe(): string {
+        return f"{this.length()} items";
+    }
+}
+
+fn show(d: Describe): string {
+    return d.twice();
+}
+
+fn main(): void {
+    let pair = (1, "a");
+    let inc: fn(int) -> int = (n) => n + 1;
+    let maybe: ?int = 4;
+    let nothing: ?int = null;
+    println(show(pair));
+    println(show(inc));
+    println(show(maybe));
+    println(show(nothing));
+    println(show(["x", "y"]));
+    let ds: Describe[] = [pair, inc, maybe, [1, 2, 3]];
+    for (d in ds) {
+        println(d.describe());
+    }
+}

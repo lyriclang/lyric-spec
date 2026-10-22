@@ -1,0 +1,66 @@
+//! run
+//! stdout:
+//! | o=1
+//! | true=3
+//! | pot true=30
+//! | pot 1=30
+//! since: 5.0.0
+// 05 §5 rule 1: a generic member is forwarded too, one forwarder per use — on the type, through a
+// constraint; a 'mut fn' writes the field where it lies, a class's member writes the shared object.
+import std.io { println };
+
+interface Counter {
+    mut fn add<N :: [Display]>(n: N): int;
+    fn label<L :: [Display]>(l: L): string;
+}
+
+struct Tally :: [Counter] {
+    var count: int,
+
+    mut fn add<N :: [Display]>(n: N): int {
+        this.count = this.count + 1;
+        return this.count;
+    }
+
+    fn label<L :: [Display]>(l: L): string {
+        return f"{l}={this.count}";
+    }
+}
+
+class Pot :: [Counter] {
+    var count: int = 10,
+
+    mut fn add<N :: [Display]>(n: N): int {
+        this.count = this.count + 10;
+        return this.count;
+    }
+
+    fn label<L :: [Display]>(l: L): string {
+        return f"pot {l}={this.count}";
+    }
+}
+
+struct Outer :: [Counter by inner] {
+    var inner: Tally,
+}
+
+struct Holder :: [Counter by pot] {
+    pot: Pot,
+}
+
+fn bump<C :: [Counter]>(c: C): string {
+    var walk = c;
+    walk.add(1);
+    walk.add("x");
+    return walk.label(true);
+}
+
+fn main(): void {
+    var o = Outer { inner = Tally { count = 0 } };
+    o.add(5);
+    println(o.label("o"));
+    println(bump(o));
+    let h = Holder { pot = Pot {} };
+    println(bump(h));
+    println(h.label(1));
+}
