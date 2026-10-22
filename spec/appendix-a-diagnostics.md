@@ -96,6 +96,8 @@ The parser's. A declaration that does not parse reports these and nothing that f
 | LYR-PAR0061 | E | [11-metaprogramming](11-metaprogramming.md) | a 'comptime if' in expression position without 'else' | A `comptime if (c) a` stands where a value is taken and has no `else` branch. |
 | LYR-PAR0062 | E | [11-metaprogramming](11-metaprogramming.md) | a 'comptime for' in an initializer without '[f] = e' | In an initializer, a `comptime for (f in …)` is followed by something else than an item `[f] = e`. |
 | LYR-PAR0063 | E | [11-metaprogramming](11-metaprogramming.md) | 'quote' without a block | The word `quote` is not followed by `{`. |
+| LYR-PAR0064 | E | [16-diagnostics](16-diagnostics.md) | a field that ends with ';' | A field of a struct or class, or a field of an initializer, ends with `;` where its list separates with `,`; read as the `,` it stands for. |
+| LYR-PAR0065 | E | [16-diagnostics](16-diagnostics.md) | a 'continue', 'break' or 'return' where a value stands | A jump stands where an expression is wanted — a match arm, a branch of an `if` expression —; it is a statement and goes in a block, `=> { continue; }`. |
 
 ## A.3 RES — Names and modules
 
@@ -341,6 +343,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0229 | E | [03-types](03-types.md) | a place of another type than the place parameter | A place argument `&x` is of another type than the place parameter `&p: T` it is passed to; nothing widens into a place. |
 | LYR-SEM0230 | E | [05-interfaces](05-interfaces.md) | an interface value made through a shape's or a blanket block *(retired)* | A value is made into an interface it conforms to only through a block on a shape or a blanket conformance: such a value is not built in this release. Retired: M12b S7: a value of an interface is made through a shape's block or a blanket conformance — the shape in a box, a named type with the block's row in its table; nothing refuses it. |
 | LYR-SEM0231 | E | [05-interfaces](05-interfaces.md) | a static member of an interface called through the interface | A static member of an interface is called on the interface's name, `Make.make<Item>(s)`: the interface has no value to call it for. |
+| LYR-SEM0232 | E | [07-statements](07-statements.md) | a loop over a string | A `for` loop walks a `string`, which is no `Iterable`: `s.chars()` gives its characters, `s.lines()` its lines. |
 
 ## A.5 MAC — Macros
 

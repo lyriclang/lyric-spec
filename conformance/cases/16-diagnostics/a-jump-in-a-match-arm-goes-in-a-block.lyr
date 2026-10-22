@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-PAR0065
+//! since: 5.0.0
+// 16 §1 rule 2: 'continue' where an arm's value stands is read as '{ continue; }' — one finding,
+// the other arms checked as usual.
+fn main(): void {
+    for (c in "a b".chars()) {
+        let n = match (c) {
+            ' ' => continue,
+            _ => 1,
+        };
+        let _ = n;
+    }
+}

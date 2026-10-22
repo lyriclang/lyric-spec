@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-PAR0064
+//! since: 5.0.0
+// 16 §1 rule 2: the ';' after a field is said once, as the ',' it stands for — no follow-up error
+// about the next member.
+class Expression {
+    var nodes: int;
+    var depth: int,
+}
+
+fn main(): void {
+}

@@ -54,7 +54,12 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
    arguments an annotation got wrong, refused there and not again where an initializer takes them;
    the names an or-pattern's alternative does not bind, in one finding; the parser's recovery, which
    skips the rest of an unclosed interpolation and reads `T { x: 1 }` as the initializer it is
-   (`LYR-PAR0037`, with `=` as its fix); a literal's suffix the lexer refused, which the parser does
+   (`LYR-PAR0037`, with `=` as its fix), a field or an initializer's field that ends with `;` instead
+   of `,`, said once at the `;` and read as the `,` it stands for — `T { a = 1; }` after the name of
+   a type is the initializer, not a call with a trailing block (`LYR-PAR0064`, with `,` as its fix) —,
+   and a `continue`, `break` or `return` where a value stands, a match arm or a branch of an `if`,
+   read as the block it belongs in (`LYR-PAR0065`, with `{ continue; }` as its fix); a literal's
+   suffix the lexer refused, which the parser does
    not refuse again; a conformance written twice (`LYR-SEM0133`), whose second block the calls do not
    see; a compile-time-only call, said where the program makes it and not again inside the standard
    library.

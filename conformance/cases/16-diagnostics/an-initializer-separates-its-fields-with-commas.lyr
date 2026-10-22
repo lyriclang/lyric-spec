@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-PAR0064
+//! since: 5.0.0
+// 16 §1 rule 2: 'Pair { a = 1; b = 2; }' after a type's name is the initializer, each ';' said;
+// no call with a trailing block, no unknown names.
+struct Pair {
+    a: int,
+    b: int,
+}
+
+fn main(): void {
+    let p = Pair { a = 1; b = 2; };
+    let _ = p;
+}
