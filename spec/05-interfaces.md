@@ -112,7 +112,18 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    interface calling the member on `this`, and through the qualified call (§4), each is
    reached — a static member through the type parameter its interface bounds, `T.make(s)`. One block that
    holds a name at two counts holds an overload set ([08 §1.2](08-expressions.md)), not two
-   scopes.
+   scopes; blocks that give instances of one generic interface hold one set as well (rule 5).
+5. A type may conform to **several instances** of one generic interface, `struct Label ::
+   [From<int>, From<string>]` — in its list, or each in a block of its own. Members of one name
+   and count stand side by side where each answers its own instance, `from(v: int)` beside
+   `from(v: string)` (D4 holds per conformance; `LYR-SEM0085` where they answer one). A call
+   chooses by its arguments' types: the member whose parameters take them, and of several the
+   one whose parameters are the arguments' own types — `Label.from(3)` is the `From<int>` one
+   beside `From<float>`, a literal being its default type. None or several left is refused
+   (`LYR-SEM0086`); the argument is written with `as`, `Label.from(3 as int16)`. Through a
+   constraint, `U :: [From<T>]`, the instance the constraint names chooses; through a value of
+   an interface instance, its table does. There is no qualified form for a static member (§4
+   rule 2).
 
 ## 4. The qualified call
 

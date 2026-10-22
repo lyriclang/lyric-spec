@@ -60,6 +60,8 @@ A call names a function and gives it arguments
    arguments** — `of(hex)` beside `of(r, g, b)` — and never otherwise (D4): a call counts its
    arguments and finds one candidate, with no ranking and no conversion of any kind; none that
    takes that many is refused (`LYR-SEM0087`). The names of the arguments decide nothing (F7).
+   Members that answer instances of one generic interface are the one exception: they share a
+   count, and the arguments' types choose ([05 §3](05-interfaces.md) rule 5).
    A type's members are one scope with its blocks' ([05 §13](05-interfaces.md)): a method and a
    static reached through the type's name count among them alike — `int8.parse(s)` beside
    `int8.parse(s, 16)`.

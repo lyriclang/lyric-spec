@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | #3 x
+//! since: 5.0.0
+// 05 §3 rule 5: each instance in a block of its own; the call chooses between the blocks' members.
+import std.io { println };
+
+struct Label {
+    text: string,
+}
+
+extend Label :: [From<int>] {
+    static fn from(v: int): Label {
+        return Label { text = f"#{v}" };
+    }
+}
+
+extend Label :: [From<string>] {
+    static fn from(v: string): Label {
+        return Label { text = v };
+    }
+}
+
+fn main(): void {
+    let a = Label.from(3);
+    let b = Label.from("x");
+    println(f"{a.text} {b.text}");
+}

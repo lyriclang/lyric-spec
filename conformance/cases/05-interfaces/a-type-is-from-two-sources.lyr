@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | #3 x #7 y
+//! since: 5.0.0
+// 05 §3 rule 5: two instances of 'From', their 'from' told apart by the argument's type — called
+// on the type, through a constraint, through the blanket 'into'.
+import std.io { println };
+
+struct Label :: [From<int>, From<string>] {
+    text: string,
+
+    static fn from(v: int): Label {
+        return Label { text = f"#{v}" };
+    }
+
+    static fn from(v: string): Label {
+        return Label { text = v };
+    }
+}
+
+fn make<T, L :: [From<T>]>(v: T): L {
+    return L.from(v);
+}
+
+fn main(): void {
+    let a = Label.from(3);
+    let b = Label.from("x");
+    let c: Label = make(7);
+    let d: Label = "y".into();
+    println(f"{a.text} {b.text} {c.text} {d.text}");
+}
