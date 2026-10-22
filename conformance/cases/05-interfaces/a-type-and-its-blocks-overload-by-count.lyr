@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | 3 6 p p! 1
+//! since: 5.0.0
+// 05 §3 rule 1: the body and the inherent blocks are one scope; a name at two counts is an overload
+// — in the body and a block, in two blocks, and for a static.
+import std.io { println };
+
+struct P {
+    v: int,
+
+    fn get(): int {
+        return this.v;
+    }
+}
+
+extend P {
+    fn get(scale: int): int {
+        return this.v * scale;
+    }
+
+    fn name(): string {
+        return "p";
+    }
+}
+
+extend P {
+    fn name(suffix: string): string {
+        return "p" + suffix;
+    }
+
+    static fn make(): P {
+        return P { v = 1 };
+    }
+}
+
+extend P {
+    static fn make(v: int): P {
+        return P { v = v };
+    }
+}
+
+fn main(): void {
+    let p = P.make(3);
+    println(f"{p.get()} {p.get(2)} {p.name()} {p.name("!")} {P.make().v}");
+}

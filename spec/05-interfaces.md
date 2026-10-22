@@ -87,12 +87,15 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 
 ## 3. One method set
 
-1. A type holds **one function per name** (D2): its own members, the methods its inherent
-   extend blocks add, and the implementations of its conformances — an own member, a member of
-   a conformance block, an interface's default, a member delegated to a field (§5). A name two
-   of these would give it is refused where the second is declared (`LYR-SEM0121`): an
-   extension beside an own member, two extensions, an extension beside a default of a conformed
-   interface, a conformance block beside an own member. A blanket block's member is none of
+1. A type holds **one function per name and count** (D2, R4a3): its own members, the methods
+   its inherent extend blocks add, and the implementations of its conformances — an own member,
+   a member of a conformance block, an interface's default, a member delegated to a field (§5).
+   Its own members and its inherent blocks' are one scope ([08 §1.2](08-expressions.md) rule 1):
+   `fn get()` in the body beside `fn get(scale: int)` in an `extend`, or in two of them, is an
+   overload by count. A name two of these would give it at a count they share is refused where
+   the second is declared (`LYR-SEM0121`): an extension beside an own member, two extensions,
+   and — at any count — an extension beside a default of a conformed interface, a conformance
+   block beside an own member. A blanket block's member is none of
    these: it stands behind them all ([§13](#13-generic-extends) rule 7).
 2. An **own member is the implementation** of every conformance's member of that name, and
    overrides a default. Two defaults of one name from two interfaces, which the type does not
