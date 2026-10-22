@@ -745,9 +745,14 @@ Type parameters, their inference, and what an instance is
    `extend<I, E> MapIter<I, E>` is checked as `MapIter` is declared. An alias's right side is
    checked where the alias is used, with the use's arguments in place: `type Table<K> = Map<K, int>`
    asks nothing of `K`, and `Table<NoHash>` is the use's error.
-4. *(Informative.)* Every instance is compiled as code of its own — **monomorphization** —
+4. Every instance is compiled as code of its own — **monomorphization** —
    with `T` replaced throughout: an `int8` field takes one byte, a call on a `T` is a direct
-   call. The compiler collects the instances of a program and compiles each once (C3).
+   call. The compiler collects the instances of a program and compiles each once (C3). The
+   set must be **finite** (T19): a chain of instances, each body asking for the next, is refused
+   at a depth of 128 (`LYR-SEM0197`), the message naming the chain by its first links and its
+   last — `fn grow<T>(x: T, n: int)` that calls `grow(W<T> { v = x }, n - 1)` asks for
+   `grow<W<T>>` at every level and is refused, whatever `n` is at run time; a program that asks
+   for more than 20 000 instances is refused alike.
 5. A type parameter may carry a **default** (T18): `interface Add<Rhs = Self> { … }`,
    `class Map<K, V, H = DefaultHasher>`. A use that writes fewer arguments takes the defaults
    for the trailing ones, resolved where the type is declared — `Self` there is the conforming
