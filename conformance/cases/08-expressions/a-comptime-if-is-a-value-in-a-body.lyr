@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 1 2 10
+//! since: 5.0.0
+// 08 §2 rule 6: 'comptime if' as a value in a function's body — bound, in a hole, returned.
+import std.io { println };
+
+fn pick(): int {
+    return comptime if (1 < 2) 10 else 20;
+}
+
+fn main(): void {
+    let n = comptime if (true) 1 else 2;
+    println(f"{n} {comptime if (false) 1 else 2} {pick()}");
+}

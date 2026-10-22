@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0003
+//! since: 5.0.0
+// 03 §9.1 rule 7: a 'void' value holds nothing to compare.
+fn nothing(): void {
+}
+
+fn main(): void {
+    assert(nothing() == nothing());
+}

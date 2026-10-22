@@ -340,6 +340,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0228 | E | [03-types](03-types.md) | an inline array of another length | An array literal or a repetition `[x] * n` that is to be an inline array `T[N]` makes another number of elements than `N`. |
 | LYR-SEM0229 | E | [03-types](03-types.md) | a place of another type than the place parameter | A place argument `&x` is of another type than the place parameter `&p: T` it is passed to; nothing widens into a place. |
 | LYR-SEM0230 | E | [05-interfaces](05-interfaces.md) | an interface value made through a shape's or a blanket block *(retired)* | A value is made into an interface it conforms to only through a block on a shape or a blanket conformance: such a value is not built in this release. Retired: M12b S7: a value of an interface is made through a shape's block or a blanket conformance — the shape in a box, a named type with the block's row in its table; nothing refuses it. |
+| LYR-SEM0231 | E | [05-interfaces](05-interfaces.md) | a static member of an interface called through the interface | A static member of an interface is called on the interface's name, `Make.make<Item>(s)`: the interface has no value to call it for. |
 
 ## A.5 MAC — Macros
 

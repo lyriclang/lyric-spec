@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-SEM0231
+//! since: 5.0.0
+// 05 §4 rule 2: the interface has no value to call 'make' for; 'Item.make' or 'T.make' does.
+interface Make {
+    static fn make(s: string): Self;
+}
+
+struct Item :: [Make] {
+    name: string,
+
+    static fn make(s: string): Item {
+        return Item { name = s };
+    }
+}
+
+fn main(): void {
+    let _ = Make.make<Item>("x");
+}
