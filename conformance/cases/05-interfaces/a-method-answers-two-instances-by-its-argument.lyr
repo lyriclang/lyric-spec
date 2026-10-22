@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | int 6
+//! | float 3.0
+//! | int 8 / int 8
+//! | float 1.0 / float 1.0
+//! | float 4.0
+//! since: 5.0.0
+// 05 §3 rule 5: a method of two instances; '3' is an 'int' and takes the 'Scale<int>' one; a
+// constraint's instance chooses in generic code, a value's table where it is one.
+import std.io { println };
+
+interface Scale<T> {
+    fn scale(by: T): string;
+}
+
+struct Vec :: [Scale<int>, Scale<float>] {
+    x: int,
+
+    fn scale(by: int): string {
+        return f"int {this.x * by}";
+    }
+
+    fn scale(by: float): string {
+        return f"float {(this.x as float) * by}";
+    }
+}
+
+fn twice<T, S :: [Scale<T>]>(s: S, by: T): string {
+    return s.scale(by) + " / " + s.scale(by);
+}
+
+fn main(): void {
+    let v = Vec { x = 2 };
+    println(v.scale(3));
+    println(v.scale(1.5));
+    println(twice(v, 4));
+    println(twice(v, 0.5));
+    let s: Scale<float> = v;
+    println(s.scale(2.0));
+}
