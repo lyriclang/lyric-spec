@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | named cat
+//! | named cat!
+//! | named cat
+//! since: 5.0.0
+// 05 §13 rule 8: a value of 'Describe' from a type the blanket block reaches, the block's member
+// in its table, the default beside it; an optional of the interface holds one too.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Describe {
+    fn describe(): string;
+
+    fn loud(): string {
+        return this.describe() + "!";
+    }
+}
+
+extend<T :: [Named]> T :: [Describe] {
+    fn describe(): string {
+        return "named " + this.name();
+    }
+}
+
+struct Cat :: [Named] {
+    fn name(): string {
+        return "cat";
+    }
+}
+
+fn main(): void {
+    let d: Describe = Cat {};
+    println(d.describe());
+    println(d.loud());
+    let maybe: ?Describe = Cat {};
+    println(maybe?.describe() ?? "none");
+}
