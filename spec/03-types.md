@@ -738,7 +738,13 @@ Type parameters, their inference, and what an instance is
    are three.
 3. The number of arguments is the number of parameters (`LYR-SEM0026`); an argument that does
    not satisfy its parameter's constraints is refused (`LYR-SEM0028`), written or inferred
-   alike.
+   alike. A **written** instance is checked where it is written — a parameter, a result, a
+   field, an annotation —, once for the place: `fn f(s: Set<NoHash>)` is
+   the signature's error, not first that of a call that builds the set. A block's target names
+   the type with the block's own parameters, and those carry the type's constraints with them:
+   `extend<I, E> MapIter<I, E>` is checked as `MapIter` is declared. An alias's right side is
+   checked where the alias is used, with the use's arguments in place: `type Table<K> = Map<K, int>`
+   asks nothing of `K`, and `Table<NoHash>` is the use's error.
 4. *(Informative.)* Every instance is compiled as code of its own — **monomorphization** —
    with `T` replaced throughout: an `int8` field takes one byte, a call on a `T` is a direct
    call. The compiler collects the instances of a program and compiles each once (C3).
