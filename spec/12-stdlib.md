@@ -1526,7 +1526,7 @@ write, as enums and structs a `comptime` function reads, builds and writes back.
    file as the diagnostics name it, a line and a column from 1 — `""` and `0` for a node that was
    built, not read (`Span.none()`). The enums are `@NonExhaustive` (10 B13 M3): a `match` over
    them outside the standard library writes a `_`, and a form the compiler has that the module
-   has not — the rounds of a `comptime for` over fields ([§4](#4-type-information)), a local
+   has not — the rounds of a `comptime for` over fields ([§4](11-metaprogramming.md#4-type-information)), a local
    function, a node the parser could not read — is refused where it is read (`LYR-CT0005`). Every
    node is `Debug`; `Box<T>` is `Debug` where `T` is, and writes its value alone.
 2. **`parseExpr(s)`, `parseStmts(s)` and `parseDecls(s)` read a text as the compiler reads it**:
