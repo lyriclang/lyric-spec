@@ -410,3 +410,10 @@ in `tests/Lyric.Tests.Formatting`).
    every package the editor has analysed: the uses of a library's function include those of an open
    program that depends on it. A rename edits each of them, and nothing in a package read from git or
    in the standard library; a rename that would is refused, and says why.
+8. A finding links the page of its code in the catalog, of the toolchain's version, the one
+   `lyric explain` names. The quick fixes at a place are the changes the findings' notes suggest,
+   word for word — the one `lyric fix` applies preferred, the others offered —, and for a lint the
+   `@Allow` of its code above the declaration it stands in; the editor composes no change of its
+   own.
+9. The document's form is `lyric fmt`'s ([§8](#8-fmt)), sent as the lines it changes. The command
+   `lyric.expand` answers the open module with its macros expanded, as `lyric expand` prints it.
