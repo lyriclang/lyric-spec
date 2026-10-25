@@ -228,6 +228,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
+| `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
@@ -299,3 +300,23 @@ in `tests/Lyric.Tests.Formatting`).
 4. **`--check`** writes nothing: it names each file that would change, one to a line, and ends with
    exit 1 where one would, 0 where none would. **`--diff`**, with `--check` only, shows each change
    as a unified diff instead of the name.
+
+## 9. `doc`
+
+([11 E7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `DocCommandTests`).
+
+1. **`lyric doc`** writes the reference of the package found from here (`-C` names another
+   directory) as static pages, into `out/doc/` or the directory `--out` names: a page for the
+   package, one for each module and one for each type, from the `pub` declarations the checker sees
+   and their documentation comments. A package that does not check is not documented: its findings
+   are said and the command ends with exit 1, writing nothing.
+2. A **module's documentation** is the `//!` lines that open its file
+   ([01](01-lexical.md)); an item's is the `///` lines above it. A page shows each item's signature
+   as written, its documentation as Markdown, and for a type its conformances — those its
+   declaration lists and those blocks of the package add.
+3. Each member stands under an anchor that names its kind: `#field.x`, `#method.push`,
+   `#variant.Up`, `#assoc.Item`, `#const.x` on a type's page, `#fn.name`, `#const.name`,
+   `#type.Alias` on a module's. A second member of one name and kind takes `-2`, and so on.
+4. **`--std`** writes the standard library's reference instead of a package's.
