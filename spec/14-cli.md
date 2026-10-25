@@ -144,8 +144,8 @@ above the current directory, or above `-C <dir>`; without one there is nothing t
 The package's tests ([10 B12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md), [07 V4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)) — the package of the nearest `lyric.toml`,
 as in §2.
 
-**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`; the
-standard library's own tests through it, `StdTests`).
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`, `DocTestTests`;
+the standard library's own tests through it, `StdTests`).
 
 1. **`lyric test`** builds every function the package marks `@Test`
    ([11 §1](11-metaprogramming.md)) — in its modules under `src/` and under `tests/`
@@ -175,6 +175,19 @@ standard library's own tests through it, `StdTests`).
    function's, `app.tests.math.adds` — holds the text.
 4. The exit is 0 when every test held — or when there is none to run —, and 1 when one failed or
    the program was refused (§1.3).
+5. **Doc-tests**: each ` ```lyric ` block in a documentation comment — `///` or `//!` — of the
+   package's modules under `src/` is a test of its own, after the marked ones, module by module in
+   the order of their paths. It is named `doc: <module>.<element> (<file>:<line>)` — the element
+   the comment documents, a member as `Type.member`, the module alone for `//!` — and `-f` and the
+   count take it as the others. Its fence says what it must do, as the Book's snippets
+   ([Book](https://lyric.oil1i.de/dev/book/)) do: `lyric` builds and runs, and prints what an
+   ` ```output ` block right below it says; `lyric,no_run` builds; `lyric,compile_fail=CODE` fails
+   to build with that code and no other, and says what a ` ```diagnostic ` block right below it
+   says. A block without `fn main` is made a program as the Book's are — its statements the body
+   of `main`, or its declarations beside an empty one —, and imports the element it documents, its
+   type for a member, where that is `pub` and the block imports nothing of the module itself. A
+   comment whose block the form refuses fails a test named after its module. Built for another
+   machine, no doc-test is built.
 
 ## 4. `bench`
 
