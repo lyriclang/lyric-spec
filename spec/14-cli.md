@@ -227,6 +227,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>` | yes | yes |
 | `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
+| `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
@@ -279,3 +280,22 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 4. **`lyric completions <bash|zsh|fish|pwsh>`** prints the shell's completion script — the verbs,
    and for each its options and the options every verb takes, as §5's table has them — and runs
    nothing. Another shell is refused (exit 2).
+
+## 8. `fmt`
+
+([11 E5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `FmtCommandTests`; the form itself
+in `tests/Lyric.Tests.Formatting`).
+
+1. **`lyric fmt`** puts Lyric files in **the one form**: there are no options that change it. Without
+   words it takes the package found from here (`-C` names another directory) — every `.lyr` file
+   under `src/` and `tests/`, and `build.lyr` —; with words, the files named and no others.
+2. The form keeps what the program means, its comments and the parentheses it writes; formatting a
+   formatted file changes nothing. A file in the form is not written. A file is written with LF line
+   ends and one final newline.
+3. A file that does not parse is **left as it is**: its findings are said, and the command ends with
+   exit 1 after the other files are formatted.
+4. **`--check`** writes nothing: it names each file that would change, one to a line, and ends with
+   exit 1 where one would, 0 where none would. **`--diff`**, with `--check` only, shows each change
+   as a unified diff instead of the name.
