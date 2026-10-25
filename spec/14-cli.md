@@ -244,6 +244,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
 | `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
 | `lsp` | — | `--stdio` | — | — |
+| `dap` | — | — | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
@@ -422,3 +423,25 @@ in `tests/Lyric.Tests.Formatting`).
     name `lyric test` gives it — `app.tests.check.adds`, `doc: app.add (src/lib.lyr:3)`; the request
     `lyric/tests` lists them for a document. The server runs no test: the editor runs
     `lyric test -f <name>` ([§3](#3-test)).
+
+## 12. `dap`
+
+([11 E4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md),
+[01 L12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `DapCommandTests`).
+
+1. **`lyric dap`** is the debug adapter: it speaks the Debug Adapter Protocol with an editor over
+   its standard input and output, and **lldb-dap** behind it does the debugging — breakpoints with
+   their conditions, logpoints, stepping, threads, attaching are lldb's. Where no lldb-dap is
+   found (`LYRIC_LLDB_DAP` names one, else the path and Xcode's), each request is refused with the
+   reason.
+2. A **`launch`** names in `program` a package's directory or a `.lyr` file: the adapter builds it
+   in the debug profile first, what the build says reaches the editor's console, and a program
+   that does not build is refused; the binary built is what runs, with the `args` and `cwd` the
+   launch gives.
+3. **A panic** is the exception filter `lyric-panic`, on unless the editor turns it off: the
+   program stops where it panics, before the panic leaves its task. It is the only filter offered.
+4. A frame is shown by its **Lyric name** (`app.main.deep`) at its Lyric line. A build writes the
+   names beside the binary — `<binary>.lyric-names`, a line per function: its C name, a tab, its
+   Lyric name —; a frame of the runtime keeps its name and is marked as set back (`subtle`).
