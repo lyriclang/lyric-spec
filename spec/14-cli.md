@@ -391,9 +391,14 @@ in `tests/Lyric.Tests.Formatting`).
    the nearest `lyric.toml` above it: with every other module of the package, in the one
    compilation `lyric test` makes of them ([§3](#3-test)), and the packages of its graph. Any other
    file is analysed **alone**, with the standard library, as `lyric check <file>` checks it.
-3. The findings the editor shows are those `lyric check` says of the same text; the text of every
-   file the editor holds open counts instead of what is saved.
+3. The findings the editor shows are those `lyric check` says of the same text, except those only
+   the lowering finds — a monomorphization that does not end (`LYR-SEM0197`) is said by the build;
+   the text of every file the editor holds open counts instead of what is saved.
 4. The server reads the manifest and the graph as a build reads them, except that it **fetches
    nothing** — a package from git comes from the cache — and **writes nothing**: `lyric.lock` is
    left as it is. A manifest it cannot read leaves the file analysed alone, and the server says why
    in the editor's log.
+5. An edit arrives as the ranges it replaces. A client that asks for a document's findings
+   (`textDocument/diagnostic`) gets them for the documents it has open; the findings of every other
+   file of the package are sent to it (`textDocument/publishDiagnostics`), as to a client that does
+   not ask.
