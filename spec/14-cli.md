@@ -243,6 +243,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
 | `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
+| `lsp` | — | `--stdio` | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
@@ -375,3 +376,24 @@ in `tests/Lyric.Tests.Formatting`).
    `{"breaking": n, "changes": [{"change", "breaking", "path", "kind", "old"?, "new"?, "why"}]}`.
 7. A directory in no git repository, a revision git cannot read, or one without the package's
    `lyric.toml` is **LYR-CLI0022**, exit 2. `--diff` with `--std` is refused with exit 2.
+
+## 11. `lsp`
+
+([11 E1, E3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric.Tests.Lsp`; the verb in `tests/Lyric5.Tests`,
+`LspCommandTests`).
+
+1. **`lyric lsp`** is the language server: it speaks the Language Server Protocol with an editor
+   over its standard input and output until the editor says `exit`, and ends with exit 0 after a
+   `shutdown`, 1 without one. **`--stdio`** names the one way there is; editors pass it.
+2. A file is analysed **as a module of its package** where it lies under the `src/` or `tests/` of
+   the nearest `lyric.toml` above it: with every other module of the package, in the one
+   compilation `lyric test` makes of them ([§3](#3-test)), and the packages of its graph. Any other
+   file is analysed **alone**, with the standard library, as `lyric check <file>` checks it.
+3. The findings the editor shows are those `lyric check` says of the same text; the text of every
+   file the editor holds open counts instead of what is saved.
+4. The server reads the manifest and the graph as a build reads them, except that it **fetches
+   nothing** — a package from git comes from the cache — and **writes nothing**: `lyric.lock` is
+   left as it is. A manifest it cannot read leaves the file analysed alone, and the server says why
+   in the editor's log.
