@@ -188,6 +188,8 @@ the standard library's own tests through it, `StdTests`).
    type for a member, where that is `pub` and the block imports nothing of the module itself. A
    comment whose block the form refuses fails a test named after its module. Built for another
    machine, no doc-test is built.
+6. **`--no-run`** builds the program and runs none of it: its path is the last line printed, and no
+   doc-test is built — each is a program of its own. It is what a debugger launches (§12).
 
 ## 4. `bench`
 
@@ -237,7 +239,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
 | `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
 | `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | — |
-| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>` | yes | yes |
+| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--no-run` | yes | yes |
 | `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
@@ -445,3 +447,17 @@ in `tests/Lyric.Tests.Formatting`).
 4. A frame is shown by its **Lyric name** (`app.main.deep`) at its Lyric line. A build writes the
    names beside the binary — `<binary>.lyric-names`, a line per function: its C name, a tab, its
    Lyric name —; a frame of the runtime keeps its name and is marked as set back (`subtle`).
+5. A **value** is shown as Lyric writes it: a local by its Lyric name, a string as its text, an
+   array as its length with its elements, an optional as its value or `none`, an enum as its
+   variant with its payload, a struct's and a class's fields by their names; what the compiler made
+   — its temporaries, its locals of its own — is not shown, nor what the runtime keeps beside the
+   program. The names file says which C type is which Lyric type (`type`, `variant`, `global`
+   lines beside the functions'); the toolchain's `lldb/lyric_lldb.py` reads it, and lldb loads it
+   with `command script import`.
+6. A **line breakpoint** stops at the line's code: the function's own setting up stands at the
+   function's line, never at a line after it. The sources are found where they lie, by the names
+   the binary writes for them (§1.2).
+7. On **Windows** the adapter is measured, not promised: the binary carries PDB, and whether
+   lldb-dap reads it is reported, not gated.
+8. A `launch` with a **`test`** debugs the package's tests whose names hold it: the program
+   `lyric test --no-run -f <test>` builds (§3), run in the package's directory as `test` runs it.
