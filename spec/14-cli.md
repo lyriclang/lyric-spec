@@ -402,3 +402,11 @@ in `tests/Lyric.Tests.Formatting`).
    (`textDocument/diagnostic`) gets them for the documents it has open; the findings of every other
    file of the package are sent to it (`textDocument/publishDiagnostics`), as to a client that does
    not ask.
+6. A `comptime` site of the program is evaluated under at most a tenth of the toolchain's budget
+   ([11 §2](11-metaprogramming.md#2-comptime) rule 5); a site that runs out of it is shown without a
+   value and without a finding — the build evaluates it under the program's budget. The standard
+   library's sites keep theirs.
+7. What a declaration is under the cursor — its signature, its uses, its new name — is answered for
+   every package the editor has analysed: the uses of a library's function include those of an open
+   program that depends on it. A rename edits each of them, and nothing in a package read from git or
+   in the standard library; a rename that would is refused, and says why.
