@@ -417,3 +417,8 @@ in `tests/Lyric.Tests.Formatting`).
    own.
 9. The document's form is `lyric fmt`'s ([§8](#8-fmt)), sent as the lines it changes. The command
    `lyric.expand` answers the open module with its macros expanded, as `lyric expand` prints it.
+10. Each `@Test` function of a package's file and each runnable block of its documentation carries
+    two commands for the editor to run, *run* and *debug*, with the package's directory and the
+    name `lyric test` gives it — `app.tests.check.adds`, `doc: app.add (src/lib.lyr:3)`; the request
+    `lyric/tests` lists them for a document. The server runs no test: the editor runs
+    `lyric test -f <name>` ([§3](#3-test)).
