@@ -242,6 +242,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
+| `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
@@ -333,3 +334,44 @@ in `tests/Lyric.Tests.Formatting`).
    `#variant.Up`, `#assoc.Item`, `#const.x` on a type's page, `#fn.name`, `#const.name`,
    `#type.Alias` on a module's. A second member of one name and kind takes `-2`, and so on.
 4. **`--std`** writes the standard library's reference instead of a package's.
+
+## 10. `api`
+
+([11 E7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md),
+[07 B3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `ApiCommandTests`).
+
+1. **`lyric api`** prints the **public surface** of the package found from here (`-C` names another
+   directory): what `lyric doc` documents (§9) — each `pub` item of its modules, each member of a
+   type, each conformance a type's declaration lists or a block of the package adds — **one line per
+   element**. A package that does not check prints nothing: its findings are said and the command
+   ends with exit 1. **`--std`** prints the standard library's surface instead.
+2. A line is the element's **signature with its qualified path for its name**
+   (`pub fn geo.distance(a: Point, b: Point): float`, `pub geo.Point.y: float = 0.0`,
+   `variant geo.Dir.Up`); a conformance is a line of its own (`geo.Point :: Equatable`), and a
+   type's line carries no `::` list. An interface's method that has a body ends with `{ … }`.
+3. The lines are written in **one spelling**: comments, line breaks, spaces and a trailing comma do
+   not change a line; a parameter's name does, since a call may name its argument. The lines are
+   sorted by path, a type's own line before its conformances: the same declarations print the same
+   text, byte for byte.
+4. **`--json`** prints the same elements as one document:
+   `{"package", "version", "elements": [{"module", "path", "kind", "signature", "line", "owner"?, "default"?}]}`,
+   in the text's order; `kind` is one of `fn`, `struct`, `class`, `enum`, `interface`, `type`,
+   `const`, `field`, `method`, `variant`, `assoc`, `conformance`; `owner` is the kind of a member's
+   type, `default` is present and true where a field or an associated type has a value or an
+   interface's method has a body.
+5. **`--diff <rev>`** compares the surface with the package's as the **git revision** `<rev>` of its
+   repository holds it — read from the repository, not from the working tree. Each element is
+   **removed**, **added** or **changed** (the same kind and path with another line). Removed and
+   changed are **breaking**; added is breaking only where the language makes code written before
+   write it out: a field without a value in a struct or class (an initializer names it), a variant of
+   an enum (a `match` over every case misses it), an interface's method without a body or
+   associated type without a value (each conformer must give it). An interface's method that only
+   gains a body is compatible; one that loses it is breaking.
+6. The diff lists the breaking changes first, each with the old line (`-`) and the new (`+`), then
+   the compatible ones, and ends with the count. The command ends with **exit 1** where a change is
+   breaking and 0 where none is; **`--json`** prints
+   `{"breaking": n, "changes": [{"change", "breaking", "path", "kind", "old"?, "new"?, "why"}]}`.
+7. A directory in no git repository, a revision git cannot read, or one without the package's
+   `lyric.toml` is **LYR-CLI0022**, exit 2. `--diff` with `--std` is refused with exit 2.
