@@ -248,8 +248,9 @@ each operating system from any host — compared byte for byte.
 ([11 W3 BS1–BS6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md); M8b S13.)
 
 1. A package's **`build.lyr`**, at its root, is a program that runs before the package compiles.
-   It does things — writes modules into `gen/`, names C to compile and libraries to link — and
-   defines nothing: what the package is, the manifest says (§1).
+   It does things — writes modules into `gen/`, names C to compile, libraries to link and where
+   to find them, and files to put beside the program — and defines nothing: what the package is,
+   the manifest says (§1).
 2. It is **a program of its own**: its module is `build`, a file `build/x.lyr` beside it the
    module `build.x`, and it imports from `std` and from the packages of the manifest's
    **`[build-dependencies]`**, a graph of its own (§2), read at the commits the same lock holds and
@@ -257,15 +258,31 @@ each operating system from any host — compared byte for byte.
    package's program sees none of its dependencies; `build` names no package of that graph. It runs
    on the host, with the package's root as its working directory, whatever the build's target.
 3. **`std.build`** is its view of the build: `target()` and `profile()`, the build's; `outDir()`,
-   the package's `out/`; `genDir()`; `rerunIfChanged(paths…)`, `linkLib(name)`,
-   `cFlags(flags…)`, `compileC(sources…)` — paths from the package's root —, and `warn(message)`,
+   the package's `out/`; `genDir()`; `rerunIfChanged(paths…)`, `rerunIfEnvChanged(names…)`,
+   `linkLib(name)`, `linkSearch(dir)`, `cFlags(flags…)`, `compileC(sources…)`,
+   `besideBinary(paths…)` — paths from the package's root, or absolute —, and `warn(message)`,
    which the build shows (`LYR-BLD0003`). Outside a build script they panic.
+   1. **`linkSearch(dir)`** names a directory the link searches for the libraries of `linkLib`
+      and of `[native]` (§1), before the linker's own and in the order named — the scripts of
+      dependencies by their names, the root's last. For a Windows target a library `X` is found
+      as `X.dll`, `X.lib`, `libX.a`, or as the import library `libX.dll.a` or `X.dll.a` a MinGW
+      toolchain makes. A directory that is not there is no error: the link that does not find a
+      library says where it searched.
+   2. **`besideBinary(paths…)`** names files the program needs beside it when it runs — a shared
+      library above all. After each link the build copies them, under their own names, into the
+      directory of every binary it makes of the program — of `build` and `run`, of `test` and
+      `bench` ([14 §3](14-cli.md)), not of a build script —, and such a binary searches its own
+      directory for shared libraries first: an ELF binary by the run path `$ORIGIN`, a Mach-O
+      binary by `@executable_path`; a Windows binary does so by itself. A file that is not there
+      when the script has ended, and two files of one name, stop the build (`LYR-BLD0004`).
 4. **`gen/`**, which the toolchain makes before the script runs, is a module space of the
    package: `gen/schema.lyr` in `app` is `app.gen.schema`, as `tests/` is §7's. It is no part of
    the package's content (§2).
 5. **When it runs**: before the compile, where the script changed — `build.lyr`, `build/`, its
-   dependencies, the toolchain, the target, the profile —, where a file it named with `rerunIfChanged` changed, or
-   where `gen/` is not as it left it; else what its last run asked stands. A script that does not
+   dependencies, the toolchain, the target, the profile —, where a file it named with `rerunIfChanged` changed,
+   where an environment variable it named with `rerunIfEnvChanged` has another value than in its
+   last run — set where it was not, or not where it was —, or where `gen/` is not as it left it;
+   else what its last run asked stands. A script that does not
    compile, that ends with an exit other than 0, or that does not end within 10 minutes, stops the
    build (`LYR-BLD0002`), with what it wrote — exit 1, as a program refused ([14 §1.3](14-cli.md)):
    the package's code failed, not the environment.

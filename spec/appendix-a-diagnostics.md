@@ -405,6 +405,7 @@ The C toolchain, the runtime, the build script.
 | LYR-BLD0001 | E | [14-cli](14-cli.md) | the C compiler or the linker failed | Reported by `build`, `run`, `test` and `bench` when compiling the generated C, a package's native C or a build script's C, archiving the runtime, or linking the binary fails. The message carries the command and what the C compiler wrote; the exit code is 2. |
 | LYR-BLD0002 | E | [15-project](15-project.md) | a package's build script did not build or did not succeed | Reported when a package's `build.lyr` does not compile, ends with an exit code other than 0, or does not end within 10 minutes. The package is not built; for a script that ran, what it wrote follows the message. |
 | LYR-BLD0003 | W | [15-project](15-project.md) | a warning a build script reported | Reported when a package's `build.lyr` calls `std.build.warn`: the build shows the script's message as a warning, prefixed with the package's name. |
+| LYR-BLD0004 | E | [15-project](15-project.md) | a file a build script puts beside the binary is not there, or shares its name | Reported when a package's `build.lyr` names a file with `std.build.besideBinary` that is not there when the script has ended, or two such files that have one name. Nothing is built. |
 
 ## A.10 CLI — The command line
 
