@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | -3 1.50 text 6|15 1
+//! since: 5.0.0
+// 13 §3 rule 7: C's variadic arguments, each as it crosses - a string as its bytes - and as C
+// promotes it: the float32 a double, the int8 and the bool an int. The Lyric variadic function
+// beside it is what it was. C writes the output, and flushes it before the program ends.
+import std.ffi { Ptr, CStr };
+
+extern "C" {
+    fn printf(format: CStr, ...): int32;
+    fn fflush(stream: ?Ptr<uint8>): int32;
+}
+
+fn sum(xs: int...): int {
+    var total = 0;
+    for (x in xs) {
+        total += x;
+    }
+    return total;
+}
+
+fn main(): void {
+    let small: int8 = -3;
+    let half: float32 = 1.5;
+    let n = printf("%d %.2f %s %lld|", small, half, "text", sum(1, 2, 3));
+    printf("%d %d\n", n, true);
+    fflush(null);
+}
