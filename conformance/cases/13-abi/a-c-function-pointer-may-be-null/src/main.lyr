@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | -1 true
+//! | 10 false
+//! since: 5.0.0
+// 13 §3 rule 9: '?extern "C" fn(…)' is a C function's pointer that may be null: null crosses as C's,
+// and C's null comes back as null.
+import std.io { println };
+
+extern "C" {
+    fn set_hook(h: ?extern "C" fn(int) -> int): void;
+    fn run_hook(x: int): int;
+    fn get_hook(): ?extern "C" fn(int) -> int;
+}
+
+fn double(x: int): int {
+    return x * 2;
+}
+
+fn main(): void {
+    set_hook(null);
+    println(f"{run_hook(5)} {get_hook() == null}");
+    set_hook(double);
+    println(f"{run_hook(5)} {get_hook() == null}");
+}

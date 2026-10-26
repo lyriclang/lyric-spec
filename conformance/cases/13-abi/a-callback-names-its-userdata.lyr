@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 10: a Callback's C function type has its userdata, a 'Ptr<void>', as its first or last
+// parameter; this one has none.
+import std.ffi { Ptr, Callback };
+
+fn main(): void {
+    let _ = Callback<extern "C" fn(int) -> void>.new((x) => { });
+}
