@@ -57,7 +57,7 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
    (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
    `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14),
-   `@SeesConformer` (rule 15) and `@When` (§3). What one says holds for
+   `@SeesConformer` (rule 15), `@Layout` (rule 16) and `@When` (§3). What one says holds for
    every instance, so beside `@Test` they sit on a generic declaration too, where data may not
    (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
@@ -97,6 +97,10 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
     its word. std.core's family and std.codec's `Encode` and `Decode` carry it; an interface of the
     program that builds or reads a conformer whole — a parser of arguments, a codec — says so with
     it, and its documentation says that it does (the sweep after M10, W10).
+16. **`@Layout(C)`** on a struct or an enum, **`@Layout(uint8)`** and the other integer types on an
+    enum: the type is laid out as C's and crosses into C ([13 §3](13-abi.md#3-the-type-table-stage-2)).
+    Its form is a name, as `@callerExpr`'s; a generic type does not take it, since one layout is
+    not one per instance.
 
 ## 2. `comptime`
 

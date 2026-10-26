@@ -1,6 +1,6 @@
 # ABI and embedding
 
-> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**, §2 with **M7**; the rest comes
+> **Partly written.** §1 was written with milestone **M1** of the Lyric 5 plan, §1.6 and §1.7 with **M6**, §2 with **M7**, §3 with **M14**; the rest comes
 > with **M14**, spec-first: each rule lands here with its conformance case before or with its
 > implementation. Source of the decisions:
 > [01 Runtime](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md), [11 Tooling and interop W4/W5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
@@ -111,6 +111,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
    | `LYR-RT0018` | every task of a thread waits, none sleeps, and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
+   | `LYR-RT0021` | a C function returned, for an enum with `@Layout`, an integer no variant stands for: `C returned <n>, which is no variant of <enum> (it has <count>)` (§3 rule 5) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -212,8 +213,8 @@ blocking the thread until another thread wakes it or a deadline passes (`lyr/pol
 
 A C function the program calls, declared in Lyric and found by the linker in a package's native
 part ([15 §5](15-project.md)) or a library ([11 W4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)). Stage 1 carries the
-scalars C has as they are; strings, pointers, structs, callbacks and exports are the type table
-of a later stage (M14).
+scalars C has as they are; pointers, strings, structs and enums are the type table's second
+stage (§3); callbacks and exports come later (M14).
 
 **Conformance.** `conformance/cases/13-abi/`, package cases with a native part; the toolchain's
 own tests (`tests/Lyric5.Tests`, `NativeTests`).
@@ -224,8 +225,49 @@ own tests (`tests/Lyric5.Tests`, `NativeTests`).
    body, no type parameters and no `throws` — a C function throws nothing (`LYR-SEM0099`).
 2. What crosses: `int8` to `int64` and `uint8` to `uint64` as the C integer of their width,
    `int`/`uint` as the 64-bit ones; `float32` as `float`, `float` as `double`; `bool` as C's
-   `bool`, 0 or 1; and `void` as a return. Each by value: a place parameter (`&x: T`,
-   [03 §2.3a](03-types.md)) is an address and does not cross. Every other type is refused, as a parameter and as a
-   result (`LYR-SEM0099`).
+   `bool`, 0 or 1; `char` as `uint32_t`, its scalar value; and `void` as a return. Each by value:
+   a place parameter (`&x: T`, [03 §2.3a](03-types.md)) is an address and does not cross. What
+   §3 adds crosses too; every other type is refused, as a parameter and as a result
+   (`LYR-SEM0099`).
 3. A call is a direct call in the target platform's C ABI. A symbol nothing defines fails the link
-   (exit 2, [14 §1.3](14-cli.md)).
+   (exit 2, [14 §1.3](14-cli.md)). The program's own declaration is the one it calls by: a header
+   of the system's that declares the same function with other types does not meet it.
+4. `extern "C" { fn …; fn …; }` declares the functions of one ABI together: each is the
+   declaration it would be alone, with its symbol and its `;`. A visibility word before `extern`
+   is that of each function inside without its own. An attribute stands on a function inside,
+   not on the block (`LYR-PAR0042`); a block without a function is refused (`LYR-PAR0032`).
+
+## 3. The type table, stage 2
+
+What crosses into C beside the scalars of §2: pointers, C's strings, structs by value and enums
+as integers ([11 X2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the prelude
+([11 §1](11-metaprogramming.md) rule 16).
+
+**Conformance.** `conformance/cases/13-abi/`; the toolchain's own tests (`NativeTests`).
+
+1. **`Ptr<T>`** is an address C gave, never null: C's `T *`. Lyric does not read or write through
+   it here, and makes none of its own; `T` says what it points at, which C alone holds to.
+   **`?Ptr<T>`** is a pointer that may be null: `null` crosses as C's null, and a null pointer C
+   returns comes back as `null`.
+2. **`CStr`** is C's `const char *`: bytes up to a NUL, which C owns. Its `length()` counts the
+   bytes before the NUL; its `toString()` copies them into a `string`, and throws `Utf8Error`
+   where they are no well-formed UTF-8. **`?CStr`** may be null, as `?Ptr<T>`.
+3. A `string` argument where a C function's parameter is `CStr` crosses as the string's bytes,
+   with the NUL every string holds (§1.2), without a copy. They are C's for the call: C does not
+   keep the address past its return.
+4. A struct with **`@Layout(C)`** is laid out as C lays out a struct of the same fields in the same
+   order on the target platform, and crosses by value, as a parameter and as a result. Its fields
+   are what C holds: the scalars of §2, `char`, `Ptr<T>`, `CStr`, another `@Layout(C)` struct, and an
+   inline array `T[N]` of one of them. A field of another type — an optional, an enum, a string —
+   is refused (`LYR-SEM0099`). A struct without `@Layout(C)` is the compiler's to lay out and does
+   not cross (`LYR-SEM0099`).
+5. An enum with **`@Layout(C)`** is C's `enum`, an `int`; with **`@Layout(uint8)`** — or any other
+   integer type of §2 — it is that integer. Its variants carry no payload (`LYR-SEM0099`). The
+   first variant written is 0, the next 1, in the order they are written, and the count must fit
+   the integer (`LYR-SEM0099`). It crosses as a parameter and as a result; an integer C returns that
+   no variant stands for is a panic (`LYR-RT0021`), before any `match` meets it. An enum without
+   `@Layout` does not cross (`LYR-SEM0099`).
+6. `@Layout` takes `C` or an integer type, written as a name: `@Layout(C)`, `@Layout(uint8)`. It
+   sits on a struct or an enum that is not generic; on a class, on a generic type, on a struct
+   with an integer type, or in another form it is refused (`LYR-SEM0099`).

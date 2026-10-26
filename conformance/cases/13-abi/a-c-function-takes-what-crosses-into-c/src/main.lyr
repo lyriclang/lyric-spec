@@ -1,7 +1,8 @@
 //! check
 //! error: LYR-SEM0099
 //! since: 5.0.0
-// 13 §2 rule 2: a string does not cross into C in stage 1.
+// 13 §2 rule 2, §3 rule 3: a string does not cross into C as a parameter's type; a 'CStr'
+// parameter takes it.
 extern "C" fn shout(s: string): int;
 
 fn main(): void {

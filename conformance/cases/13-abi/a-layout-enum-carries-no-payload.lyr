@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 5: an enum with @Layout is an integer, one per variant; a variant with a payload is
+// refused.
+@Layout(C)
+enum Shape { Dot, Circle(float) }
+
+fn main(): void {
+}

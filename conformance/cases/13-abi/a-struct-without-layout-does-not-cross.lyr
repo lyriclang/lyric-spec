@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 4: a struct without @Layout(C) is the compiler's to lay out, and does not cross.
+struct Pair { a: int, b: int }
+
+extern "C" fn sum(p: Pair): int;
+
+fn main(): void {
+}
