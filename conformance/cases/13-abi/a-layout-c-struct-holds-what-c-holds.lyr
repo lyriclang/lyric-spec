@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 4: the fields of a @Layout(C) struct are what C holds; a string is not, whether or not
+// the struct ever crosses.
+@Layout(C)
+struct Named { id: int, name: string }
+
+fn main(): void {
+}

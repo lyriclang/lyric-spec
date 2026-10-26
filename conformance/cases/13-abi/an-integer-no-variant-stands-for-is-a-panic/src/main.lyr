@@ -1,0 +1,22 @@
+//! run
+//! panic: LYR-RT0021
+//! stdout:
+//! | Blue
+//! since: 5.0.0
+// 13 §3 rule 5: an enum with @Layout comes back from C as the variant its integer stands for; an
+// integer none stands for is a panic where the call returns, before any match meets it.
+import std.io { println };
+
+@Layout(uint8)
+enum Color { Red, Green, Blue }
+
+extern "C" fn color_of(n: int): Color;
+
+fn name(c: Color): string {
+    return match (c) { .Red => "Red", .Green => "Green", .Blue => "Blue" };
+}
+
+fn main(): void {
+    println(name(color_of(2)));
+    println(name(color_of(3)));
+}

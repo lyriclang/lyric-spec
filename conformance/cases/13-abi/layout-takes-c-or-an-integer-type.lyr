@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 6: @Layout takes C or an integer type, as a name.
+@Layout(packed)
+struct Flags { bits: uint32 }
+
+fn main(): void {
+}

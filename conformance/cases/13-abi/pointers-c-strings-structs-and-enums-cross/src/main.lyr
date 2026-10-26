@@ -1,0 +1,58 @@
+//! run
+//! stdout:
+//! | 5 -1 8
+//! | 11 3.0 false 98
+//! | 42 true
+//! | 8 9 107
+//! | 8
+//! | red Left
+//! since: 5.0.0
+// 13 §3 rules 1-5: a string into a CStr parameter as its bytes, null into ?CStr, a CStr back; a
+// @Layout(C) struct by value both ways, an inline array among its fields, and behind a pointer C
+// keeps; a pointer out of C and back into it, a null one as null; enums as their integers, the
+// first variant 0.
+import std.io { println };
+import std.ffi { Ptr, CStr };
+
+@Layout(C)
+struct Point { x: int32, y: float, ok: bool, tag: uint8[2] }
+
+@Layout(uint8)
+enum Color { Red, Green, Blue }
+
+@Layout(C)
+enum Side { Left, Right }
+
+extern "C" {
+    fn strlen(s: CStr): uint;
+    fn length_or(s: ?CStr): int;
+    fn greet(): CStr;
+    fn shift(p: Point, d: int32): Point;
+    fn kept_point(): Ptr<Point>;
+    fn load(p: Ptr<Point>): Point;
+    fn cell_at(): Ptr<int32>;
+    fn read_cell(p: Ptr<int32>): int;
+    fn no_cell(): ?Ptr<int32>;
+    fn next_color(c: Color): Color;
+    fn side_of(s: Side): Side;
+}
+
+fn color(c: Color): string {
+    return match (c) { .Red => "red", .Green => "green", .Blue => "blue" };
+}
+
+fn side(s: Side): string {
+    return match (s) { .Left => "Left", .Right => "Right" };
+}
+
+fn main(): void {
+    println(f"{strlen("hello")} {length_or(null)} {length_or(greet())}");
+    let p = shift(Point { x = 1, y = 1.5, ok = true, tag = [97, 97] }, 10);
+    println(f"{p.x} {p.y} {p.ok} {p.tag[1]}");
+    println(f"{read_cell(cell_at())} {no_cell() == null}");
+    let kept = kept_point();
+    let first = load(kept);
+    println(f"{first.x} {load(kept).x} {first.tag[0]}");
+    println(f"{greet().length()}");
+    println(f"{color(next_color(Color.Blue))} {side(side_of(Side.Right))}");
+}

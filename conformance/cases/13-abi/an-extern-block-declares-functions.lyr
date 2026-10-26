@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0032
+//! since: 5.0.0
+// 13 §2 rule 4: an extern block declares functions; an empty one is refused.
+extern "C" { }
+
+fn main(): void {
+}
