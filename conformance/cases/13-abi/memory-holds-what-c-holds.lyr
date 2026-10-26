@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 8: what is read or written through a pointer, or allocated, is what a field of a
+// @Layout(C) struct may be; a string is not.
+import std.ffi { Ptr, alloc, free };
+
+fn main(): void {
+    unsafe {
+        let p = alloc<string>(1);
+        free(p);
+    }
+}

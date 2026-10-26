@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0233
+//! since: 5.0.0
+// 13 §3 rule 8: a pointer's read is a memory operation, called in an unsafe block only; the
+// array's asPtr() before it is safe.
+import std.ffi { Ptr };
+
+fn main(): void {
+    let p = [1, 2].asPtr();
+    let _ = p.read();
+}
