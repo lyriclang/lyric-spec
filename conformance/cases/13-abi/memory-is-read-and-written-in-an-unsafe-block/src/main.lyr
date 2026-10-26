@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | 42 42
+//! | 20 20
+//! | 7 2.5 0
+//! | 10 5
+//! | 3
+//! since: 5.0.0
+// 13 §3 rule 8: memory from C's heap, set to zero, written and read through a pointer and its
+// offsets - forward and back, as bytes through a cast -, a @Layout(C) struct behind one; an array's
+// and a slice's elements handed to C through asPtr(), which is safe; a lambda written in the block
+// is within it.
+import std.io { println };
+import std.ffi { Ptr, alloc, free };
+
+@Layout(C)
+struct Pair { a: int32, b: float }
+
+extern "C" fn sum(xs: Ptr<int>, n: int): int;
+
+fn main(): void {
+    unsafe {
+        let p = alloc<int>(3);
+        p.write(10);
+        p.offset(1).write(20);
+        p.offset(2).write(12);
+        println(f"{p.read() + p.offset(1).read() + p.offset(2).read()} {sum(p, 3)}");
+        println(f"{p.cast<uint8>().offset(8).read()} {p.offset(2).offset(-1).read()}");
+        free(p);
+        let q = alloc<Pair>(2);
+        q.offset(1).write(Pair { a = 7, b = 2.5 });
+        let second = q.offset(1).read();
+        println(f"{second.a} {second.b} {q.read().a}");
+        free(q);
+    }
+    let xs = [1, 2, 3, 4];
+    println(f"{sum(xs.asPtr(), 4)} {sum(xs[1..3].asPtr(), 2)}");
+    unsafe {
+        let first = () => xs.asPtr().offset(2).read();
+        println(f"{first()}");
+    }
+}

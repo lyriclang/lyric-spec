@@ -282,3 +282,21 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    `bool` and an enum of such an integer among them — as `int`; every other as itself. *(Informative:
    what the callee reads is its format's to say; an `int` is C's `int64_t`, which `%lld` reads,
    not `%d`.)*
+8. **Memory and `unsafe`**: `unsafe { … }` — the word contextual, a statement — is a block
+   within which `std.ffi`'s memory operations may be called: a pointer's `read()`, `write(v)`,
+   `offset(n)` and `cast<U>()`, `alloc<T>(n)` and `free(p)`. Called outside one, each is refused
+   (`LYR-SEM0233`); the block is lexical, a lambda written within it is within it. Nothing else
+   about the block differs, and calling a C function is not unsafe.
+   - `read()` is the `T` at the pointer's address, `write(v)` puts one there; `T` is what a field
+     of a `@Layout(C)` struct may be (rule 4, `LYR-SEM0099`), and the memory's layout is C's.
+   - `offset(n)` is the address `n` values of `T` further — before it for a negative `n`;
+     `cast<U>()` the same address as a `Ptr<U>`.
+   - `alloc<T>(n)` is `n` values of `T` from C's heap, set to zero, never null: a negative `n`
+     panics (`LYR-RT0007`), and so does a heap with no memory left (`LYR-RT0005`); `T` is as for
+     `read`. `free(p)` gives it back.
+   - What the program holds to in the block — that the memory is there, holds a `T` and is not
+     freed twice — is the program's word; the implementation does not check it, and breaking it
+     is undefined.
+   - `xs.asPtr()` of an array or a slice — safe — is the address of its first element, the
+     elements one after another as in a C array. The pointer does not keep the array alive, and
+     points at nothing where it is empty.

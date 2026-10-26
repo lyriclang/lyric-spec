@@ -344,6 +344,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0230 | E | [05-interfaces](05-interfaces.md) | an interface value made through a shape's or a blanket block *(retired)* | A value is made into an interface it conforms to only through a block on a shape or a blanket conformance: such a value is not built in this release. Retired: A value of an interface is made through a shape's block or a blanket conformance — the shape in a box, a named type with the block's row in its table; nothing refuses it. |
 | LYR-SEM0231 | E | [05-interfaces](05-interfaces.md) | a static member of an interface called through the interface | A static member of an interface is called on the interface's name, `Make.make<Item>(s)`: the interface has no value to call it for. |
 | LYR-SEM0232 | E | [07-statements](07-statements.md) | a loop over a string | A `for` loop walks a `string`, which is no `Iterable`: `s.chars()` gives its characters, `s.lines()` its lines. |
+| LYR-SEM0233 | E | [13-abi](13-abi.md) | a memory operation outside an unsafe block | A pointer's `read`, `write`, `offset` or `cast`, or `std.ffi`'s `alloc` or `free`, is called outside an `unsafe { … }` block. |
 
 ## A.5 MAC — Macros
 

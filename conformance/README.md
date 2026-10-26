@@ -61,7 +61,8 @@ of the standard library:
   `spawnDetached`, `yieldNow`, `sleep`, `Channel` and `ChannelClosed` (10 §6), `Select` and
   `Timer` (10 §7), `std.sync`'s `Atomic` and `AtomicValue` (10 §8), `Thread` (10 §9), `Mutex`,
   `RwLock` and `Once` (10 §10), `Pool` (10 §11), `Signal` and `signals` (10 §12) —;
-  `std.ffi`'s `Ptr` and `CStr` with `length()`, the types C's boundary stands on (13 §3); and the
+  `std.ffi`'s `Ptr` and `CStr` with `length()`, the types C's boundary stands on, and the memory
+  operations of 13 §3 rule 8 — `read`, `write`, `offset`, `cast`, `alloc`, `free`, `asPtr`; and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to

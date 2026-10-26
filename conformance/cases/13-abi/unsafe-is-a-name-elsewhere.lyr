@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 3
+//! since: 5.0.0
+// 13 §3 rule 8: 'unsafe' is a word only before a block that begins a statement; elsewhere it is
+// a name.
+import std.io { println };
+
+fn main(): void {
+    let unsafe = 3;
+    println(f"{unsafe}");
+}
