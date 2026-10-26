@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 7: an argument beyond a C function's parameters is of a type that crosses as a
+// parameter does; an array does not.
+import std.ffi { CStr };
+
+extern "C" fn printf(format: CStr, ...): int32;
+
+fn main(): void {
+    let _ = printf("%p", [1, 2]);
+}

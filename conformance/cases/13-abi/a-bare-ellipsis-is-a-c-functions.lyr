@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0026
+//! since: 5.0.0
+// 13 §3 rule 7: a bare '...' is C's variadic arguments, and only a C function has them; a Lyric
+// function's are a parameter, 'xs: T...'.
+fn total(first: int, ...): int {
+    return first;
+}
+
+fn main(): void {
+}

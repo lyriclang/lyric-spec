@@ -271,3 +271,14 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
 6. `@Layout` takes `C` or an integer type, written as a name: `@Layout(C)`, `@Layout(uint8)`. It
    sits on a struct or an enum that is not generic; on a class, on a generic type, on a struct
    with an integer type, or in another form it is refused (`LYR-SEM0099`).
+7. **C's variadic arguments**: a bare `...` after the last parameter of a C function,
+   `extern "C" fn printf(format: CStr, ...): int32;`, takes any number of arguments beyond the
+   parameters. A parameter stands before it (`LYR-SEM0099`), and only a C function has it
+   (`LYR-PAR0026`) — a Lyric function's variadic parameter, `xs: T...`
+   ([03](03-types.md)), is another thing and unchanged. Each argument beyond the parameters is
+   of a type that crosses as a parameter does (`LYR-SEM0099`), a `string` as its bytes as into a
+   `CStr` (rule 3); a spread `xs...` does not hand an array over them. They cross as C's default
+   argument promotions make them: a `float32` as `double`, an integer narrower than C's `int` — a
+   `bool` and an enum of such an integer among them — as `int`; every other as itself. *(Informative:
+   what the callee reads is its format's to say; an `int` is C's `int64_t`, which `%lld` reads,
+   not `%d`.)*
