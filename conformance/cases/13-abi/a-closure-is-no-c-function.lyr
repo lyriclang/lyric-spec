@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 13 §3 rule 9: C calls a function by its address alone; a lambda that captures a local has state
+// C's pointer cannot hold.
+extern "C" fn apply(f: extern "C" fn(int) -> int, x: int): int;
+
+fn main(): void {
+    let n = 2;
+    let _ = apply((x) => x + n, 1);
+}
