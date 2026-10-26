@@ -112,6 +112,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0018` | every task of a thread waits, none sleeps, and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
    | `LYR-RT0021` | a C function returned, for an enum with `@Layout`, an integer no variant stands for: `C returned <n>, which is no variant of <enum> (it has <count>)` (§3 rule 5) |
+   | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run` (§3 rule 9) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -300,3 +301,19 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    - `xs.asPtr()` of an array or a slice — safe — is the address of its first element, the
      elements one after another as in a C array. The pointer does not keep the array alive, and
      points at nothing where it is empty.
+9. **C function pointers**: `extern "C" fn(int) -> int` is the type of a pointer to a C function,
+   crossing as C's function pointer wherever C holds one — a parameter, a result, a field. Its
+   parameters and result are what a C function's are (rules 1–5, `LYR-SEM0099`); it throws
+   nothing and takes no place (`LYR-SEM0099`); its ABI is `"C"` (`LYR-SEM0099`). A Lyric function
+   type, `fn(int) -> int`, is a closure and does not cross (`LYR-SEM0099`).
+   - Where such a type is expected, a function given by its name — free or static, with a body,
+     without type parameters — or a lambda that captures nothing becomes the pointer, when its
+     parameters and result are the type's and it throws nothing. Any other function value is
+     refused (`LYR-SEM0001`): a closure's state has no place in C's pointer.
+   - C calls such a function on the thread it runs on, through a trampoline that takes C's values
+     as Lyric's (rules 1–5) and gives the result back as C's. The coroutine it runs in counts the
+     C frames below it (§1.6 rule 6): the function may park and yield, and a panic in it ends the
+     process with its report (§1.6 rule 10) — C's frames cannot be unwound. On a thread Lyric
+     does not run — one C started itself — the call ends the process with `LYR-RT0022`.
+   - A value of the type is called as a function is: a call of the C function it points at, each
+     value crossing as for an `extern "C"` declaration.

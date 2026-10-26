@@ -1,0 +1,20 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 13 §3 rule 9: a panic in a function C calls ends the process - C's frames below it cannot be
+// unwound - and nothing after the call runs.
+import std.io { println };
+
+extern "C" fn each(f: extern "C" fn(int) -> void, n: int): void;
+
+fn boom(i: int): void {
+    panic("in the callback");
+}
+
+fn main(): void {
+    println("before");
+    each(boom, 1);
+    println("never");
+}

@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 9: a C function pointer's parameters are what a C function's are; a string is not.
+extern "C" fn register(f: extern "C" fn(string) -> int): void;
+
+fn main(): void {
+}
