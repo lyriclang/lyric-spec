@@ -266,8 +266,10 @@ each operating system from any host — compared byte for byte.
       and of `[native]` (§1), before the linker's own and in the order named — the scripts of
       dependencies by their names, the root's last. For a Windows target a library `X` is found
       as `X.dll`, `X.lib`, `libX.a`, or as the import library `libX.dll.a` or `X.dll.a` a MinGW
-      toolchain makes. A directory that is not there is no error: the link that does not find a
-      library says where it searched.
+      toolchain makes. No directory the link searched is written into the binary: a shared
+      library is found when the program starts where the system looks, or beside it (rule 3.2).
+      A directory that is not there is no error: the link that does not find a library says
+      where it searched.
    2. **`besideBinary(paths…)`** names files the program needs beside it when it runs — a shared
       library above all. After each link the build copies them, under their own names, into the
       directory of every binary it makes of the program — of `build` and `run`, of `test` and
