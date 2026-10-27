@@ -113,7 +113,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
    | `LYR-RT0021` | a C function returned, for an enum with `@Layout`, an integer no variant stands for: `C returned <n>, which is no variant of <enum> (it has <count>)` (§3 rule 5) |
    | `LYR-RT0023` | a `GcHandle` read as a handle of another class than its object's, or of none (§3 rule 12) |
-   | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run` (§3 rule 9) |
+   | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run …` — but for a Callback's that returns nothing, which goes to its thread (§3 rules 9, 13) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -320,7 +320,8 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
      as Lyric's (rules 1–5) and gives the result back as C's. The coroutine it runs in counts the
      C frames below it (§1.6 rule 6): the function may park and yield, and a panic in it ends the
      process with its report (§1.6 rule 10) — C's frames cannot be unwound. On a thread Lyric
-     does not run — one C started itself — the call ends the process with `LYR-RT0022`.
+     does not run — one C started itself — the call ends the process with `LYR-RT0022`, but for
+     a `Callback`'s that returns nothing (rule 13).
    - A value of the type is called as a function is: a call of the C function it points at, each
      value crossing as for an `extern "C"` declaration.
 10. **Closures C calls**: `std.ffi`'s `Callback<C>` holds a closure — a Lyric function value with
@@ -353,3 +354,11 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
       (`LYR-RT0023`).
     - `release()` lets the object go; reading or releasing that handle again is a panic
       (`LYR-RT0008`). Reading another handle of a released object is undefined.
+13. **Callbacks from C's threads**: a `Callback` belongs to the thread that made it. Called on a
+    thread Lyric does not run, one whose type returns nothing does not run there: the call — what C
+    passed, copied — goes to its thread, which runs it in its scheduler's next turn
+    ([10 §2](10-concurrency.md)), in the order C's calls came; C's thread goes on at once.
+    - One whose type returns a value would have C's thread wait for its own: the process ends
+      (`LYR-RT0022`), as it does where the thread that made the Callback runs no scheduler.
+    - While a thread's Callbacks are not released, its scheduler is not deadlocked when every task
+      waits (10 §2 rule 12): a call from C may come and wake one.

@@ -1,0 +1,9 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native]
+sources = ["native/*.c"]
+
+[native.linux]
+libs = ["pthread"]
