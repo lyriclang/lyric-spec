@@ -1,0 +1,30 @@
+//! run
+//! panic: LYR-RT0014
+//! stdout:
+//! | -1 0
+//! since: 5.0.0
+// 13 §1.6 rule 6: a generator suspended in a callback has C's frames on its stack; closing it
+// would unwind them, and is a panic.
+import std.io { println };
+import std.task { Cancelled };
+
+extern "C" fn each(f: extern "C" fn(int) -> void, n: int): void;
+
+fn step(i: int): void {
+    try {
+        yield i;
+    } catch (_: Cancelled) {
+    }
+}
+
+fn numbers(): Coroutine<int> {
+    yield -1;
+    each(step, 3);
+}
+
+fn main(): void throws Error {
+    let g = numbers();
+    println(f"{g.next() ?? 99} {g.next() ?? 99}");
+    try g.close();
+    println("never");
+}
