@@ -305,7 +305,9 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    crossing as C's function pointer wherever C holds one — a parameter, a result, a field. Its
    parameters and result are what a C function's are (rules 1–5, `LYR-SEM0099`); it throws
    nothing and takes no place (`LYR-SEM0099`); its ABI is `"C"` (`LYR-SEM0099`). A Lyric function
-   type, `fn(int) -> int`, is a closure and does not cross (`LYR-SEM0099`).
+   type, `fn(int) -> int`, is a closure and does not cross (`LYR-SEM0099`). `?extern "C" fn(…)`
+   is a pointer that may be null, as a parameter and as a result: `null` crosses as C's null, and a
+   null pointer C returns comes back as `null` — not as a field, as for `?Ptr<T>` (rule 4).
    - Where such a type is expected, a function given by its name — free or static, with a body,
      without type parameters — or a lambda that captures nothing becomes the pointer, when its
      parameters and result are the type's and it throws nothing. Any other function value is
@@ -317,3 +319,16 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
      does not run — one C started itself — the call ends the process with `LYR-RT0022`.
    - A value of the type is called as a function is: a call of the C function it points at, each
      value crossing as for an `extern "C"` declaration.
+10. **Closures C calls**: `std.ffi`'s `Callback<C>` holds a closure — a Lyric function value with
+    its state — for C, which hands back a `void *userdata` beside its function pointer.
+    - `C` is the C function's type as C calls it, an `extern "C" fn(…)` (`LYR-SEM0099` for another),
+      whose first or last parameter is the userdata, a `Ptr<void>`; with none there, or with one
+      at either end, it is refused (`LYR-SEM0099`).
+    - `Callback<C>.new(closure)` takes a function of `C`'s other parameters, in their order, with
+      `C`'s result, that throws nothing; a closure of another shape is refused as any argument of
+      the wrong type is.
+    - `cb.function`, of type `C`, is what C calls: it finds the closure through the userdata and
+      calls it, as a function C calls is called (rule 9) — on the thread Lyric runs on, its C
+      frames counted. `cb.userdata` is what C hands back to it.
+    - The closure lives until `cb.release()`; C must not call `cb.function` afterwards. A second
+      `release()` is a panic (`LYR-RT0008`).
