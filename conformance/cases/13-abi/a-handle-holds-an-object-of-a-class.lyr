@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 12: a GcHandle holds an object of a class, what the collector keeps by a root.
+import std.ffi { GcHandle };
+
+fn main(): void {
+    let _ = GcHandle.pin(3);
+}

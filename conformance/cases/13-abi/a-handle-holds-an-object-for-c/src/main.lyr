@@ -1,0 +1,48 @@
+//! run
+//! stdout:
+//! | 7
+//! since: 5.0.0
+// 13 §3 rule 12: an object held for C, its handle's pointer the userdata C keeps, read again from
+// that pointer by a function C calls; the program allocates between the calls, the collector may
+// run, and the object is the one held.
+import std.io { println };
+import std.ffi { Ptr, GcHandle };
+
+class Counter {
+    var total: int = 0,
+
+    mut fn add(x: int): void {
+        this.total += x;
+    }
+}
+
+extern "C" {
+    fn on_event(handler: extern "C" fn(Ptr<void>, int) -> void, userdata: Ptr<void>): void;
+    fn fire(event: int): void;
+}
+
+fn handler(userdata: Ptr<void>, event: int): void {
+    unsafe {
+        let counter = GcHandle<Counter>.from(userdata).get();
+        counter.add(event);
+    }
+}
+
+fn churn(): int {
+    var kept = 0;
+    for (i in 0..100000) {
+        let xs = [i, i + 1];
+        kept += xs.length();
+    }
+    return kept;
+}
+
+fn main(): void {
+    let handle = GcHandle.pin(Counter { });
+    on_event(handler, handle.asPtr());
+    fire(3);
+    let _ = churn();
+    fire(4);
+    println(f"{handle.get().total}");
+    handle.release();
+}

@@ -64,7 +64,8 @@ of the standard library:
   `std.ffi`'s `Ptr` and `CStr` with `length()`, the types C's boundary stands on, and the memory
   operations of 13 §3 rule 8 — `read`, `write`, `offset`, `cast`, `alloc`, `free`, `asPtr` — and
   `Callback` with `new`, `function`, `userdata` and `release` (rule 10), `stash` and
-  `takeStashed` (rule 11); and the
+  `takeStashed` (rule 11), `GcHandle` with `pin`, `from`, `get`, `asPtr` and `release` (rule 12);
+  and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to
