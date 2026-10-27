@@ -197,18 +197,129 @@ built-in profiles the suite builds with; the toolchain's own tests (`tests/Lyric
 C a package brings with it, compiled with the program and linked into it
 ([07 B5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md); [11 W2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
 
-**Conformance.** `conformance/cases/13-abi/`, package cases that call their native part; the
-toolchain's own tests (`tests/Lyric5.Tests`, `NativeTests`).
+**Conformance.** `conformance/cases/13-abi/` and `conformance/cases/15-project/`, package cases
+that call their native part or whose manifest a rule refuses; the toolchain's own tests
+(`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
+
+*(Rules 4–21 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
+decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
+each comes with its cases.)*
+
+### 5.1 Sources
 
 1. `[native]` names `sources`, patterns of the package's files as §2's `include` has them — the C
    sources compiled with the program under its profile —, `include`, directories of the package
    the sources find their includes in, and `libs`, libraries linked by name (`-lz`). Another key
-   is refused (`LYR-PKG0003`), as is another form of an entry (`LYR-PKG0002`).
+   than this section's is refused (`LYR-PKG0003`), as is another form of an entry (`LYR-PKG0002`).
 2. `[native.linux]`, `[native.windows]` and `[native.macos]` take the same keys: what a build for
    that operating system gets on top of `[native]`.
 3. Every package of the program brings its native part — a dependency's too —, and each library is
    linked once. The C functions of a native part are called through `extern "C"`
    ([13 §2](13-abi.md)).
+4. **`[native.<triple>]`** — a Tier 1 or Tier 2 target's triple, `[native.x86_64-windows-gnu]` —
+   takes the same keys, and what a build for that target gets comes on top of `[native]` and of its
+   operating system's table: the three tables are **layered**, each list the one before with its
+   own entries after. A triple no tier holds is refused (`LYR-PKG0003`).
+5. **`defines = ["RAYLIB_STATIC", "LEVEL=2"]`** are the package's sources' preprocessor
+   definitions, `NAME` or `NAME=value`, `NAME` a C identifier (`LYR-PKG0002`). The manifest takes no
+   other flag for the C compiler: one that names the machine or a path outside the package would
+   break §6 and the builds for other targets.
+6. A native source finds, besides its package's `include`, the toolchain's **`<lyric.h>`**
+   ([13 §4](13-abi.md#4-exports-and-libraries)) and the `include` of each package its package
+   declares as a dependency — not of the packages those depend on (§2 rule 5). Of the toolchain's
+   headers only `lyric.h` is promised.
+
+### 5.2 Linking
+
+7. **`archives = ["native/lib/libz.a"]`** are static libraries the package brings, prebuilt — files
+   of the package's content (§2) or of a source tree (§5.3): each is linked **by its path**, not
+   searched for. A file outside the content is refused (`LYR-PKG0002`). An archive is built for one
+   target, so it stands in the table of its triple (rule 4) as a rule. On Windows an archive is
+   promised to link where it was built for the GNU ABI — by MinGW or zig cc —, not by MSVC.
+8. A package brings **no shared library** of its own — no `.so`, `.dylib` or `.dll`
+   ([07 B5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md));
+   one named in `archives` is refused (`LYR-PKG0002`). A shared library of the system is linked by
+   name (`libs`), one the program finds at run time is `std.ffi`'s `Library`
+   ([13 §5](13-abi.md)).
+9. **`frameworks = ["Cocoa"]`** are macOS frameworks, linked as `-framework Cocoa`: a key of
+   `[native.macos]` and of the macOS triples' tables only (`LYR-PKG0003` elsewhere).
+10. **`pkgConfig = ["sdl2"]`** names libraries of the system as `pkg-config` knows them: a build for
+    the host asks `pkg-config --cflags --libs` and gives what it says about include directories and
+    definitions to the package's sources, and the rest to the link. `pkg-config` missing, or a
+    name it does not know, stops the build (`LYR-BLD0004`, exit 2).
+11. **What only the host has**: a framework comes from the macOS SDK and a name of `pkgConfig` from
+    the host's system, so a build for another target that needs one is refused before it compiles
+    (`LYR-BLD0004`, exit 2, naming the package and the key). *(Informative: with the toolchain's C
+    compiler a build for Windows links Windows' system libraries from any host; a build for Linux
+    links a library of the system beside libc only on a Linux host, and one for macOS a framework
+    only on a macOS host.)*
+12. The link takes, in this order: the program's objects and the native parts' — the packages
+    **before the packages they depend on**, the root's first —, their `archives` in that order, the
+    libraries by name and from `pkgConfig`, then the frameworks; each archive, library and framework
+    once, where it first stands. A symbol two packages define fails the link (`LYR-LNK0003`), and
+    so does one nothing defines (`LYR-LNK0001`) or a library the linker does not find
+    (`LYR-LNK0002`) — each exit 2, as the link is ([14 §1.3](14-cli.md)). A binary is linked anew
+    where an archive's bytes changed, not only its time.
+
+### 5.3 Source trees
+
+13. **`[native.vendor]`** names **source trees**: C that the package does not hold and that is no
+    package — no manifest, no modules. `raylib = { git = "https://…", tag = "5.5" }` is a revision
+    of a repository, read as §2 rule 2 reads one (`branch`, `rev`, or none), cached and locked as
+    §2 rule 3 and §3 have it; `sqlite = { url = "https://…/sqlite.zip", hash = "sha256:…" }` is a
+    file loaded over `https`, a `.tar.gz`, `.tar.xz` or `.zip`, whose SHA-256 — 64 hexadecimal
+    digits — is its `hash`, unpacked with a single top directory left out. A name is a lowercase
+    letter, then letters, digits, `_` and `-`; another key or form is refused (`LYR-PKG0002`).
+14. A path of the native part — in `sources`, `include`, `archives` and `bindings` — that begins
+    with **`@name/`** lies in the tree `name`; a name `[native.vendor]` does not hold is refused
+    (`LYR-PKG0002`). A tree is the package's own: another package's `@name` is another tree, and
+    two packages that compile one tree define its symbols twice (rule 12).
+15. A tree is read **only where a build needs it**: where a table that holds for the build's target
+    names it. What it reads is fetched into the user's cache — a URL's file once by its hash —,
+    under `--offline` not at all (`LYR-PKG0007`). A URL without `hash` is refused, the message giving
+    the hash of what it loaded (`LYR-PKG0002`); a file whose hash is another, or a revision whose
+    content is not what the lock holds, is refused (`LYR-PKG0008`); a revision the repository does
+    not have (`LYR-PKG0006`); one that cannot be reached is the environment's (`LYR-PKG0007`, exit
+    2). The lock holds a git tree as it holds a package read from git (§3 rule 1), its content's
+    hash over every file of the tree; `lyric update` and `--locked` read it as they read those.
+16. A tree runs nothing: it is compiled, as the package's sources are, and no trust is asked for it
+    (§8 rule 6). What an archive does, its bytes say; the lock holds them.
+
+### 5.4 Bindings
+
+17. **`bindings = [{ header = "@raylib/src/raylib.h", module = "rl" }]`** makes a **module of the
+    package from a C header**: `rl` in `game` is the module `game.rl`, a path of segments as §2's
+    modules have, each a lowercase letter, then letters, digits and `_` (`LYR-PKG0002`). Its
+    declarations are `pub`, its names C's. A module of that path under `src/`, `gen/` or `tests/`
+    is refused (`LYR-RES0016`). The packages that declare the package as a dependency import it as
+    any of its modules.
+18. The module is made **for the build's target**, from what the C compiler reads of the header
+    with the package's `include` and `defines` — C's types differ between targets. It holds the
+    declarations of the header and of the headers beside and below it, in the order they come, not
+    the system's:
+    - a function as `extern "C" fn` ([13 §2](13-abi.md)), with `...` where it is variadic;
+    - a struct as a `@Layout(C)` struct of the same fields ([13 §3](13-abi.md) rule 4); a struct
+      C declares without its fields as `Ptr<void>` where a pointer names it;
+    - an enum's constants as module-level constants of its integer type, and the enum's name as an
+      alias of that type;
+    - a `typedef` as an alias ([03 §10](03-types.md)), a pointer to a C function as its type
+      `extern "C" fn(…) -> R`;
+    - a `#define` whose body is one integer literal, or one string literal, as a constant.
+
+    The C types as [13 §2–§3](13-abi.md) cross them: the integers by their width on the target —
+    `char` as the target's `int8` or `uint8`, `size_t` as `uint`, `ptrdiff_t` as `int` —, `float`
+    and `double`, `bool`; `const char *` as `?CStr`; any other `T *` as `?Ptr<T>`, `void *` as
+    `?Ptr<void>`; an array parameter as the pointer it is. A name that is a word of Lyric gets a `_`
+    after it.
+19. What it cannot write — a union, a bit field, a struct with one, a function-like macro, a
+    `static inline` function, a variable, a declaration that needs one of them — is **left out**,
+    and the module's last lines list each by its name, its file and line, and why. The lints
+    `naming` and `dead-code` do not look at it ([16 §5](16-diagnostics.md#5-lints)).
+20. A header that does not compile, or a module the toolchain cannot write, stops the build
+    (`LYR-BLD0005`, exit 1) with what the C compiler said. The module is made anew where the
+    header, a header it reads, the `defines`, the target or the toolchain changed.
+21. **`lyric bindgen`** writes the module one entry makes to standard output, to keep it under
+    `src/` instead ([14](14-cli.md)).
 
 ## 6. Reproducibility
 
@@ -229,6 +340,10 @@ each operating system from any host — compared byte for byte.
    Windows binary's PDB, a macOS binary's `.dSYM` — gathered on a macOS host, where `dsymutil` is.
    The binary names it by a hash of its own bytes — a PE image's PDB GUID, a Mach-O image's UUID —,
    so the two still pair.
+3. A package's **archives** and **source trees** (§5.2, §5.3) are inputs as its sources are: the
+   lock holds their bytes, and an archive comes into the binary as it was built — what it carries
+   of the machine that built it is its own. A library linked by name or through `pkgConfig` is the
+   machine's: the same bytes need the same system libraries. *(Written ahead of M14b.)*
 
 ## 7. Tests
 
@@ -260,6 +375,17 @@ each operating system from any host — compared byte for byte.
    the package's `out/`; `genDir()`; `rerunIfChanged(paths…)`, `linkLib(name)`,
    `cFlags(flags…)`, `compileC(sources…)` — paths from the package's root —, and `warn(message)`,
    which the build shows (`LYR-BLD0003`). Outside a build script they panic.
+   *(Written ahead of M14b, replacing `cFlags` and `compileC` when it lands:)* `target()` is a
+   **`Target`** — its `triple`, its `os` (`Os.linux`, `Os.windows`, `Os.macos`), its `arch`
+   (`Arch.x86_64`, `Arch.aarch64`) and whether it `isHost` —; `vendorDir(name)` is the directory of
+   a source tree (§5.3), read where the script asks for it; **`cLibrary(name)`** is a C library the
+   script compiles with the program — its `sources(…)`, `include(…)`, `define(name)` and
+   `define(name, value)`, and `flags(…)`, the C compiler's own, its alone — and `compile()` adds it:
+   its sources see the package's `include`, `<lyric.h>` and the headers §5 rule 6 names; paths are
+   the package's or a tree's (`@name/…`). `linkLib(name)`, `linkArchive(path)`,
+   `linkFramework(name)` and `pkgConfig(name)` are §5.2's keys, with their rules; `cEnv()` is the
+   environment — `CC`, `AR`, `CFLAGS` — under which another build system compiles C for the target
+   with the toolchain's C compiler.
 4. **`gen/`**, which the toolchain makes before the script runs, is a module space of the
    package: `gen/schema.lyr` in `app` is `app.gen.schema`, as `tests/` is §7's. It is no part of
    the package's content (§2).
