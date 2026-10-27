@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | other task
+//! | slept 2
+//! since: 5.0.0
+// 13 §5 rule 6: where Lyric called the C that calls an export, the export runs in the task that
+// runs: it parks there, through C's frames, and the thread's other tasks run meanwhile.
+import std.io { println };
+import std.task { spawn, sleep, Cancelled };
+import std.time { Duration };
+
+extern "C" fn call_nap(ms: int): int;
+
+@Export("app_nap")
+pub fn nap(ms: int): int {
+    try! sleep(Duration.ofMillis(ms));
+    return ms;
+}
+
+fn main(): void throws Error {
+    let other = spawn(() => {
+        println("other task");
+    });
+    let slept = call_nap(2);
+    try other.await();
+    println(f"slept {slept}");
+}

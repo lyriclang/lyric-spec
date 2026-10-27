@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 2 LYR-RT0008: not a count: -3 (frames: yes)
+//! | 0 7
+//! | after
+//! since: 5.0.0
+// 13 §5 rule 4: a panic in an export that throws is LYR_PANIC with its code, its message and its
+// frames for lyr_take_error; the runtime goes on, and the next call runs.
+import std.io { println };
+import std.ffi { CStr };
+import std.core { Exception, Utf8Error };
+
+extern "C" {
+    fn attempt(n: int): CStr;
+}
+
+@Export("app_check")
+pub fn check(n: int): int throws Exception {
+    if (n < 0) {
+        panic(f"not a count: {n}");
+    }
+    if (n == 0) {
+        throw Exception.new("zero");
+    }
+    return n;
+}
+
+fn main(): void throws Utf8Error {
+    println(try attempt(-3).toString());
+    println(try attempt(7).toString());
+    println("after");
+}

@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 0 42 0
+//! | 1 -1 1 | std.core.Exception: no count in '4x2' | std.core.ParseError: the text is not a value of the type
+//! | 0 -1 0
+//! since: 5.0.0
+// 13 §5 rule 4: an export that throws answers LYR_ERROR, and lyr_take_error gives the error's
+// type, its message and its causes; a second take finds nothing.
+import std.io { println };
+import std.ffi { CStr };
+import std.core { Exception, ParseError, Utf8Error };
+
+extern "C" {
+    fn attempt(text: CStr): CStr;
+    fn retake(): CStr;
+}
+
+@Export("app_count")
+pub fn count(text: CStr): int throws Exception {
+    let s = try! text.toString();
+    try {
+        return int.parse(s);
+    } catch (e: ParseError) {
+        throw Exception.new(f"no count in '{s}'", cause: e);
+    }
+}
+
+fn main(): void throws Utf8Error {
+    println(try attempt("42").toString());
+    println(try attempt("4x2").toString());
+    println(try retake().toString());
+}

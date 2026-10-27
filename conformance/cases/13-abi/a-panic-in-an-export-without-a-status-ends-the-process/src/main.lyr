@@ -1,0 +1,24 @@
+//! run
+//! panic: LYR-RT0008
+//! stdout:
+//! | before
+//! since: 5.0.0
+// 13 §5 rule 4: an export that does not throw has no status to answer a panic with: the panic
+// ends the process with its report, and nothing after the call runs.
+import std.io { println };
+
+extern "C" fn call_half(n: int): int;
+
+@Export("app_half")
+pub fn half(n: int): int {
+    if (n % 2 != 0) {
+        panic(f"odd: {n}");
+    }
+    return n / 2;
+}
+
+fn main(): void {
+    println("before");
+    println(f"{call_half(3)}");
+    println("after");
+}
