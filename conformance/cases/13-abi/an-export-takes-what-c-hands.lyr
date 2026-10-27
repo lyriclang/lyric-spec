@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §4 rule 3: C hands its text as a CStr; a string is no parameter of an export.
+@Export("app_length")
+pub fn length(text: string): int {
+    return text.length();
+}
+
+fn main(): void {
+}

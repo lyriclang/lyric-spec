@@ -49,7 +49,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    names the binary.
 5. Without a file and without a manifest at or above the directory there is nothing to build
    (`LYR-CLI0004`). A package without `src/main.lyr` is a library: `build` checks it
-   ([15 §2](15-project.md)), and `run` has no program there (`LYR-CLI0005`).
+   ([15 §2](15-project.md)) — `build --lib` builds it for C (rule 9) —, and `run` has no program
+   there (`LYR-CLI0005`).
 6. **`lyric expand [<file.lyr>]`** prints the program's entry module after its macros' expansion
    ([11 §5](11-metaprogramming.md)) to standard output: the results in the sites' places, the
    rest as written, in the formatter's form — comments fall, as do the module's header line and
@@ -64,7 +65,12 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    `build` does — through everything a build does before the C: the build scripts, for what they
    write into `gen/` ([15 §8](15-project.md)), the front end and the lints, `comptime`, and the
    lowering. It says what `build` says, exits as `build` does (§1.3), and makes neither C nor a
-   binary. It takes `build`'s options but `--emit`.
+   binary. It takes `build`'s options but `--emit`, `--lib` and `--shared`.
+9. **`lyric build --lib`** builds the package's library for C — its `src/lib.lyr` and what that
+   imports — instead of its programs ([13 §4](13-abi.md#4-exports-and-libraries)): the archive
+   `lib<name>.a` and the header `<name>.h`, or with **`--shared`** a shared library in the
+   archive's place. Without `src/lib.lyr` there is nothing to build (`LYR-CLI0001`); `--shared`
+   without `--lib`, and `--lib` with a file, `--bin` or `--emit`, are refused (exit 2).
 
 ### 1.2 Where the files go
 
@@ -76,7 +82,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    without that, by the file (P5). Under it, the binary is `out/<profile>/<target>/<name>`, with
    the executable suffix of the target — named after the package for its `src/main.lyr`, after
    the module's last segment for another module of the package, after the file for a single file
-   —, and `out/cache/` holds what the build keeps between runs (P4; 01 L7).
+   —, a library for C beside it ([13 §4](13-abi.md#4-exports-and-libraries) rule 7), and
+   `out/cache/` holds what the build keeps between runs (P4; 01 L7).
 3. An unchanged program compiles nothing twice: the same sources — every module of the program,
    the standard library's included —, toolchain and options reuse the cache, and the binary is
    linked only when an input to it changed (11 C9). A build that reuses the cache **says again
@@ -235,7 +242,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 
 | verb | words | options | lints | `--json` |
 |---|---|---|---|---|
-| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--emit <ir|c>` | yes | yes |
+| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--emit <ir|c>`, `--lib`, `--shared` | yes | yes |
 | `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
 | `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
 | `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | — |
