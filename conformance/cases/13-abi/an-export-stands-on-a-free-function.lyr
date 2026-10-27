@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0065
+//! since: 5.0.0
+// 13 §4 rule 2: what C calls by a symbol is a free function; on a method the attribute is out of
+// its place.
+struct Counter {
+    n: int,
+
+    @Export
+    pub fn get(): int {
+        return this.n;
+    }
+}
+
+fn main(): void {
+}

@@ -57,9 +57,9 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
    reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
    (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
    `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14),
-   `@SeesConformer` (rule 15), `@Layout` (rule 16) and `@When` (§3). What one says holds for
-   every instance, so beside `@Test` they sit on a generic declaration too, where data may not
-   (`LYR-SEM0067`).
+   `@SeesConformer` (rule 15), `@Layout` (rule 16), `@Export` (rule 17) and `@When` (§3). What
+   one says holds for every instance, so beside `@Test` they sit on a generic declaration too,
+   where data may not (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
    leaves the parameter out, it gets the line the call begins on, or the file the call stands in —
    the package's name, then the path within the package, with `/` on every system:
@@ -101,6 +101,10 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
     enum: the type is laid out as C's and crosses into C ([13 §3](13-abi.md#3-the-type-table-stage-2)).
     Its form is a name, as `@callerExpr`'s; a generic type does not take it, since one layout is
     not one per instance.
+17. **`@Export("geo_area")`** on a `pub fn`, or a bare **`@Export`**: C calls the function by that
+    symbol, or by the function's own name ([13 §4](13-abi.md#4-exports-and-libraries)). Its form is a
+    string written out, which the header and the linker read before anything is computed; a generic
+    function does not take it, since C has no type arguments.
 
 ## 2. `comptime`
 

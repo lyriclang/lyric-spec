@@ -366,3 +366,63 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
       (`LYR-RT0022`), as it does where the thread that made the Callback runs no scheduler.
     - While a thread's Callbacks are not released, its scheduler is not deadlocked when every task
       waits (10 §2 rule 12): a call from C may come and wake one.
+
+## 4. Exports and libraries
+
+A Lyric function C calls by a symbol, and the library `lyric build --lib` makes of a package for
+a C program to link ([11 X8, H1–H3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+A call of an export is C's call of a Lyric function on the thread Lyric runs on, as through a
+C function's pointer (§3 rule 9).
+
+**Conformance.** `conformance/cases/13-abi/`; that a C program links the library — the archive
+and the shared one — and calls its exports, in the toolchain's own tests (`tests/Lyric5.Tests`,
+`ExportTests`).
+
+1. **`@Export("geo_area")`** on a function — a compiler instruction of the prelude
+   ([11 §1](11-metaprogramming.md) rule 17) — makes it C's to call as the function `geo_area`; a
+   bare `@Export` names it as the function is named. The symbol is written out as a string, or
+   not at all (`LYR-SEM0099`); it is a C identifier, does not begin with `lyr_` or `LYR_` — the
+   runtime's names —, and is one function's in the program (`LYR-SEM0099` for each).
+2. What is exported is a free function with a body, `pub`, without type parameters, neither
+   `inline` nor a macro (`LYR-SEM0099`). On a method the attribute stands out of its place
+   (`LYR-SEM0065`).
+3. Its parameters and its result cross as a C function's do (§2 rule 2, §3), the other way: C
+   hands the parameters and takes the result. A `string` is no parameter — C hands its text as a
+   `CStr`, which `toString()` copies —, a place is none, and every type that does not cross is
+   refused, as a parameter and as a result (`LYR-SEM0099`).
+4. An export that **throws** is C's `LyrStatus name(parameters…, R *out)`: `LYR_OK` with its
+   result written through `out`, `LYR_ERROR` where it threw, `out` left as it was. Without a
+   result there is no `out`. The error itself stays behind.
+5. An export is a **root** of every build: of a program's — a C function of its native part
+   ([15 §5](15-project.md)) may call it — and of a library's.
+6. C calls an export after the runtime started (§1.5 rule 2), on the thread that started it: before
+   it, or on another thread, the process ends with its report (`LYR-RT0022`). The first call into
+   a library fills the library's module-level bindings, once, as a program's start does before
+   `main` ([04 §1](04-modules.md) rule 2); in a program `main`'s start filled them. The function
+   runs as one C calls through its pointer does (§3 rule 9): its C frames are counted, it may park,
+   and a panic in it ends the process with its report.
+7. **`lyric build --lib`** ([14 §1.1](14-cli.md) rule 9) builds the package's **library**: its root
+   module `src/lib.lyr` and the modules it reaches by import, as a program is its entry module's
+   ([04 §2](04-modules.md)) — without a `main` to start from; one there is an ordinary function.
+   Under `out/<profile>/<target>/` it writes **`lib<name>.a`**, the archive that holds the library
+   and the runtime, and the header **`<name>.h`**. With `--shared` a shared library takes the
+   archive's place: `lib<name>.so`, `lib<name>.dylib`, or `<name>.dll` beside its import library
+   `<name>.lib`.
+8. The **header** declares, in this order:
+   - the runtime's API: `LyrConfig`, `lyr_init`, `lyr_shutdown`, and `LyrStatus` with `LYR_OK`,
+     `LYR_ERROR`, `LYR_PANIC`;
+   - the `@Layout` types the exports name, each before the first that needs it, named by its
+     module's path and its own name joined by `_` — `geo.Point` is `geo_Point` —: a struct as C's
+     `struct` of the same fields in their order, an enum with `@Layout(C)` as C's `enum`, one with
+     an integer type as that integer with a constant per variant (`geo_Shape_Square = 0`, on in
+     the order written);
+   - the exports, each as C declares it: the integers by their widths (`int64_t` for `int`),
+     `double` and `float`, `bool`, a `char` as `uint32_t`, a `Ptr<T>` as `T *` — `void *` where C
+     has no name for `T` —, a `CStr` as `const char *`, an optional pointer as the pointer, a C
+     function's pointer in C's form. A parameter is named as in Lyric, with a `_` after a name C
+     reserves.
+9. A shared library gives the system's loader its exports, `lyr_init` and `lyr_shutdown`, and no
+   other symbol. A C program that links the archive links the libraries the runtime calls too — on
+   Linux `-lpthread -lm`, with zig cc `-lunwind`; on Windows `-lshell32 -lws2_32` — and those the
+   packages' native parts name ([15 §5](15-project.md)), which a shared library is linked against
+   itself.

@@ -1,0 +1,49 @@
+//! run
+//! stdout:
+//! | 41 21 -901
+//! | noted 2
+//! since: 5.0.0
+// 13 §4 rules 1-6: C calls the program's exports by their symbols; the bindings are main's start's,
+// and one that throws answers LYR_ERROR with its result left as it was.
+import std.io { println };
+
+pub enum Odd :: [Error] { Number;
+    pub fn message(): string { return "odd"; }
+}
+
+extern "C" {
+    fn call_twice(x: int): int;
+    fn call_half(x: int): int;
+    fn call_note(): void;
+}
+
+let factor = [1, 1].length();
+var notes = 0;
+
+@Export("app_twice")
+pub fn twice(x: int): int {
+    return factor * x;
+}
+
+@Export("app_half")
+pub fn half(x: int): int throws Odd {
+    if (x % 2 != 0) {
+        throw Odd.Number;
+    }
+    return x / 2;
+}
+
+@Export("app_note")
+pub fn note(): void {
+    notes += 1;
+}
+
+fn main(): void {
+    let a = call_twice(20);
+    let b = call_half(42);
+    let c = call_half(3);
+    println(f"{a} {b} {c}");
+    call_note();
+    call_note();
+    println(f"noted {notes}");
+}

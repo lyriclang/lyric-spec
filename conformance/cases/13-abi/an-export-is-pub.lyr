@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §4 rule 2: C calls an export from outside every module, so an export is 'pub'.
+@Export("app_add")
+fn add(a: int, b: int): int {
+    return a + b;
+}
+
+fn main(): void {
+}

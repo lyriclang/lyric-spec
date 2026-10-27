@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §4 rule 2, 11 §1 rule 17: C has no type arguments; a generic function is no export.
+@Export
+pub fn same<T>(x: T): T {
+    return x;
+}
+
+fn main(): void {
+}

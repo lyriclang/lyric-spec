@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §4 rule 1: one C symbol is one function of the program.
+@Export("app_f")
+pub fn f(): int {
+    return 1;
+}
+
+@Export("app_f")
+pub fn g(): int {
+    return 2;
+}
+
+fn main(): void {
+}
