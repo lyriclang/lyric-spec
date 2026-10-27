@@ -233,7 +233,11 @@ own tests (`tests/Lyric5.Tests`, `NativeTests`).
    `bool`, 0 or 1; `char` as `uint32_t`, its scalar value; and `void` as a return. Each by value:
    a place parameter (`&x: T`, [03 §2.3a](03-types.md)) is an address and does not cross. What
    §3 adds crosses too; every other type is refused, as a parameter and as a result
-   (`LYR-SEM0099`).
+   (`LYR-SEM0099`). *(Informative: the standard library calls its runtime the same way, by
+   `extern "C"`; its declarations alone also pass the runtime's own objects — a `string`, an
+   array, an object of a class, a coroutine, or the optional of one — as the runtime's pointers,
+   since the runtime is the one C that knows them. The table of what crosses is the same check
+   with that row more.)*
 3. A call is a direct call in the target platform's C ABI. A symbol nothing defines fails the link
    (exit 2, [14 §1.3](14-cli.md)). The program's own declaration is the one it calls by: a header
    of the system's that declares the same function with other types does not meet it.
