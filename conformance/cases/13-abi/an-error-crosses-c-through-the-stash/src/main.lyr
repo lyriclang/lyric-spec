@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | 2 items: fine
+//! | 4 items: item 2 is too large
+//! | taken: true
+//! | task: item 2 is too large
+//! since: 5.0.0
+// 13 §3 rule 11: a function C calls stashes its error, and the code around the C call takes it -
+// the first of several, the running task's own; once taken, none waits.
+import std.io { println };
+import std.ffi { stash, takeStashed };
+import std.task { spawn };
+
+extern "C" fn each(f: extern "C" fn(int) -> void, n: int): void;
+
+fn check(i: int): void {
+    if (i >= 2) {
+        stash(Exception(f"item {i} is too large"));
+    }
+}
+
+fn visit(n: int): void throws Error {
+    each(check, n);
+    if (let e = takeStashed()) {
+        throw e;
+    }
+}
+
+fn main(): void throws Error {
+    try visit(2);
+    println("2 items: fine");
+    try {
+        visit(4);
+    } catch (e: Error) {
+        println(f"4 items: {e.message()}");
+    }
+    println(f"taken: {takeStashed() == null}");
+    let t = spawn(() => {
+        try visit(3);
+    });
+    try {
+        t.await();
+    } catch (e: Error) {
+        println(f"task: {e.message()}");
+    }
+}

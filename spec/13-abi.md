@@ -105,7 +105,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0011` | `assert(condition, message)` with a false condition: `assertion failed: `, the condition as written, then the message where one is given ([06 §9](06-errors.md#9-panics-and-never)) |
    | `LYR-RT0012` | `unreachable(message)` reached: `unreachable`, then the message where one is given |
    | `LYR-RT0013` | `todo(message)` reached: `not implemented`, then the message where one is given |
-   | `LYR-RT0014` | a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
+   | `LYR-RT0014` | a close of a coroutine with C frames on its stack (§1.6 rule 6); a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7); random bytes ([12](12-stdlib.md)) |
    | `LYR-RT0016` | a collection of the library changed while it was walked: `List: changed while it was walked` — a list, a map, a set, a deque ([12](12-stdlib.md)) |
    | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
@@ -168,6 +168,9 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
 6. C frames may lie on a coroutine's stack between a resume and a yield — a callback from C that
    yields ([01 K4](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)).
    The runtime counts them for each coroutine: a stack with C frames on it cannot be unwound.
+   Closing such a coroutine is a panic (`LYR-RT0014`); one that nothing references any more is not
+   collected — its stack stays, as C may still point into it, and the runtime says so once on the
+   error output — and nothing on it runs again.
 7. A **park** stops the coroutine that runs where it stands and hands control back to the thread's
    own stack — where a scheduler runs — past every coroutine between
    ([06 N3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/06-nebenlaeufigkeit.md)):
@@ -332,3 +335,10 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
       frames counted. `cb.userdata` is what C hands back to it.
     - The closure lives until `cb.release()`; C must not call `cb.function` afterwards. A second
       `release()` is a panic (`LYR-RT0008`).
+11. **Errors across C**: a function C calls throws nothing (rule 9); its error crosses as
+    `std.ffi.stash(e)`, which keeps `e` for the code around the C call, and `std.ffi.takeStashed()`
+    there, which returns it and forgets it — `null` where none waits.
+    - What is kept is the running task's own ([10 §2](10-concurrency.md)): a callback that parked
+      leaves it for its task, not for whichever runs next. Where no task runs, it is the program's.
+    - One error waits at a time: a second `stash`, before the first is taken, is dropped — the
+      first went wrong first.

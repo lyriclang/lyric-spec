@@ -63,7 +63,8 @@ of the standard library:
   `RwLock` and `Once` (10 §10), `Pool` (10 §11), `Signal` and `signals` (10 §12) —;
   `std.ffi`'s `Ptr` and `CStr` with `length()`, the types C's boundary stands on, and the memory
   operations of 13 §3 rule 8 — `read`, `write`, `offset`, `cast`, `alloc`, `free`, `asPtr` — and
-  `Callback` with `new`, `function`, `userdata` and `release` (rule 10); and the
+  `Callback` with `new`, `function`, `userdata` and `release` (rule 10), `stash` and
+  `takeStashed` (rule 11); and the
   `std.time.Duration` a sleep takes, made by its `of…` constructors.
 
 A case that needs more library than that — container behavior, string methods — belongs to
