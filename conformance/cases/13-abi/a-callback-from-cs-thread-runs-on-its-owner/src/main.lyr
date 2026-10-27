@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | tick 0
+//! | tick 1
+//! | tick 2
+//! | done 3
+//! since: 5.0.0
+// 13 §3 rule 13: a Callback that returns nothing, called on a thread C started: each call goes to
+// the thread that made the Callback and runs there, in the order C made them, while main waits.
+import std.io { println };
+import std.ffi { Ptr, Callback };
+import std.task { sleep };
+import std.time { Duration };
+
+extern "C" fn start_ticker(f: extern "C" fn(Ptr<void>, int) -> void, userdata: Ptr<void>, n: int): void;
+
+fn main(): void throws Error {
+    var seen = 0;
+    let cb = Callback<extern "C" fn(Ptr<void>, int) -> void>.new((i) => {
+        println(f"tick {i}");
+        seen += 1;
+    });
+    start_ticker(cb.function, cb.userdata, 3);
+    while (seen < 3) {
+        try sleep(Duration.ofMillis(1));
+    }
+    cb.release();
+    println(f"done {seen}");
+}
