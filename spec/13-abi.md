@@ -112,6 +112,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0018` | every task of a thread waits, none sleeps, and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
    | `LYR-RT0021` | a C function returned, for an enum with `@Layout`, an integer no variant stands for: `C returned <n>, which is no variant of <enum> (it has <count>)` (§3 rule 5) |
+   | `LYR-RT0023` | a `GcHandle` read as a handle of another class than its object's, or of none (§3 rule 12) |
    | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run` (§3 rule 9) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
@@ -289,7 +290,7 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
 8. **Memory and `unsafe`**: `unsafe { … }` — the word contextual, a statement — is a block
    within which `std.ffi`'s memory operations may be called: a pointer's `read()`, `write(v)`,
    `offset(n)` and `cast<U>()`, `alloc<T>(n)` and `free(p)`. Called outside one, each is refused
-   (`LYR-SEM0233`); the block is lexical, a lambda written within it is within it. Nothing else
+   (`LYR-SEM0233`), as `GcHandle.from` is (rule 12); the block is lexical, a lambda written within it is within it. Nothing else
    about the block differs, and calling a C function is not unsafe.
    - `read()` is the `T` at the pointer's address, `write(v)` puts one there; `T` is what a field
      of a `@Layout(C)` struct may be (rule 4, `LYR-SEM0099`), and the memory's layout is C's.
@@ -342,3 +343,13 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
       leaves it for its task, not for whichever runs next. Where no task runs, it is the program's.
     - One error waits at a time: a second `stash`, before the first is taken, is dropped — the
       first went wrong first.
+12. **Objects held for C**: `std.ffi.GcHandle<T>` holds an object of a class for C.
+    - `GcHandle.pin(object)` holds it: the collector keeps it, wherever C keeps the handle, until
+      `release()`; `T` is a class (`LYR-SEM0099`). `get()` is the object.
+    - `asPtr()` is the `Ptr<void>` C keeps and hands back, the same for every handle of the object;
+      `GcHandle<T>.from(pointer)` is a handle of it again. `from` is a memory operation of rule 8
+      (`LYR-SEM0233` outside an `unsafe` block): the pointer is one `asPtr()` gave and that is not
+      released. Reading a handle whose object is of another class than `T` is a panic
+      (`LYR-RT0023`).
+    - `release()` lets the object go; reading or releasing that handle again is a panic
+      (`LYR-RT0008`). Reading another handle of a released object is undefined.
