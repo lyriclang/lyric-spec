@@ -123,6 +123,10 @@ def main():
     version = (tuple(int(p) for p in args.toolchain_version.split("-")[0].split("."))
                if args.toolchain_version else None)
 
+    if not args.lyric_script.is_file():
+        print(f"no lyric-script at '{args.lyric_script}'", file=sys.stderr)
+        return 2
+
     cases = sorted(args.cases.rglob("*.lyrs"))
     if not cases:
         print("no cases found", file=sys.stderr)
