@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §6 rule 2: what a library's symbol is read as is a C function's type - an address of the
+// loader's is nothing else.
+import std.ffi { Library };
+
+fn main(): void throws Error {
+    using let lib = try Library.open("libplugin.so");
+    let x = lib.symbol<int>("x");
+}

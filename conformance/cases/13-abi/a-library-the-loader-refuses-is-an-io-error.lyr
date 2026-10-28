@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | refused: true no-such-library-anywhere
+//! since: 5.0.0
+// 13 §6 rule 1: a library the system's loader cannot load is an IoError of kind NotFound, with the
+// path; the loader's own words, which differ from system to system, are its detail.
+import std.io { println, IoError, IoErrorKind };
+import std.ffi { Library };
+
+fn main(): void {
+    try {
+        using let lib = try Library.open("no-such-library-anywhere");
+        println("loaded");
+    } catch (e: IoError) {
+        println(f"refused: {e.kind == IoErrorKind.NotFound} {e.path ?? ""}");
+    }
+}
