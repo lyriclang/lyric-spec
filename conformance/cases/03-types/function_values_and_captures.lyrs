@@ -1,0 +1,55 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 5
+//! | 12
+//! | 10
+//! | 2
+//! | 10
+//! | 120
+//! | 111
+// §3 rule 11 (Lyric 5 §8): lambdas, functions as values, captures — a `var` shared and fresh
+// in each pass of a loop — local functions that call themselves, nested lambdas.
+fn apply(f: fn(int) -> int, v: int): int = f(v)
+fn twice(n: int): int = n * 2
+fn counter(): int {
+    var n = 0
+    let inc = () => {
+        n += 1
+    }
+    inc()
+    inc()
+    return n
+}
+fn fresh(): int {
+    var a = () => -1
+    var b = () => -1
+    for (i in 0..2) {
+        var v = i * 10
+        if (i == 0) {
+            a = () => v
+        } else {
+            b = () => v
+        }
+    }
+    return a() + b()
+}
+fn fact(): int {
+    fn f(n: int): int {
+        return if (n <= 1) 1 else n * f(n - 1)
+    }
+    return f(5)
+}
+fn nested(): int {
+    let base = 100
+    let mk = (d: int): fn(int) -> int => (x: int): int => x + d + base
+    return mk(10)(1)
+}
+let add = (x: int, y: int): int => x + y
+println(add(2, 3))
+println(apply(x => x * 3, 4))
+println(apply(twice, 5))
+println(counter())
+println(fresh())
+println(fact())
+println(nested())

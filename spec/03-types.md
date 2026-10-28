@@ -2,8 +2,8 @@
 
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
-**Status.** The core (S2), the optionals, `var x = null`, tuples and enums with payloads (S3)
-written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core (S2), the optionals, `var x = null`, tuples, enums with payloads and
+function values (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -58,10 +58,22 @@ written; the rest a skeleton, written with the milestone that builds it — unti
    (`LYS-SEM0113`). Unlike Lyric 5 (§4.1 rules 3–4) an enum with a payload is a **reference** to
    an immutable value, as a struct is (rule 3): it holds itself without a box —
    `enum Tree { Leaf(int), Node(Tree, Tree) }`.
-11. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+11. **Function values.** Lyric 5 §8.1–§8.4 and §8.6 apply, without `inline fn` (§8.5) and,
+   until the errors come (S4), without `throws` in a function type: `fn(A, B) -> R`; lambdas in
+   the three forms — `(n: int): int => n + 1`, `x => x * 3`, a trailing block with `it` or its
+   parameters named before `=>` — their parameters' types written or from the position
+   (`LYS-SEM0045`), a `return` in one whose result nothing gives refused (`LYS-SEM0010`); a free
+   or static function named without a call, and `obj.method` bound to `obj`; a call through any
+   value of a function type, a field's included (`LYS-SEM0013` on what is none); captures — a
+   `let` copied, a `var` in a box both sides share, fresh in each pass of a loop (02 C1),
+   `this` copied; a local `fn` that calls itself. Two function values are not compared
+   (`LYS-SEM0059`). A brace after a name that is no type's opens a trailing block (§2 D4).
+12. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
    slots in order, inline; an enum without payloads as an `int`, one with payloads as an object
-   of a VM type per variant whose first scalar is the variant's number
+   of a VM type per variant whose first scalar is the variant's number; a function value as an
+   object whose first scalar names its function and whose fields hold its captures, called by
+   `call.v`
    ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
 
 ## Deviations (skeleton, written with later milestones)
