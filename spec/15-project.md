@@ -131,9 +131,9 @@ the toolchain's own tests (`tests/Lyric5.Tests`, `LockTests`).
    and version, its repository and revision, the **commit** it was, and the **hash** of its
    package content (§2): SHA-256 over one line per file — the file's SHA-256 in hexadecimal, two
    spaces, its path with `/` between directories —, the lines sorted by path; written `h1:` and
-   base64. The toolchain writes the lock — only when what it holds changes, and none for a
-   program that reads nothing from git —, and it is checked in with the manifest. A
-   dependency's lock is not read.
+   base64 — and the source trees from git a build read (§5 rule 15). The toolchain writes the
+   lock — only when what it holds changes, and none for a program that reads nothing from git —,
+   and it is checked in with the manifest. A dependency's lock is not read.
 2. A build reads a revision the lock holds **at the commit the lock holds**: a branch stays where
    it was locked, and a tag moved in the repository too. Content that is not what the lock holds
    is refused, as is a locked commit the repository does not have (`LYR-PKG0008`). What the lock
@@ -201,8 +201,8 @@ C a package brings with it, compiled with the program and linked into it
 that call their native part or whose manifest a rule refuses; the toolchain's own tests
 (`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
 
-*(Rules 9–11, the findings `LYR-LNK…` of rule 12, rules 13–21, and what rules 7 and 8 say of a
-source tree are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
+*(Rules 9–11, the findings `LYR-LNK…` of rule 12, rules 17–21, and `bindings` in rule 14 are
+written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
 decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
 each comes with its cases.)*
 
@@ -279,22 +279,39 @@ each comes with its cases.)*
 13. **`[native.vendor]`** names **source trees**: C that the package does not hold and that is no
     package — no manifest, no modules. `raylib = { git = "https://…", tag = "5.5" }` is a revision
     of a repository, read as §2 rule 2 reads one (`branch`, `rev`, or none), cached and locked as
-    §2 rule 3 and §3 have it; `sqlite = { url = "https://…/sqlite.zip", hash = "sha256:…" }` is a
-    file loaded over `https`, a `.tar.gz`, `.tar.xz` or `.zip`, whose SHA-256 — 64 hexadecimal
-    digits — is its `hash`, unpacked with a single top directory left out. A name is a lowercase
-    letter, then letters, digits, `_` and `-`; another key or form is refused (`LYR-PKG0002`).
-14. A path of the native part — in `sources`, `include`, `archives` and `bindings` — that begins
-    with **`@name/`** lies in the tree `name`; a name `[native.vendor]` does not hold is refused
-    (`LYR-PKG0002`). A tree is the package's own: another package's `@name` is another tree, and
-    two packages that compile one tree define its symbols twice (rule 12).
+    §2 rule 3 and §3 have it, its content every file of the commit; `sqlite = { url =
+    "https://…/sqlite.zip", hash = "sha256:…" }` is a file loaded from `https://`, `http://` or
+    `file://` — its `hash` is its SHA-256, 64 hexadecimal digits, and makes the way it came
+    irrelevant —, a tar compressed with gzip or a zip, told by its bytes, not its name, and
+    unpacked with a single top directory left out. A name is a lowercase letter, then letters,
+    digits, `_` and `-`; another key or form is refused (`LYR-PKG0002`). *(A tar compressed with xz
+    is no tree in 5.0; such a tree comes from git.)*
+14. A path of the native part — in `sources`, `include`, `archives`, `dylibs` and `bindings` — that
+    begins with **`@name/`** lies in the tree `name`; a name `[native.vendor]` does not hold is
+    refused (`LYR-PKG0002`). A tree's file is no part of the package's content (§2 rule 4) and is
+    not refused for it; one that is not there is refused when the build needs it (`LYR-PKG0002`).
+    A tree is the package's own: another package's `@name` is another tree, and two packages that
+    compile one tree define its symbols twice (rule 12).
 15. A tree is read **only where a build needs it**: where a table that holds for the build's target
-    names it. What it reads is fetched into the user's cache — a URL's file once by its hash —,
-    under `--offline` not at all (`LYR-PKG0007`). A URL without `hash` is refused, the message giving
-    the hash of what it loaded (`LYR-PKG0002`); a file whose hash is another, or a revision whose
-    content is not what the lock holds, is refused (`LYR-PKG0008`); a revision the repository does
-    not have (`LYR-PKG0006`); one that cannot be reached is the environment's (`LYR-PKG0007`, exit
-    2). The lock holds a git tree as it holds a package read from git (§3 rule 1), its content's
-    hash over every file of the tree; `lyric update` and `--locked` read it as they read those.
+    names it. `lyric check`, `lyric metadata` and the editor read none. What a build reads is
+    fetched into the user's cache — a URL's file once by its hash, unpacked once —, under
+    `--offline` not at all (`LYR-PKG0007`). A URL without `hash` is refused, the message giving the
+    hash of what it loaded (`LYR-PKG0002`); a file whose hash is another is refused, the message
+    giving both (`LYR-PKG0008`), as is a revision whose content is not what the lock holds; a
+    revision the repository does not have (`LYR-PKG0006`); a repository or a URL that cannot be
+    reached is the environment's (`LYR-PKG0007`, exit 2).
+
+    The lock (§3) holds a **git tree** a build read as it holds a package read from git — its
+    repository, revision, commit and the hash of its content —, written `kind = "native"`, with
+    `of`, the name of the package whose tree it is, and no `version`; a URL's tree is held by its
+    `hash` in the manifest, not in the lock. A build adds the trees it resolved; reading the graph
+    keeps the trees a manifest of the graph still names so and drops the rest — a tree no build
+    has needed is not held. Under `--locked` a build that needs a tree the lock does not hold is
+    refused (`LYR-PKG0011`), as §3 rule 4 refuses a revision. **`lyric update`** reads the trees
+    the lock holds anew — those it names, or every one —, a branch at its head and a moved tag at
+    its commit; a tree's tag is not raised, as a tree has no version.
+16. A tree runs nothing: it is compiled, as the package's sources are, and no trust is asked for it
+    (§8 rule 6). What an archive does, its bytes say; the lock holds them.
 16. A tree runs nothing: it is compiled, as the package's sources are, and no trust is asked for it
     (§8 rule 6). What an archive does, its bytes say; the lock holds them.
 
@@ -357,7 +374,7 @@ each operating system from any host — compared byte for byte.
    its sources are: the lock holds their bytes, and an archive comes into the binary as it was
    built — what it carries of the machine that built it is its own. A library linked by name,
    through `pkgConfig` or from a directory a build script names (§8 rule 3.1) is the machine's:
-   the same bytes need the same system libraries. *(Source trees are written ahead of M14b.)*
+   the same bytes need the same system libraries.
 
 ## 7. Tests
 
