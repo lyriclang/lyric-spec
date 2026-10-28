@@ -403,7 +403,7 @@ The C toolchain, the runtime, the build script.
 
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
-| LYR-BLD0001 | E | [14-cli](14-cli.md) | the C compiler or the linker failed | Reported by `build`, `run`, `test` and `bench` when compiling the generated C, a package's native C or a build script's C, archiving the runtime, or linking the binary fails. The message carries the command and what the C compiler wrote; the exit code is 2. |
+| LYR-BLD0001 | E | [14-cli](14-cli.md) | the C compiler or the linker failed | Reported by `build`, `run`, `test` and `bench` when compiling the generated C, a package's native C or a build script's C, archiving the runtime, or linking the binary fails, or does not finish within five minutes and is stopped. The message carries the command and what the C compiler wrote, or the limit; the exit code is 2. |
 | LYR-BLD0002 | E | [15-project](15-project.md) | a package's build script did not build or did not succeed | Reported when a package's `build.lyr` does not compile, ends with an exit code other than 0, or does not end within 10 minutes. The package is not built; for a script that ran, what it wrote follows the message. |
 | LYR-BLD0003 | W | [15-project](15-project.md) | a warning a build script reported | Reported when a package's `build.lyr` calls `std.build.warn`: the build shows the script's message as a warning, prefixed with the package's name. |
 | LYR-BLD0005 | E | [15-project](15-project.md) | a module cannot be made from a C header | Reported when a header a package's `bindings` names does not compile — with what the C compiler said — or when the C compiler writes no syntax tree of it, which only zig cc and clang do. Nothing is built; the exit code is 1. |
@@ -455,7 +455,7 @@ The toolchain's own failure: a bug to report, never the program's fault.
 
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
-| LYR-ICE0001 | E | [16-diagnostics](16-diagnostics.md) | the toolchain crashed | `lyric5` met an exception it did not expect. It prints the exception, where it was in the program if it knows, and its own stack trace, and exits with 101. |
+| LYR-ICE0001 | E | [16-diagnostics](16-diagnostics.md) | the toolchain crashed | `lyric5` met an exception it did not expect. It prints the exception, where it was in the program if it knows, and its own stack trace, writes the same with the version, the command and the machine to a report under `out/` (`lyric5-ice-<time>-<pid>.txt`), and exits with 101. |
 | LYR-ICE0002 | E | [16-diagnostics](16-diagnostics.md) | a construct the lowering cannot translate | The checker accepted a construct that the lowering to IR cannot translate. The diagnostic carries the note that it is the compiler's fault. |
 
 ## A.13 RT — Runtime panics
