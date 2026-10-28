@@ -44,8 +44,10 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    scalar and a string print as themselves; `{x}` and `println(x)` print any other value in its
    Debug form — `P { x = 1, name = "a" }`, `E.B(3)`, `E.R { w = 4 }`, `E.A`, `(1, "a")`, an
    optional as its value or `null`, a string inside it quoted and a `char` in single quotes, a
-   class's fields as a struct's. Until the descriptors (S3i) an interface value prints as
-   `<I>`, its interface's name, and a function value as `<fn>`.
+   class's fields as a struct's, a generic type's under its declared name, `Pair { a = 1 }`.
+   An interface value and a value of a type parameter print the form of the value they hold —
+   through a slot every type's table fills (S3i) —, alone a string as itself and inside another
+   value quoted, as for any value; a function value prints as `<fn>`.
 10. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;

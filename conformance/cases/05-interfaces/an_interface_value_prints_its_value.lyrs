@@ -1,0 +1,31 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | Circle { r = 2 }
+//! | 7
+//! | "hi"
+//! | Pair { a = Circle { r = 1 } }
+//! | raw
+//! | Pair { a = "x" }
+// §5 rule 9: an interface value and a type parameter's value print the form of what they
+// hold; a generic type under its declared name.
+interface Shape {
+    fn area(): int
+}
+struct Circle :: Shape {
+    r: int
+
+    fn area(): int = this.r
+}
+struct Pair<T> {
+    a: T
+}
+fn shape(): Shape = Circle { r = 2 }
+fn hold(x: Any): Any = x
+fn show<T>(x: T): string = f"{x}"
+println(shape())
+println(hold(7))
+println(hold("hi"))
+println(hold(Pair { a = Circle { r = 1 } }))
+println(show("raw"))
+println(Pair { a = "x" })
