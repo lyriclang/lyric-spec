@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 4 0
+//! since: 5.0.0
+// 13 §3 rule 3: a string crosses into '?CStr' as into 'CStr'; null crosses as C's null.
+import std.io { println };
+import std.ffi { CStr };
+
+extern "C" fn text_len(s: ?CStr): uint;
+
+fn main(): void {
+    println(f"{text_len("abcd")} {text_len(null)}");
+}

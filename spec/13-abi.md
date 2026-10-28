@@ -262,8 +262,9 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
 2. **`CStr`** is C's `const char *`: bytes up to a NUL, which C owns. Its `length()` counts the
    bytes before the NUL; its `toString()` copies them into a `string`, and throws `Utf8Error`
    where they are no well-formed UTF-8. **`?CStr`** may be null, as `?Ptr<T>`.
-3. A `string` argument where a C function's parameter is `CStr` crosses as the string's bytes,
-   with the NUL every string holds (§1.2), without a copy. They are C's for the call: C does not
+3. A `string` argument where a C function's parameter is `CStr` — or `?CStr`, which a string
+   never leaves null — crosses as the string's bytes, with the NUL every string holds (§1.2),
+   without a copy. They are C's for the call: C does not
    keep the address past its return.
 4. A struct with **`@Layout(C)`** is laid out as C lays out a struct of the same fields in the same
    order on the target platform, and crosses by value, as a parameter and as a result. Its fields

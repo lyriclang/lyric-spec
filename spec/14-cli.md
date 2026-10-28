@@ -105,14 +105,14 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 | 101 | the toolchain itself failed (`LYR-ICE0001`) |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
 
-## 2. `clean`, `metadata`, `add` and `remove`
+## 2. `clean`, `metadata`, `add`, `remove` and `bindgen`
 
 The verbs about a package besides building it — the package of the nearest `lyric.toml` at or
 above the current directory, or above `-C <dir>`; without one there is nothing to do
 (`LYR-CLI0004`).
 
 **Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `OutTests`,
-`ManifestEditTests`).
+`ManifestEditTests`, `BindingsTests`).
 
 1. **`lyric clean`** removes the package's `out/`, once a build that writes into it is done
    (§1.2).
@@ -149,6 +149,12 @@ above the current directory, or above `-C <dir>`; without one there is nothing t
 5. A dependency written otherwise than as one line — a table of its own, dotted keys — is the
    person's to edit: `add` and `remove` refuse it (`LYR-CLI0008`). Both take `-C` and
    `--offline`.
+6. **`lyric bindgen <header>`** writes to standard output the module a `bindings` entry makes of
+   the header ([15 §5.4](15-project.md#54-bindings)) — for the host, or the target `--target`
+   names —, to be kept under `src/` instead of made by every build. Within a package the header is
+   compiled with the package's `include` and `defines` for that target, and a path `@name/…` names
+   a file of its source tree; outside a package, with none. A header that does not compile is
+   refused as the build refuses it (`LYR-BLD0005`).
 
 ## 3. `test`
 
@@ -264,6 +270,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `update` | `[<package>…]` | `-C <dir>`, `--offline` | — | — |
 | `add` | `<name>` | `--path <dir>`, `--git <url>`, `--tag <tag>`, `--branch <branch>`, `--rev <commit>`, `--vendor`, `--url <url>`, `-C <dir>`, `--offline` | — | — |
 | `remove` | `<name>` | `--vendor`, `-C <dir>`, `--offline` | — | — |
+| `bindgen` | `<header>` | `--target <triple>`, `-C <dir>`, `--offline` | — | — |
 | `clean` | — | `-C <dir>` | — | — |
 | `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
 | `toolchain` | `<install|list|default|remove|update> [<version>]` | `--available` | — | — |
