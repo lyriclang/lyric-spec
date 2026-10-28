@@ -264,7 +264,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
 | `lsp` | — | `--stdio` | — | — |
 | `dap` | — | — | — | — |
-| `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | — | — |
+| `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | yes | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
 | `update` | `[<package>…]` | `-C <dir>`, `--offline` | — | — |
@@ -273,7 +273,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `bindgen` | `<header>` | `--target <triple>`, `-C <dir>`, `--offline` | — | — |
 | `clean` | — | `-C <dir>` | — | — |
 | `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
-| `toolchain` | `<install|list|default|remove|update> [<version>]` | `--available` | — | — |
+| `toolchain` | `<install|list|default|remove|update> [<version>|zig]` | `--available` | — | — |
 | `explain` | `<code>` | — | — | — |
 | `completions` | `<bash|zsh|fish|pwsh>` | — | — | — |
 | `version` | — | — | — | — |
@@ -286,13 +286,15 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 **Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `VerbTableTests`).
 
 1. **`lyric env`** says every setting a build of the package here reads — the toolchain, the
-   standard library, the manifest, the C compiler, the cache, the profile and each of its fields,
-   the target, and each `LYRIC_*` variable that is set — with its value and **where it comes
-   from**: `command line`, the variable's name (`LYRIC_PROFILE`), `lyric.toml`, or `default`. The
-   command line is over the environment, the environment over the manifest, the manifest over the
-   default.
+   standard library, the manifest, the C compiler and **zig** apart from it, the cache, the profile
+   and each of its fields, the target, **each lint's level** (`lint.<name>`, and `lint.warnDeps`),
+   and each `LYRIC_*` variable that is set — with its value and **where it comes from**:
+   `command line`, the variable's name (`LYRIC_PROFILE`), `lyric.toml`, or `default`; the C
+   compiler and zig also `installed` (the zig of §13 rule 12) or `PATH`. The command line is over
+   the environment, the environment over the manifest, the manifest over the default.
 2. It takes the options that change a setting — `-C`, `--profile`, the profile's fields,
-   `--target` — so that it says what the build with them would read. **`--json`** writes one
+   `--target`, the lint options `-A`, `-W`, `-D` and `--warn-deps` — so that it says what the
+   build with them would read. **`--json`** writes one
    document instead: `{"version": 1, "settings": [{"name", "value", "origin"}, …]}`.
 
 ## 7. `new`, `init` and `completions`
@@ -544,6 +546,19 @@ a mirror served on the machine): a conformance case fetches nothing.
     handed on, and only the package the command runs in is read — a dependency's pin is the
     build's to check.
 
+12. **`lyric toolchain install zig`** installs the zig the toolchain is built and tested with — its
+    version is the toolchain's — under the home as `zig/<version>/`, where the search for a C
+    compiler finds it after `LYRIC_CC` and before the `PATH`. The archive's name, size and SHA-256
+    come from zig's index on its download page; the archive comes from zig's community mirrors in
+    a shuffled order, each asked with `?source=lyric`, and from the download page last. It is
+    checked with zig's minisign key and against the file its signature's trusted comment names; a
+    source whose archive does not hold is passed over for the next, and where none holds, nothing
+    is installed (`LYR-CLI0024`). An index that cannot be had, or that has no archive of the
+    version for this machine, is `LYR-CLI0023`. **`LYRIC_ZIG_MIRROR`** names a server in place of
+    the download page — its index, its list of mirrors and the archives —, and
+    **`LYRIC_ZIG_MIRROR_KEY`** the key it signs with; set without the server, it is refused.
+    `lyric toolchain list` names the zig installed.
+
 ### 13.1 The archive, the index and the signature *(informative)*
 
 - **The archive** of a toolchain is one per Tier 1 target: `.zip` for Windows, `.tar.gz` for the
@@ -559,3 +574,8 @@ a mirror served on the machine): a conformance case fetches nothing.
 - **The signature** is minisign's, beside the file as `<file>.minisig`: Ed25519 over the file's
   BLAKE2b-512 hash, and over that signature with its trusted comment; minisign's legacy form,
   which signs the file itself, is refused.
+- **zig's archives** are a `.tar.xz` — a `.zip` for Windows — holding one directory with `zig` and
+  its `lib`; zig's index is `index.json` on its download page (`{"<version>": {"<arch>-<os>":
+  {"tarball", "shasum", "size"}}}`), the archives lie under `<page>/<version>/`, its community
+  mirrors are listed in `community-mirrors.txt` beside the index, one address a line, and serve
+  an archive as `<mirror>/<file>`.
