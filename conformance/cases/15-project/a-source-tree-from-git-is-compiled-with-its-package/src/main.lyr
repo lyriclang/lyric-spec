@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 15 §5 rules 13–15: a tree from git at the revision it names — no manifest in it —, its sources
+// compiled with the package's, its include directory found by the package's own source.
+import std.io { println };
+
+extern "C" fn twice(x: int): int;
+
+fn main(): void {
+    println(f"{twice(21)}");
+}

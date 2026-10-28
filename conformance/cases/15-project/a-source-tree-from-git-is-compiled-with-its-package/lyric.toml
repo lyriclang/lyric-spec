@@ -1,0 +1,10 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native.vendor]
+clib = { git = "{repos}/clib", tag = "v1.0.0" }
+
+[native]
+sources = ["native/*.c", "@clib/src/*.c"]
+include = ["@clib/include"]

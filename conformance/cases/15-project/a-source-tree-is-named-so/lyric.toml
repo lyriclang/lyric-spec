@@ -1,0 +1,6 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native.vendor]
+Raylib = { git = "https://example.org/raylib", tag = "5.5" }

@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §5 rule 14: a path @name/… names a tree [native.vendor] holds.
+fn main(): void {
+}

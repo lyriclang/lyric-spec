@@ -138,10 +138,14 @@ above the current directory, or above `-C <dir>`; without one there is nothing t
    names it, or after the table's last, or in a table it begins at the end. Every other line of
    the manifest stays as it was. The graph is then read with the dependency
    ([15 §2](15-project.md)); a graph that refuses it leaves the manifest as it was, and the
-   refusal is the graph's.
+   refusal is the graph's. With **`--vendor`** the line names a source tree and goes into
+   `[native.vendor]` instead ([15 §5.3](15-project.md#53-source-trees)): `--git <url>` and a
+   revision as above, read once to show the revision is there — the lock gets it when a build
+   needs it —, or **`--url <url>`**, the file loaded and its SHA-256 written as the line's
+   `hash`. `--path` names no tree, and `--url` goes with `--vendor` alone (`LYR-CLI0003`).
 4. **`lyric remove <name>`** takes the dependency's line out of `[dependencies]`, and the graph —
-   the lock with it ([15 §3](15-project.md)) — is read again. A name the table does not hold is
-   refused (`LYR-CLI0003`).
+   the lock with it ([15 §3](15-project.md)) — is read again; with `--vendor`, the tree's line
+   out of `[native.vendor]`. A name the table does not hold is refused (`LYR-CLI0003`).
 5. A dependency written otherwise than as one line — a table of its own, dotted keys — is the
    person's to edit: `add` and `remove` refuse it (`LYR-CLI0008`). Both take `-C` and
    `--offline`.
@@ -258,8 +262,8 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
 | `init` | — | `--lib`, `--name <name>`, `--[no-]git`, `-C <dir>` | — | — |
 | `update` | `[<package>…]` | `-C <dir>`, `--offline` | — | — |
-| `add` | `<name>` | `--path <dir>`, `--git <url>`, `--tag <tag>`, `--branch <branch>`, `--rev <commit>`, `-C <dir>`, `--offline` | — | — |
-| `remove` | `<name>` | `-C <dir>`, `--offline` | — | — |
+| `add` | `<name>` | `--path <dir>`, `--git <url>`, `--tag <tag>`, `--branch <branch>`, `--rev <commit>`, `--vendor`, `--url <url>`, `-C <dir>`, `--offline` | — | — |
+| `remove` | `<name>` | `--vendor`, `-C <dir>`, `--offline` | — | — |
 | `clean` | — | `-C <dir>` | — | — |
 | `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
 | `explain` | `<code>` | — | — | — |
