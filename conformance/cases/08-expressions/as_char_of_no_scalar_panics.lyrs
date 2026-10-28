@@ -1,0 +1,6 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0009
+// §8 rule 2 (Lyric 5 §8): an int as char is a Unicode scalar value, or the script panics.
+let code = 55296
+println(code as char)

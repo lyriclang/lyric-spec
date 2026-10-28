@@ -1,0 +1,6 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | Hello, world!
+// The first script.
+println("Hello, world!")

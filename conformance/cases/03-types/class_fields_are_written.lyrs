@@ -1,5 +1,7 @@
-//! check
+//! run
 //! since: 1.0.0
+//! stdout:
+//! | 2
 // §3 rule 3: a class is the mutable reference; its methods write its var fields.
 class Counter {
     var count: int = 0

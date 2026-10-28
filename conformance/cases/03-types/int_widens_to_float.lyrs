@@ -1,5 +1,7 @@
-//! check
+//! run
 //! since: 1.0.0
+//! stdout:
+//! | 3.5
 // §3 rule 2: an int widens where a float is taken.
 let x: float = 1
 fn half(v: float) = v / 2
