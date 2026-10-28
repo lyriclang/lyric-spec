@@ -1,0 +1,31 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+// §5 rule 11 (Lyric 5 §8 rule 5): a constraint fixes `Item`; inside, it is an `int`.
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+class Counter :: [Iterator] {
+    var n: int = 0
+    type Item = int
+
+    fn next(): ?int {
+        if (this.n >= 3) {
+            return null
+        }
+        this.n += 1
+        return this.n
+    }
+}
+fn sum<I :: [Iterator<Item = int>]>(it: I): int {
+    var total = 0
+    var x = it.next()
+    while (x != null) {
+        total += x
+        x = it.next()
+    }
+    return total
+}
+println(sum(Counter { }))

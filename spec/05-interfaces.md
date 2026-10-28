@@ -70,8 +70,10 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    differ by type, so each argument gets a copy of its own. A bound, `type Iter :: [Iterator]`,
    is met by every answer (`LYS-SEM0160`); through `T.Iter` the associated type has the bounds'
    members and satisfies what they are (`LYS-SEM0027` for a member none gives), and a path goes
-   on through them, `A.Iter.Item`. Fixations (`Iterator<Item = int>`) and the value form come
-   later.
+   on through them, `A.Iter.Item`. A constraint may fix one (§8 rule 5),
+   `T :: [Iterator<Item = int>]`: inside, `T.Item` is that type wherever it stands; an argument
+   whose answer is another is refused (`LYS-SEM0028`), a name the interface does not declare too
+   (`LYS-SEM0128`). The value form (`Iterator<Item = int>` as a value's type) comes later.
 12. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
