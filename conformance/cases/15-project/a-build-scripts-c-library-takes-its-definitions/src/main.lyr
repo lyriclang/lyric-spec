@@ -2,7 +2,7 @@
 //! stdout:
 //! | 42
 //! since: 5.0.0
-// 15 §8 rule 3: compileC's source is compiled with cFlags's flags and linked into the program.
+// 15 §8 rule 3.4: a build script's C library is compiled with its definitions and linked into the program.
 import std.io { println };
 
 extern "C" fn twice_of(n: int): int;

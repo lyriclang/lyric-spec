@@ -1,6 +1,0 @@
-import std.build;
-
-fn main(): void {
-    build.cFlags("-DTWICE=2");
-    build.compileC("native/twice.c");
-}

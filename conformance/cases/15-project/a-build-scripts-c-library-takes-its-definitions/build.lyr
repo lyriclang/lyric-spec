@@ -1,0 +1,5 @@
+import std.build;
+
+fn main(): void {
+    build.cLibrary("twice").sources("native/twice.c").define("TWICE", "2").compile();
+}
