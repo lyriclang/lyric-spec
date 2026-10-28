@@ -203,7 +203,7 @@ C a package brings with it, compiled with the program and linked into it
 that call their native part or whose manifest a rule refuses; the toolchain's own tests
 (`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
 
-*(Rules 9–11 and the findings `LYR-LNK…` of rule 12 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
+*(The findings `LYR-LNK…` of rule 12 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
 decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
 each comes with its cases.)*
 
@@ -258,15 +258,18 @@ each comes with its cases.)*
 9. **`frameworks = ["Cocoa"]`** are macOS frameworks, linked as `-framework Cocoa`: a key of
    `[native.macos]` and of the macOS triples' tables only (`LYR-PKG0003` elsewhere).
 10. **`pkgConfig = ["sdl2"]`** names libraries of the system as `pkg-config` knows them: a build for
-    the host asks `pkg-config --cflags --libs` and gives what it says about include directories and
-    definitions to the package's sources, and the rest to the link. `pkg-config` missing, or a
-    name it does not know, stops the build (`LYR-BLD0004`, exit 2).
+    the host asks `pkg-config --cflags --libs` — or the program the environment's `PKG_CONFIG`
+    names — and gives what it says about include directories and definitions to the package's
+    sources and to its bindings (§5.4), its directories and libraries to the link as `libs` are
+    linked, its frameworks as rule 9's, and every other flag to the link as it is. `pkg-config`
+    missing, or a name it does not know, stops the build (`LYR-BLD0004`, exit 2).
 11. **What only the host has**: a framework comes from the macOS SDK and a name of `pkgConfig` from
     the host's system, so a build for another target that needs one is refused before it compiles
     (`LYR-BLD0004`, exit 2, naming the package and the key). *(Informative: with the toolchain's C
     compiler a build for Windows links Windows' system libraries from any host; a build for Linux
     links a library of the system beside libc only on a Linux host, and one for macOS a framework
-    only on a macOS host.)*
+    only on the Mac it is for: zig finds the SDK's frameworks for the Mac it runs on, and for no
+    target named — another Mac's included.)*
 12. The link takes, in this order: the program's objects and the native parts' — the packages
     **before the packages they depend on**, the root's first —, their `archives` and `dylibs` in that order, the
     libraries by name and from `pkgConfig`, then the frameworks; each archive, library and framework
@@ -416,9 +419,9 @@ each operating system from any host — compared byte for byte.
    on the host, with the package's root as its working directory, whatever the build's target.
 3. **`std.build`** is its view of the build: `target()` and `profile()`, the build's; `outDir()`,
    the package's `out/`; `genDir()`; `rerunIfChanged(paths…)`, `rerunIfEnvChanged(names…)`,
-   `linkLib(name)`, `linkSearch(dir)`, `cFlags(flags…)`, `compileC(sources…)`,
-   `besideBinary(paths…)` — paths from the package's root, or absolute —, and `warn(message)`,
-   which the build shows (`LYR-BLD0003`). Outside a build script they panic.
+   `linkLib(name)`, `linkSearch(dir)`, `besideBinary(paths…)` — paths from the package's root, or
+   absolute —, and `warn(message)`, which the build shows (`LYR-BLD0003`); and those of rules
+   3.3–3.6. Outside a build script they panic.
    1. **`linkSearch(dir)`** names a directory the link searches for the libraries of `linkLib`
       and of `[native]`'s `libs` (§5), before the linker's own and in the order named — the
       scripts of dependencies by their names, the root's last. For a Windows target a library `X`
@@ -435,17 +438,26 @@ each operating system from any host — compared byte for byte.
       `$ORIGIN`, a Mach-O binary by `@executable_path`; a Windows binary does so by itself. A file
       that is not there when the script has ended, and two files of one name — counting the
       `dylibs` of §5 rule 8 —, stop the build (`LYR-BLD0006`, exit 1).
-   *(Written ahead of M14b, replacing `cFlags` and `compileC` when it lands:)* `target()` is a
-   **`Target`** — its `triple`, its `os` (`Os.linux`, `Os.windows`, `Os.macos`), its `arch`
-   (`Arch.x86_64`, `Arch.aarch64`) and whether it `isHost` —; `vendorDir(name)` is the directory of
-   a source tree (§5.3), read where the script asks for it; **`cLibrary(name)`** is a C library the
-   script compiles with the program — its `sources(…)`, `include(…)`, `define(name)` and
-   `define(name, value)`, and `flags(…)`, the C compiler's own, its alone — and `compile()` adds it:
-   its sources see the package's `include`, `<lyric.h>` and the headers §5 rule 6 names; paths are
-   the package's or a tree's (`@name/…`). `linkLib(name)`, `linkArchive(path)`,
-   `linkFramework(name)` and `pkgConfig(name)` are §5.2's keys, with their rules; `cEnv()` is the
-   environment — `CC`, `AR`, `CFLAGS` — under which another build system compiles C for the target
-   with the toolchain's C compiler.
+   3. **`target()`** is a **`BuildTarget`** — its `triple`, its `os` and `arch` as the prelude's
+      `Platform` and `Arch` name them (`.Linux`, `.Windows`, `.MacOS`; `.X86_64`, `.Aarch64`), and
+      whether it `isHost`, the machine the script runs on.
+   4. **`cLibrary(name)`** is a C library the script compiles with the program — its
+      `sources(…)`, patterns as `[native]`'s `sources`, `include(…)`, `define(name)` and
+      `define(name, value)`, and `flags(…)`, the C compiler's own — and `compile()` adds it. Its
+      sources see its own `include` first, then what the package's sources see (§5 rule 6); its
+      definitions and flags are its own, no other source's. Its paths are the package's or a
+      tree's (`@name/…`); another is refused (`LYR-BLD0002`).
+   5. `linkLib(name)`, **`linkArchive(path)`**, **`linkFramework(name)`** and **`pkgConfig(name)`**
+      add to the package's native part what `libs`, `archives`, `frameworks` and `pkgConfig` add
+      (§5), with their rules; an archive the script names — under `out/`, where it made it, or
+      absolute — is the script's, not of the package's content (§5 rule 7).
+   6. **`vendorDir(name)`** is the directory of the package's source tree `name` (§5.3), read when
+      the script asks for it: the script stops, the build reads the tree, and the script runs
+      again from its start with the tree there. A name `[native.vendor]` does not hold is refused
+      (`LYR-BLD0002`). **`cEnv()`** is the environment — `CC`, `AR`, `CFLAGS` — under which another
+      build system compiles C for the target with the toolchain's C compiler: `CC` and `AR` run the
+      toolchain's compiler for the target, as the build's own C is compiled, and `CFLAGS` holds the
+      profile's optimization.
 4. **`gen/`**, which the toolchain makes before the script runs, is a module space of the
    package: `gen/schema.lyr` in `app` is `app.gen.schema`, as `tests/` is §7's. It is no part of
    the package's content (§2).

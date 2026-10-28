@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 17
+//! since: 5.0.0
+// 15 §8 rule 3.4: a build script's C library, with its own include directory and definitions.
+import std.io { println };
+
+extern "C" fn scaled(n: int): int;
+
+fn main(): void {
+    println(f"{scaled(2)}");
+}
