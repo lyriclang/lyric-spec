@@ -2,7 +2,7 @@
 
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
-**Status.** The core (S2), the optionals and `var x = null` (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core (S2), the optionals, `var x = null` and tuples (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -22,7 +22,7 @@
    codes start at 0900 (§16). `LYS-NYI0001` names a form a later milestone of the
    plan builds; it leaves the toolchain before 1.0.
 
-## Written (S3, optionals and `var x = null`)
+## Written (S3)
 
 6. **Optionals.** Lyric 5 §3.1–3.3 apply as written: `?T` and `??T`, `null`, `!` (on null the
    panic `LYS-RT0004`), `??`, `?.`, `??=`, `== null`, narrowing after a test and after a branch
@@ -42,8 +42,17 @@
    the declaration is refused with the type to write (`LYS-SEM0010`); `let x = null` is refused
    so too, as in Lyric 5. Lyric 5 infers no binding from a later use ([03 Leer](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md));
    the empty literals `[]` and `[:]` take the same way with S7.
-9. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
-   other `?T` as the slots of `T` and one presence slot after them
+9. **Tuples.** Lyric 5 §6 rules 1–5 apply: `(A, B)` from two elements (`(1,)` is refused,
+   `LYS-PAR0010`); labels `(x: A, y: B)`, no part of the type and seen through the type they
+   were written on; `t.0` and `t.x` (`LYS-SEM0012` for an element the tuple lacks); elements
+   never written (`LYS-SEM0019`); `let (a, b) = t` and `var (a, b) = t`, nested and with `_`
+   (`LYS-SEM0058` where the pattern does not fit, `LYS-SEM0097` for a name twice); a literal
+   takes the types an expected tuple gives its elements, and an element that gives no type of
+   its own where none is expected is refused (`LYS-SEM0010`). Rule 6 — equality, hashing,
+   display — comes with the synthesis (S3h), `for ((a, b) in …)` with the collections (S7).
+10. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+   other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
+   slots in order, inline
    ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
 
 ## Deviations (skeleton, written with later milestones)

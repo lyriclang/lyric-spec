@@ -1,0 +1,5 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0010
+// §3 rule 9 (Lyric 5 §6 rule 1): a tuple has two elements or more; `(1,)` is refused.
+let t = (1,)

@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 12
+//! | 7
+// §3 rule 9 (Lyric 5 §6 rule 4): `let (a, b) = t` binds the elements, nested and with `_`; a
+// `var` pattern binds variables.
+fn d(): int {
+    let (a, (b, _)) = (1, (2, 3))
+    return a * 10 + b
+}
+var (x, y) = (1, 2)
+x = 5
+println(d())
+println(x + y)
