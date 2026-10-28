@@ -2,9 +2,16 @@
 
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
-**Status.** Skeleton (S0). The rules are written with the milestone that builds them; until then the design documents decide.
+**Status.** The core written (S2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
-## Deviations
+## Written (S2, the core)
+
+1. **The prelude's output** ([07 I8](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)): `print(x)` and
+   `println(x)` write one value of a core type — `int`, `float`, `bool`, `char`, `string` — as
+   text, `println` with a line end; `println()` writes the line end alone. They need no import.
+   Other values follow with `Display`.
+
+## Deviations (skeleton, written with later milestones)
 
 - Lyric 5's API adapted to Lyric-Script's types, plus the batteries `cli`, `csv`, `log`, `fs.glob`, and `reflect`; no `sync`, `thread`, `ffi`, `meta`, `syntax`, `build` ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
 

@@ -1,0 +1,7 @@
+---
+[dependencies]
+println("hello")
+
+//! check
+//! since: 1.0.0
+//! error: LYS-LEX0100

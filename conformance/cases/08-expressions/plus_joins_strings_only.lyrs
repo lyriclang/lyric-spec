@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0003
+// §8 rule 1: + joins two strings and nothing else to a string; an f-string does.
+let n = 3
+println("n = " + n)

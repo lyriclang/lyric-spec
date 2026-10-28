@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0001
+// §3 rule 4: a block body without a written type is void; it returns no value.
+fn answer() {
+    return 42
+}
+answer()

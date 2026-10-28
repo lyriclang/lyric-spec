@@ -1,0 +1,6 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0001
+// Lyric 5 §8 (spec §16 D-codes): an integer division by zero is the script's panic.
+fn ratio(a: int, b: int) = a / b
+println(ratio(1, 0))

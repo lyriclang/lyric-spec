@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0053
+// §2 D2: a visibility word stands before a declaration only.
+pub let answer = 42
+println(answer)

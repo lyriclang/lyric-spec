@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0029
+// §2 D3: two fields on one line need a `,` between them.
+struct Point {
+    x: int y: int
+}
+let p = Point { x = 1, y = 2 }
+println(p.x)

@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+// §1 D1 rule 2: `>` closes type arguments, so the line end after it ends the statement.
+type Ints = List<int>
+let count = 2
+println(count)

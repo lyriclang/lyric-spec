@@ -1,0 +1,10 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0019
+// §3 rule 3: a struct's fields are never written.
+struct Point {
+    x: int
+}
+let p = Point { x = 1 }
+p.x = 2
+println(p.x)

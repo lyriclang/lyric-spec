@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3 3.5 xy
+// §8 rule 1: mixed arithmetic widens; int / int stays integer division.
+let a = 7 / 2
+let b = 7 / 2.0
+println(f"{a} {b} {"x" + "y"}")

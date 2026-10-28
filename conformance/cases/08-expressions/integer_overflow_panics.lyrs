@@ -1,0 +1,7 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0002
+// Lyric 5 §8: int arithmetic is checked; an overflow is the script's panic, +% wraps.
+let big = 9223372036854775807
+println(big +% 1)
+println(big + 1)

@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0006
+// §8 rule 2: as converts between int, float and char alone.
+let flag = true
+println(flag as int)

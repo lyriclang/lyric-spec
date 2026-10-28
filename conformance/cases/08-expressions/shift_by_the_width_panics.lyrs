@@ -1,0 +1,6 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0002
+// Lyric 5 §8: a shift by the width of int or more panics; nothing is masked.
+let n = 64
+println(1 << n)

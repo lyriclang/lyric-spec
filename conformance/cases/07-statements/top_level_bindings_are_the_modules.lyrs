@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 5
+// §7 rule 1: the script's outermost bindings are the module's; every function sees them.
+var total = 0
+fn add(n: int) {
+    total += n
+}
+add(2)
+add(3)
+println(total)

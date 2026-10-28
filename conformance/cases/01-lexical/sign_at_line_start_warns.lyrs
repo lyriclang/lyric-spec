@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0022
+//! warning: LYS-LEX0101
+// §1 D1 rule 4: `-` at the start of a line starts a statement of its own, with a warning; the
+// statement then computes a value and throws it away (Lyric 5 §7).
+let price = 10
+let discount = 3
+let total = price
+    - discount
+println(total)

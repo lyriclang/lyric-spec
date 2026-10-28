@@ -1,0 +1,17 @@
+//! check
+//! since: 1.0.0
+// §1 D1 rule 3: a line that starts with `.`, `else` or an operator only binary goes on.
+struct Box {
+    size: int
+}
+let box = Box { size = 4 }
+let size = box
+    .size
+let big = size
+    > 3
+if (big) {
+    println(size)
+}
+else {
+    println(0)
+}

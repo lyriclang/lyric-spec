@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0020
+//! error: LYS-PAR0031
+// §2 D1: a fault gives up its statement, and the parse goes on: both faults are reported.
+let = 1
+fn half(x int) = x / 2
+println(half(4))
