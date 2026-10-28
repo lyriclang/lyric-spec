@@ -1,0 +1,10 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0028
+// §3 rule 12 (Lyric 5 §9.1 rule 3): an argument its parameter's constraints do not admit is
+// refused.
+interface Named {
+    fn name(): string
+}
+fn label<T :: [Named]>(x: T): string = x.name()
+let s = label(3.5)

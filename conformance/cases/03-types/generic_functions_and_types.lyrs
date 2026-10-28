@@ -1,0 +1,59 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 42
+//! | 12
+//! | q
+//! | z! int!
+//! | 6
+//! | a int
+//! | 6
+//! | 1040
+// §3 rule 12 (Lyric 5 §9): generic functions with inference — a lambda's after the other
+// arguments — and constraints; generic structs, classes and enums with their methods.
+interface Named {
+    fn name(): string
+}
+struct P :: [Named] {
+    n: string
+    fn name(): string = this.n
+}
+extend int :: [Named] {
+    fn name(): string = "int"
+}
+fn ident<T>(x: T): T = x
+fn twice<T>(x: T, f: fn(T) -> T): T = f(f(x))
+fn pick<T>(c: bool, a: T, b: T): T = if (c) a else b
+fn label<T :: [Named]>(x: T): string = x.name() + "!"
+fn mapOpt<T, U>(x: ?T, f: fn(T) -> U): ?U = if (x != null) f(x) else null
+struct Pair<A, B> {
+    first: A
+    second: B
+    fn swap(): Pair<B, A> = Pair { first = this.second, second = this.first }
+}
+class Box<T> {
+    var v: T
+    fn get(): T = this.v
+    fn put(x: T): void {
+        this.v = x
+    }
+}
+enum Opt<T> {
+    Some(T), None
+    fn or(d: T): T = match (this) {
+        .Some(x) => x,
+        .None => d,
+    }
+}
+println(ident(41) + 1)
+println(twice(3) { it * 2 })
+println(pick(false, P { n = "p" }, P { n = "q" }).n)
+println(label(P { n = "z" }) + " " + label(7))
+println(mapOpt(5) { it + 1 } ?? 0)
+let q = Pair { first = 1, second = "a" }.swap()
+println(q.first + " " + q.second.name())
+let b = Box { v = 5 }
+b.put(b.get() + 1)
+println(b.get())
+let none: Opt<int> = .None
+println(none.or(1000) + Opt.Some(40).or(0))

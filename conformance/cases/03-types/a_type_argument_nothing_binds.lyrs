@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0060
+// §3 rule 12 (Lyric 5 §9.2 rule 3): a type parameter no argument and no position binds is
+// refused.
+fn none<T>(): ?T = null
+let z = none()
