@@ -1,0 +1,6 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native]
+bindings = [{ header = "native/geo.h", module = "geo" }]

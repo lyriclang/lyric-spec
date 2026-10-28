@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-BLD0005
+//! since: 5.0.0
+// 15 §5 rule 20: a header that does not compile stops the build, with what the C compiler said.
+fn main(): void {
+}

@@ -203,8 +203,7 @@ C a package brings with it, compiled with the program and linked into it
 that call their native part or whose manifest a rule refuses; the toolchain's own tests
 (`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
 
-*(Rules 9–11, the findings `LYR-LNK…` of rule 12, rules 17–21, and `bindings` in rule 14 are
-written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
+*(Rules 9–11 and the findings `LYR-LNK…` of rule 12 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
 decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
 each comes with its cases.)*
 
@@ -295,7 +294,8 @@ each comes with its cases.)*
     A tree is the package's own: another package's `@name` is another tree, and two packages that
     compile one tree define its symbols twice (rule 12).
 15. A tree is read **only where a build needs it**: where a table that holds for the build's target
-    names it. `lyric check`, `lyric metadata` and the editor read none. What a build reads is
+    names it. `lyric check` reads only those its bindings need (§5.4); `lyric metadata` and the
+    editor read none. What a build reads is
     fetched into the user's cache — a URL's file once by its hash, unpacked once —, under
     `--offline` not at all (`LYR-PKG0007`). A URL without `hash` is refused, the message giving the
     hash of what it loaded (`LYR-PKG0002`); a file whose hash is another is refused, the message
@@ -324,7 +324,7 @@ each comes with its cases.)*
     modules have, each a lowercase letter, then letters, digits and `_` (`LYR-PKG0002`). Its
     declarations are `pub`, its names C's. A module of that path under `src/`, `gen/` or `tests/`
     is refused (`LYR-RES0016`). The packages that declare the package as a dependency import it as
-    any of its modules.
+    any of its modules. `bindings` is a key of every table of rule 4, layered as the others.
 18. The module is made **for the build's target**, from what the C compiler reads of the header
     with the package's `include` and `defines` — C's types differ between targets. It holds the
     declarations of the header and of the headers beside and below it, in the order they come, not
@@ -341,17 +341,26 @@ each comes with its cases.)*
     The C types as [13 §2–§3](13-abi.md) cross them: the integers by their width on the target —
     `char` as the target's `int8` or `uint8`, `size_t` as `uint`, `ptrdiff_t` as `int` —, `float`
     and `double`, `bool`; `const char *` as `?CStr`; any other `T *` as `?Ptr<T>`, `void *` as
-    `?Ptr<void>`; an array parameter as the pointer it is. A name that is a word of Lyric gets a `_`
-    after it.
+    `?Ptr<void>`; an array parameter as the pointer it is. In a **field**, where 13 §3 rule 4 takes
+    no optional, a pointer is `Ptr<T>`, `CStr` or the function pointer's type — a null there is the
+    program's to look for —, and an array of arrays is one array of all their elements,
+    `float m[4][4]` as `float32[16]`, laid out alike. A constant is a `pub let`: an enum's of its
+    integer type; a `#define`'s integer of the type C gives the literal — the first of `int32` and
+    `int` it fits, unsigned with a `u` suffix or where a hexadecimal or octal one needs it, `int`
+    or `uint` with an `l` —, so that it goes where C's `int` goes; its string as `string`. A name
+    that is a word of Lyric or a builtin type's name gets a `_` after it: `string` as `string_`.
 19. What it cannot write — a union, a bit field, a struct with one, a function-like macro, a
     `static inline` function, a variable, a declaration that needs one of them — is **left out**,
-    and the module's last lines list each by its name, its file and line, and why. The lints
-    `naming` and `dead-code` do not look at it ([16 §5](16-diagnostics.md#5-lints)).
-20. A header that does not compile, or a module the toolchain cannot write, stops the build
-    (`LYR-BLD0005`, exit 1) with what the C compiler said. The module is made anew where the
+    and the module's last lines list each by its name, its file and line, and why; a `#define`
+    with an empty body — an include guard — is passed over. No lint looks at the module
+    ([16 §5](16-diagnostics.md#5-lints)): it is written by the toolchain, as a dependency's
+    modules are written by others.
+20. A header that does not compile, or a module the toolchain cannot write — a C compiler that
+    writes no syntax tree, which only zig cc and clang do —, stops the build (`LYR-BLD0005`, exit 1)
+    with what the C compiler said. The module is made anew where the
     header, a header it reads, the `defines`, the target or the toolchain changed.
 21. **`lyric bindgen`** writes the module one entry makes to standard output, to keep it under
-    `src/` instead ([14](14-cli.md)).
+    `src/` instead ([14 §2](14-cli.md) rule 6).
 
 ## 6. Reproducibility
 
