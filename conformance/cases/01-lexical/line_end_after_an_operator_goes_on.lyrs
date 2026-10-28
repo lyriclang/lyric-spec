@@ -1,0 +1,10 @@
+//! check
+//! since: 1.0.0
+// §1 D1 rule 2: a line that ends in an operator, `=`, `,` or an opening bracket goes on.
+let total = 1 +
+    2
+let xs = [
+    total,
+    3
+]
+println(total)

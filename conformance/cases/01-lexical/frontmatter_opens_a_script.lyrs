@@ -1,0 +1,8 @@
+#!/usr/bin/env lyric-script
+---
+[dependencies]
+---
+println("hello")
+
+//! check
+//! since: 1.0.0

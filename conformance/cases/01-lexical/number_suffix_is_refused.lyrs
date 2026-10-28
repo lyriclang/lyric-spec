@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-LEX0003
+// §1 D3 rule 1: a number takes no suffix; the literal is int or float by its form.
+let small = 1u8
+println(small)

@@ -1,0 +1,13 @@
+//! check
+//! since: 1.0.0
+// §1 D1 rule 3: a line that starts with `.`, `else` or an operator only binary goes on.
+let name = "lyric"
+    .toUpper()
+let big = name.length()
+    > 3
+if (big) {
+    println(name)
+}
+else {
+    println("short")
+}

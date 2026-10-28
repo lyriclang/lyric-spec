@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+// §1 D3 rule 1: without a suffix, digits are an int and a point or an exponent a float.
+let a = 1_000
+let b = 0xff
+let c = 2.5e3
+println(a + b)
+println(c)
