@@ -1,6 +1,6 @@
 //! check
 //! since: 1.0.0
-//! error: LYS-SEM0100
+//! error: LYS-SEM0900
 // §3 rule 1: Lyric 5's width types are refused where they are named.
 let small: int8 = 1
 println(small)

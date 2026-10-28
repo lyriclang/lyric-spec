@@ -22,7 +22,7 @@
       `catch`, and the operators `*` `/` `%` `*%` `&&` `||` `??` `==` `!=` `<` `>` `<=` `>=`
       `<<` `>>` `..` `..=` `|` `&` `^` `!in` — it is whitespace;
    4. otherwise it ends the statement. When the next line starts with `+` or `-`, these start a
-      new statement, as signs, and the toolchain warns (`LYS-LEX0101`).
+      new statement, as signs, and the toolchain warns (`LYS-LEX0901`).
 2. Line ends after one another are one; a line end before the first token, or right after `;`,
    is none. Comments are whitespace to these rules, doc comments included.
 3. `;` remains a separator wherever a line end ends a statement ([§2](02-grammar.md)).
@@ -34,7 +34,7 @@
 2. A line that is exactly `---` — trailing blanks aside — as the first line, or the first after
    the `#!` line, opens the **frontmatter**: the lines up to the next `---` line, both included,
    are one token whose text between the two lines is TOML (the dependencies,
-   [15](15-project.md)). Without a closing line the script is refused (`LYS-LEX0100`). Elsewhere
+   [15](15-project.md)). Without a closing line the script is refused (`LYS-LEX0900`). Elsewhere
    `---` is the operators `--` and `-`.
 
 ### D3. Literals
@@ -54,7 +54,7 @@
 
 ### D5. Diagnostics
 
-1. The lexical codes carry the prefix `LYS-`. A code below `LYS-LEX0100` means what Lyric 5's
-   `LYR-LEX` code of the same number means; from 0100 on the codes are Lyric-Script's own.
+1. The lexical codes carry the prefix `LYS-`. A code means what Lyric 5's `LYR-LEX` code of the
+   same number means; Lyric-Script's own codes start at 0900 (§16).
 
 **Conformance.** `conformance/cases/01-lexical/` (`since: 1.0.0`).

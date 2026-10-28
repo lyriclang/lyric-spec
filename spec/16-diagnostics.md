@@ -7,9 +7,9 @@
 ## Written (S2)
 
 1. **Codes** carry the prefix `LYS-`; the catalogue is `diagnostics.toml` in lyric-script
-   ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)). In each area that Lyric 5 has as well — `LEX`, `PAR`, `SEM`, `RT` — a code below
-   0100 means what Lyric 5's code of the same number means; from 0100 on the codes are
-   Lyric-Script's own. `LYS-NYI0001` names a form a later milestone builds and leaves the
+   ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)). In each area that Lyric 5 has as well — `LEX`, `PAR`, `SEM`, `RT` — a code means
+   what Lyric 5's code of the same number means, whatever its number; Lyric-Script's own codes
+   start at **0900**, beyond the numbers Lyric 5 uses (its `SEM` codes reach 0232). `LYS-NYI0001` names a form a later milestone builds and leaves the
    toolchain before 1.0.
 2. **The text form** is Lyric 5's: `severity[CODE]: message`, the place as `--> file:line:column`
    with the column in characters, the line with the span marked under it (a tab drawn as four

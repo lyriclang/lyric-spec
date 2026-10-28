@@ -16,7 +16,7 @@ from Lyric 5 gets a failing and a passing case.
 //! | second line
 //! check                    check only; expect acceptance in silence
 //! error: LYS-SEM0001       check only; expect rejection with this code (repeatable)
-//! warning: LYS-LEX0101     the check succeeds and reports this code (repeatable)
+//! warning: LYS-LEX0901     the check succeeds and reports this code (repeatable)
 //! since: 1.0.0             the Lyric-Script version the case pins; required
 //! until: 1.2.0             the version from which the case no longer holds
 ```

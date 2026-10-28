@@ -9,7 +9,7 @@
 1. **The script's code.** The statements of a module are its code, run in their order
    ([07 Top](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). Its outermost `let` and `var` are
    the module's bindings: every function of the module sees them. `return` outside a function is
-   refused (`LYS-SEM0102`): a script ends at its end, or with `exit(n)`.
+   refused (`LYS-SEM0902`): a script ends at its end, or with `exit(n)`.
 2. As in Lyric 5, an expression stands alone as a statement only where it does something — a
    call, an assignment, a loop (`LYS-SEM0022`).
 

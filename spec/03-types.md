@@ -8,18 +8,18 @@
 
 1. **Scalars.** `int` is 64 bits, `float` 64 bits; `bool` and `char` are Lyric 5's. A width type
    of Lyric 5 — `int8` … `int64`, `uint`, `uint8` … `uint64`, `float32`, `float64` — is refused
-   where it is named (`LYS-SEM0100`) ([03 K3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
+   where it is named (`LYS-SEM0900`) ([03 K3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
 2. **Widening.** An `int` value where a `float` is taken — a binding, an argument, a field, a
    return, a branch of an `if` beside a `float` one — is widened; nothing narrows on its own
    (`LYS-SEM0001`) ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
 3. **Structs and classes.** A struct's fields are never written: an assignment to one is refused
-   (`LYS-SEM0019`), and so is `var` on one (`LYS-SEM0101`). A class is the mutable reference: its
+   (`LYS-SEM0019`), and so is `var` on one (`LYS-SEM0901`). A class is the mutable reference: its
    `var` fields are written by any code that holds it, its methods without `mut fn` (§7).
 4. **Omitted return types** (Kotlin's rule, [09 Ret](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)): `fn f(…) = e`
    has the type of `e`; a block body without a written type is `void`. A function whose type
    depends on itself through its own body is refused until the type is written (`LYS-SEM0010`).
-5. A code below `LYS-SEM0100` means what Lyric 5's `LYR-SEM` code of the same number means; from
-   0100 on the codes are Lyric-Script's own. `LYS-NYI0001` names a form a later milestone of the
+5. A code means what Lyric 5's `LYR-SEM` code of the same number means; Lyric-Script's own
+   codes start at 0900 (§16). `LYS-NYI0001` names a form a later milestone of the
    plan builds; it leaves the toolchain before 1.0.
 
 ## Written (S3, optionals)
