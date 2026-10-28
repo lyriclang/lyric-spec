@@ -1,0 +1,17 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0160
+// §5 rule 11 (Lyric 5 §8 rule 2): an `int` is no `Iterator`.
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+interface Iterable {
+    type Iter :: [Iterator]
+    fn iter(): Self.Iter
+}
+struct Bad :: [Iterable] {
+    type Iter = int
+
+    fn iter(): int = 1
+}

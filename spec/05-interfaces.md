@@ -67,8 +67,11 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    `T.Item`, which a constraint of `T` declares (`LYS-SEM0128` otherwise). An interface that
    declares one is a constraint only (rule 10). Unlike Lyric 5's copies (§9.1 rule 4), the shared
    copy of 11 Gen does not serve a type parameter such an interface constrains: an answer's slots
-   differ by type, so each argument gets a copy of its own. Bounds, paths through an answer
-   (`T.Iter.Item`), fixations (`Iterator<Item = int>`) and the value form come later.
+   differ by type, so each argument gets a copy of its own. A bound, `type Iter :: [Iterator]`,
+   is met by every answer (`LYS-SEM0160`); through `T.Iter` the associated type has the bounds'
+   members and satisfies what they are (`LYS-SEM0027` for a member none gives), and a path goes
+   on through them, `A.Iter.Item`. Fixations (`Iterator<Item = int>`) and the value form come
+   later.
 12. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
