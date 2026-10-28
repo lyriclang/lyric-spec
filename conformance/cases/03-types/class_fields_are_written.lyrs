@@ -1,0 +1,13 @@
+//! check
+//! since: 1.0.0
+// §3 rule 3: a class is the mutable reference; its methods write its var fields.
+class Counter {
+    var count: int = 0
+    fn bump() {
+        this.count += 1
+    }
+}
+let c = Counter { }
+c.bump()
+c.count = c.count + 1
+println(c.count)

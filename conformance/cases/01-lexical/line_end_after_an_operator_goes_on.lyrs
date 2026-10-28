@@ -3,8 +3,9 @@
 // §1 D1 rule 2: a line that ends in an operator, `=`, `,` or an opening bracket goes on.
 let total = 1 +
     2
-let xs = [
+fn add(a: int, b: int) = a + b
+let sum = add(
     total,
     3
-]
-println(total)
+)
+println(sum)

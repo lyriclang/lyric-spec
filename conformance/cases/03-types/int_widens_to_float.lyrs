@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+// §3 rule 2: an int widens where a float is taken.
+let x: float = 1
+fn half(v: float) = v / 2
+let y = if (x > 0) 2 else 2.5
+println(half(3) + y)

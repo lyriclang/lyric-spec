@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0001
+// §3 rule 2: nothing narrows on its own; a float is no int.
+let ratio = 1.5
+let whole: int = ratio
+println(whole)

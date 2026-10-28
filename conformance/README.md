@@ -21,8 +21,9 @@ from Lyric 5 gets a failing and a passing case.
 //! until: 1.2.0             the version from which the case no longer holds
 ```
 
-Exactly one of `run` / `check` leads the header. `error:` implies rejection (exit 1); `check`
-without `error:` or `warning:` expects silence.
+Exactly one of `run` / `check` leads the header. `error:` implies rejection (exit 1), and a
+case's `warning:` lines are then expected beside its errors; `check` without `error:` or
+`warning:` expects silence.
 
 The differences from Lyric 5's format:
 

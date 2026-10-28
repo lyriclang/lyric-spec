@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+// §12 rule 1: print and println write the core values, with no import.
+print(1)
+print(2.5)
+print(true)
+print('c')
+println("text")
+println()

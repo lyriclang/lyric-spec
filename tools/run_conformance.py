@@ -79,7 +79,8 @@ def run_case(path, spec, exe):
             return fail("expected rejection, checked cleanly")
         if checked.returncode != 1:
             return fail(f"check exited {checked.returncode}, expected 1:\n{diagnostics}")
-        for code in spec["errors"]:
+        # a case may expect warnings beside its errors
+        for code in spec["errors"] + spec["warnings"]:
             if code not in diagnostics:
                 return fail(f"expected {code}, diagnostics were:\n{diagnostics}")
         return (True, "")
