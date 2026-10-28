@@ -75,8 +75,10 @@ values and generics (S3) written; the rest a skeleton, written with the mileston
    binds is refused (`LYS-SEM0060`), as is an argument its constraints do not admit
    (`LYS-SEM0028`) and a wrong count (`LYS-SEM0026`). An initializer of a generic type binds its
    arguments from its fields' values or takes the instance the position expects; a unit variant
-   of a generic enum takes it from the position. Written type arguments at a call, a generic
-   function as a value, `Self`, static and associated members come with the rest of S3.
+   of a generic enum takes it from the position. Type arguments may be written at a call,
+   `none<int>()` (§9.2 rule 4): a `<` after a name or a member opens them where its matching `>`
+   stands before `(`. A generic function as a value, `Self`, static and associated members come
+   with the descriptors (S3i).
    Unlike Lyric 5 (§9.1 rule 4), an instance is not compiled per argument list: the types whose
    values are objects of the VM share one copy, whose constraint calls go through the value's
    table; every other type has a copy of its own (11 Gen).

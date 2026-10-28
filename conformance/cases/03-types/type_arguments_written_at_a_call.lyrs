@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 7
+//! | 1
+// §3 rule 12 (Lyric 5 §9.2 rule 4): type arguments written at a call bind before the arguments;
+// a comparison stays one.
+fn none<T>(): ?T = null
+fn less(a: int, b: int): int = if (a < b) 1 else 0
+println(none<int>() ?? 7)
+println(less(1, 2))
