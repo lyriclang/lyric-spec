@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | -1
+//! | 2
+//! | 1
+// §9 rule 1 (Lyric 5 §9 §3 rule 4): a match over `?E` takes `null` and the variants of `E`.
+enum Color {
+    Red, Green
+}
+fn f(c: ?Color): int = match (c) {
+    null => -1,
+    .Red => 1,
+    .Green => 2,
+}
+println(f(null))
+println(f(.Green))
+println(f(Color.Red))

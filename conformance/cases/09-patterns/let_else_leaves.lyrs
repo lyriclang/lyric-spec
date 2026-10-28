@@ -1,0 +1,15 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0098
+// §9 rule 2 (Lyric 5 §9 §1 rule 5): the `else` of a `let` leaves on every path.
+enum Shape {
+    Circle(int)
+    Empty
+}
+fn f(s: Shape): int {
+    let .Circle(r) = s else {
+        println(0)
+    }
+    return r
+}
+println(f(.Empty))

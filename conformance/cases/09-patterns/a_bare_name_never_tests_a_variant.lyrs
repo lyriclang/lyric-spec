@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0111
+// §9 rule 1 (Lyric 5 §9 §2 rule 2): a bare name binds; one that spells a variant is refused.
+enum Color {
+    Red, Green
+}
+fn f(c: Color): int = match (c) {
+    Red => 1,
+}
+println(f(.Green))

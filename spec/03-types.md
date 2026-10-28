@@ -2,7 +2,8 @@
 
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
-**Status.** The core (S2), the optionals, `var x = null` and tuples (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core (S2), the optionals, `var x = null`, tuples and enums with payloads (S3)
+written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -50,9 +51,17 @@
    takes the types an expected tuple gives its elements, and an element that gives no type of
    its own where none is expected is refused (`LYS-SEM0010`). Rule 6 — equality, hashing,
    display — comes with the synthesis (S3h), `for ((a, b) in …)` with the collections (S7).
-10. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+10. **Enums with payloads.** Lyric 5 §4.1 rules 1–2 and §4.2 apply: tuple variants
+   `Num(int)` and struct variants `Rect { w: int, h: int }` beside unit ones, built as
+   `Shape.Num(3)`, `Shape.Rect { w = 1, h = 2 }` and `Shape.Empty`, a payload read by a pattern
+   only; `.Red`, `.Num(3)` and `.Rect { … }` where the position expects the enum, else refused
+   (`LYS-SEM0113`). Unlike Lyric 5 (§4.1 rules 3–4) an enum with a payload is a **reference** to
+   an immutable value, as a struct is (rule 3): it holds itself without a box —
+   `enum Tree { Leaf(int), Node(Tree, Tree) }`.
+11. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
-   slots in order, inline
+   slots in order, inline; an enum without payloads as an `int`, one with payloads as an object
+   of a VM type per variant whose first scalar is the variant's number
    ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
 
 ## Deviations (skeleton, written with later milestones)

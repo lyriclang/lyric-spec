@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! warning: LYS-SEM0112
+// §9 rule 3 (Lyric 5 §9 §4): an arm behind one that takes every value is warned about.
+fn f(n: int): int = match (n) {
+    _ => 0,
+    1 => 1,
+}
+println(f(1))

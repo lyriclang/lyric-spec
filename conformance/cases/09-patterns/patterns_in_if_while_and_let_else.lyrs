@@ -1,0 +1,41 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 69
+//! | 2
+//! | 6
+// §9 rule 2: patterns in `if (let …)`, `while (let …)` and `let P = e else { … }`.
+enum Shape {
+    Circle(int)
+    Rect { w: int, h: int }
+    Empty
+}
+enum Tree {
+    Leaf(int)
+    Node(Tree, Tree)
+}
+fn il(s: Shape): int {
+    if (let .Circle(r) = s) {
+        return r
+    } else {
+        return -1
+    }
+}
+fn depth(t: Tree): int {
+    var cur = t
+    var n = 0
+    while (let .Node(l, _) = cur) {
+        n += 1
+        cur = l
+    }
+    return n
+}
+fn le(s: Shape): int {
+    let .Rect { w, h } = s else {
+        return 0
+    }
+    return w * h
+}
+println(il(Shape.Circle(7)) * 10 + il(Shape.Empty))
+println(depth(Tree.Node(Tree.Node(Tree.Leaf(1), Tree.Leaf(2)), Tree.Leaf(3))))
+println(le(Shape.Rect { w = 2, h = 3 }) + le(Shape.Empty))

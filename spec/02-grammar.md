@@ -66,7 +66,7 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
   `mut fn` on class methods) and refused forms with a hint (`&x`, width types, `var` struct
   fields, `Slice`, `T[N]`, `comptime`, macros, `inline fn`, `unsafe`, `extern`, `@When`)
   ([09 Cmp](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)) — with the checker.
-- Patterns, lambdas and trailing blocks, generics, interfaces, `match`, labels — with the
-  milestones of the plan that build them.
+- Lambdas and trailing blocks, generics, interfaces, labels — with the milestones of the plan
+  that build them. Patterns and `match` are written in §9.
 
 **Conformance.** `conformance/cases/02-grammar/` (`since: 1.0.0`).

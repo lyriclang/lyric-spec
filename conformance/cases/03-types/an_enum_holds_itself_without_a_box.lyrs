@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+// §3 rule 10: an enum with a payload is a reference, as a struct is, and holds itself without a
+// box (Lyric 5 §4.1 rule 4 refuses it).
+enum Tree {
+    Leaf(int)
+    Node(Tree, Tree)
+}
+fn sum(t: Tree): int = match (t) {
+    .Leaf(v) => v,
+    .Node(l, r) => sum(l) + sum(r),
+}
+println(sum(Tree.Node(Tree.Leaf(1), Tree.Node(Tree.Leaf(2), Tree.Leaf(3)))))

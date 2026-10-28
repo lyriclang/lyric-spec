@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0035
+// §9 rule 4: a line that begins with `.` goes on the line before, so the value arm before a
+// `.Variant` arm ends with `,`.
+enum Color {
+    Red, Green
+}
+fn f(c: Color): int = match (c) {
+    .Red => 1
+    .Green => 2,
+}
