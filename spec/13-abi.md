@@ -7,7 +7,7 @@
 
 ## Scope
 
-The C ABI as the one foreign boundary: the type table, `@Layout(C)`, pointers, callbacks, exports, and the embedding API (`lyr_init`, exports as tasks, `LyrStatus`). Replaces the 4.x bytecode chapter.
+The C ABI as the one foreign boundary: the type table, `@Layout(C)`, pointers, callbacks, exports, the embedding API (`lyr_init`, exports as tasks, `LyrStatus`), and libraries loaded while a program runs. Replaces the 4.x bytecode chapter.
 
 ## 1. The runtime contract, stage 0
 
@@ -476,3 +476,28 @@ output of its own — `examples/embedded-host` —, in the toolchain's own tests
    export runs in the task that runs, as a Lyric function C calls through its pointer does (§3
    rule 9): its C frames are counted, it may park, and a panic in it ends the process with its
    report. Calls nest as deep as the stack lets them, without a count of their own.
+
+## 6. Loading a library
+
+A shared library a program loads while it runs, and the C functions in it found by their names
+([11 H7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
+A library of Lyric's own loaded this way — a second runtime in the process — is not covered.
+
+**Conformance.** `conformance/cases/13-abi/`; that a program loads a library built apart and calls
+what it finds — `examples/ffi` —, in the toolchain's own tests (`tests/Lyric5.Tests`,
+`ExampleTests`).
+
+1. **`std.ffi.Library.open(path)`** loads the shared library at `path` — a `.so`, `.dylib` or
+   `.dll` —, as the system's loader does (`dlopen`, `LoadLibraryW`); a name without a directory goes
+   where the loader looks. Where the loader refuses it, `open` throws `std.io`'s `IoError` of kind
+   `NotFound`, with the path, and the loader's words as its detail.
+2. **`lib.symbol<F>(name)`** is the symbol `name` of the library as a value of `F`, which is a C
+   function's type, `extern "C" fn(…) -> …` — any other type is refused (`LYR-SEM0099`) —, and
+   `null` where the library has no such symbol. The value is called as any C function's pointer
+   (§3 rule 9). The type is the program's word: the loader knows a name, not a signature, and
+   nothing checks the one against the other.
+3. A `Library` is `Closeable` ([12](12-stdlib.md)): **`close()`** gives it back to the system, and
+   a second close does nothing. A function found in it is not called after the close; `symbol` on a
+   closed library panics.
+4. A program that loads a library links the system's loader with it: on Linux `-ldl`, where the C
+   library keeps `dlopen` apart.
