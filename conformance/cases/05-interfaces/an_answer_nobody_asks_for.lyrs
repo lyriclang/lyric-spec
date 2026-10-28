@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0129
+// §5 rule 11 (Lyric 5 §8 rule 3): no interface of the type declares the associated type.
+struct W {
+    type Item = int
+}

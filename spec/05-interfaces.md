@@ -3,8 +3,8 @@
 **Base.** Lyric 5.0 [§5](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/05-interfaces.md) applies, with the deviations below.
 
 **Status.** Written for what S3 builds: interfaces, their values, extends, delegation, `is`, sealed
-interfaces, equality and the Debug form, `Self` and static members; associated types and
-generic members with the descriptors (S3i), the family written in a list and the operator interfaces
+interfaces, equality and the Debug form, `Self` and static members, associated types; their
+bounds, fixations and value form, and generic members with the descriptors (S3i), the family written in a list and the operator interfaces
 with the prelude's interfaces (S7), the qualified call and members per interface (§3 rule 4,
 §4) with the milestones that build them.
 
@@ -59,7 +59,17 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    A type parameter satisfies what its constraints and their parents are, also where it is
    handed to another generic. `static let` members, and generic members of an interface that
    names `Self`, come later.
-11. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
+11. **Associated types** (§8 rules 1–4): an interface declares `type Item`, with a default
+   `type Item = T` or none; a conforming type answers in its body or its extend block,
+   `type Item = int` — without an answer and a default it is refused (`LYS-SEM0128`), an answer
+   no interface of the type asks for too (`LYS-SEM0129`). Inside the interface the associated
+   type is `Self.Item`, an implementation writes the answer; through a constraint it is
+   `T.Item`, which a constraint of `T` declares (`LYS-SEM0128` otherwise). An interface that
+   declares one is a constraint only (rule 10). Unlike Lyric 5's copies (§9.1 rule 4), the shared
+   copy of 11 Gen does not serve a type parameter such an interface constrains: an answer's slots
+   differ by type, so each argument gets a copy of its own. Bounds, paths through an answer
+   (`T.Iter.Item`), fixations (`Iterator<Item = int>`) and the value form come later.
+12. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
    `call.i` runs the receiver's function of a slot, `is.t` and `is.i` answer `is`.
