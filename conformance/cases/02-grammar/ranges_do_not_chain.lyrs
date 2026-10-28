@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0005
+// §2 (Lyric 5 §8): ranges do not chain; a range has two ends.
+for (i in 1..2..3) {
+    println(i)
+}

@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+// §2 D2: a module mixes declarations and statements; a function body may be `= expression`.
+let base = 20
+fn twice(x: int) = x * 2
+println(twice(base) + 2)

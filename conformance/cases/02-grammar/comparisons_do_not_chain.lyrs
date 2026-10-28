@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0059
+// §2 (Lyric 5 §8): comparisons do not chain; a < b < c is refused, not read left to right.
+let a = 1
+let b = 2
+let c = 3
+let ordered = a < b < c
+println(ordered)

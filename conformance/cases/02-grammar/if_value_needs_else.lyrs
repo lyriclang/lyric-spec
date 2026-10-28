@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0036
+// §2 (Lyric 5 §8.2): an if where a value stands needs its else.
+let big = true
+let size = if (big) 10
+println(size)
