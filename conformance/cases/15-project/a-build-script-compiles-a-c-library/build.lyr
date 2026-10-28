@@ -1,0 +1,5 @@
+import std.build;
+
+fn main(): void {
+    build.cLibrary("scaled").sources("native/*.c").include("native/inc").define("SCALE", "7").compile();
+}
