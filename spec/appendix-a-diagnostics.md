@@ -435,6 +435,9 @@ The driver's options and verbs.
 | LYR-CLI0020 | E | [14-cli](14-cli.md) | an internal failure of the 4.x compiler *(retired)* | Reported by the 4.x drivers when the compiler reached a state it believed impossible. Retired: Lyric 5: lyric5 reports its own failures as LYR-ICE0001 (exit 101); nothing in lyric5 calls CliDiagnostics.FailInternal |
 | LYR-CLI0021 | E | [14-cli](14-cli.md) | no package can be made here | `lyric new` names a directory that exists already, `lyric init` runs where a `lyric.toml` is, or the `git init` the command asked for failed. The exit code is 2. |
 | LYR-CLI0022 | E | [14-cli](14-cli.md) | the revision `lyric api --diff` names cannot be read | `lyric api --diff <rev>` runs in no git repository, names a revision git does not know, or the revision holds no `lyric.toml` where the package is. The exit code is 2. |
+| LYR-CLI0023 | E | [14-cli](14-cli.md) | a toolchain cannot be fetched | `lyric toolchain` reaches neither the mirror nor GitHub, the channel has no such version or no archive for this machine, or there is no key to check a signature with. The exit code is 2. |
+| LYR-CLI0024 | E | [14-cli](14-cli.md) | a toolchain fetched is not what its index says | A channel's index does not carry a signature the toolchain's key made, or an archive's size, SHA-256 or `toolchain.json` differs from what the index and the archive itself list. Nothing is installed; the exit code is 2. |
+| LYR-CLI0025 | E | [14-cli](14-cli.md) | the installed toolchains refuse the change | `lyric toolchain default` or `remove` names a version that is not installed, `remove` names the default or the toolchain that runs the command, `update` finds no default, or `config.toml` under `LYRIC_HOME` is not one the toolchain reads. The exit code is 2. |
 
 ## A.11 IR — The lowering
 
