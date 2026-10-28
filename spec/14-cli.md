@@ -262,6 +262,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `remove` | `<name>` | `-C <dir>`, `--offline` | — | — |
 | `clean` | — | `-C <dir>` | — | — |
 | `metadata` | — | `-C <dir>`, `--offline`, `--json` | — | — |
+| `toolchain` | `<install|list|default|remove|update> [<version>]` | `--available` | — | — |
 | `explain` | `<code>` | — | — | — |
 | `completions` | `<bash|zsh|fish|pwsh>` | — | — | — |
 | `version` | — | — | — | — |
@@ -468,3 +469,67 @@ in `tests/Lyric.Tests.Formatting`).
    lldb-dap reads it is reported, not gated.
 8. A `launch` with a **`test`** debugs the package's tests whose names hold it: the program
    `lyric test --no-run -f <test>` builds (§3), run in the package's directory as `test` runs it.
+
+## 13. `toolchain`
+
+([11 T1–T8](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md),
+[14 C9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/14-website.md))
+
+**Conformance.** The toolchain's own tests (`tests/Lyric5.Tests`, `ToolchainCommandTests`, against
+a mirror served on the machine): a conformance case fetches nothing.
+
+1. **The home.** Toolchains are installed side by side under `~/.lyric` — or the directory
+   **`LYRIC_HOME`** names: `toolchains/<version>/` holds each as its archive unpacked it,
+   `config.toml` names the default (`default = "<version>"`, the one key it takes), and `bin` is a
+   link to the default's directory — a symbolic link, on Windows a junction —, so that `bin` on the
+   `PATH` runs the default. A directory an install has not finished is no toolchain.
+2. **`lyric toolchain install <version|dev|stable>`** installs a toolchain for this machine's
+   target. `dev` and `stable` name the newest version of their channel; a version is one its
+   channel lists, written with its build part (`+…`) or without. A development build's version
+   (`-dev.…`) is the `dev` channel's, every other the `stable` channel's. The first toolchain
+   installed becomes the default. A version installed already is said and fetched no further.
+3. **What an install trusts.** The channel's index is fetched with its signature and checked with
+   the key the toolchain carries; the archive is fetched no further than the size the index gives
+   and checked against its SHA-256; it is unpacked beside the toolchains and checked against its
+   own `toolchain.json` — its version, its target and every file; only then is it moved into
+   place. A difference anywhere installs nothing (`LYR-CLI0024`), and a run cut short leaves
+   nothing a later one counts as installed.
+4. **Where from.** The index and the archives come from the mirror, and from GitHub's releases
+   where the mirror cannot be reached; a signature or a hash that does not hold is never routed
+   around. **`LYRIC_MIRROR`** names another mirror in place of both, and **`LYRIC_MIRROR_KEY`**
+   the key its signatures are checked with — set without a mirror, it is refused. A toolchain
+   that carries no key installs only from such a mirror.
+5. **`lyric toolchain list`** names the installed toolchains, the newest first, the default
+   marked; with **`--available`**, the versions both channels offer, with their dates, those
+   installed marked. A channel that cannot be fetched is said, and is an error only where neither
+   can.
+6. **`lyric toolchain default [<version>]`** says the default, or makes the installed version the
+   default: `config.toml` written, `bin` pointed at it. A `bin` that is no link is refused, and
+   left as it is.
+7. **`lyric toolchain remove <version>`** removes an installed toolchain; not the default, nor the
+   toolchain the command runs from (`LYR-CLI0025`).
+8. **`lyric toolchain update`** installs the newest version of the default's channel beside the
+   default and makes it the default; the old one stays until it is removed. Where the default is
+   the newest, it is said.
+9. While an archive is fetched, its progress is drawn on the standard error where that is a
+   terminal, and nowhere else.
+10. Every refusal is the environment's, exit 2: an action or a version missing, an unknown action,
+    `--available` beside another action (§1.3); a toolchain that cannot be fetched
+    (`LYR-CLI0023`); one that is not what its index says (`LYR-CLI0024`); a change the installed
+    toolchains refuse (`LYR-CLI0025`).
+
+### 13.1 The archive, the index and the signature *(informative)*
+
+- **The archive** of a toolchain is one per Tier 1 target: `.zip` for Windows, `.tar.gz` for the
+  others, holding the binary, `stdlib5/`, the runtime as C source and prebuilt for the archive's
+  target, `lldb/`, `LICENSE` and the notices, and **`toolchain.json`** —
+  `{"version", "triple", "files": [{"path", "size", "sha256"}, …]}`, every other file with its
+  size and SHA-256.
+- **The index** of a channel is `dev.json` or `stable.json`:
+  `{"channel", "versions": [{"version", "date", "archives": {"<triple>": {"file", "size", "sha256"}}}]}`.
+  On a mirror it lies at `<base>/<channel>.json`, its archives under `<base>/<channel>/`; on GitHub
+  the release `dev` carries the development build with `dev.json`, the release `channels` carries
+  `stable.json`, and each stable version has its release `v<version>`.
+- **The signature** is minisign's, beside the file as `<file>.minisig`: Ed25519 over the file's
+  BLAKE2b-512 hash, and over that signature with its trusted comment; minisign's legacy form,
+  which signs the file itself, is refused.
