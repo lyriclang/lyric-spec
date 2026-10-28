@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0003
+//! since: 5.0.0
+// 15 §5 rule 8: a shared library is one target's; [native] holds for every one.
+fn main(): void {
+}

@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PKG0002
+//! since: 5.0.0
+// 15 §5 rule 8: a shared library named in archives is refused; it belongs in dylibs.
+fn main(): void {
+}
