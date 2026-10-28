@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 60
+// §5 rule 4 (Lyric 5 05 §5): `I by field` forwards to the field, read at each call; the forwarded
+// member is the type's too.
+interface Walker {
+    fn walk(): int
+}
+struct Legs :: [Walker] {
+    n: int
+    fn walk(): int = this.n * 10
+}
+class Dog :: [Walker by legs] {
+    var legs: Legs
+}
+fn w(x: Walker): int = x.walk()
+let dog = Dog { legs = Legs { n = 4 } }
+let first = w(dog)
+dog.legs = Legs { n = 2 }
+println(first + dog.walk())

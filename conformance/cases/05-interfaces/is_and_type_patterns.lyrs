@@ -1,0 +1,65 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 69
+//! | 405
+//! | 142
+//! | 12
+// §5 rules 5–6 (Lyric 5 05 §9, §10): `is` narrows, a box gives its value back, type patterns
+// bind, `Any` holds everything, a sealed interface's conformers cover a match.
+interface Shape {
+    fn area(): int
+}
+struct Sq :: [Shape] {
+    side: int
+    fn area(): int = this.side * this.side
+}
+struct Rect :: [Shape] {
+    w: int
+    h: int
+    fn area(): int = this.w * this.h
+}
+sealed interface Token {
+    fn len(): int
+}
+struct Word :: [Token] {
+    text: string
+    fn len(): int = 1
+}
+struct Space :: [Token] {
+    fn len(): int = 0
+}
+fn sides(s: Shape): int {
+    if (s is Sq) {
+        return s.side
+    }
+    return -1
+}
+fn kind(s: Shape): int = match (s) {
+    q: Sq => q.side,
+    r: Rect => r.w + r.h,
+    _ => 0,
+}
+fn anyValues(): int {
+    let xs: Any = 41
+    let ys: Any = "s"
+    var n = 0
+    if (xs is int) {
+        n = xs + 1
+    }
+    if (ys is string) {
+        n += 100
+    }
+    if (xs is string) {
+        n += 1000
+    }
+    return n
+}
+fn tok(t: Token): int = match (t) {
+    _: Word => 1,
+    _: Space => 2,
+}
+println(sides(Sq { side = 7 }) * 10 + sides(Rect { w = 1, h = 2 }))
+println(kind(Sq { side = 4 }) * 100 + kind(Rect { w = 2, h = 3 }))
+println(anyValues())
+println(tok(Word { text = "a" }) * 10 + tok(Space { }))
