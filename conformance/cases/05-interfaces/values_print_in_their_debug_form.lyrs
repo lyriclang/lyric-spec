@@ -1,0 +1,42 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | P { x = 1, name = "a" }
+//! | Shape.Circle(3)
+//! | Shape.Rect { w = 4, h = 5 }
+//! | Shape.Empty
+//! | Color.Green
+//! | C { n = 1 }
+//! | null
+//! | 7
+//! | (1, "a", 'c')
+//! | raw
+// §5 rule 9 (03 Eq, Lyric 5 05 §14 rule 2): every value prints; what has no Display prints in
+// its Debug form, given unasked — a string inside quoted, a char in single quotes.
+struct P {
+    x: int
+    name: string
+}
+enum Shape {
+    Circle(int)
+    Rect { w: int, h: int }
+    Empty
+}
+enum Color {
+    Red, Green
+}
+class C {
+    var n: int = 1
+}
+let o: ?int = null
+let q: ?int = 7
+println(P { x = 1, name = "a" })
+println(Shape.Circle(3))
+println(Shape.Rect { w = 4, h = 5 })
+println(Shape.Empty)
+println(Color.Green)
+println(C { })
+println(o)
+println(q)
+println((1, "a", 'c'))
+println("raw")

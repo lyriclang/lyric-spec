@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0116
+// §3 rule 13 (Lyric 5 §2.5 rule 4): a class is changed in place; it is no struct to copy.
+class C {
+    var n: int = 0
+}
+let c = C { }
+let d = c with { n = 1 }

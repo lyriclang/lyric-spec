@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0059
+// §5 rule 8 (03 Eq): a class that is no `Identity` has no `==`.
+class D {
+    var n: int = 0
+}
+let same = D { } == D { }

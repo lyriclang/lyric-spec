@@ -1,0 +1,35 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3 2
+//! | 2 1
+//! | 1 2
+//! | 9 2
+//! | 4 6
+//! | 5 6
+//! | 7
+// §3 rule 13 (Lyric 5 §2.5): a copy with the named fields replaced, the values over the old
+// value; a path into a held struct; a path after its field was replaced whole changes the new
+// value; a postfix.
+struct P {
+    x: int
+    y: int
+}
+struct Thing {
+    name: string
+    pos: P
+}
+let p = P { x = 1, y = 2 }
+let q = p with { x = 3 }
+let s = p with { x = p.y, y = p.x }
+println(f"{q.x} {q.y}")
+println(f"{s.x} {s.y}")
+println(f"{p.x} {p.y}")
+let t = Thing { name = "a", pos = p }
+let a = t with { pos.x = 9 }
+let c = t with { pos = P { x = 5, y = 6 }, pos.x = 4 }
+let d = t with { pos.x = 4, pos = P { x = 5, y = 6 } }
+println(f"{a.pos.x} {a.pos.y}")
+println(f"{c.pos.x} {c.pos.y}")
+println(f"{d.pos.x} {d.pos.y}")
+println(1 + p with { x = 6 }.x)

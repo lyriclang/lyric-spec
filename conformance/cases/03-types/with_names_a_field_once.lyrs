@@ -1,0 +1,10 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0070
+// §3 rule 13 (Lyric 5 §2.5 rule 2): a field named twice in one `with`.
+struct P {
+    x: int
+    y: int
+}
+let p = P { x = 1, y = 2 }
+let q = p with { x = 1, x = 2 }

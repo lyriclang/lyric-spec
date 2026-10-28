@@ -3,7 +3,7 @@
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
 **Status.** The core (S2), the optionals, `var x = null`, tuples, enums with payloads, function
-values and generics (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+values, generics and `with` (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -82,7 +82,14 @@ values and generics (S3) written; the rest a skeleton, written with the mileston
    Unlike Lyric 5 (§9.1 rule 4), an instance is not compiled per argument list: the types whose
    values are objects of the VM share one copy, whose constraint calls go through the value's
    table; every other type has a copy of its own (11 Gen).
-13. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+13. **`with`.** Lyric 5 §2.5 applies as written: `p with { x = 3, pos.y = 4 }` is a copy of
+   the struct `p` with the named fields replaced, its values left to right over the old `p`, after
+   `p` itself; a path reaches into the structs `p` holds; on a class, a tuple or an enum refused
+   (`LYS-SEM0116`), a field twice (`LYS-SEM0070`) or unknown (`LYS-SEM0015`) too; a postfix, and
+   as a statement a value thrown away (`LYS-SEM0022`). A struct is shared and never changed
+   (rule 3), so the copy is a new object, and so is each struct a path reaches; a path after its
+   field was replaced whole changes the new value, as Lyric 5's stores into the copy do.
+14. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
    slots in order, inline; an enum without payloads as an `int`, one with payloads as an object
    of a VM type per variant whose first scalar is the variant's number; a function value as an

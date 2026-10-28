@@ -2,9 +2,11 @@
 
 **Base.** Lyric 5.0 [§5](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/05-interfaces.md) applies, with the deviations below.
 
-**Status.** Written for what S3 builds without generics; `Self`, static members, associated
-types, generic members and extends (S3g), the operator interfaces and synthesis (S3h), the
-qualified call and members per interface (§3 rule 4, §4) with the milestones that build them.
+**Status.** Written for what S3 builds: interfaces, their values, extends, delegation, `is`, sealed
+interfaces, equality and the Debug form; `Self`, static members, associated types and generic
+members with the descriptors (S3i), the family written in a list and the operator interfaces
+with the prelude's interfaces (S7), the qualified call and members per interface (§3 rule 4,
+§4) with the milestones that build them.
 
 ## Written (S3)
 
@@ -31,7 +33,20 @@ qualified call and members per interface (§3 rule 4, §4) with the milestones t
 6. **Sealed interfaces** (§10 rules 1–2): type patterns for every conformer cover a match without
    `_`; the witness names the conformer missing (`_: Rect`). A script is one module, so every
    conformer stands in the interface's.
-7. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
+8. **Equality without a list** ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md); Lyric 5 §14 rules 2–3): `==` and `!=` compare a
+   struct, an enum or a tuple part by part, without a conformance written — a struct's fields in
+   declaration order, an enum's variant first and then its payload, a tuple's elements in order
+   — when every part compares; an optional compares its value. A class compares only as an
+   `Identity` (`class C :: [Identity]`), by its reference; any other class, a
+   function value and an interface value do not compare, and neither does a type holding one
+   (`LYS-SEM0059`, the part named). `Identity` is a name of the prelude, as `Any` is.
+9. **The Debug form, given unasked** (Lyric 5 §14 rules 2–3 and 7): every value prints. A
+   scalar and a string print as themselves; `{x}` and `println(x)` print any other value in its
+   Debug form — `P { x = 1, name = "a" }`, `E.B(3)`, `E.R { w = 4 }`, `E.A`, `(1, "a")`, an
+   optional as its value or `null`, a string inside it quoted and a `char` in single quotes, a
+   class's fields as a struct's. Until the descriptors (S3i) an interface value prints as
+   `<I>`, its interface's name, and a function value as `<fn>`.
+10. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
    `call.i` runs the receiver's function of a slot, `is.t` and `is.i` answer `is`.
