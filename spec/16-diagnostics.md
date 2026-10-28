@@ -77,8 +77,9 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 **Conformance.** Every rejecting case names its codes; the catalogue against the compiler in the toolchain's
 own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 
-1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `CT`, `CG`, `PKG`, `BLD`, `CLI`, `ICE`,
-   `RT`, and `IR`, retired —, and four digits. The code and its severity are contract; the message's wording is not.
+1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `CT`, `CG`, `PKG`, `BLD`, `LNK`, `CLI`,
+   `ICE`, `RT`, and `IR`, retired —, and four digits. *(`LNK`, the link's findings
+   ([15 §5.2](15-project.md#52-linking) rule 12), is written ahead of M14b.)* The code and its severity are contract; the message's wording is not.
 2. Every code the toolchain reports stands in [Appendix A](appendix-a-diagnostics.md), generated from the
    toolchain's catalogue, with its severity, the chapter whose rule it is, and when it is reported. A code no
    longer reported is **retired** there: its number is not given to another finding.
@@ -106,7 +107,9 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    `applicability` `safe` or `needs-review`), and `rendered`, the finding in the text form without colour.
    A span is `null` or `{file, start, end}`, `start` and `end` each `{line, column, offset}`, the file as
    the text form says it (§1 rule 5). Every finding is a line — §2's limit is the text form's.
-4. **`artifact`**: what a build wrote — `kind` (`binary`, or `library` for `build --lib`), `name`, `path`.
+4. **`artifact`**: what a build wrote — `kind` (`binary`, or `library` for `build --lib`), `name`, `path`;
+   *(written ahead of M14b)* a static library's also `linkArgs`, what a C program links beside it
+   ([13 §4](13-abi.md#4-exports-and-libraries) rule 9), an array of strings.
 5. **`test`**: a test of `lyric test` as it ends — `name`, `outcome` (`passed`, `failed`, `skipped`), and
    where there is one a `message` (why it was skipped, what ended it) and the `panic`'s code. **`tests`**:
    the run's count — `passed`, `failed`, `skipped`. **`output`**: a line the program wrote that is no event

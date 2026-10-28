@@ -425,4 +425,10 @@ and the shared one — and calls its exports, in the toolchain's own tests (`tes
    other symbol. A C program that links the archive links the libraries the runtime calls too — on
    Linux `-lpthread -lm`, with zig cc `-lunwind`; on Windows `-lshell32 -lws2_32` — and those the
    packages' native parts name ([15 §5](15-project.md)), which a shared library is linked against
-   itself.
+   itself. *(Written ahead of M14b:)* the **archives** of the native parts
+   ([15 §5.2](15-project.md#52-linking)) lie inside `lib<name>.a` with the library and the runtime,
+   so a C program links that one file; what it links beside it — the libraries by name and from
+   `pkgConfig`, the frameworks, the runtime's — `build --lib` says after the archive, as the
+   arguments of a C compiler in the order they are linked (`note: link it with -lpthread -lm …`),
+   and its `--json` form gives them as the artifact's `linkArgs`
+   ([16 §4](16-diagnostics.md)). They are the target's: another target has others.
