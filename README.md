@@ -1,47 +1,32 @@
-# The Lyric Language Specification
+# The Lyric-Script Specification
 
-**Status: NORMATIVE since Lyric 2.0.**
+**Status: skeleton (S0 of the plan to `lyric-script 1.0.0`).** This branch (`script`) specifies
+Lyric-Script as a **delta to Lyric 5.0**: each chapter says which chapter of the Lyric 5
+specification applies and lists the deviations, each with its reason in the design
+([lyriclang/lyric-script `design/v1/spec/`](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/)). Chapter 13 replaces Lyric 5's ABI chapter;
+chapter 17 has no Lyric 5 counterpart.
 
-This repository holds the specification of the Lyric programming language and its conformance
-suite: a document from which a second, independent implementation can be built — and a suite
-that tells it whether it succeeded.
+The specification defines the language and the toolchain implements it; a divergence is a
+toolchain bug. A rule is written here first — the chapter sentence and its conformance case — and
+the toolchain follows (its `spec.pin` names the commit here).
 
-Since 2.0 the relationship stands inverted from the draft phase: the specification defines the
-language, the toolchain implements it, and a divergence is a toolchain bug. A change to
-observable language behavior is a specification change FIRST — the chapter sentence and its
-conformance case land before or with the implementation, never after.
+## Base
+
+The Lyric 5 specification at `lyric-spec` `main`
+[`38ea610e`](https://github.com/lyriclang/lyric-spec/tree/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e). The base moves to the Lyric 5.0 tag when
+it exists (S15 of the plan); a later Lyric 5 edition reaches Lyric-Script only by a decision
+written in the design.
 
 ## Layout
 
 | Path | Content |
 |---|---|
-| `spec/01-lexical.md` | tokens, literals, escapes, contextual words |
-| `spec/02-grammar.md` | the canonical EBNF and the rules around it (mirrored in the toolchain) |
-| `spec/03-types.md` | the type system; wrapping arithmetic; `as`; opaque aliases |
-| `spec/04-modules.md` | modules, imports, visibility, capabilities |
-| `spec/05-interfaces.md` | conformance, inheritance, interface values, extends |
-| `spec/06-operators.md` | every operator as its interface method |
-| `spec/07-statements.md` | bindings, loops, narrowing, lambdas, match |
-| `spec/08-generics.md` | monomorphization and constraints |
-| `spec/09-errors.md` | return values vs. throwables vs. panics |
-| `spec/10-coroutines.md` | `Coroutine<T>`, `yield`, `resume` |
-| `spec/11-stdlib-contract.md` | what of the library is LANGUAGE |
-| `spec/12-diagnostics.md` | the code catalogue as contract |
-| `spec/13-bytecode.md` | the `.lyrbc` module format (canonical; mirrored in the toolchain) |
-| `spec/appendix-a-diagnostics.md` | the catalogue itself: every code, severity, cause, and the retired numbers |
-| `conformance/` | the suite: one `.lyr` per case, expectations in a `//!` header |
-| `tools/run_conformance.py` | the reference runner |
+| `spec/01-lexical.md` … `spec/16-diagnostics.md` | the deltas, chapter by chapter after Lyric 5 |
+| `spec/13-embedding.md` | replaces Lyric 5's ABI chapter |
+| `spec/17-host.md` | rights, budget, reload, determinism, instances — Lyric-Script's own |
+| `conformance/` | the conformance suite (`since: 1.0.0`) |
 
-## The mirror model
+## History
 
-The grammar (chapter 02) and the bytecode format (chapter 13) are canonical **here**. The
-toolchain repository carries byte-identical mirrors as `docs/Grammar.md` and
-`docs/Bytecode.md` — its tests pin against them and its doc site publishes them — and its CI
-diffs everything below the `<!-- sync:body -->` marker against these chapters. Duplication
-would drift; a checked mirror cannot.
-
-## Versioning
-
-The specification describes a **language version**: this document describes Lyric 4.6. A case
-in the suite may carry `//! since: X.Y.Z` and applies to that version and later, which is how
-one suite serves every release since the freeze (1.16) without a manual deferral dance.
+The Lyric 4.x specification that stood on this branch is the tag `script-4.x-final`; the 4.6
+toolchain at lyric-script `v4.6-final` checks against it.
