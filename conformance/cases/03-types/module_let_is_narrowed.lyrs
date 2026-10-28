@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+// Lyric 5 §3.2: a module-level `let` is narrowed by a test like a local.
+let x: ?int = 3
+if (x != null) {
+    println(x + 1)
+}

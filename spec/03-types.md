@@ -2,7 +2,7 @@
 
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
-**Status.** The core written (S2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core (S2) and the optionals (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -21,6 +21,21 @@
 5. A code below `LYS-SEM0100` means what Lyric 5's `LYR-SEM` code of the same number means; from
    0100 on the codes are Lyric-Script's own. `LYS-NYI0001` names a form a later milestone of the
    plan builds; it leaves the toolchain before 1.0.
+
+## Written (S3, optionals)
+
+6. **Optionals.** Lyric 5 §3.1–3.3 apply as written: `?T` and `??T`, `null`, `!` (on null the
+   panic `LYS-RT0004`), `??`, `?.`, `??=`, `== null`, narrowing after a test and after a branch
+   that never comes out, `if let`, `while let`. The codes are Lyric 5's: a null operator on a
+   value that is never null is `LYS-SEM0005`, `== null` there `LYS-SEM0059`, an assignment
+   through `?.` `LYS-SEM0019`.
+7. **Narrowing ends at a write** (Lyric 5 §3.2). An assignment to a narrowed binding ends its
+   narrowing; a loop that writes it has it narrowed in none of its turns. A module-level `var` is
+   never narrowed — a script's top-level bindings are the module's (§7) — and a module-level
+   `let` is narrowed like a local.
+8. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+   other `?T` as the slots of `T` and one presence slot after them
+   ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
 
 ## Deviations (skeleton, written with later milestones)
 
