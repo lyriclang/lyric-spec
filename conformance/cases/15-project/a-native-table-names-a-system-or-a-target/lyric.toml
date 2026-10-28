@@ -1,0 +1,6 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native.x86_64-plan9]
+sources = ["native/*.c"]

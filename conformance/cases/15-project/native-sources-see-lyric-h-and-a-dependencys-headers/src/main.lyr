@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 42
+//! since: 5.0.0
+// 15 §5 rule 6: a native source sees lyric.h and the include of a package its package declares.
+import std.io { println };
+
+extern "C" fn app_value(): int;
+
+fn main(): void {
+    println(f"{app_value()}");
+}

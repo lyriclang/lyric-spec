@@ -201,7 +201,8 @@ C a package brings with it, compiled with the program and linked into it
 that call their native part or whose manifest a rule refuses; the toolchain's own tests
 (`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
 
-*(Rules 4–21 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
+*(Rules 9–11, the findings `LYR-LNK…` of rule 12, rules 13–21, and what rules 7 and 8 say of a
+source tree are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
 decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
 each comes with its cases.)*
 
@@ -233,7 +234,8 @@ each comes with its cases.)*
 
 7. **`archives = ["native/lib/libz.a"]`** are static libraries the package brings, prebuilt — files
    of the package's content (§2) or of a source tree (§5.3): each is linked **by its path**, not
-   searched for. A file outside the content is refused (`LYR-PKG0002`). An archive is built for one
+   searched for. A file outside the content, or one that is not there, is refused when the build
+   needs it (`LYR-PKG0002`). An archive is built for one
    target, so it stands in the table of its triple (rule 4) as a rule. On Windows an archive is
    promised to link where it was built for the GNU ABI — by MinGW or zig cc —, not by MSVC.
 8. **`dylibs`** are shared libraries the package brings, prebuilt — files of the package's content
@@ -246,8 +248,9 @@ each comes with its cases.)*
    (`LYR-PKG0002`). The build puts each beside every binary it makes of the program, as §8 rule 3.2
    puts a file there, and with the same rules: the binary searches its own directory first, no
    directory of the machine is written into it, and two files of one name stop the build. A
-   Mach-O library whose install name does not begin with `@rpath/` would not be found there; it
-   is refused (`LYR-BLD0006`, exit 1), the message saying how to rename it. A shared library of
+   Mach-O library whose install name does not begin with `@rpath/` would not be found there, and an
+   ELF library without a `soname` would be recorded by the path it was linked from — the
+   machine's; each is refused (`LYR-BLD0006`, exit 1), the message saying how to name it. A shared library of
    the system is linked by name (`libs`); one the program finds while it runs is `std.ffi`'s
    `Library` ([13 §5](13-abi.md)). *(Rule 8 replaces, the same day, a rule that refused every
    shared library of a package — [07, E3′](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).)*
@@ -354,7 +357,7 @@ each operating system from any host — compared byte for byte.
    its sources are: the lock holds their bytes, and an archive comes into the binary as it was
    built — what it carries of the machine that built it is its own. A library linked by name,
    through `pkgConfig` or from a directory a build script names (§8 rule 3.1) is the machine's:
-   the same bytes need the same system libraries. *(Written ahead of M14b.)*
+   the same bytes need the same system libraries. *(Source trees are written ahead of M14b.)*
 
 ## 7. Tests
 
