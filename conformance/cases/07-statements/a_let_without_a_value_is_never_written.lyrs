@@ -1,0 +1,10 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0019
+// Lyric 5: a let declared without a value is never written.
+fn f(): int {
+    let x: int
+    x = 1
+    return x
+}
+println(f())

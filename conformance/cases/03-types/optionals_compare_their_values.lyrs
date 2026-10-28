@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | true
+//! | true
+//! | false
+//! | true
+// Lyric 5 §3.2 rule 7: two optionals are equal where both are empty or both hold equal values; a
+// `T` beside a `?T` is coerced up.
+let a: ?int = 5
+let b: ?int = null
+let c: ?int = null
+let s: ?string = "x"
+println(a == 5)
+println(a != b)
+println(b == c)
+println(a == 6)
+println(s == "x")

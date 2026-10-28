@@ -2,7 +2,7 @@
 
 **Base.** Lyric 5.0 [§3](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/03-types.md) applies, with the deviations below.
 
-**Status.** The core (S2) and the optionals (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core (S2), the optionals and `var x = null` (S3) written; the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -22,7 +22,7 @@
    codes start at 0900 (§16). `LYS-NYI0001` names a form a later milestone of the
    plan builds; it leaves the toolchain before 1.0.
 
-## Written (S3, optionals)
+## Written (S3, optionals and `var x = null`)
 
 6. **Optionals.** Lyric 5 §3.1–3.3 apply as written: `?T` and `??T`, `null`, `!` (on null the
    panic `LYS-RT0004`), `??`, `?.`, `??=`, `== null`, narrowing after a test and after a branch
@@ -33,7 +33,16 @@
    narrowing; a loop that writes it has it narrowed in none of its turns. A module-level `var` is
    never narrowed — a script's top-level bindings are the module's (§7) — and a module-level
    `let` is narrowed like a local.
-8. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+8. **`var x = null`** without a written type takes the type of the first use in its function
+   — the script's code counting as one — that fixes one: an assignment or a `??=` of a value of
+   type `T` (or `?T`), or the binding standing where a type `?T` is taken (an argument, a
+   return, a typed binding, a field). `x` is then a `?T` from its declaration on, and every use
+   is checked as such: uses before the fixing one in the source are allowed where they fix
+   nothing (`x == null`) and checked against `?T`. Where nothing in the function fixes the type,
+   the declaration is refused with the type to write (`LYS-SEM0010`); `let x = null` is refused
+   so too, as in Lyric 5. Lyric 5 infers no binding from a later use ([03 Leer](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md));
+   the empty literals `[]` and `[:]` take the same way with S7.
+9. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them
    ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
 

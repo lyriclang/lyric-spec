@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0010
+// §3 rule 8: where nothing in the function fixes the type of `var x = null`, it is written.
+fn f(): bool {
+    var x = null
+    return x == null
+}
+println(f())

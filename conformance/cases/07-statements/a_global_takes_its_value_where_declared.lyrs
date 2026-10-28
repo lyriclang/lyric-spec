@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0903
+// §7 rule 4: a global of the script takes its value where it is declared — a function may read
+// it before any statement assigns it.
+var total: int
+fn show(): void {
+    println(total)
+}
+show()
+total = 1

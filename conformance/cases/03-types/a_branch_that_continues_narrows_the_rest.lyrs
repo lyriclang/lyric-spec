@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 8
+// Lyric 5 §3.2 rule 3: behind `if (x == null) { continue }` the rest of the turn has `x` present.
+var sum = 0
+var i = 0
+while (i < 4) {
+    i += 1
+    let x: ?int = if (i == 2) null else i
+    if (x == null) {
+        continue
+    }
+    sum += x
+}
+println(sum)
