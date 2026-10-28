@@ -81,7 +81,10 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    with the descriptors (S3i).
    Unlike Lyric 5 (§9.1 rule 4), an instance is not compiled per argument list: the types whose
    values are objects of the VM share one copy, whose constraint calls go through the value's
-   table; every other type has a copy of its own (11 Gen).
+   table; every other type has a copy of its own (11 Gen). The arguments are not lost to the
+   sharing: what a shared copy builds is of the exact type its arguments make — `wrap(Foo { })`
+   of `fn wrap<T>(x: T): Box<T>` is a `Box<Foo>` —, and `x is T` on an interface value tests the
+   argument, as in Lyric 5's copy for it.
 13. **`with`.** Lyric 5 §2.5 applies as written: `p with { x = 3, pos.y = 4 }` is a copy of
    the struct `p` with the named fields replaced, its values left to right over the old `p`, after
    `p` itself; a path reaches into the structs `p` holds; on a class, a tuple or an enum refused
@@ -96,6 +99,11 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    object whose first scalar names its function and whose fields hold its captures, called by
    `call.v`
    ([11 V2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)).
+   Every type has a descriptor, a value of the VM that carries its template and its arguments'
+   descriptors. A shared copy gets the descriptors of its arguments as hidden parameters — a
+   method of a generic type reads them from its receiver's, since a call through an interface
+   value does not know them —, and a type it builds is interned at run time, so that two
+   descriptors of one type are one (`load.t`, `inst.t`, `desc.of`, `new.d`, `is.d`).
 
 ## Deviations (skeleton, written with later milestones)
 
