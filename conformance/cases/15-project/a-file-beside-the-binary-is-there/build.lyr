@@ -1,0 +1,5 @@
+import std.build;
+
+fn main(): void {
+    build.besideBinary("lib/missing.dll");
+}

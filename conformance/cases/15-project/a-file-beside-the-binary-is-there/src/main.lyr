@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-BLD0006
+//! since: 5.0.0
+// 15 §8 rule 3.2: a file a build script puts beside the binary must be there when the script ends.
+fn main(): void {
+}
