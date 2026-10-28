@@ -101,8 +101,8 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 |---|---|
 | 0 | done |
 | 1 | the program or its manifest was refused: a compile error, or a construct the compiler does not translate yet |
-| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a git repository that cannot be reached, a toolchain below what a package asks for |
-| 101 | the toolchain itself failed (`LYR-ICE0001`) |
+| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a C compiler that fails or does not finish within its limit (`LYR-BLD0001`), a git repository that cannot be reached, a toolchain below what a package asks for |
+| 101 | the toolchain itself failed (`LYR-ICE0001`): said with its trace, and written with the version, the command and the machine to a report under `out/` — of the package the command ran in, else of the working directory — which the message names |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
 
 ## 2. `clean`, `metadata`, `add`, `remove` and `bindgen`
