@@ -522,6 +522,21 @@ a mirror served on the machine): a conformance case fetches nothing.
     (`LYR-CLI0023`); one that is not what its index says (`LYR-CLI0024`); a change the installed
     toolchains refuse (`LYR-CLI0025`).
 
+11. **Which toolchain runs a command.** Before a verb runs, the toolchain it should run with is
+    decided: **`LYRIC_TOOLCHAIN`** — `local` for the toolchain that was started, or an installed
+    version, written with its build part or without (one not installed is refused,
+    `LYR-CLI0025`) — over the `toolchain` the package the command runs in asks for
+    ([15 §1](15-project.md) rule 6), a least version. The toolchain that was started runs the
+    command where it is what is asked for; else the default, where it is; else the newest
+    installed that is. Another toolchain is **handed the command** as it was given — on Unix in
+    place of the process, on Windows as a child whose exit is the command's — with
+    **`LYRIC_TOOLCHAIN_FROM`** set, and a command that carries it is never handed on again. Where
+    no installed toolchain is what the package asks for, a terminal is offered the least stable
+    version that is, installed on a yes; elsewhere the verb runs and refuses the package
+    (`LYR-PKG0009`). `toolchain`, `help`, `explain`, `completions`, `new` and `init` are never
+    handed on, and only the package the command runs in is read — a dependency's pin is the
+    build's to check.
+
 ### 13.1 The archive, the index and the signature *(informative)*
 
 - **The archive** of a toolchain is one per Tier 1 target: `.zip` for Windows, `.tar.gz` for the
