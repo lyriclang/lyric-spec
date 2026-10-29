@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | sleep cancelled
+// §10 rules 11, 17: a sleep is a wait.
+let t = spawn {
+    try {
+        sleep(Duration.ofSecs(10))
+    } catch (e: Cancelled) {
+        println("sleep cancelled")
+    }
+}
+yieldNow()
+t.cancel()
+t.await()

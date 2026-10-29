@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | fast,slow
+// §10 rule 17: the earlier deadline wakes first.
+var log = ""
+let a = spawn {
+    sleep(Duration.ofMillis(30))
+    log = log + "slow"
+}
+let b = spawn {
+    sleep(Duration.ofMillis(10))
+    log = log + "fast,"
+}
+a.await()
+b.await()
+println(log)

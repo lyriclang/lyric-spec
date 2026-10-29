@@ -5,7 +5,7 @@
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
 cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3), channels and
-semaphores (S6d1), `select` (S6d2); time and I/O come with S6d3–S6e — until then the design
+semaphores (S6d1), `select` (S6d2), time (S6d3); I/O comes with S6e — until then the design
 documents decide.
 
 ## Written (S6a, tasks)
@@ -148,6 +148,22 @@ documents decide.
     closed; is there none, the task waits on all of them, and the first channel to get something
     or to close runs its case. One body runs, once. `run()` is a wait (rule 11) and throws what the
     body that runs throws. *(Informative: a select is biased to its first case.)*
+
+## Written (S6d3, time)
+
+17. **Time** (Lyric 5 §2 rule 5, §3 rule 4, §7 rules 3, 5; [07 N5, N9](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). A `Duration` of the
+    prelude is a span of whole nanoseconds, made by `Duration.ofNanos`, `ofMicros`, `ofMillis`,
+    `ofSecs`, `ofMinutes`, `ofHours` and read by `nanos()`, `millis()`, `secs()`. `sleep(d)` parks
+    the task until at least `d` has passed on the run's monotonic clock — a wait (rule 11); the
+    sleepers whose time came wake in the order of their deadlines, behind the tasks already ready,
+    and a sleep of zero or less lets the ready tasks run first. Where no task is ready, the run
+    waits for its earliest timer. `Timer.after(d)` gives a `Channel<void>` that closes once `d` has
+    passed: a `recv()` from it answers `null` and a select's case on it runs; the run does not
+    wait for a timer. A select's `.timeout(d) { … }` runs its body when no case could go on before
+    `d` passed — at once for zero or less. `withTimeout(d) { … }` runs the block as a task of its
+    own and gives its value or throws its error, unless `d` passes first: then the block is
+    cancelled, and once it has ended `TimedOut` is thrown; whenever it returns, the block has ended,
+    and its failure comes out of `withTimeout` alone, no failure of the top level's scope.
 
 ## Deviations
 
