@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0014
+//! since: 1.0.0
+// §10 rule 10: the value meets the running coroutine's `Y`.
+fn emit(s: string) {
+    yield s
+}
+fn gen(): Coroutine<int> {
+    emit("x")
+}
+let c = gen()
+c.next()

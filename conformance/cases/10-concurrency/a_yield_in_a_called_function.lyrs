@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | 2
+// §10 rule 10: the yield suspends the coroutine that runs, whoever called the function.
+fn emit(x: int) {
+    yield x
+}
+fn gen(): Coroutine<int> {
+    emit(1)
+    emit(2)
+}
+for (x in gen()) {
+    println(x)
+}

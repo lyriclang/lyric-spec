@@ -3,8 +3,8 @@
 **Base.** Lyric 5.0 [§10](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/10-concurrency.md) applies, with the deviations below.
 
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
-`sequence` and `for` over a coroutine (S6b2); `close()`, a `yield` in a called function (S6b3),
-cancellation and scopes, channels, `select` and time, and I/O come with S6b3–S6e — until then the
+`sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3);
+cancellation and scopes, channels, `select` and time, and I/O come with S6c–S6e — until then the
 design documents decide.
 
 ## Written (S6a, tasks)
@@ -68,6 +68,24 @@ design documents decide.
    (`LYS-SEM0007`). *(Informative: `Coroutine :: Iterator`, and `for` over any iterable, come with
    the collections, S7.)*
 
+## Written (S6b3, closing and called yields)
+
+9. **`close()`** (Lyric 5 §1 rules 9–10, 14). A coroutine never pulled, or ended, ends without
+   running anything. One parked at a yield runs on from it with that yield throwing `Cancelled`, an
+   `Error` of the prelude, so its `defer`s and `using`s run on the way out; the `Cancelled` ends at
+   the close. What a `defer` threw on the way out was suppressed into it: `close()` throws the
+   first of those, the rest suppressed into it. A body that catches the `Cancelled` may still end
+   with a result, and a yield after it panics (`LYS-RT0014`); what else escapes the body comes out
+   of `close()`, which throws any `Error`. The coroutine has ended afterwards; closing one that
+   runs panics (`LYS-RT0014`). A coroutine is `Closeable` — `using let c = gen()` closes it when
+   the scope is left — and, unlike another `Closeable`, may be dropped unclosed without a warning:
+   nothing of it runs any more. A coroutine is an `Identity`: `==` asks whether two are one.
+10. **A yield in a function a coroutine calls** (§1 rule 13) suspends the coroutine that runs,
+    whoever called the function: its value is typed as what it is and meets the coroutine's `Y`
+    where it runs — a value of another type, or such a yield where no coroutine runs, panics
+    (`LYS-RT0014`). Every yield throws `Cancelled` where its coroutine is closed, so a function with
+    a written `throws` covers it (`LYS-SEM0034`).
+
 ## Deviations
 
 - No threads, `Mutex` or `Atomic`; one scheduler per instance; `Semaphore` guards sections across waits ([02 W](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [07](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)).
@@ -77,5 +95,7 @@ design documents decide.
 - `Task<T>` carries no `throws`: `await()` throws any `Error` ([07 N4](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); 03: no errors in
   function types). Nor does `Coroutine<Y, R>`: a pull throws any `Error` (Lyric 5 §1 rule 6
   puts the coroutine function's clause on the type).
+- A task or a coroutine is no interface value — not of `Closeable`, not of `Any` — until they
+  have descriptors at run time, with the collections (S7); `using` and `==` take them as they are.
 
 **Conformance.** `conformance/cases/10-concurrency/` (`since: 1.0.0`).

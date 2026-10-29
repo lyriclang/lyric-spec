@@ -1,0 +1,14 @@
+//! run
+//! panic: LYS-RT0014
+//! since: 1.0.0
+// §10 rule 9: a coroutine closed from its own body.
+var me: ?Coroutine<int> = null
+fn gen(): Coroutine<int> {
+    if (let c = me) {
+        c.close()
+    }
+    yield 1
+}
+let c = gen()
+me = c
+c.next()

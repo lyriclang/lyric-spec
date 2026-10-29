@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+// §10 rule 9: a coroutine never pulled ends without running anything.
+fn gen(): Coroutine<int> {
+    println("runs")
+    yield 1
+}
+let c = gen()
+c.close()
+println(c.isDone())
