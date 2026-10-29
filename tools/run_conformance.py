@@ -160,8 +160,9 @@ def prepare_package(package, work):
                 git(["add", "-A"], target)
                 git(["commit", "-q", "-m", f"v{ver.name}"], target)
                 git(["tag", f"v{ver.name}"], target)
+    # a manifest, a lock, and a script, whose frontmatter may name the repositories too
     for f in copy.rglob("*"):
-        if f.is_file() and f.name in ("lyric-script.toml", "lyric-script.lock"):
+        if f.is_file() and (f.name in ("lyric-script.toml", "lyric-script.lock") or f.suffix == ".lyrs"):
             f.write_text(fill_repos(f.read_text(encoding="utf-8"), url), encoding="utf-8", newline="\n")
     return copy
 
@@ -175,7 +176,8 @@ def run_case(path, spec, exe, package=None, env=None):
         if package is not None:
             return subprocess.run([str(exe), verb, *spec["options"]], capture_output=True, text=True,
                                   cwd=package, env=env)
-        return subprocess.run([str(exe), verb, *spec["options"], str(path)], capture_output=True, text=True)
+        return subprocess.run([str(exe), verb, *spec["options"], str(path)], capture_output=True, text=True,
+                              env=env)
 
     # `update`: the package's git dependencies read anew before the build
     if spec.get("update") and package is not None:
@@ -273,7 +275,15 @@ def main():
             skipped += 1
             print(f"SKIP {label} (until {'.'.join(map(str, spec['until']))})")
             continue
-        if package is None:
+        program = program_of(case, args.cases)
+        if package is None and program is not None and (program / "repos").is_dir():
+            # a script whose frontmatter reads from git: built from a copy, its cache its own
+            with tempfile.TemporaryDirectory() as work:
+                work = pathlib.Path(work)
+                copy = prepare_package(program, work)
+                env = dict(os.environ, LYRIC_SCRIPT_CACHE=str(work / "cache"))
+                ok, reason = run_case(copy / "main.lyrs", spec, args.lyric_script.resolve(), None, env)
+        elif package is None:
             ok, reason = run_case(case, spec, args.lyric_script.resolve())
         else:
             # built from a copy, with a cache of its own: what it fetches and locks stays there

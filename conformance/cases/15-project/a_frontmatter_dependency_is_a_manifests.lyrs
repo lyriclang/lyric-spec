@@ -1,0 +1,11 @@
+---
+[dependencies]
+geo = "1.2"
+---
+println(1)
+
+// §15 rule 13: a dependency in a frontmatter takes the manifest's forms — a version alone is a
+// registry's.
+//! check
+//! error: LYS-PKG0003
+//! since: 1.0.0
