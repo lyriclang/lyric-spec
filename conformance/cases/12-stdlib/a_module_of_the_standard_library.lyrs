@@ -1,0 +1,18 @@
+//! run
+//! env: LYRIC_SCRIPT_PROBE_7C1=found
+//! option: -A
+//! stdout:
+//! | found
+//! | unset
+//! | true
+//! | false
+//! since: 1.0.0
+// §12 rule 2: `import std.<m>` names a module of the standard library, which comes with the
+// toolchain.
+import std.os { env }
+import std.fs { exists }
+
+println(env("LYRIC_SCRIPT_PROBE_7C1") ?? "unset")
+println(env("LYRIC_SCRIPT_NEVER_SET_9F2") ?? "unset")
+println(exists("."))
+println(exists("no/such/path/7c1"))

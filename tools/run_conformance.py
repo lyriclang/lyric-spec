@@ -220,6 +220,10 @@ def run_case(path, spec, exe, package=None, env=None):
         for code in spec["errors"] + spec["warnings"]:
             if code not in diagnostics:
                 return fail(f"expected {code}, diagnostics were:\n{diagnostics}")
+        # `stderr-has:` of a rejection reads the diagnostics (ignored before S7a)
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     if checked.returncode != 0:
@@ -230,6 +234,9 @@ def run_case(path, spec, exe, package=None, env=None):
     if spec["mode"] == "check":
         if not spec["warnings"] and diagnostics.strip():
             return fail(f"expected silence, got:\n{diagnostics}")
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     executed = command("run")
