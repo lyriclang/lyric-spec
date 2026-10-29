@@ -3,4 +3,4 @@ name = "geo"
 version = "1.0.0"
 
 [dependencies]
-units = { path = "../units" }
+units = { path = "vendor/units" }
