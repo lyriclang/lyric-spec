@@ -92,7 +92,17 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    as a statement a value thrown away (`LYS-SEM0022`). A struct is shared and never changed
    (rule 3), so the copy is a new object, and so is each struct a path reaches; a path after its
    field was replaced whole changes the new value, as Lyric 5's stores into the copy do.
-14. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
+14. **Literal protocols** ([03 Lit](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)): the prelude declares `FromIntLiteral`,
+   `FromFloatLiteral`, `FromStringLiteral`, `FromBoolLiteral` and `FromNullLiteral`, each with a
+   static member named for its kind — `static fn fromIntLiteral(v: int): Self`, …,
+   `static fn fromNullLiteral(): Self` —, since one type may take several and functions are told
+   apart by their count (Lyric 5 §8.1.2). A literal where its place's type conforms — a binding's,
+   a parameter's, a field's, a return's, an optional's value type, a type parameter's — is built
+   by that type's member: `let m: Money = 5` is `Money.fromIntLiteral(5)`. Only a literal is: a
+   value of a variable is never converted (`LYS-SEM0001`), and `null` where an optional is taken
+   stays the optional's `null`. `FromArrayLiteral` and `FromMapLiteral` come with the collections
+   (S7).
+15. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
    slots in order, inline; an enum without payloads as an `int`, one with payloads as an object
    of a VM type per variant whose first scalar is the variant's number; a function value as an
