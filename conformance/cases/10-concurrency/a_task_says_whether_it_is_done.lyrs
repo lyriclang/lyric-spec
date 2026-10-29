@@ -1,0 +1,10 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | false
+//! | true
+// §10 rule 1: `isDone()`.
+let t = spawn { 1 }
+println(t.isDone())
+t.await()
+println(t.isDone())

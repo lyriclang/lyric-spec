@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 15
+//! | 3.5
+// §10 rule 7: without a type for them, the yields unify into the coroutine's — `float` here.
+let g = (n: int) => {
+    yield n
+    yield n * 2
+}
+var s = 0
+for (x in g(5)) {
+    s += x
+}
+println(s)
+let h = () => {
+    yield 1
+    yield 2.5
+}
+let c = h()
+println((c.next() ?? 0.0) + (c.next() ?? 0.0))

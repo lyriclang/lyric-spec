@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | close threw other
+// §10 rule 9: an error other than the `Cancelled` comes out of the close.
+fn gen(): Coroutine<int> {
+    try {
+        yield 1
+    } catch (e: Cancelled) {
+        throw Exception("other")
+    }
+}
+let c = gen()
+c.next()
+try {
+    c.close()
+} catch (e) {
+    println("close threw " + e.message())
+}

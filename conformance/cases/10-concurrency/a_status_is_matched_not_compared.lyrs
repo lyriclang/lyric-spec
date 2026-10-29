@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-SEM0059
+//! since: 1.0.0
+// §10 rule 1: a `TaskStatus<T>` is no `Equatable`.
+let t = spawn { 1 }
+println(t.status() == t.status())

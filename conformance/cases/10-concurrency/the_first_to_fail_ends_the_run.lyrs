@@ -1,0 +1,15 @@
+//! run
+//! exit: 1
+//! since: 1.0.0
+//! stderr:
+//! | error: ended first
+// §10 rule 2: the first task to fail by the order they ended — not the first spawned — ends the
+// run; one that fails after it is none of the scope's.
+fn fail(m: string): int {
+    throw Exception(m)
+}
+spawn {
+    yieldNow()
+    fail("spawned first")
+}
+spawn { fail("ended first") }

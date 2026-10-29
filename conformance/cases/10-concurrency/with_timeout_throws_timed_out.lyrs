@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | caught timed out
+// §10 rule 17: the block is cancelled, then `TimedOut`.
+try {
+    withTimeout(Duration.ofMillis(10)) {
+        sleep(Duration.ofSecs(5))
+        1
+    }
+} catch (e: TimedOut) {
+    println("caught " + e.message())
+}

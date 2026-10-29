@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0034
+//! since: 1.0.0
+// §10 rule 11: a function that waits throws `Cancelled`.
+fn f() throws Exception {
+    yieldNow()
+}

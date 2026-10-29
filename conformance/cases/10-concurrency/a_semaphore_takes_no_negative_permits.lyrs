@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §10 rule 15.
+let sem = Semaphore.new(-1)

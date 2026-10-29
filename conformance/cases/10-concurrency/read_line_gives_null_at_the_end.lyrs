@@ -1,0 +1,6 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+// §10 rule 18: null at the end of the input.
+println(readLine() == null)

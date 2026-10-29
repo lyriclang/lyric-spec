@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0034
+//! since: 1.0.0
+// §10 rule 10: a yield throws `Cancelled` where its coroutine is closed.
+fn emit(x: int) throws Exception {
+    yield x
+}

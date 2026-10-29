@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | hello
+//! stdout:
+//! | hello
+//! | true
+// §10 rule 18: a task that only gives way does not starve the read.
+var ticks = 0
+var done = false
+let tk = spawn {
+    while (!done) {
+        ticks += 1
+        yieldNow()
+    }
+}
+let l = readLine()
+done = true
+tk.await()
+println(l ?? "-")
+println(ticks > 0)

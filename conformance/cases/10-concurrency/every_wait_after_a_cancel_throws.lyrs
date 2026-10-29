@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | first
+//! | second
+//! | end
+// §10 rule 11: a task that catches `Cancelled` and waits again gets it again.
+let t = spawn {
+    try {
+        yieldNow()
+    } catch (e: Cancelled) {
+        println("first")
+    }
+    try {
+        yieldNow()
+    } catch (e: Cancelled) {
+        println("second")
+    }
+}
+t.cancel()
+t.await()
+println("end")

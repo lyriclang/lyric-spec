@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | b x
+// §10 rule 16: the case whose channel can be received from runs.
+let a = Channel<int>.new(1)
+let b = Channel<string>.new(1)
+b.send("x")
+Select.on(a) { v => println("a") }
+    .on(b) { v => println("b " + (v ?? "none")) }
+    .run()

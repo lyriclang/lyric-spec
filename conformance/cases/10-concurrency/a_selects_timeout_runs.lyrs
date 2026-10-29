@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | timed out
+// §10 rules 16–17: no case could go on before the timeout passed.
+let a = Channel<int>.new()
+Select.on(a) { v => println("value") }
+    .timeout(Duration.ofMillis(10)) { println("timed out") }
+    .run()

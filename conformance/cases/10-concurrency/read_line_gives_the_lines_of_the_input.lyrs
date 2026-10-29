@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | alpha
+//! | beta
+//! stdout:
+//! | > alpha
+//! | > beta
+// §10 rule 18: a line of standard input without its line end.
+while (let l = readLine()) {
+    println("> " + l)
+}

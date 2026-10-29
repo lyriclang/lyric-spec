@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+//! | 1
+//! | 1
+// §10 rule 4: a coroutine function may be a method; the coroutine holds the receiver.
+class Counter {
+    var n: int = 0
+    fn upTo(k: int): Coroutine<int> {
+        while (this.n < k) {
+            this.n += 1
+            yield this.n
+        }
+    }
+}
+let c = Counter { }
+let g = c.upTo(2)
+println(c.n)
+println(g.next() ?? 0)
+println(c.n)

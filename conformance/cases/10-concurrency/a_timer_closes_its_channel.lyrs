@@ -1,0 +1,7 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+// §10 rule 17: `Timer.after(d)`; the run waits for the timer where no task is ready.
+let tick = Timer.after(Duration.ofMillis(5))
+println(tick.recv() == null)

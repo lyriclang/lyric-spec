@@ -1,0 +1,7 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 42
+// §10 rule 1: `spawn { … }` gives a `Task<T>`; `await()` its value.
+let t = spawn { 21 * 2 }
+println(t.await())

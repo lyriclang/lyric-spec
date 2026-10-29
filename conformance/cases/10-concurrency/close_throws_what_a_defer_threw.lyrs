@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | close threw in defer
+// §10 rule 9: what a defer threw on the way out comes out of the close.
+fn gen(): Coroutine<int> {
+    defer {
+        throw Exception("in defer")
+    }
+    yield 1
+}
+let c = gen()
+c.next()
+try {
+    c.close()
+} catch (e) {
+    println("close threw " + e.message())
+}

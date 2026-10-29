@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | false
+// §10 rule 9 (Lyric 5 §1 rule 14): `==` asks whether two coroutines are one.
+fn gen(): Coroutine<int> {
+    yield 1
+}
+let c = gen()
+let d = c
+println(c == d)
+println(c == gen())

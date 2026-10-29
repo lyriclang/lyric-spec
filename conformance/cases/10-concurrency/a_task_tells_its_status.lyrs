@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | running
+//! | done 7
+// §10 rule 1: `status()`, `Running` until the task has ended, then `Done` with its value — the task
+// ends while the top level gives way, so no await leaves its value in a register; 7, no state
+// number the status is told apart by.
+fn show(s: TaskStatus<int>): string {
+    return match (s) {
+        .Running => "running",
+        .Done(v) => f"done {v}",
+        _ => "other",
+    }
+}
+let t = spawn { 7 }
+println(show(t.status()))
+yieldNow()
+println(show(t.status()))

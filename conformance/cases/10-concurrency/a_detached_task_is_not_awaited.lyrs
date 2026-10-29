@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | main ends
+//! | scoped
+// §10 rule 12: the end waits for the scope's tasks, not for a detached one.
+spawn { println("scoped") }
+spawnDetached {
+    yieldNow()
+    yieldNow()
+    println("never")
+}
+println("main ends")

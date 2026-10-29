@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-RES0009
+//! since: 1.0.0
+// §10 rule 17: its field is the prelude's.
+let d = Duration { nanosCount = 5 }

@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | closed
+// §10 rule 16: a closed channel can be received from: its case gets null.
+let a = Channel<int>.new()
+a.close()
+Select.on(a) { v => println(if (v == null) "closed" else "value") }.run()

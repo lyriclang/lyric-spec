@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | done
+// §10 rule 7: the returns give the result's type.
+let g = () => {
+    yield 1
+    return "done"
+}
+let c = g()
+c.next()
+c.next()
+println(c.result() ?? "none")

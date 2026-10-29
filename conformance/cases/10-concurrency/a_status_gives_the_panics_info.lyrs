@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0001
+//! since: 1.0.0
+//! stdout:
+//! | integer division by zero
+// §10 rule 1: `Panicked` holds the panic's `PanicInfo`.
+let c = spawn { 1 / 0 }
+yieldNow()
+match (c.status()) {
+    .Panicked(p) => println(p.message),
+    _ => println("no"),
+}

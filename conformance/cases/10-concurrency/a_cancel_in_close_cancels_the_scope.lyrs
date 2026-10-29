@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | inner cancelled
+//! | outer done
+// §10 rule 13: a task cancelled while it waits in close() cancels
+// the scope's tasks and still waits for them.
+let outer = spawn {
+    using let scope = TaskScope.new()
+    scope.spawn {
+        try {
+            while (true) {
+                yieldNow()
+            }
+        } catch (e: Cancelled) {
+            println("inner cancelled")
+        }
+    }
+}
+yieldNow()
+yieldNow()
+outer.cancel()
+outer.await()
+println("outer done")

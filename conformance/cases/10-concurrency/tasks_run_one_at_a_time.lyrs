@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | mab
+// §10 rule 1 (07 N8): the spawner goes on; a task runs once another waits.
+var log = ""
+let a = spawn {
+    log = log + "a"
+    1
+}
+let b = spawn {
+    log = log + "b"
+    2
+}
+log = log + "m"
+println(a.await() + b.await())
+println(log)

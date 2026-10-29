@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | select cancelled
+// §10 rules 11, 16: run() is a wait.
+let a = Channel<int>.new()
+let t = spawn {
+    try {
+        Select.on(a) { v => println("got") }.run()
+    } catch (e: Cancelled) {
+        println("select cancelled")
+    }
+}
+yieldNow()
+t.cancel()
+t.await()

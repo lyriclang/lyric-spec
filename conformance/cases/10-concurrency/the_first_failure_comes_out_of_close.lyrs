@@ -1,0 +1,29 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | sibling cleaned up
+//! | caught boom
+// §10 rule 13: the first failure cancels the others; close throws it.
+fn fail(): int {
+    throw Exception("boom")
+}
+fn work() {
+    using let scope = TaskScope.new()
+    scope.spawn {
+        defer {
+            println("sibling cleaned up")
+        }
+        while (true) {
+            yieldNow()
+        }
+    }
+    scope.spawn {
+        yieldNow()
+        fail()
+    }
+}
+try {
+    work()
+} catch (e) {
+    println("caught " + e.message())
+}

@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | body ends
+//! | child done
+//! | after
+// §10 rule 13: no task of the scope outlives the block.
+fn work() {
+    using let scope = TaskScope.new()
+    scope.spawn {
+        yieldNow()
+        println("child done")
+    }
+    println("body ends")
+}
+work()
+println("after")

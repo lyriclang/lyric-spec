@@ -1,0 +1,48 @@
+//! run
+//! exit: 1
+//! since: 1.0.0
+//! stdout:
+//! | running
+//! | false
+//! | done 42
+//! | true
+//! | failed: boom
+//! | panicked: LYS-RT0001
+//! | cancelled
+//! stderr:
+//! | error: boom
+// §10 rule 1: the value, the error, the panic's code — and the first
+// failure still ends the run (rule 2).
+fn boom(): int {
+    throw Exception("boom")
+}
+fn show(s: TaskStatus<int>): string {
+    return match (s) {
+        .Running => "running",
+        .Done(v) => f"done {v}",
+        .Failed(e) => "failed: " + e.message(),
+        .Cancelled => "cancelled",
+        .Panicked(p) => "panicked: " + p.code,
+    }
+}
+let a = spawn { 42 }
+println(show(a.status()))
+println(a.isDone())
+a.await()
+println(show(a.status()))
+println(a.isDone())
+let b = spawn { boom() }
+let c = spawn { 1 / 0 }
+let d = spawn {
+    yieldNow()
+    7
+}
+yieldNow()
+println(show(b.status()))
+println(show(c.status()))
+d.cancel()
+try {
+    d.await()
+} catch (e: Cancelled) {
+}
+println(show(d.status()))

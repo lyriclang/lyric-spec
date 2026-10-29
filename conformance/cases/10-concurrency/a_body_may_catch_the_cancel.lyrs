@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | caught cancelled
+//! | 5
+// §10 rule 9: a body that catches the `Cancelled` may still end with a result.
+fn gen(): Coroutine<int, int> {
+    try {
+        yield 1
+    } catch (e: Cancelled) {
+        println("caught " + e.message())
+        return 5
+    }
+    return 0
+}
+let c = gen()
+c.next()
+c.close()
+println(c.result() ?? -1)

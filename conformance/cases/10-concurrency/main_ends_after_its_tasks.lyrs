@@ -1,0 +1,14 @@
+//! run
+//! exit: 5
+//! since: 1.0.0
+//! stdout:
+//! | late
+// §10 rule 2: where `fn main` is the entry, the scope ends after it, its exit code once every
+// task has ended.
+fn main(): int {
+    spawn {
+        yieldNow()
+        println("late")
+    }
+    return 5
+}

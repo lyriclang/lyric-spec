@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | tm
+// §10 rule 17: a sleep of zero or less.
+var log = ""
+let t = spawn { log = log + "t" }
+sleep(Duration.ofNanos(0))
+log = log + "m"
+t.await()
+println(log)

@@ -51,11 +51,11 @@ def parse_header(path):
             spec["exit"] = int(body[5:].strip())
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
-        elif body in ("stdout:", "stderr:"):
+        elif body in ("stdout:", "stderr:", "stdin:"):
             out = spec[body[:-1]] = []
         elif body.startswith("|"):
             if out is None:
-                raise ValueError(f"{path}: a '|' line before 'stdout:' or 'stderr:'")
+                raise ValueError(f"{path}: a '|' line before 'stdout:', 'stderr:' or 'stdin:'")
             # One space after the bar is the format's, more are the text's: a report's
             # '  caused by:' keeps its indentation.
             out.append(body[2:] if body[1:].startswith(" ") else body[1:])
@@ -172,6 +172,11 @@ def prepare_package(package, work):
     return copy
 
 
+# A case that does not end — a wait nothing ends, a cancel that never acts — fails after this many
+# seconds instead of holding the suite (S6c1).
+CASE_TIMEOUT = 60
+
+
 def run_case(path, spec, exe, package=None, env=None):
     def fail(reason):
         return (False, reason)
@@ -181,12 +186,17 @@ def run_case(path, spec, exe, package=None, env=None):
     if spec.get("env"):
         env = dict(env or os.environ, **spec["env"])
 
+    # `stdin:` lines are the run's standard input, each ended by a line end (S6e); without them
+    # the input is empty
+    given = "".join(line + "\n" for line in spec.get("stdin") or [])
+
     def command(verb):
-        if package is not None:
-            return subprocess.run([str(exe), verb, *spec["options"]], capture_output=True, text=True,
-                                  cwd=package, env=env)
-        return subprocess.run([str(exe), verb, *spec["options"], str(path)], capture_output=True, text=True,
-                              env=env)
+        args = [str(exe), verb, *spec["options"]] + ([] if package is not None else [str(path)])
+        try:
+            return subprocess.run(args, capture_output=True, text=True, cwd=package, env=env,
+                                  timeout=CASE_TIMEOUT, input=given)
+        except subprocess.TimeoutExpired:
+            return None
 
     # `update`: the package's git dependencies read anew before the build
     if spec.get("update") and package is not None:
@@ -195,6 +205,8 @@ def run_case(path, spec, exe, package=None, env=None):
             return fail(f"update exited {updated.returncode}:\n{updated.stderr}")
 
     checked = command("check")
+    if checked is None:
+        return fail(f"check timed out after {CASE_TIMEOUT} s")
     diagnostics = checked.stderr
 
     if spec["errors"]:
@@ -221,6 +233,8 @@ def run_case(path, spec, exe, package=None, env=None):
         return (True, "")
 
     executed = command("run")
+    if executed is None:
+        return fail(f"run timed out after {CASE_TIMEOUT} s")
     expected_exit = 101 if spec["panic"] else spec["exit"]
     if executed.returncode != expected_exit:
         return fail(f"exit {executed.returncode}, expected {expected_exit};"

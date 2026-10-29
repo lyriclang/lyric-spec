@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 5
+//! | 6
+// §10 rule 7: each call of a generator lambda gives a coroutine of its own over the captures.
+fn make(start: int): fn() -> Coroutine<int> {
+    var n = start
+    return () => {
+        n += 1
+        yield n
+    }
+}
+let g = make(4)
+println(g().next() ?? 0)
+println(g().next() ?? 0)

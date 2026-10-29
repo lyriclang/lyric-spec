@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | t1
+//! | true
+//! | t2
+//! | false
+//! | false
+// §10 rule 4: a `Coroutine<void>`'s `next()` gives whether the body stopped at a yield.
+fn ticks(): Coroutine<void> {
+    println("t1")
+    yield
+    println("t2")
+}
+let c = ticks()
+println(c.next())
+println(c.next())
+println(c.next())

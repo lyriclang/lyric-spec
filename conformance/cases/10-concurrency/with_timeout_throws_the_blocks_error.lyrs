@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | caught boom
+// §10 rule 17: the block's error comes out of withTimeout alone: the run ends well.
+fn boom(): int {
+    throw Exception("boom")
+}
+try {
+    withTimeout(Duration.ofMillis(100)) { boom() }
+} catch (e) {
+    println("caught " + e.message())
+}

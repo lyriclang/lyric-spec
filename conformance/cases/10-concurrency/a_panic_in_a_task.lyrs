@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0001
+//! since: 1.0.0
+// §10 rule 1: a panic in a task panics the task that awaits it.
+let t = spawn { 1 / 0 }
+println(t.await())

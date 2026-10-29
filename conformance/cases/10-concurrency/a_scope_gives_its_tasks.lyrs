@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+// §10 rule 13: `scope.spawn` gives the task; `using` closes the scope.
+fn work(): int {
+    using let scope = TaskScope.new()
+    let a = scope.spawn { 1 }
+    let b = scope.spawn { 2 }
+    return a.await() + b.await()
+}
+println(work())

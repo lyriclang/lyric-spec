@@ -19,6 +19,8 @@ from Lyric 5 gets a failing and a passing case.
 //! stderr:                  the error stream begins with these lines (the frames may follow):
 //! | error: first
 //! |   caused by: second
+//! stdin:                    the run's standard input, each line ended by a line end; empty
+//! | a line                  without it
 //! check                    check only; expect acceptance in silence
 //! error: LYS-SEM0001       check only; expect rejection with this code (repeatable)
 //! warning: LYS-LEX0901     the check succeeds and reports this code (repeatable)

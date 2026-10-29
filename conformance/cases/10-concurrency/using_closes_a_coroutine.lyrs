@@ -1,0 +1,20 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | cleaned
+//! | after
+// §10 rule 9: a coroutine is `Closeable`.
+fn gen(): Coroutine<int> {
+    defer {
+        println("cleaned")
+    }
+    yield 1
+    yield 2
+}
+fn run() {
+    using let c = gen()
+    println(c.next() ?? 0)
+}
+run()
+println("after")

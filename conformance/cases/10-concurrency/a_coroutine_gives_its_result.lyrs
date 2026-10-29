@@ -1,0 +1,20 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | a
+//! | b
+//! | -
+//! | 2
+// §10 rule 4: `return v` gives the result; `result()` is null until the body has returned.
+fn steps(): Coroutine<string, int> {
+    yield "a"
+    yield "b"
+    return 2
+}
+let c = steps()
+println(c.result() == null)
+println(c.next() ?? "-")
+println(c.next() ?? "-")
+println(c.next() ?? "-")
+println(c.result() ?? -1)

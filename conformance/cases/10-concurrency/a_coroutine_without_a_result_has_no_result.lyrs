@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0012
+//! since: 1.0.0
+// §10 rule 4: `result()` belongs to a coroutine with a result type.
+fn f(): Coroutine<int> {
+    yield 1
+}
+let r = f().result()
