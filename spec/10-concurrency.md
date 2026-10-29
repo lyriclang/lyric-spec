@@ -4,8 +4,8 @@
 
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
-cancellation (S6c1); `TaskScope` and a task's status with its values (S6c2–3), channels, `select`
-and time, and I/O come with S6c2–S6e — until then the design documents decide.
+cancellation (S6c1), task scopes (S6c2); a task's status with its values (S6c3), channels,
+`select` and time, and I/O come with S6c3–S6e — until then the design documents decide.
 
 ## Written (S6a, tasks)
 
@@ -102,6 +102,18 @@ and time, and I/O come with S6c2–S6e — until then the design documents decid
     neither — whose block may throw `Cancelled` alone: any other error it handles itself
     (`LYS-SEM0034`). A panic in it ends the run (§5 rule 4).
 
+## Written (S6c2, task scopes)
+
+13. **Task scopes** (Lyric 5 §4, §5 rule 3). `TaskScope.new()` makes a scope; `scope.spawn { … }`
+    starts a task of it and gives its `Task<T>`. `close()` waits until every task of the scope has
+    ended; the first of them to fail — with an error other than `Cancelled`, or a panic — cancels
+    the others, and once they have all ended `close()` throws that error, any `Error`, or panics
+    again with that panic. A scope is `Closeable`: under `using let scope = TaskScope.new()` no
+    task of it outlives the block. `scope.cancel()` cancels every task of it that has not ended. A
+    task cancelled while it waits in `close()` cancels the scope's tasks and still waits for them;
+    then `close()` returns or throws as before. A closed scope takes no task: `scope.spawn` after
+    `close()` panics (`LYS-RT0008`). A scope is no interface value either (deviations).
+
 ## Deviations
 
 - No threads, `Mutex` or `Atomic`; one scheduler per instance; `Semaphore` guards sections across waits ([02 W](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [07](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)).
@@ -111,7 +123,7 @@ and time, and I/O come with S6c2–S6e — until then the design documents decid
 - `Task<T>` carries no `throws`: `await()` throws any `Error` ([07 N4](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); 03: no errors in
   function types). Nor does `Coroutine<Y, R>`: a pull throws any `Error` (Lyric 5 §1 rule 6
   puts the coroutine function's clause on the type).
-- A task or a coroutine is no interface value — not of `Closeable`, not of `Any` — until they
+- A task, a coroutine or a task scope is no interface value — not of `Closeable`, not of `Any` — until they
   have descriptors at run time, with the collections (S7); `using` and `==` take them as they are.
 
 **Conformance.** `conformance/cases/10-concurrency/` (`since: 1.0.0`).

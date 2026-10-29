@@ -1,0 +1,10 @@
+//! run
+//! panic: LYS-RT0001
+//! since: 1.0.0
+// §10 rule 13 (Lyric 5 §5 rule 3): close panics again.
+fn work() {
+    using let scope = TaskScope.new()
+    scope.spawn { println(1 / 0) }
+}
+work()
+println("unreached")

@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §10 rule 13: `scope.spawn` after `close()`.
+let scope = TaskScope.new()
+scope.close()
+scope.spawn { 1 }

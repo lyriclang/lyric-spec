@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | child cancelled
+//! | after
+// §10 rule 13: `scope.cancel()`.
+fn work() {
+    using let scope = TaskScope.new()
+    scope.spawn {
+        try {
+            while (true) {
+                yieldNow()
+            }
+        } catch (e: Cancelled) {
+            println("child cancelled")
+        }
+    }
+    yieldNow()
+    scope.cancel()
+}
+work()
+println("after")
