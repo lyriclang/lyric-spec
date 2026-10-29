@@ -377,7 +377,8 @@ C function's pointer (§3 rule 9).
 
 **Conformance.** `conformance/cases/13-abi/`; that a C program links the library — the archive
 and the shared one — and calls its exports, in the toolchain's own tests (`tests/Lyric5.Tests`,
-`ExportTests`).
+`ExportTests`); that it links the archive with the packages' archives inside and the line the build
+names, `LibraryLinkTests`.
 
 1. **`@Export("geo_area")`** on a function — a compiler instruction of the prelude
    ([11 §1](11-metaprogramming.md) rule 17) — makes it C's to call as the function `geo_area`; a
@@ -425,15 +426,19 @@ and the shared one — and calls its exports, in the toolchain's own tests (`tes
      reserves.
 9. A shared library gives the system's loader its exports and the runtime's API of rule 8, and no
    other symbol. A C program that links the archive links the libraries the runtime calls too — on
-   Linux `-lpthread -lm`, with zig cc `-lunwind`; on Windows `-lshell32 -lws2_32` — and those the
+   Linux `-lpthread -lm -ldl`, with zig cc `-lunwind`; on Windows `-lshell32 -lws2_32` — and those the
    packages' native parts name ([15 §5](15-project.md)), which a shared library is linked against
-   itself. *(Written ahead of M14b:)* the **archives** of the native parts
-   ([15 §5.2](15-project.md#52-linking)) lie inside `lib<name>.a` with the library and the runtime,
-   so a C program links that one file; what it links beside it — the libraries by name and from
-   `pkgConfig`, the frameworks, the runtime's — `build --lib` says after the archive, as the
-   arguments of a C compiler in the order they are linked (`note: link it with -lpthread -lm …`),
-   and its `--json` form gives them as the artifact's `linkArgs`
-   ([16 §4](16-diagnostics.md)). They are the target's: another target has others.
+   itself. The **archives** of the native parts ([15 §5.2](15-project.md#52-linking)) lie inside
+   `lib<name>.a` with the library and the runtime, so a C program links that one file; their
+   **shared libraries** lie beside it, with a Windows import library each. What a C program links
+   beside the archive — the shared libraries by those copies, the libraries by name with the
+   directories they are searched in, what `pkgConfig` gave, the frameworks, the runtime's —
+   `build --lib` says after the archive is written, as the arguments of a C compiler in the order
+   they are linked (`note: link out/…/lib<name>.a with -lpthread -lm …`; nothing where there is
+   nothing), and its `--json` form gives them as the artifact's `linkArgs`
+   ([16 §4](16-diagnostics.md)). They are the target's: another target has others. Where the C
+   program finds a shared library while it runs is its own to say. With `--shared` nothing is
+   said: the library is linked against all of it, and the packages' shared libraries lie beside it.
 
 ## 5. Embedding
 
