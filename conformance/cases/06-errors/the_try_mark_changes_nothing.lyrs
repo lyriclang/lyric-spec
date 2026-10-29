@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 2
+//! | caught
+// §6 rule 7 (Script 05 Th): `try` marks what stands to its right and changes nothing — a call
+// that throws need not stand under it, and one that does throws the same.
+struct Oops :: Error {
+    fn message(): string = "oops"
+}
+fn one(): int = 1
+fn fail(): int {
+    throw Oops { }
+}
+let a = 1 + try one() * 2
+println(a)
+try println(one() + 1)
+try {
+    let b = try fail()
+    println(b)
+} catch (_: Oops) {
+    println("caught")
+}

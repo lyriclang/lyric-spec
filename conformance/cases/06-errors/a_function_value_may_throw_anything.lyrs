@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0034
+// §6 rule 5 (Script 02 K2): a function type carries no set, so a call through a function value
+// may throw anything — more than `throws NotFound` covers.
+struct NotFound :: Error {
+    fn message(): string = "not found"
+}
+fn apply(f: fn() -> int): int throws NotFound {
+    return f()
+}
+println(apply { 1 })

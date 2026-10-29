@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0137
+// §6 rule 6 (Lyric 5 §2 rule 1): a `throws` names a type once.
+struct A :: Error {
+    fn message(): string = "a"
+}
+fn f(): int throws [A, A] {
+    return 1
+}
+println(f())

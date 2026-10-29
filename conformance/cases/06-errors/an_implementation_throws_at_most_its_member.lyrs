@@ -1,0 +1,20 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0042
+// §6 rule 6 (Lyric 5 §2 rule 4): the member writes `throws NotFound`; an implementation throws
+// at most that.
+struct NotFound :: Error {
+    fn message(): string = "not found"
+}
+struct Denied :: Error {
+    fn message(): string = "denied"
+}
+interface Store {
+    fn load(key: string): int throws NotFound
+}
+struct Locked :: Store {
+    fn load(key: string): int {
+        throw Denied { }
+    }
+}
+println("x")
