@@ -1,0 +1,21 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0001
+// §5 rule 11 (Lyric 5 §8 rule 6): a type whose answer is another stands for no such value.
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+class Words :: [Iterator] {
+    var done: bool = false
+    type Item = string
+
+    fn next(): ?string {
+        if (this.done) {
+            return null
+        }
+        this.done = true
+        return "w"
+    }
+}
+let w: Iterator<Item = int> = Words { }

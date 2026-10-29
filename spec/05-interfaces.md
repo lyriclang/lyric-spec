@@ -73,7 +73,12 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    on through them, `A.Iter.Item`. A constraint may fix one (§8 rule 5),
    `T :: [Iterator<Item = int>]`: inside, `T.Item` is that type wherever it stands; an argument
    whose answer is another is refused (`LYS-SEM0028`), a name the interface does not declare too
-   (`LYS-SEM0128`). The value form (`Iterator<Item = int>` as a value's type) comes later.
+   (`LYS-SEM0128`). The **value form** (§8 rule 6): `Iterator<Item = int>`, every associated type
+   fixed, is the type of a value — a member typed by one has the fixed type, `next(): ?int` — and a
+   type stands for it where it conforms and answers alike (`LYS-SEM0001` otherwise). An associated
+   type left open keeps the interface a constraint only (`LYS-SEM0126`); a member that names
+   `Self` itself, a static or a generic member keeps it one whatever is fixed — `Self.Item`
+   alone does not.
 12. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;

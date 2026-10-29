@@ -1,0 +1,42 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+//! | 3
+// §5 rule 11 (Lyric 5 §8 rule 6): `Iterator<Item = int>` is a value's type; its `next` gives an
+// `int`, and it is an `Iterator` where a generic asks for one.
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+class Counter :: [Iterator] {
+    var n: int = 0
+    type Item = int
+
+    fn next(): ?int {
+        if (this.n >= 3) {
+            return null
+        }
+        this.n += 1
+        return this.n
+    }
+}
+fn counter(): Iterator<Item = int> = Counter { }
+fn total(it: Iterator<Item = int>): int {
+    var t = 0
+    var x = it.next()
+    while (x != null) {
+        t += x
+        x = it.next()
+    }
+    return t
+}
+fn count<I :: [Iterator]>(it: I): int {
+    var n = 0
+    while (it.next() != null) {
+        n += 1
+    }
+    return n
+}
+println(total(counter()))
+println(count(counter()))
