@@ -58,6 +58,8 @@ The differences from Lyric 5's format:
   Each such case runs with a cache of its own (`LYRIC_SCRIPT_CACHE`). A program case — a folder
   with a `main.lyrs` — that holds `repos/` is built the same way, `{repos}` written in its
   scripts' frontmatter too.
+- `env: NAME=value` adds to the environment the case runs in (repeatable); `stderr-has:` a text
+  the error stream holds somewhere (repeatable), where the report names paths of the run.
 - `option: --offline` passes an option to `check` and `run` (repeatable); `update` runs
   `lyric-script update` in a package case before it is checked. A case's `lyric-script.lock` may
   name the repositories' commits: they are fixed by the fixed author and times.

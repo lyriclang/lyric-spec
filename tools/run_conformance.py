@@ -71,6 +71,11 @@ def parse_header(path):
             spec["options"].append(body[7:].strip())
         elif body == "update":
             spec["update"] = True
+        elif body.startswith("env:"):
+            name, _, value = body[4:].strip().partition("=")
+            spec.setdefault("env", {})[name] = value
+        elif body.startswith("stderr-has:"):
+            spec.setdefault("stderr_has", []).append(body[11:].strip())
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -172,6 +177,10 @@ def run_case(path, spec, exe, package=None, env=None):
         return (False, reason)
 
     # a package case is built from its folder, naming no file, as a user builds a package
+    # `env:` lines add to the environment the case runs in
+    if spec.get("env"):
+        env = dict(env or os.environ, **spec["env"])
+
     def command(verb):
         if package is not None:
             return subprocess.run([str(exe), verb, *spec["options"]], capture_output=True, text=True,
@@ -216,6 +225,9 @@ def run_case(path, spec, exe, package=None, env=None):
     if executed.returncode != expected_exit:
         return fail(f"exit {executed.returncode}, expected {expected_exit};"
                     f" stderr:\n{executed.stderr}")
+    for text in spec.get("stderr_has", []):
+        if text not in executed.stderr:
+            return fail(f"expected '{text}' on the error stream:\n{executed.stderr}")
     if spec["panic"] and spec["panic"] not in executed.stderr:
         return fail(f"expected panic {spec['panic']}, stderr:\n{executed.stderr}")
     if spec["stdout"] is not None:

@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-CLI0007
+//! exit: 2
+//! option: --allow=disk
+//! since: 1.0.0
+// §17 rule 1: `--allow` names classes of rights — file, net, process, os, native.
+println(1)

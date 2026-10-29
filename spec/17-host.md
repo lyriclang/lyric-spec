@@ -2,7 +2,24 @@
 
 **Base.** None — this chapter is Lyric-Script's own.
 
-**Status.** Skeleton (S0). The rules are written with the milestone that builds them; until then the design documents decide.
+**Status.** Rights from imports written (S5e); scopes, fuel and deadline, suspension, the
+allocation budget, ownership and reload come with S8 — until then the design documents decide.
+
+## Written (S5e, rights from imports)
+
+1. **Rights** ([01 S1, S4](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); [12 Rechte](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)). A module of the standard
+   library that reaches outside the script belongs to a **class of rights** — `file`, `net`,
+   `process`, `os` (the environment, signals, the clock, unseeded randomness), `native`; a
+   program asks for the classes its imports reach, each with its import, and the module's
+   bytecode carries them, so a cached module asks as the compiled one does. They are checked
+   when the module is loaded, before anything runs: nothing is given unless the run gives it —
+   `--allow file,net` names classes, `-A` gives every one (`LYS-CLI0007` for a word that is no
+   class). Where stdin and stderr are a terminal, the run lists what it was not given, each with
+   its import, and asks once; else every missing right is reported at once, with its import
+   (`LYS-CAP0001`), exit 2. `check` asks for none. A script holds no rights of its own: not in
+   its frontmatter, not in a manifest. The standard library's table is fixed with S7, which
+   brings `std`; until then `LYRIC_SCRIPT_RIGHTS` — `module=class` pairs between commas — stands
+   in for it in tests: it can ask for rights, never give them.
 
 ## Scope
 
