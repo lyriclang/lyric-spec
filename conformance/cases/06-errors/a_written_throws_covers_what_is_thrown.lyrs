@@ -1,0 +1,21 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0034
+// §6 rules 5–6 (Lyric 5 §3 rule 3): `parse` throws what `digit` throws, inferred; its written
+// `throws` does not cover it.
+struct BadDigit :: Error {
+    fn message(): string = "not a digit"
+}
+struct Empty :: Error {
+    fn message(): string = "empty"
+}
+fn digit(c: char): int {
+    if (c != '7') {
+        throw BadDigit { }
+    }
+    return 7
+}
+fn parse(c: char): int throws Empty {
+    return digit(c)
+}
+println(parse('7'))

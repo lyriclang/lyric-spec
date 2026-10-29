@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0010
+//! stdout:
+//! | 3
+// §6 rule 8 (Lyric 5 §6 rule 2): `try! e` is `e`'s value; where something under it throws, the
+// script ends with the panic `LYS-RT0010`.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+println(try! f(3))
+println(try! f(1))

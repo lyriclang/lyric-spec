@@ -1,0 +1,59 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | found 100
+//! | not found: 1
+//! | oops 7
+//! | plain Plain.Two
+//! | four
+// §6 rule 2 (Lyric 5 §4 rules 1–2): the clauses are asked in order, the first whose type the error
+// has takes it and binds it as a value of that type — a struct, an enum with a payload, an enum
+// without one; `catch (e)` takes every error, `e` an `Error`.
+struct NotFound :: Error {
+    key: int
+    fn message(): string = f"no {this.key}"
+}
+enum Oops :: Error {
+    Bad
+    Worse(int)
+    fn message(): string = "oops"
+}
+enum Plain :: Error {
+    One
+    Two
+    fn message(): string = "plain"
+}
+fn find(k: int): int {
+    if (k == 1) {
+        throw NotFound { key = k }
+    }
+    if (k == 2) {
+        throw Oops.Worse(7)
+    }
+    if (k == 3) {
+        throw Plain.Two
+    }
+    if (k == 4) {
+        throw Exception("four")
+    }
+    return 100
+}
+fn pick(k: int): string {
+    try {
+        return f"found {find(k)}"
+    } catch (e: NotFound) {
+        return f"not found: {e.key}"
+    } catch (e: Oops) {
+        return match (e) {
+            .Bad => "oops",
+            .Worse(n) => f"oops {n}",
+        }
+    } catch (e: Plain) {
+        return f"plain {e}"
+    } catch (e) {
+        return e.message()
+    }
+}
+for (k in 0..5) {
+    println(pick(k))
+}

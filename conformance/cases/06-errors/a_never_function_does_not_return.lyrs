@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0146
+// §6 rule 12 (Lyric 5 §9 rule 4): a function returning `never` does not return.
+fn stop(): never {
+    return 1
+}
+println("x")

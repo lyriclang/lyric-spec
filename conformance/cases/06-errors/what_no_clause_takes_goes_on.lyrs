@@ -1,0 +1,64 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+//! | mid took A
+//! | top took B
+//! | from the clause: B
+//! | went on
+// §6 rules 2 and 4 (Lyric 5 §4 rules 3–4, §5 rule 1): what no clause takes leaves the function for
+// the `try` of a caller; what a clause throws goes to the `try` around, not to its sister clauses;
+// nothing after the inner `try` runs.
+struct A :: Error {
+    fn message(): string = "A"
+}
+struct B :: Error {
+    fn message(): string = "B"
+}
+fn thrower(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+fn mid(n: int): string {
+    try {
+        return f"{thrower(n)}"
+    } catch (_: A) {
+        return "mid took A"
+    }
+}
+fn top(n: int): string {
+    try {
+        return mid(n)
+    } catch (e: B) {
+        return "top took " + e.message()
+    }
+}
+for (n in 0..3) {
+    println(top(n))
+}
+try {
+    try {
+        throw A { }
+    } catch (_: A) {
+        throw B { }
+    } catch (_: B) {
+        println("a sister clause")
+    }
+} catch (e: B) {
+    println("from the clause: " + e.message())
+}
+try {
+    try {
+        throw B { }
+    } catch (_: A) {
+        println("wrong")
+    }
+    println("not here")
+} catch (_) {
+    println("went on")
+}

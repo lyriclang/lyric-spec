@@ -1,0 +1,48 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 7
+//! | not a digit
+//! | empty
+// §6 rules 5–6: what a function may throw is covered by its `throws` — the type itself, an
+// interface it conforms to —; a clause takes its part, and the clause without a type throws on
+// exactly what reached it (the precise rethrow).
+interface ParseError :: Error {
+}
+struct BadDigit :: ParseError {
+    fn message(): string = "not a digit"
+}
+struct Empty :: ParseError {
+    fn message(): string = "empty"
+}
+struct Overflow :: Error {
+    fn message(): string = "overflow"
+}
+fn digit(c: char): int throws ParseError {
+    if (c == ' ') {
+        throw Empty { }
+    }
+    if (c != '7') {
+        throw BadDigit { }
+    }
+    return 7
+}
+fn checked(c: char): int throws ParseError {
+    try {
+        return digit(c)
+    } catch (_: Overflow) {
+        return 0
+    } catch (e) {
+        throw e
+    }
+}
+fn show(c: char) {
+    try {
+        println(checked(c))
+    } catch (e) {
+        println(e.message())
+    }
+}
+show('7')
+show('x')
+show(' ')

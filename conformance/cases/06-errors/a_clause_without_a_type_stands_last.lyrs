@@ -1,0 +1,26 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0035
+// §6 rule 9 (Lyric 5 §4 rule 2): `catch (e)` takes every error, so it stands last.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+try {
+    println(f(1))
+} catch (e) {
+    println(e.message())
+} catch (_: A) {
+    println("a")
+}

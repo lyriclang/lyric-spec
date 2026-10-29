@@ -1,0 +1,36 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+//! | -1
+//! | -2
+//! | 6
+//! | 42
+// §6 rule 8 (Lyric 5 §6 rules 4–5): `try e catch (x: A) v` is `e`'s value or the value of the
+// clause that took the error; a clause belongs to the nearest `try` on its left; a clause's value
+// may be a block.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+fn d(n: int): int = try f(n) catch (_: A) -1 catch (_) -2
+println(d(0))
+println(d(1))
+println(d(2))
+println(try f(1) catch (_: B) 1 catch (_: A) try f(2) catch (_: A) 5 catch (_) 6)
+let g = try f(1) catch (e) {
+    let n = 40
+    n + 2
+}
+println(g)

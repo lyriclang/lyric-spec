@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0101
+// §7 rule 5 (Lyric 5 §1 rule 3): a jump names a label a loop around carries.
+for (i in 0..2) {
+    continue nowhere
+}

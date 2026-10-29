@@ -33,9 +33,9 @@ def header_lines(lines):
 
 
 def parse_header(path):
-    spec = {"mode": None, "exit": 0, "panic": None, "stdout": None,
+    spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
             "errors": [], "warnings": [], "since": None, "until": None}
-    out = []
+    out = None
     for line in header_lines(path.read_text(encoding="utf-8").splitlines()):
         body = line[3:].strip()
         if body == "run":
@@ -46,10 +46,14 @@ def parse_header(path):
             spec["exit"] = int(body[5:].strip())
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
-        elif body == "stdout:":
-            spec["stdout"] = out
+        elif body in ("stdout:", "stderr:"):
+            out = spec[body[:-1]] = []
         elif body.startswith("|"):
-            out.append(body[1:].lstrip(" ") if body[1:].startswith(" ") else body[1:])
+            if out is None:
+                raise ValueError(f"{path}: a '|' line before 'stdout:' or 'stderr:'")
+            # One space after the bar is the format's, more are the text's: a report's
+            # '  caused by:' keeps its indentation.
+            out.append(body[2:] if body[1:].startswith(" ") else body[1:])
         elif body.startswith("error:"):
             spec["errors"].append(body[6:].strip())
         elif body.startswith("warning:"):
@@ -107,6 +111,14 @@ def run_case(path, spec, exe):
         wanted = "\n".join(spec["stdout"])
         if actual != wanted:
             return fail(f"stdout mismatch\n-- expected --\n{wanted}\n-- actual --\n{actual}")
+    if spec["stderr"] is not None:
+        # The error stream BEGINS with these lines: the report's own, then the frames, which are
+        # the implementation's.
+        actual = executed.stderr.replace("\r\n", "\n").split("\n")
+        if actual[:len(spec["stderr"])] != spec["stderr"]:
+            wanted = "\n".join(spec["stderr"])
+            return fail(f"stderr mismatch\n-- expected to begin with --\n{wanted}"
+                        f"\n-- actual --\n{executed.stderr}")
     return (True, "")
 
 

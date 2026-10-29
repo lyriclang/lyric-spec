@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! exit: 1
+//! stderr:
+//! | error: x
+//! |     at fail (line 13)
+// §6 rules 3–4: an error no clause takes goes on as the same error, and the report shows where it
+// was first thrown.
+struct Other :: Error {
+    fn message(): string = "other"
+}
+fn fail() {
+    throw Exception("x")
+}
+try {
+    fail()
+} catch (_: Other) {
+    println("no")
+}

@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0013
+//! stderr:
+//! | panic [LYS-RT0013]: not implemented: the parser
+// §6 rule 12 (Lyric 5 §9 rule 1): `todo(m)` says `not implemented` and the message behind it.
+fn parse(): int = todo("the parser")
+println(parse())

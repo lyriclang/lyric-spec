@@ -1,0 +1,14 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0049
+// §6 rule 6 (Lyric 5 §2 rule 1): two thrown types without brackets are refused.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(): int throws A, B {
+    return 1
+}
+println(f())

@@ -1,0 +1,28 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0 0
+//! | 1 0
+//! | 5
+// §7 rule 5 (Lyric 5 §1 rule 3): a label names the loop a jump leaves or continues; after `break`
+// a name is the label where a loop around carries it.
+outer: for (i in 0..3) {
+    for (j in 0..3) {
+        if (j == 1) {
+            continue outer
+        }
+        if (i == 2) {
+            break outer
+        }
+        println(f"{i} {j}")
+    }
+}
+let found = search: loop {
+    for (k in 0..10) {
+        if (k * k > 20) {
+            break search k
+        }
+    }
+    break search -1
+}
+println(found)

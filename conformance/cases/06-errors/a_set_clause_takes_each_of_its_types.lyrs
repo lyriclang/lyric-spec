@@ -1,0 +1,33 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | set b
+//! | set a
+//! | 0
+// §6 rule 9 (Lyric 5 §4 rule 2): `catch (e in [A, B])` takes a value of any of its types; `e` is
+// an `Error`.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+fn s(n: int) {
+    try {
+        println(f(n))
+    } catch (e in [A, B]) {
+        println("set " + e.message())
+    }
+}
+s(2)
+s(1)
+s(0)

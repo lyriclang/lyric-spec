@@ -1,0 +1,30 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0050
+// §6 rule 9 (Script 05 K7): `B` reaches the clause and no arm takes it.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+fn h(n: int): string {
+    try {
+        f(n)
+        return "ok"
+    } catch (e) {
+        return match (e) {
+            _: A => "A",
+        }
+    }
+}
+println(h(1))

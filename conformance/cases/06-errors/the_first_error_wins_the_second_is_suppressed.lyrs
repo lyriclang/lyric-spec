@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! exit: 1
+//! stderr:
+//! | error: oops
+//! |   suppressed: late
+// §6 rules 4, 10 (Lyric 5 §5 rules 3, 5): a defer that throws while an error is in flight does not
+// replace it: the first wins, the second goes with it, and the report says so.
+struct Oops :: Error {
+    fn message(): string = "oops"
+}
+struct Late :: Error {
+    fn message(): string = "late"
+}
+fn f() {
+    defer {
+        throw Late { }
+    }
+    throw Oops { }
+}
+f()

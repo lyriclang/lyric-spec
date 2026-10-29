@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0050
+// §6 rule 8 (Lyric 5 §3 rule 2): `try?`, `try!` and a `try` with clauses stand at the start of
+// what they cover, not right of an operator.
+fn f(): int = 1
+let v = 1 + try? f()

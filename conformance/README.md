@@ -14,12 +14,18 @@ from Lyric 5 gets a failing and a passing case.
 //! stdout:                  expected standard output, byte-exact, LF line ends:
 //! | first line
 //! | second line
+//! stderr:                  the error stream begins with these lines (the frames may follow):
+//! | error: first
+//! |   caused by: second
 //! check                    check only; expect acceptance in silence
 //! error: LYS-SEM0001       check only; expect rejection with this code (repeatable)
 //! warning: LYS-LEX0901     the check succeeds and reports this code (repeatable)
 //! since: 1.0.0             the Lyric-Script version the case pins; required
 //! until: 1.2.0             the version from which the case no longer holds
 ```
+
+One space after a `|` belongs to the format; more are the line's own, so `|   caused by: x`
+expects `  caused by: x`.
 
 Exactly one of `run` / `check` leads the header. `error:` implies rejection (exit 1), and a
 case's `warning:` lines are then expected beside its errors; `check` without `error:` or
