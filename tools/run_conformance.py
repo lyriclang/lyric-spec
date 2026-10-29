@@ -51,11 +51,11 @@ def parse_header(path):
             spec["exit"] = int(body[5:].strip())
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
-        elif body in ("stdout:", "stderr:"):
+        elif body in ("stdout:", "stderr:", "stdin:"):
             out = spec[body[:-1]] = []
         elif body.startswith("|"):
             if out is None:
-                raise ValueError(f"{path}: a '|' line before 'stdout:' or 'stderr:'")
+                raise ValueError(f"{path}: a '|' line before 'stdout:', 'stderr:' or 'stdin:'")
             # One space after the bar is the format's, more are the text's: a report's
             # '  caused by:' keeps its indentation.
             out.append(body[2:] if body[1:].startswith(" ") else body[1:])
@@ -186,11 +186,15 @@ def run_case(path, spec, exe, package=None, env=None):
     if spec.get("env"):
         env = dict(env or os.environ, **spec["env"])
 
+    # `stdin:` lines are the run's standard input, each ended by a line end (S6e); without them
+    # the input is empty
+    given = "".join(line + "\n" for line in spec.get("stdin") or [])
+
     def command(verb):
         args = [str(exe), verb, *spec["options"]] + ([] if package is not None else [str(path)])
         try:
             return subprocess.run(args, capture_output=True, text=True, cwd=package, env=env,
-                                  timeout=CASE_TIMEOUT)
+                                  timeout=CASE_TIMEOUT, input=given)
         except subprocess.TimeoutExpired:
             return None
 

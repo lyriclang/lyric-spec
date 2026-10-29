@@ -5,8 +5,7 @@
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
 cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3), channels and
-semaphores (S6d1), `select` (S6d2), time (S6d3); I/O comes with S6e — until then the design
-documents decide.
+semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
 
 ## Written (S6a, tasks)
 
@@ -165,9 +164,25 @@ documents decide.
     cancelled, and once it has ended `TimedOut` is thrown; whenever it returns, the block has ended,
     and its failure comes out of `withTimeout` alone, no failure of the top level's scope.
 
+## Written (S6e, natives that wait)
+
+18. **A native that waits** ([07 N6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); Lyric-Script 11 Co) runs on a task of the host while the
+    script's task waits, and the other tasks run meanwhile — a task that only gives way does not
+    hold it up. `readLine()` of the prelude is the first: the next line of standard input without
+    its line end, `null` at its end; an error reading the input ends it as well, until `std.io`
+    brings `IoError` (S7). A read is a wait (rule 11): a cancel ends it, and a line its reader
+    brings after the cancel is dropped.
+
+## Not yet written
+
+- `Coroutine :: Iterator` and a `for` over any iterable, signals as a channel (Lyric 5 §12; the
+  right `os`), and `IoError` for `readLine`: with the std core (S7). A host's waits — `call`,
+  `start`, `step` — and the instance's halt on its budget with its tasks: with the embedding (S8).
+
 ## Deviations
 
-- No threads, `Mutex` or `Atomic`; one scheduler per instance; `Semaphore` guards sections across waits ([02 W](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [07](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)).
+- No threads, pools, `Mutex`, `RwLock`, `Once` or atomics (Lyric 5 §8–§11); one scheduler per
+  instance; `Semaphore` guards sections across waits ([02 W](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [07](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)).
 - The top-level code is a `TaskScope` ([07 End](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)): `spawn` starts a task of it, so the
   program does not end before its tasks (Lyric 5 §2 rule 1), and a statement that drops the
   handle does not warn — the scope awaits it (§2 rule 8's `unused-task`).

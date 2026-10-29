@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | x
+//! stdout:
+//! | tick
+//! | x
+// §10 rule 18: the script's task waits, the others run.
+spawn { println("tick") }
+let l = readLine()
+println(l ?? "-")

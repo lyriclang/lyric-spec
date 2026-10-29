@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | read cancelled
+// §10 rules 11, 18: a read is a wait.
+let t = spawn {
+    try {
+        readLine()
+    } catch (e: Cancelled) {
+        println("read cancelled")
+    }
+}
+t.cancel()
+t.await()
