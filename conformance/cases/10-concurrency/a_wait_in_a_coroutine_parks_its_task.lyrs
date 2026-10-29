@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ctd
+// §10 rule 6 (07 N3): a wait in the body parks the task that pulls; another task runs, then the
+// coroutine goes on where it waited.
+var log = ""
+fn ticker(): Coroutine<int> {
+    log = log + "c"
+    yieldNow()
+    log = log + "d"
+    yield 1
+}
+spawn { log = log + "t" }
+let c = ticker()
+c.next()
+println(log)

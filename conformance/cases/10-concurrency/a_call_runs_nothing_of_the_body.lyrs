@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | made
+//! | runs
+//! | 1
+// §10 rule 4: a coroutine function's call gives a coroutine; its body runs when it is pulled.
+fn noisy(): Coroutine<int> {
+    println("runs")
+    yield 1
+}
+let c = noisy()
+println("made")
+println(c.next() ?? 0)

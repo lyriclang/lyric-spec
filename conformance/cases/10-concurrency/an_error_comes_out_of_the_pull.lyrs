@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | caught bad
+//! | true
+//! | true
+// §10 rule 5: the error that leaves the body comes out of the pull that ran into it; the
+// coroutine has ended.
+fn bad(): Coroutine<int> {
+    yield 1
+    throw Exception("bad")
+}
+let c = bad()
+println(c.next() ?? 0)
+try {
+    c.next()
+} catch (e) {
+    println("caught " + e.message())
+}
+println(c.isDone())
+println(c.next() == null)

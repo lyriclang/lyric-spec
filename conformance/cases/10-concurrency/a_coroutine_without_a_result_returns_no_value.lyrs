@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0039
+//! since: 1.0.0
+// §10 rule 4: `Coroutine<int>` is `Coroutine<int, void>`: its `return` gives nothing.
+fn f(): Coroutine<int> {
+    yield 1
+    return 2
+}

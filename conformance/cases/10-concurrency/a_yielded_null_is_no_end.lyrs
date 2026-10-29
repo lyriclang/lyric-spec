@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | true
+// §10 rule 4: a `Coroutine<?T>`'s pull gives `??T`.
+fn opt(): Coroutine<?int> {
+    yield null
+    yield 2
+}
+let c = opt()
+let a = c.next()
+println(a != null)
+if (let x = a) {
+    println(x == null)
+}

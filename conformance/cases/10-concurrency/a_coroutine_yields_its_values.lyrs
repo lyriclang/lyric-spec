@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+//! | true
+//! | true
+// §10 rule 4: each pull runs to the next yield; once the body has ended, every pull gives null.
+fn count(n: int): Coroutine<int> {
+    var i = 0
+    while (i < n) {
+        i += 1
+        yield i
+    }
+}
+let c = count(3)
+var sum = 0
+while (let v = c.next()) {
+    sum += v
+}
+println(sum)
+println(c.isDone())
+println(c.next() == null)

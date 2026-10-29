@@ -1,0 +1,14 @@
+//! run
+//! panic: LYS-RT0014
+//! since: 1.0.0
+// §10 rule 6: a coroutine pulled from its own body.
+var me: ?Coroutine<int> = null
+fn selfish(): Coroutine<int> {
+    if (let c = me) {
+        c.next()
+    }
+    yield 1
+}
+let c = selfish()
+me = c
+c.next()

@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0038
+//! since: 1.0.0
+// §10 rule 4: a bare `yield` in a coroutine that yields values.
+fn f(): Coroutine<int> {
+    yield
+}

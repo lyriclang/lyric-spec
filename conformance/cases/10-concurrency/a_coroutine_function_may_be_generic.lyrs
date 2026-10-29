@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | hi
+//! | 8
+// §10 rule 4: a generic coroutine function, instantiated as any generic function is.
+fn twice<T>(x: T): Coroutine<T> {
+    yield x
+    yield x
+}
+let c = twice("hi")
+println(c.next() ?? "")
+let d = twice(4)
+println((d.next() ?? 0) + (d.next() ?? 0))
