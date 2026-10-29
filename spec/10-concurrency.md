@@ -4,8 +4,8 @@
 
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
-cancellation (S6c1), task scopes (S6c2); a task's status with its values (S6c3), channels,
-`select` and time, and I/O come with S6c3–S6e — until then the design documents decide.
+cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3); channels,
+`select` and time, and I/O come with S6d–S6e — until then the design documents decide.
 
 ## Written (S6a, tasks)
 
@@ -15,9 +15,11 @@ cancellation (S6c1), task scopes (S6c2); a task's status with its values (S6c3),
    task that is still running, or gives way with `yieldNow()`; the next to run is the one that
    has waited longest. `t.await()` gives the task's value once it has ended; the error it ended
    with is thrown again where it is awaited, any `Error`; a panic in it panics the task that
-   awaits it. `t.status()` is a `TaskStatus` of the prelude: `Running`, `Done`, `Failed`,
-   `Panicked`, `Cancelled` — so far without the value, the error or the panic's `PanicInfo` that
-   Lyric 5 §2 rule 11 gives them; those come with S6c, and `isDone()` (§2 rule 10) with them.
+   awaits it. `t.status()` says where the task stands, without a wait: a `TaskStatus<T>` of the
+   prelude — `Running`; `Done(value)`; `Failed(error)`, an `Error`; `Cancelled`; or
+   `Panicked(info)`, a `PanicInfo` with the panic's `code`, `message` and `trace`. It is no
+   `Equatable`: a status is matched, not compared (`LYS-SEM0059`). `t.isDone()` says whether the
+   task has ended (Lyric 5 §2 rules 10–11, §5 rule 2).
 2. **The top level is a task scope** ([07 End](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); Lyric 5 §4 rules 1–2, §5 rule 3). Its
    end — after `fn main` where `main` is the entry — waits until every task of the run has
    ended. The first task to fail, by the order they ended — with an error or a panic alike —

@@ -16,4 +16,7 @@ try {
 } catch (e: Cancelled) {
     println("cancelled: " + e.message())
 }
-println(t.status() == TaskStatus.Cancelled)
+println(match (t.status()) {
+    .Cancelled => true,
+    _ => false,
+})
