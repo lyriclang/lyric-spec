@@ -1,7 +1,9 @@
 # Conformance suite
 
 Every case is ONE `.lyrs` script under `cases/<chapter>/`, named after the sentence it pins, with
-its expectations in a `//!` header. The format is Lyric 5's (`main`, `conformance/README.md`)
+its expectations in a `//!` header — or ONE program of modules, a folder so named that holds the
+entry, `main.lyrs`, with the header, and the modules it imports below it
+([04](../spec/04-modules.md) rule 1). The format is Lyric 5's (`main`, `conformance/README.md`)
 with the differences below; the reference runner is `tools/run_conformance.py`. Every deviation
 from Lyric 5 gets a failing and a passing case.
 
@@ -38,6 +40,9 @@ The differences from Lyric 5's format:
 - Every case carries `since:`, at least `1.0.0`; a case without it is a fault of the suite.
 - The header is the leading block of `//!` lines. A case whose first lines are its point — a `#!`
   line, a frontmatter — carries the header as the **trailing** block instead.
+- A program of modules is a folder with a `main.lyrs`: the runner checks and runs that file, and
+  the folder's other `.lyrs` files, at any depth, are its modules, not cases; they carry no
+  header.
 
 ## What a case may use
 

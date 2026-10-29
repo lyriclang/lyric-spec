@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0002
+//! since: 1.0.0
+// §4 rule 6: a module sees what it declares, what it imports and the prelude — not the entry's
+// names.
+import lib { g }
+
+fn secret(): int = 7
+
+println(g())

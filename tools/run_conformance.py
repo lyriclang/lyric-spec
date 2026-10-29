@@ -2,7 +2,8 @@
 """The reference conformance runner of Lyric-Script. See conformance/README.md for the case format.
 
 Lyric 5's runner (tools/run_conformance.py on main) with a script's differences: one executable,
-`lyric-script check` and `lyric-script run`; `since:` required; a header that may trail the case.
+`lyric-script check` and `lyric-script run`; `since:` required; a header that may trail the case;
+a program of modules is a folder with a `main.lyrs`, the case its entry.
 """
 
 import argparse
@@ -69,6 +70,23 @@ def parse_header(path):
     if spec["since"] is None or spec["since"] < (1, 0, 0):
         raise ValueError(f"{path}: every case carries 'since:', at least 1.0.0")
     return spec
+
+
+def program_of(path, root):
+    """The folder of the program a file belongs to: the nearest one above it, below `root`, that
+    holds a `main.lyrs`; None for a case of one file."""
+    for parent in path.parents:
+        if parent == root or root not in parent.parents:
+            return None
+        if (parent / "main.lyrs").is_file():
+            return parent
+    return None
+
+
+def is_case(path, root):
+    """A file of one file's case, or a program's entry; a program's other files are its modules."""
+    program = program_of(path, root)
+    return program is None or path == program / "main.lyrs"
 
 
 def run_case(path, spec, exe):
@@ -140,7 +158,7 @@ def main():
         print(f"no lyric-script at '{args.lyric_script}'", file=sys.stderr)
         return 2
 
-    cases = sorted(args.cases.rglob("*.lyrs"))
+    cases = sorted(c for c in args.cases.rglob("*.lyrs") if is_case(c, args.cases))
     if not cases:
         print("no cases found", file=sys.stderr)
         return 2
@@ -150,6 +168,8 @@ def main():
     for case in cases:
         spec = parse_header(case)
         label = case.relative_to(args.cases)
+        if case.name == "main.lyrs" and program_of(case, args.cases) is not None:
+            label = f"{label.parent.as_posix()}/"
         if version and spec["since"] > version:
             skipped += 1
             print(f"SKIP {label} (since {'.'.join(map(str, spec['since']))})")

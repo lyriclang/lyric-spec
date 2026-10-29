@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-RES0005
+//! since: 1.0.0
+// §4 rule 2: imports form no cycle.
+import a { fa }
+
+println(fa())

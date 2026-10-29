@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-RES0001
+//! since: 1.0.0
+// §4 rule 7: an import beside a declaration of the module, or two imports of one name.
+import a { f }
+import b { f }
+
+fn f(): int = 3
+
+println(f())

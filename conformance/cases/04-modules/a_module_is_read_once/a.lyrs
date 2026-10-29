@@ -1,0 +1,3 @@
+import c { base }
+
+fn fa(): int = base + 1

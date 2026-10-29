@@ -1,0 +1,10 @@
+fn f(): int = 2
+
+struct Point {
+    x: int,
+    y: int,
+
+    fn show(): string = f"b{this.x}{this.y}"
+}
+
+fn make(): Point = Point { x = 2, y = 3 }

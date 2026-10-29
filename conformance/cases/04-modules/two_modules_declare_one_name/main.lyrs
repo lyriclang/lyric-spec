@@ -1,0 +1,20 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 12
+//! | a1
+//! | b23
+//! | true
+//! | false
+// §4 rule 4 (Lyric 5 §2 rule 9): a declaration is its module's; two types of one name stay two.
+import a { f, Point as APoint, make as makeA }
+import b { f as g, Point, make }
+
+println(f() * 10 + g())
+let p: APoint = makeA()
+let q: Point = make()
+println(p.show())
+println(q.show())
+let u: Any = q
+println(u is Point)
+println(u is APoint)

@@ -1,0 +1,8 @@
+//! check
+//! warning: LYS-SEM0072
+//! since: 1.0.0
+// §4 rule 8 (Lyric 5 §4 rule 3): an import nothing uses is warned, in every form.
+import lib { used, unused }
+import lib as l
+
+println(used())
