@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0001
+//! since: 1.0.0
+// §15 rule 8: a lock that is not one is refused, not repaired.
+import geo { area }
+
+println(area(3))

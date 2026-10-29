@@ -1,0 +1,1 @@
+fn area(s: int): int = s * s

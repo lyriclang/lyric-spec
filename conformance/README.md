@@ -56,7 +56,9 @@ The differences from Lyric 5's format:
   `main`, by a fixed author at fixed times — and writes the repositories' place as a `file://`
   URL where a manifest or a lock says `{repos}`: `geo = { git = "{repos}/geo", tag = "v1.0.0" }`.
   Each such case runs with a cache of its own (`LYRIC_SCRIPT_CACHE`).
-- `option: --offline` passes an option to `check` and `run` (repeatable).
+- `option: --offline` passes an option to `check` and `run` (repeatable); `update` runs
+  `lyric-script update` in a package case before it is checked. A case's `lyric-script.lock` may
+  name the repositories' commits: they are fixed by the fixed author and times.
 
 ## What a case may use
 

@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-PKG0011
+//! option: --locked
+//! since: 1.0.0
+// §15 rule 9 (Lyric 5 15 §3 rule 4): under --locked a program that reads from git needs a lock.
+import geo { area }
+
+println(area(3))

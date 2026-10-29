@@ -69,6 +69,8 @@ def parse_header(path):
             spec["until"] = tuple(int(p) for p in body[6:].strip().split("."))
         elif body.startswith("option:"):
             spec["options"].append(body[7:].strip())
+        elif body == "update":
+            spec["update"] = True
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -122,7 +124,9 @@ def git(args, cwd):
     env = dict(os.environ, GIT_AUTHOR_NAME="conformance", GIT_AUTHOR_EMAIL="conformance@lyric",
                GIT_COMMITTER_NAME="conformance", GIT_COMMITTER_EMAIL="conformance@lyric",
                GIT_AUTHOR_DATE="2026-01-01T00:00:00Z", GIT_COMMITTER_DATE="2026-01-01T00:00:00Z")
-    subprocess.run(["git", "-c", "core.autocrlf=false", "-c", "commit.gpgsign=false", *args],
+    # and modes that do not depend on the file system the case was checked out to
+    subprocess.run(["git", "-c", "core.autocrlf=false", "-c", "core.fileMode=false",
+                    "-c", "commit.gpgsign=false", *args],
                    cwd=cwd, env=env, check=True, capture_output=True)
 
 
@@ -172,6 +176,12 @@ def run_case(path, spec, exe, package=None, env=None):
             return subprocess.run([str(exe), verb, *spec["options"]], capture_output=True, text=True,
                                   cwd=package, env=env)
         return subprocess.run([str(exe), verb, *spec["options"], str(path)], capture_output=True, text=True)
+
+    # `update`: the package's git dependencies read anew before the build
+    if spec.get("update") and package is not None:
+        updated = subprocess.run([str(exe), "update"], capture_output=True, text=True, cwd=package, env=env)
+        if updated.returncode != 0:
+            return fail(f"update exited {updated.returncode}:\n{updated.stderr}")
 
     checked = command("check")
     diagnostics = checked.stderr

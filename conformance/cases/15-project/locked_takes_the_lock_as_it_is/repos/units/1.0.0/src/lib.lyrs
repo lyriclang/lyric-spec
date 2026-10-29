@@ -1,0 +1,1 @@
+fn unit(): int = 1

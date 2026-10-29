@@ -2,9 +2,9 @@
 
 **Base.** Lyric 5.0 [§15](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/15-project.md) applies, with the deviations below.
 
-**Status.** The manifest, path and git dependencies written (S5b, S5c1); the lock, version lines
-and `[override]` come with S5c2–S5c3, a script's frontmatter with S5d, `[lints]` with S11 — until
-then the design documents decide.
+**Status.** The manifest, path and git dependencies and the lock written (S5b, S5c1, S5c2);
+version lines and `[override]` come with S5c3, a script's frontmatter with S5d, `[lints]` with
+S11 — until then the design documents decide.
 
 ## Written (S5b, the manifest and path dependencies)
 
@@ -55,6 +55,29 @@ then the design documents decide.
    commit the cache holds is not fetched again; a branch, or no revision, is read at its head,
    fetched. **`--offline`** (`run`, `check`) fetches nothing: what the cache does not hold is
    refused (`LYS-PKG0007`, exit 2).
+
+## Written (S5c2, the lock)
+
+8. **`lyric-script.lock`** (Lyric 5 §3 rules 1–2), beside the root manifest, holds every revision
+   of a git repository the program read, each with its package's name and version, its
+   repository in its normal form, the revision as the manifest asks for it — `tag v1.0.0`,
+   `branch main`, `rev 0123abc`, `HEAD` —, the **commit** it was, and the **hash** of its
+   package content: its manifest, the files under `src/`, and `README*` and `LICENSE*` at its
+   root; SHA-256 over one line per file — the file's SHA-256 in hexadecimal, two spaces, its path
+   with `/` between folders —, the lines sorted by path, written `h1:` and Base64. The toolchain
+   writes it, in one order, only when what it holds changes, and none for a program that reads
+   nothing from git; it is checked in with the manifest, and a dependency's lock is not read. A
+   revision the lock holds is read **at its commit** — a branch stays where it was locked —, and
+   content that is not what the lock holds, or a locked commit the repository does not have, is
+   refused (`LYS-PKG0008`). What the lock does not hold yet is resolved and added; what the
+   program no longer reads is dropped. A lock that is not one is refused (`LYS-PKG0001`).
+9. **`lyric-script update [package…]`** (§3 rule 3), in a package's folder, reads every package
+   from git anew — or those it names, the others staying at their commits —, fetching first, and
+   writes the lock: a branch moves to its head; it runs nothing (`LYS-CLI0006` for a name no
+   package read from git has). Under **`--locked`** (§3 rule 4) `run` and `check` take the lock
+   as it is and write nothing: a revision the lock does not hold is refused before anything is
+   fetched, and so is a lock that holds what the program no longer reads, or none where the
+   program reads from git (`LYS-PKG0011`).
 
 ## Deviations
 

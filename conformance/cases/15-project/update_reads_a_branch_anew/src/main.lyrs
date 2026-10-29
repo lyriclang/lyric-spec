@@ -1,0 +1,9 @@
+//! run
+//! update
+//! stdout:
+//! | 1009
+//! since: 1.0.0
+// §15 rule 9 (Lyric 5 15 §3 rule 3): `lyric-script update` reads the packages from git anew and writes the lock: a branch moves to its head.
+import geo { area }
+
+println(area(3))
