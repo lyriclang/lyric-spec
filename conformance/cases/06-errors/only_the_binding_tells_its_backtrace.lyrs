@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0012
+// §6 rule 3 (Lyric 5 §4 rule 4): an error passed on is a value like any other and tells nothing of
+// where it was thrown; only a clause's binding does, in its clause.
+fn report(e: Error): string = e.backtrace()?.show() ?? ""
+try {
+    throw Exception("x")
+} catch (e) {
+    println(report(e))
+}

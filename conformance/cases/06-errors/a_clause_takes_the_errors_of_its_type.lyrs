@@ -6,8 +6,8 @@
 //! | oops 7
 //! | plain Plain.Two
 //! | four
-// §2 (Lyric 5 §4 rules 1–2): the clauses are asked in order, the first whose type the error has
-// takes it and binds it as a value of that type — a struct, an enum with a payload, an enum
+// §6 rule 2 (Lyric 5 §4 rules 1–2): the clauses are asked in order, the first whose type the error
+// has takes it and binds it as a value of that type — a struct, an enum with a payload, an enum
 // without one; `catch (e)` takes every error, `e` an `Error`.
 struct NotFound :: Error {
     key: int

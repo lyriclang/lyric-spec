@@ -6,8 +6,8 @@
 //! stderr:
 //! | error: config
 //! |   caused by: disk
-// §3 (Lyric 5 §5 rule 3, Script 05 E6): an error that leaves the script's code ends the run with
-// exit code 1: `error:` with its message, a line for each cause, then its frames.
+// §6 rule 4 (Lyric 5 §5 rule 3, Script 05 E6): an error that leaves the script's code ends the run
+// with exit code 1: `error:` with its message, a line for each cause, then its frames.
 fn load() {
     throw Exception("disk")
 }

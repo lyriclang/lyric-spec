@@ -1,0 +1,35 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! |     at fail (line 12)
+//! |     at <script> (line 17)
+//! | true
+//! | false
+// §6 rule 3 (Lyric 5 §4 rule 4): a clause's binding tells where the error was first thrown,
+// innermost frame first; `throw e` of the binding in its clause is the same error going on, any
+// other throw starts one of its own.
+fn fail() {
+    throw Exception("x")
+}
+var first = ""
+try {
+    try {
+        fail()
+    } catch (e) {
+        first = e.backtrace()?.show() ?? ""
+        println(first)
+        throw e
+    }
+} catch (e) {
+    println(e.backtrace()?.show() == first)
+}
+try {
+    try {
+        fail()
+    } catch (e) {
+        let again: Error = e
+        throw again
+    }
+} catch (e) {
+    println(e.backtrace()?.show() == first)
+}

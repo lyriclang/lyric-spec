@@ -6,8 +6,8 @@
 //! | top took B
 //! | from the clause: B
 //! | went on
-// §2, §3 (Lyric 5 §4 rules 3–4, §5 rule 1): what no clause takes leaves the function for the
-// `try` of a caller; what a clause throws goes to the `try` around, not to its sister clauses;
+// §6 rules 2 and 4 (Lyric 5 §4 rules 3–4, §5 rule 1): what no clause takes leaves the function for
+// the `try` of a caller; what a clause throws goes to the `try` around, not to its sister clauses;
 // nothing after the inner `try` runs.
 struct A :: Error {
     fn message(): string = "A"

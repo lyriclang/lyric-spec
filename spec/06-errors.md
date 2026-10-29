@@ -2,12 +2,13 @@
 
 **Base.** Lyric 5.0 [§6](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/06-errors.md) applies, with the deviations below.
 
-**Status.** Written for what S4a builds: what is thrown, `throw`, the `try` block with typed
-clauses and the clause without a type, the error path through the frames and the report of an
-error that leaves the script. The thrown sets (S4c), the expression forms, the set clause and
-the rules among clauses (S4d), `defer` and `using` with the suppressed errors (S4e), panics and
-`never` as a return type (S4f) are written with the slices that build them; until then the
-design documents decide.
+**Status.** Written for what S4a and S4b build: what is thrown, `throw`, the `try` block with
+typed clauses and the clause without a type, the record of where an error was first thrown,
+the error path through the frames and the report of an error that leaves the script. The
+thrown sets (S4c), the expression forms, the set clause and the rules among clauses (S4d),
+`defer` and `using` with the suppressed errors (S4e), panics and `never` as a return type (S4f)
+are written with the slices that build them, `e.suppressed()` with the arrays (S7); until then
+the design documents decide.
 
 ## Written (S4)
 
@@ -28,24 +29,34 @@ design documents decide.
    clause may run after any part of the body: it knows assigned only what was assigned before
    the `try`, and after the `try` a binding is assigned where the body and every clause assign
    it ([07](07-statements.md) rule 3).
-3. **The error path** (§5 rules 1 and 3). An error leaves frame after frame, each a return
+3. **The error's record** (§4 rule 4). An error keeps where it was first thrown: its frames,
+   innermost first, a line `    at <function> (line <n>)` each — the **trace form**, a panic's
+   too; the script's code is `<script>`, a method `<Type>.<name>`, a caller stands at its call.
+   A clause's binding tells of it: `e.backtrace()` is a `?Backtrace` of the prelude whose
+   `show()` is that text. It is asked of the binding itself, in its clause; an error passed on,
+   stored or captured by a lambda is a value like any other and has none (`LYS-SEM0012`), and
+   where the binding's type has a member of the name, the name is that member. `throw e` of the
+   binding in its clause is the same error going on and keeps its record, as an error no clause
+   takes does; any other throw starts a record of its own.
+4. **The error path** (§5 rules 1 and 3). An error leaves frame after frame, each a return
    without a value, until a clause takes it; in a caller the call stands where it was thrown.
    One that leaves the script's code ends the run with exit code 1: `error: <message>` on the
    error stream, then `  caused by: <message>` for each `cause()` in the chain, then the frames
-   it was thrown from in a panic's trace form. A chain is followed for at most 64 causes, so a
-   cycle in it ends; an error whose `message()` throws is named by its type.
-4. *Informative.* A function's code carries a table of regions, innermost first, each sending
+   of its record (rule 3). A chain is followed for at most 64 causes, so a cycle in it ends; an
+   error whose `message()` throws is named by its type.
+5. *Informative.* A function's code carries a table of regions, innermost first, each sending
    the errors of its instructions to its clauses' tests — one test of the value's descriptor
    each, as `is` makes it. An error looks for the first region that covers it, in its frame and
    then at each caller's call; a throw that no clause takes costs the returns it makes. The
-   report asks the error for its message and its causes in the same run, where the script's
-   globals still are.
+   record is the frames' functions and instructions, made at each `throw` and carried by a
+   region's second register and `rethrow`; its text is made only when asked. The report asks the
+   error for its message and its causes in the same run, where the script's globals still are.
 
 ## Deviations
 
 - Thrown sets are inferred; a written `throws` is a checked contract; `try` is accepted without effect; lint `unmarked-throw` ([02 K2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [05 Th](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
 - Function types carry no `throws`; iterators have no error type ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
 - An error that escapes the top level ends the script with exit 1; embedded it is `.Error` at the host ([05 E6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md), [01 S11](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)).
-- The report always ends with the frames, as a panic's does: a script keeps them (Lyric 5 keeps them in the debug profile only, §5 rule 3).
+- A script keeps an error's frames: the report always ends with them, as a panic's does, and `e.backtrace()` is never `null` (Lyric 5 keeps them in the debug profile only, §4 rule 4, §5 rule 3). The trace form names no file; with modules (S5) it will.
 
 **Conformance.** `conformance/cases/06-errors/` (`since: 1.0.0`).
