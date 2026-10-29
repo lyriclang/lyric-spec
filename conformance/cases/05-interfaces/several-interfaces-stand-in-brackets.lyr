@@ -1,0 +1,19 @@
+//! check
+//! error: LYR-PAR0066
+//! since: 5.0.0
+// 05 §1 rule 2: several interfaces after '::' stand in brackets; without them the list is refused.
+interface Named {
+    fn name(): string;
+}
+
+interface Shown {
+    fn show(): string;
+}
+
+struct User :: Named, Shown {
+    fn name(): string { return "u"; }
+    fn show(): string { return "U"; }
+}
+
+fn main(): void {
+}

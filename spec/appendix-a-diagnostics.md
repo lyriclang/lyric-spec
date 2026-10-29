@@ -65,7 +65,7 @@ The parser's. A declaration that does not parse reports these and nothing that f
 | LYR-PAR0026 | E | [02-grammar](02-grammar.md) | a name is missing | Where a declaration, a parameter, a field, a variant, a type parameter, an attribute, an import item or a path segment is named, no name stands — or a reserved word, which is then read as the name; an import list `{ }` names nothing; a bare `...` closes the parameters of a function that is no `extern "C"` one. |
 | LYR-PAR0028 | E | [03-types](03-types.md) | a type alias without '=' | A `type` or `opaque type` declaration names the alias, and its type parameters, but no `=` follows. |
 | LYR-PAR0029 | E | [03-types](03-types.md) | fields of a struct or class without ',' between them | In the body of a struct or class, a field is followed by another member without a `,` between them. |
-| LYR-PAR0030 | E | [05-interfaces](05-interfaces.md) | a list after '::' without its '[' | The interfaces after `::` — of a struct, class, enum, interface or extend block, of a type parameter's constraints, of an associated type's bound — do not open with `[`. |
+| LYR-PAR0030 | E | [05-interfaces](05-interfaces.md) | a list after '::' without its '[' *(retired)* | The interfaces after `::` did not open with `[`. Retired: the list rule: one interface after '::' stands without brackets, 'struct S :: I'; several without them are LYR-PAR0066 |
 | LYR-PAR0031 | E | [02-grammar](02-grammar.md) | a parameter or field without ':' before its type | A function's parameter or a field of a struct, class or variant is named, and no `:` follows before its type. |
 | LYR-PAR0032 | E | [03-types](03-types.md) | a function without 'fn', or its words out of order | Where a function or method is declared, `fn` is missing after its other words, or `inline static` is written where the order is `static inline`; an `extern` block declares no function. |
 | LYR-PAR0033 | E | [09-patterns](09-patterns.md) | a malformed pattern | Where a pattern stands, the token begins none; a `-` in a pattern is not followed by a number; a range pattern's bound is no literal; or an array pattern holds two rests `..`. |
@@ -98,6 +98,7 @@ The parser's. A declaration that does not parse reports these and nothing that f
 | LYR-PAR0063 | E | [11-metaprogramming](11-metaprogramming.md) | 'quote' without a block | The word `quote` is not followed by `{`. |
 | LYR-PAR0064 | E | [16-diagnostics](16-diagnostics.md) | a field that ends with ';' | A field of a struct or class, or a field of an initializer, ends with `;` where its list separates with `,`; read as the `,` it stands for. |
 | LYR-PAR0065 | E | [16-diagnostics](16-diagnostics.md) | a 'continue', 'break' or 'return' where a value stands | A jump stands where an expression is wanted — a match arm, a branch of an `if` expression —; it is a statement and goes in a block, `=> { continue; }`. |
+| LYR-PAR0066 | E | [05-interfaces](05-interfaces.md) | several interfaces after '::' without brackets | Several interfaces follow `::` — of a struct, class, enum, interface or extend block, or of an associated type's bound — without brackets around them. One interface stands without them, several in them. |
 
 ## A.3 RES — Names and modules
 

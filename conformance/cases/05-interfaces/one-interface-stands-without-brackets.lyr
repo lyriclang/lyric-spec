@@ -1,0 +1,67 @@
+//! run
+//! stdout:
+//! | dot
+//! | dot dot
+//! | rex
+//! | crate
+//! | dot
+//! since: 5.0.0
+// 05 §1 rule 2, 03 §9.1 rule 1: the list rule — one interface after '::' stands without the
+// brackets: a struct's list, an enum's, a class delegating to a field, an extend block, a type
+// parameter's constraint (where a ',' begins the next parameter) and an associated type's bound.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+struct Dot :: Named {
+    fn name(): string { return "dot"; }
+}
+
+enum Kind :: Named {
+    Plain;
+    fn name(): string { return "kind"; }
+}
+
+struct Legs :: Named {
+    fn name(): string { return "rex"; }
+}
+
+class Dog :: Named by legs {
+    legs: Legs,
+}
+
+struct Crate {}
+
+extend Crate :: Named {
+    fn name(): string { return "crate"; }
+}
+
+interface Holder {
+    type Item :: Named;
+    fn item(): Self.Item;
+}
+
+struct DotHolder :: Holder {
+    type Item = Dot;
+    fn item(): Dot { return Dot {}; }
+}
+
+fn twice<T :: Named, U>(t: T, u: U): string {
+    let _ = u;
+    return t.name() + " " + t.name();
+}
+
+fn held<H :: Holder>(h: H): string {
+    return h.item().name();
+}
+
+fn main(): void {
+    println(Dot {}.name());
+    println(twice(Dot {}, 1));
+    let _ = Kind.Plain.name();
+    println(Dog { legs = Legs {} }.name());
+    println(Crate {}.name());
+    println(held(DotHolder {}));
+}

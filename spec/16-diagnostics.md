@@ -184,7 +184,9 @@ programs; it does not change them.
 4. The safe changes: `unused-import` takes the import out, or the one name out of its list;
    `unused-var` writes `let` for `var`; `useless-try` takes a plain `try` out (`try?` and `try!` change the
    value's type, and a `catch` is code); `needless-return` takes the `return;` out; `self-assignment`
-   writes `x++` for `x = x++`; `deprecated` writes the `@Deprecated`'s `replacement` where it is a name.
+   writes `x++` for `x = x++`; `deprecated` writes the `@Deprecated`'s `replacement` where it is a name;
+   a call that writes fewer type arguments than the function has gets a `_` for each one left out
+   (`LYR-SEM0026`), the call the inference would have made.
    A change that needs a reader: `naming`'s new name, written where the name is declared (its uses are an
    editor's rename); `self-assignment`'s removal of `x = x`, which may stand for an assignment meant
    otherwise; an unknown name's closest known one (`did you mean`).
