@@ -45,10 +45,11 @@
 
 ## Written (S7, the core collections)
 
-6. **`for` over a list** visits its elements by index from 0 and reads the length before each
-   step: an element pushed in the loop is visited too. The binding is fresh for each element —
-   a closure keeps the element it saw —, and `break` and `continue` work as in every loop. Other
-   iterables come with the iterator protocol (S7c).
+6. **`for` over a list** visits its elements in order from the first. The binding is fresh for
+   each element — a closure keeps the element it saw —, and `break` and `continue` work as in
+   every loop. A change of the list's length while the loop walks it — a push, a pop, an
+   insert, a removal — makes the next step panic, `LYS-RT0016` (Lyric 5's `List` iterator);
+   writing an element is no change. Other iterables come with the iterator protocol (S7c).
 
 ## Deviations (skeleton, written with later milestones)
 

@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | Pt { x = 3 }
+//! | s
+//! | 7
+//! | W { v = Pt { x = 3 } }
+//! | W { v = "s" }
+//! since: 1.0.0
+// §5 rule 12: a member of `extend<T> T[]` knows `T` for each list it is called on — its text, and
+// a type it builds of `T`.
+struct Pt {
+    x: int,
+}
+struct W<T> {
+    v: T,
+}
+extend<T> T[] {
+    fn headText(): string = f"{this[0]}"
+    fn wrapHead(): W<T> = W { v = this[0] }
+}
+println([Pt { x = 3 }].headText())
+println(["s"].headText())
+println([7].headText())
+println([Pt { x = 3 }].wrapHead())
+println(["s"].wrapHead())

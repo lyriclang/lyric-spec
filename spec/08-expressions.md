@@ -17,8 +17,10 @@
 3. **Indexing a list** ([03 Index](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)). `xs[i]` is the element at the `int`
    index `i`, counted from 0; `xs[i] = v` writes it, and `xs[i] op= v` reads and writes it with
    the list and the index evaluated once. An index below 0, or at the length or above, is a
-   panic, `LYS-RT0003` (Lyric 5's), the list unchanged. `^n` comes with S7b2; indexing a map with
-   S7d, a string with S7e, a type of one's own (`Index<K>`) with S7b3.
+   panic, `LYS-RT0003` (Lyric 5's), the list unchanged. `xs[a..b]` and `xs[a..=b]` are a
+   **slice**: a new list of those elements ([03 S](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)), a panic (`LYS-RT0003`) where the range is not
+   within `0..=length()` or ends before it begins. `^n` and open ranges come with S7b2b; indexing
+   a map with S7d, a string with S7e, a type of one's own (`Index<K>`) with S7b3.
 
 ## Deviations (skeleton, written with later milestones)
 

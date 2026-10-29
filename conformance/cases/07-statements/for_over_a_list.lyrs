@@ -3,10 +3,10 @@
 //! | 6
 //! | 10 20 30
 //! | 13
-//! | [1, 2, 3, 4]
+//! | [2, 4, 6]
 //! since: 1.0.0
-// §7 rule 6: `for` over a list visits its elements in order, a fresh binding for each, the
-// length read before each step.
+// §7 rule 6: `for` over a list visits its elements in order, a fresh binding for each; writing an
+// element is no change of the list.
 var sum = 0
 for (x in [1, 2, 3]) {
     sum += x
@@ -27,10 +27,10 @@ for (x in [1, 2, 3, 4, 5]) {
     print(x)
 }
 println()
-let grow = [1]
-for (x in grow) {
-    if (grow.length() < 4) {
-        grow.push(x + 1)
-    }
+let xs = [1, 2, 3]
+var k = 0
+for (x in xs) {
+    xs[k] = x * 2
+    k += 1
 }
-println(grow)
+println(xs)

@@ -126,8 +126,19 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    reference: `let xs = [1]` binds the list for good, and `xs.push(2)` grows it. `length()` is
    its number of elements, `push(v)` appends `v`, `pop()` takes the last element off and gives
    it, `null` where the list is empty. A list's text is its Debug form, `[1, 2, 3]`, each element
-   in its own (`["a", "b"]`). The other methods, `==`, `in`, slices, `+`, an empty literal no
-   place gives a type, and a list as an interface value come with S7b2.
+   in its own (`["a", "b"]`). The other methods are Lyric 5's `List` and slice methods without
+   the views (Lyric 5 §10; [12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)): `isEmpty()`, `get(i)` and `first()`, `last()` (`null`
+   outside), `pushAll(xs)`, `insert(i, v)` (a panic, `LYS-RT0003`, outside `0..=length()`),
+   `removeAt(i)`, `removeWhere(p)` (how many went; where `p` throws, the rest stays in order),
+   `clear()`, `truncate(n)` (a negative `n` panics), `swap(i, j)`, `reverse()`, `reversed()`,
+   `fill(v)`; and where the elements compare — `==` is defined on them ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) —
+   `contains(x)`, `indexOf(x)`, `remove(x)`, `dedup()`, else they are not there
+   (`LYS-SEM0134`). `xs + ys` is a new list of both, `xs * n` one of `n` times the elements (a
+   negative `n` panics); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
+   then the elements in order (`LYS-SEM0059` where they do not compare). Over a type parameter
+   the comparing methods and operators come with `Equatable` as an interface (S7d). An empty
+   literal no place gives a type, and a list as an interface value come with S7b2b; sorting with
+   S7c.
 17. *Informative.* The VM holds a list as one object with the scalar and the reference slots of
    its elements apart: a list of `int` holds its ints unboxed, a list of tuples their slots in
    order (`list.new`, `list.push`, `list.get.*`, `list.set.*`, `list.len`, `list.pop`).

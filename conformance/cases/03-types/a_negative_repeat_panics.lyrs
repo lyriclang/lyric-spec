@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §3 rule 16: `xs * n` with a negative `n` panics, as Lyric 5's does.
+let n = -1
+println([1] * n)
