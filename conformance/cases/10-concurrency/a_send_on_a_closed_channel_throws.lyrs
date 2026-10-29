@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | closed: channel closed
+// §10 rule 14: `ChannelClosed`.
+let c = Channel<int>.new(1)
+c.close()
+try {
+    c.send(1)
+} catch (e: ChannelClosed) {
+    println("closed: " + e.message())
+}

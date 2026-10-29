@@ -1,0 +1,28 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | a1a2b1
+//! | 1
+//! | true
+//! | 0
+// §10 rule 15: the second task waits for the permit while the first gives way inside.
+let sem = Semaphore.new(1)
+var log = ""
+let a = spawn {
+    sem.acquire()
+    log = log + "a1"
+    yieldNow()
+    log = log + "a2"
+    sem.release()
+}
+let b = spawn {
+    sem.acquire()
+    log = log + "b1"
+    sem.release()
+}
+a.await()
+b.await()
+println(log)
+println(sem.available())
+println(sem.tryAcquire())
+println(sem.available())

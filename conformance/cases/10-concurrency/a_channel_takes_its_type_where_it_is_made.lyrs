@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0060
+//! since: 1.0.0
+// §10 rule 14: `Channel<T>.new()`.
+let c = Channel.new()

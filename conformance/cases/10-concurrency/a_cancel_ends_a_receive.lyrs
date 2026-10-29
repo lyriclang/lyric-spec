@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | recv cancelled
+// §10 rules 11, 14: a receive is a wait.
+let c = Channel<int>.new()
+let t = spawn {
+    try {
+        c.recv()
+    } catch (e: Cancelled) {
+        println("recv cancelled")
+    }
+}
+yieldNow()
+t.cancel()
+t.await()

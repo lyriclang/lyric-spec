@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | sender saw the close
+//! | done
+// §10 rule 14: a sender waiting when the channel closes throws.
+let c = Channel<int>.new()
+let p = spawn {
+    try {
+        c.send(1)
+    } catch (e: ChannelClosed) {
+        println("sender saw the close")
+    }
+}
+yieldNow()
+c.close()
+p.await()
+println("done")

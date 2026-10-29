@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 123
+// §10 rule 14: a receive that frees a place in the buffer puts a waiting sender's value there.
+let c = Channel<int>.new(1)
+spawn {
+    c.send(1)
+    c.send(2)
+    c.send(3)
+    c.close()
+}
+yieldNow()
+var s = 0
+while (let v = c.recv()) {
+    s = s * 10 + v
+}
+println(s)

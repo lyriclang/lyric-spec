@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+// §10 rule 14: an unbuffered channel; recv gives null once it is closed and empty.
+let c = Channel<int>.new()
+let p = spawn {
+    for (k in 1..=3) {
+        c.send(k)
+    }
+    c.close()
+}
+var sum = 0
+while (let v = c.recv()) {
+    sum += v
+}
+println(sum)

@@ -4,8 +4,9 @@
 
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
-cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3); channels,
-`select` and time, and I/O come with S6d–S6e — until then the design documents decide.
+cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3), channels and
+semaphores (S6d1); `select`, time and I/O come with S6d2–S6e — until then the design documents
+decide.
 
 ## Written (S6a, tasks)
 
@@ -116,6 +117,26 @@ cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3);
     then `close()` returns or throws as before. A closed scope takes no task: `scope.spawn` after
     `close()` panics (`LYS-RT0008`). A scope is no interface value either (deviations).
 
+## Written (S6d1, channels and semaphores)
+
+14. **Channels** (Lyric 5 §6; [07 N5](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). `Channel<T>.new(capacity)` — `0`, the default, for an
+    unbuffered one — carries values from `send` to `recv` in the order they were sent. `send(v)`
+    hands `v` to a task waiting in `recv`, or puts it into the buffer while there is room; otherwise
+    the sender waits until a receiver takes it. On a closed channel, or when the channel closes
+    while it waits, it throws `ChannelClosed`, an `Error` of the prelude. `recv()` gives the next
+    value, `?T`: from the buffer — a waiting sender's value then takes the freed place —, or from a
+    waiting sender; otherwise the receiver waits for one; `null` once the channel is closed and
+    nothing is left in it. `close()` closes it: the tasks waiting in `recv` get `null`, those
+    waiting in `send` throw `ChannelClosed`, what is buffered can still be received; closing a
+    closed channel does nothing. `send` and `recv` are waits (rule 11). A negative capacity panics
+    (`LYS-RT0008`).
+15. **Semaphores** (Lyric 5 §10 rule 7; [07 N5](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md): no `Mutex`). `Semaphore.new(n)` holds `n`
+    permits — a negative `n` panics (`LYS-RT0008`). `acquire()` takes one, waiting while none is
+    left — a wait (rule 11); `tryAcquire()` takes one where one is left and says whether it did;
+    `release()` gives one back, to the task that has waited longest; `available()` is the count.
+    A value or a permit handed over already belongs to the task a cancel finds waking: the cancel
+    acts at its next wait.
+
 ## Deviations
 
 - No threads, `Mutex` or `Atomic`; one scheduler per instance; `Semaphore` guards sections across waits ([02 W](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [07](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)).
@@ -125,7 +146,7 @@ cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3);
 - `Task<T>` carries no `throws`: `await()` throws any `Error` ([07 N4](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); 03: no errors in
   function types). Nor does `Coroutine<Y, R>`: a pull throws any `Error` (Lyric 5 §1 rule 6
   puts the coroutine function's clause on the type).
-- A task, a coroutine or a task scope is no interface value — not of `Closeable`, not of `Any` — until they
+- A task, a coroutine, a task scope, a channel or a semaphore is no interface value — not of `Closeable`, not of `Any` — until they
   have descriptors at run time, with the collections (S7); `using` and `==` take them as they are.
 
 **Conformance.** `conformance/cases/10-concurrency/` (`since: 1.0.0`).

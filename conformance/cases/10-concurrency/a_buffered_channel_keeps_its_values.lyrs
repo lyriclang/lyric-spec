@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | a
+//! | b
+//! | -
+// §10 rule 14: what is buffered can be received after the close.
+let c = Channel<string>.new(2)
+c.send("a")
+c.send("b")
+c.close()
+println(c.recv() ?? "-")
+println(c.recv() ?? "-")
+println(c.recv() ?? "-")
