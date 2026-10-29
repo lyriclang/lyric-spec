@@ -1,0 +1,9 @@
+//! run
+//! error: LYR-LNK0003
+//! since: 5.0.0
+// 15 §5.2 rule 12: a C symbol two packages define fails the link, naming both.
+import geo { one };
+
+fn main(): void {
+    let _ = one();
+}

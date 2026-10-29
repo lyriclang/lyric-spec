@@ -1,0 +1,6 @@
+//! run
+//! error: LYR-LNK0002
+//! since: 5.0.0
+// 15 §5.2 rule 12: a library by name the linker does not find fails the link, at the manifest's line.
+fn main(): void {
+}

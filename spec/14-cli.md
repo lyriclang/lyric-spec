@@ -72,6 +72,10 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
    archive's place; for the archive it says what a C program links beside it (13 §4 rule 9).
    Without `src/lib.lyr` there is nothing to build (`LYR-CLI0001`); `--shared`
    without `--lib`, and `--lib` with a file, `--bin` or `--emit`, are refused (exit 2).
+10. **`-v`** (`--verbose`) on `build`, `run`, `check`, `expand`, `test` and `bench` says each command
+    of the C compiler, the archiver and the linker on the standard error as it starts —
+    `running: ` and the command —, the build scripts' and the bindings' among them; what is up to
+    date runs nothing and says nothing. It writes text: with `--json` it is refused (exit 2).
 
 ### 1.2 Where the files go
 
@@ -102,7 +106,7 @@ As [11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkze
 |---|---|
 | 0 | done |
 | 1 | the program or its manifest was refused: a compile error, or a construct the compiler does not translate yet |
-| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a C compiler that fails or does not finish within its limit (`LYR-BLD0001`), a git repository that cannot be reached, a toolchain below what a package asks for |
+| 2 | the command line or the environment: unknown verb, option or value, a missing file, no package to build, a program to run among several unnamed, no C compiler, a C compiler that fails or does not finish within its limit (`LYR-BLD0001`), a link that fails (`LYR-LNK…`, [15 §5.2](15-project.md#52-linking)), a git repository that cannot be reached, a toolchain below what a package asks for |
 | 101 | the toolchain itself failed (`LYR-ICE0001`): said with its trace, and written with the version, the command and the machine to a report under `out/` — of the package the command ran in, else of the working directory — which the message names |
 | the program's | `run` passes the program's own exit through: its `main` value masked to `0..255` ([13 §1.5](13-abi.md)), 101 for a panic |
 
@@ -253,12 +257,12 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 
 | verb | words | options | lints | `--json` |
 |---|---|---|---|---|
-| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--emit <ir|c>`, `--lib`, `--shared` | yes | yes |
-| `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
-| `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | yes |
-| `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked` | yes | — |
-| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--no-run` | yes | yes |
-| `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
+| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--emit <ir|c>`, `--lib`, `--shared` | yes | yes |
+| `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | yes |
+| `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | yes |
+| `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | — |
+| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--filter, -f <text>`, `--no-run` | yes | yes |
+| `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |

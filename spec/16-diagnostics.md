@@ -78,8 +78,8 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 
 1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `CT`, `CG`, `PKG`, `BLD`, `LNK`, `CLI`,
-   `ICE`, `RT`, and `IR`, retired —, and four digits. *(`LNK`, the link's findings
-   ([15 §5.2](15-project.md#52-linking) rule 12), is written ahead of M14b.)* The code and its severity are contract; the message's wording is not.
+   `ICE`, `RT`, and `IR`, retired —, and four digits. `LNK` holds the link's findings
+   ([15 §5.2](15-project.md#52-linking) rule 12). The code and its severity are contract; the message's wording is not.
 2. Every code the toolchain reports stands in [Appendix A](appendix-a-diagnostics.md), generated from the
    toolchain's catalogue, with its severity, the chapter whose rule it is, and when it is reported. A code no
    longer reported is **retired** there: its number is not given to another finding.
