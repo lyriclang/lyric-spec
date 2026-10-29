@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0005
+//! since: 1.0.0
+// §15 rule 10: versions of two lines of one repository are two packages of one name.
+import geo { area }
+
+println(area(3))

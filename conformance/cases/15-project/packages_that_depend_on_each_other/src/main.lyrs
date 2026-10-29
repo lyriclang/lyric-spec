@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0010
+//! since: 1.0.0
+// §15 rule 10 (Lyric 5 15 §2 rule 6): no package depends on itself, at once or through others.
+import geo { area }
+
+println(area(3))

@@ -1,0 +1,8 @@
+//! run
+//! stdout:
+//! | 16
+//! since: 1.0.0
+// §15 rule 10: the root manifest's [override] reads its folder wherever the graph asks for the name, and what it replaces is not read, nor fetched — the repository here does not exist.
+import geo { area }
+
+println(area(3))

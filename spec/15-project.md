@@ -2,9 +2,9 @@
 
 **Base.** Lyric 5.0 [§15](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/15-project.md) applies, with the deviations below.
 
-**Status.** The manifest, path and git dependencies and the lock written (S5b, S5c1, S5c2);
-version lines and `[override]` come with S5c3, a script's frontmatter with S5d, `[lints]` with
-S11 — until then the design documents decide.
+**Status.** The manifest, path and git dependencies, the lock, version lines and `[override]`
+written (S5b, S5c); a script's frontmatter comes with S5d, `[lints]` with S11 — until then the
+design documents decide.
 
 ## Written (S5b, the manifest and path dependencies)
 
@@ -78,6 +78,60 @@ S11 — until then the design documents decide.
    as it is and write nothing: a revision the lock does not hold is refused before anything is
    fetched, and so is a lock that holds what the program no longer reads, or none where the
    program reads from git (`LYS-PKG0011`).
+
+## Written (S5c3, versions, overrides, content)
+
+10. **One package of each name** (Lyric 5 §2 rule 6). Versions of one repository are one
+    package: a tag that is a semantic version, `v1.2.0` or `1.2.0`, asks for that version or a
+    later one of its **line** — the same major version; below 1, the same minor; below 0.1, the
+    version alone —, and of all the versions the program asks for, directly or through a version
+    read on the way, the toolchain takes the greatest: **minimal version selection**. The lock
+    holds the versions chosen and those read on the way. Any other two sources for one name — two
+    folders, two repositories, two revisions of one, versions of two lines — are refused
+    (`LYS-PKG0005`), unless the root manifest's **`[override] geo = { path = "…" }`** picks one:
+    read wherever the program asks for `geo`, and what it replaces is neither read nor fetched;
+    an override reads a folder (`LYS-PKG0003` for the git form), and one in another package's
+    manifest is not read. No package depends on itself, at once or through others: a cycle is
+    refused with its path, `app -> geo -> app` (`LYS-PKG0010`).
+11. **A package's content** (Lyric 5 §2 rule 4), what is read and hashed of a package from git:
+    its manifest, its files under `src/`, and `README*` and `LICENSE*` at its root.
+    `[package] include = […]` names the files instead — the manifest always in —, and
+    `exclude = […]` takes files out: a pattern is relative to the package's root, `/` between
+    folders, `*` any characters within a folder, `?` one, `**` any number of folders, and a pattern
+    that names a folder holds what lies below it (`LYS-PKG0002` for another form). A module outside
+    the content is not there (`LYS-RES0003`).
+12. **`update` raises a version** (Lyric 5 §3 rule 3): a tag of the root manifest that is a version
+    is first raised to the newest tag of its line the repository has — never another major
+    version; below 1, never another minor; a pre-release only for a pre-release — and written on
+    its line of `lyric-script.toml`, the rest of the file as it was; a branch, a commit, or a tag
+    that is no version stays.
+
+## Written (S5c3, versions, overrides, content)
+
+10. **One package of each name** (Lyric 5 §2 rule 6). Versions of one repository are one
+    package: a tag that is a semantic version, `v1.2.0` or `1.2.0`, asks for that version or a
+    later one of its **line** — the same major version; below 1, the same minor; below 0.1, the
+    version alone —, and of all the versions the program asks for, directly or through a version
+    read on the way, the toolchain takes the greatest: **minimal version selection**. The lock
+    holds the versions chosen and those read on the way. Any other two sources for one name — two
+    folders, two repositories, two revisions of one, versions of two lines — are refused
+    (`LYS-PKG0005`), unless the root manifest's **`[override] geo = { path = "…" }`** picks one:
+    read wherever the program asks for `geo`, and what it replaces is neither read nor fetched;
+    an override reads a folder (`LYS-PKG0003` for the git form), and one in another package's
+    manifest is not read. No package depends on itself, at once or through others: a cycle is
+    refused with its path, `app -> geo -> app` (`LYS-PKG0010`).
+11. **A package's content** (Lyric 5 §2 rule 4), what is read and hashed of a package from git:
+    its manifest, its files under `src/`, and `README*` and `LICENSE*` at its root.
+    `[package] include = […]` names the files instead — the manifest always in —, and
+    `exclude = […]` takes files out: a pattern is relative to the package's root, `/` between
+    folders, `*` any characters within a folder, `?` one, `**` any number of folders, and a pattern
+    that names a folder holds what lies below it (`LYS-PKG0002` for another form). A module outside
+    the content is not there (`LYS-RES0003`).
+12. **`update` raises a version** (Lyric 5 §3 rule 3): a tag of the root manifest that is a version
+    is first raised to the newest tag of its line the repository has — never another major
+    version; below 1, never another minor; a pre-release only for a pre-release — and written on
+    its line of `lyric-script.toml`, the rest of the file as it was; a branch, a commit, or a tag
+    that is no version stays.
 
 ## Deviations
 
