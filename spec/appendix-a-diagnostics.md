@@ -356,7 +356,23 @@ A macro's own refusal, at its site.
 |---|---|---|---|---|
 | LYR-MAC0001 | E | [11-metaprogramming](11-metaprogramming.md) | an error a macro reports | A macro called `error(at, message)` of `std.syntax` while it expanded: the macro refuses its arguments. The diagnostic stands at the node the macro named, with a note at the site's `!`. |
 
-## A.6 CT — Compile-time evaluation
+## A.6 MIG — The migration
+
+`lyric fix --from-4`: a Lyric 4 program it does not read, and what it leaves to a person.
+
+| Code | S | Chapter | Title | When |
+|---|---|---|---|---|
+| LYR-MIG0001 | E | [14-cli](14-cli.md) | a program Lyric 4.6 refuses is not migrated | `lyric fix --from-4` reads the program with Lyric 4.6's own front end, and 4.6 refuses it. Nothing is written; 4.6's findings are said before this error. The exit code is 1. |
+| LYR-MIG0002 | E | [14-cli](14-cli.md) | a lyric.json the migration cannot read | `lyric fix --from-4` finds a `lyric.json` that Lyric 4.6 would not have read either: not JSON, a key of the wrong kind, a path that is not there. The exit code is 2. |
+| LYR-MIG0101 | H | [14-cli](14-cli.md) | a module named otherwise by its header | A note of `lyric fix --from-4`: a Lyric 4 module's `module` header gave it a name other than its path does. The header goes; Lyric 5 names the module by its path, and the package's own imports of it are rewritten to that name. |
+| LYR-MIG0102 | H | [14-cli](14-cli.md) | a native root without a counterpart | A note of `lyric fix --from-4`: the `lyric.json` names a native root (`nativeRoots`), whose modules Lyric 4 took from a host. Lyric 5 has no host and no native roots; a library of C is described under `[native]` and called through `extern "C"`. |
+| LYR-MIG0103 | H | [14-cli](14-cli.md) | a source root other than src/ | A note of `lyric fix --from-4`: the Lyric 4 project keeps its modules somewhere other than `src/` — its own directory, or the `sourceRoot` it names. A Lyric 5 package keeps them under `src/`; the migration does not move files. |
+| LYR-MIG0104 | H | [14-cli](14-cli.md) | a toolchain line of Lyric 4 | A note of `lyric fix --from-4`: the `lyric.json` names a version of Lyric 4 under `toolchain`. It goes; `[package] toolchain` in `lyric.toml` names the least Lyric 5 a package needs, where one is needed. |
+| LYR-MIG0106 | H | [14-cli](14-cli.md) | declarations the whole package now sees | A note of `lyric fix --from-4`, once a module: declarations without `pub` were private to their module in Lyric 4 and are seen by the whole package in Lyric 5. `main` is left aside. |
+| LYR-MIG0107 | H | [14-cli](14-cli.md) | a build script of Lyric 4 | A note of `lyric fix --from-4`: the project has a `build.lyr` written for Lyric 4, which defined the build. In Lyric 5 `lyric.toml` does — `[[bin]]`, `[profile.*]` —, and a build script only prepares sources. |
+| LYR-MIG0108 | H | [14-cli](14-cli.md) | tests compiled apart | A note of `lyric fix --from-4`: the `lyric.json` names a `testRoot`, whose files Lyric 4 compiled apart from the program. Lyric 5 runs a package's `tests/` with `lyric test`; each test is an `@Test` function. |
+
+## A.7 CT — Compile-time evaluation
 
 The evaluation of `comptime`, a macro or a synthesis at build time.
 
@@ -370,7 +386,7 @@ The evaluation of `comptime`, a macro or a synthesis at build time.
 | LYR-CT0006 | E | [11-metaprogramming](11-metaprogramming.md) | a use of a declaration the build leaves out | Code that is built for this target uses a declaration whose `@When` condition is false for it, so the declaration is not built. |
 | LYR-CT0007 | E | [11-metaprogramming](11-metaprogramming.md) | a macro expansion that does not end | The expansion of macro sites does not finish: after 32 rounds a macro's result still holds a site, or every macro still to be expanded waits for a module whose own sites wait for it. |
 
-## A.7 CG — Code generation
+## A.8 CG — Code generation
 
 What the C backend does not take.
 
@@ -379,7 +395,7 @@ What the C backend does not take.
 | LYR-CG0001 | E | [16-diagnostics](16-diagnostics.md) | a construct the C backend does not translate | The backend's subset gate meets something in the IR it has no translation for: a native function of the standard library without a runtime call, a host type, an IR instruction or type the emitter does not know. The message names the construct, and says where it is a compiler bug. |
 | LYR-CG0002 | E | [12-stdlib](12-stdlib.md) | a compile-time-only function called at run time | The program would call, at run time, a function of `std.syntax` that reads, builds or writes a syntax tree. Reported at every such call the built program reaches, the standard library's own among them. |
 
-## A.8 PKG — Packages and manifests
+## A.9 PKG — Packages and manifests
 
 `lyric.toml`, the lock file, dependencies.
 
@@ -398,7 +414,7 @@ What the C backend does not take.
 | LYR-PKG0011 | E | [15-project](15-project.md) | `--locked` and a lock that does not match | Reported under `--locked` when `lyric.lock` lacks a revision the graph reads from git or a source tree from git the build needs, holds one it does not read, or is missing although the program reads from git. Nothing is fetched or written. |
 | LYR-PKG0012 | E | [15-project](15-project.md) | a dependency's build script the root does not trust | Reported when a dependency has a `build.lyr` and the root manifest's `[trust] build-scripts` does not name it. The build stops before any script runs, at the line that declares the dependency. |
 
-## A.9 BLD — The build
+## A.10 BLD — The build
 
 The C toolchain, the runtime, the build script.
 
@@ -411,7 +427,7 @@ The C toolchain, the runtime, the build script.
 | LYR-BLD0005 | E | [15-project](15-project.md) | a module cannot be made from a C header | Reported when a header a package's `bindings` names does not compile — with what the C compiler said — or when the C compiler writes no syntax tree of it, which only zig cc and clang do. Nothing is built; the exit code is 1. |
 | LYR-BLD0006 | E | [15-project](15-project.md) | a file the build puts beside the binary is not there, shares its name, or would not be found there | Reported when a package's `build.lyr` names a file with `std.build.besideBinary` that is not there when the script has ended, when two such files — or `dylibs` of the native part — have one name, or when a library of `dylibs` would not be found there — a Mach-O library whose install name does not begin with `@rpath/`, an ELF library without a soname. Nothing is built; the exit code is 1. |
 
-## A.10 LNK — The link
+## A.11 LNK — The link
 
 What the linker says, read: a symbol nothing defines, a library it does not find, a symbol defined twice (15 §5.2 rule 12).
 
@@ -421,7 +437,7 @@ What the linker says, read: a symbol nothing defines, a library it does not find
 | LYR-LNK0002 | E | [15-project](15-project.md) | a library the linker does not find | Reported by `build`, `run`, `test` and `bench` when the linker finds no library by a name a package's `[native]` part, its build script or pkg-config gave it, or no macOS framework by its name. The finding stands at the line of the manifest that names it, or says who named it. Nothing is linked; the exit code is 2. |
 | LYR-LNK0003 | E | [15-project](15-project.md) | a C symbol two inputs of the link define | Reported by `build`, `run`, `test` and `bench` when the linker finds a symbol defined twice — by two packages' C, a package and the program, or one package twice. The finding names who defines it and where. Nothing is linked; the exit code is 2. |
 
-## A.11 CLI — The command line
+## A.12 CLI — The command line
 
 The driver's options and verbs.
 
@@ -453,7 +469,7 @@ The driver's options and verbs.
 | LYR-CLI0024 | E | [14-cli](14-cli.md) | a toolchain fetched is not what its index says | A channel's index does not carry a signature the toolchain's key made, or an archive's size, SHA-256 or `toolchain.json` differs from what the index and the archive itself list. Nothing is installed; the exit code is 2. |
 | LYR-CLI0025 | E | [14-cli](14-cli.md) | the installed toolchains refuse the change | `lyric toolchain default` or `remove`, or `LYRIC_TOOLCHAIN`, names a version that is not installed, `remove` names the default or the toolchain that runs the command, `update` finds no default, an installed toolchain a command is handed to cannot be run, or `config.toml` under `LYRIC_HOME` is not one the toolchain reads. The exit code is 2. |
 
-## A.12 IR — The lowering
+## A.13 IR — The lowering
 
 Retired: each refusal of the lowering has a code of its own.
 
@@ -461,7 +477,7 @@ Retired: each refusal of the lowering has a code of its own.
 |---|---|---|---|---|
 | LYR-IR0001 | E | [16-diagnostics](16-diagnostics.md) | a construct this compiler version could not lower *(retired)* | The lowering's one code for every refusal in earlier versions: what the language does not express yet, what the standard library lacked, and its own bugs, all under one number. Retired: Each refusal of the lowering says its reason under a code of its own — LYR-SEM0195, LYR-SEM0196, LYR-SEM0197, or LYR-ICE0002 for a construct the checker accepted and the lowering cannot translate. |
 
-## A.13 ICE — Internal compiler errors
+## A.14 ICE — Internal compiler errors
 
 The toolchain's own failure: a bug to report, never the program's fault.
 
@@ -470,7 +486,7 @@ The toolchain's own failure: a bug to report, never the program's fault.
 | LYR-ICE0001 | E | [16-diagnostics](16-diagnostics.md) | the toolchain crashed | `lyric5` met an exception it did not expect. It prints the exception, where it was in the program if it knows, and its own stack trace, writes the same with the version, the command and the machine to a report under `out/` (`lyric5-ice-<time>-<pid>.txt`), and exits with 101. |
 | LYR-ICE0002 | E | [16-diagnostics](16-diagnostics.md) | a construct the lowering cannot translate | The checker accepted a construct that the lowering to IR cannot translate. The diagnostic carries the note that it is the compiler's fault. |
 
-## A.14 RT — Runtime panics
+## A.15 RT — Runtime panics
 
 A panic ends the program with exit code 101 and a backtrace; the compile-time evaluation reports the same codes inside `LYR-CT0001`.
 
@@ -500,7 +516,7 @@ A panic ends the program with exit code 101 and a backtrace; the compile-time ev
 | LYR-RT0022 | P | [13-abi](13-abi.md) | a Lyric function called from a thread Lyric does not run | C called a Lyric function through its pointer on a thread the runtime does not know: one C started itself, which no collector attached. A Callback that returns nothing goes to the thread that made it; any other call — a function's, a Callback's that returns a value, one whose thread runs no scheduler — has no Lyric to run on, and the process ends. An export called before `lyr_init` started the runtime ends it the same way. |
 | LYR-RT0023 | P | [13-abi](13-abi.md) | a GcHandle that holds another class's object | A GcHandle made again from C's pointer with `GcHandle<T>.from` was read, and the object its root holds is of another class than `T`, or the root holds none. |
 
-## A.15 Lints
+## A.16 Lints
 
 Every warning is a lint (16 §5): its name, its code, its group and its level unless said. `warnings` names them all.
 
