@@ -19,8 +19,12 @@
    the list and the index evaluated once. An index below 0, or at the length or above, is a
    panic, `LYS-RT0003` (Lyric 5's), the list unchanged. `xs[a..b]` and `xs[a..=b]` are a
    **slice**: a new list of those elements ([03 S](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)), a panic (`LYS-RT0003`) where the range is not
-   within `0..=length()` or ends before it begins. `^n` and open ranges come with S7b2b; indexing
-   a map with S7d, a string with S7e, a type of one's own (`Index<K>`) with S7b3.
+   within `0..=length()` or ends before it begins. In the brackets `^n` counts from the end —
+   the length less `n`, `^1` the last element, `^0` past it — at an index, at a write and at an
+   end of a range, the list evaluated once (Lyric 5 03 T14); a range may leave out its ends:
+   `xs[a..]` is `xs[a..^0]`, `xs[..b]` is `xs[0..b]`, `xs[..]` the whole list. `^` counts from the
+   end in a list's brackets only. Indexing a map comes with S7d, a string with S7e, a type of
+   one's own (`Index<K>`) with S7b3.
 
 ## Deviations (skeleton, written with later milestones)
 

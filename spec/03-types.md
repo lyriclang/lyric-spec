@@ -41,8 +41,11 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    is checked as such: uses before the fixing one in the source are allowed where they fix
    nothing (`x == null`) and checked against `?T`. Where nothing in the function fixes the type,
    the declaration is refused with the type to write (`LYS-SEM0010`); `let x = null` is refused
-   so too, as in Lyric 5. Lyric 5 infers no binding from a later use ([03 Leer](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md));
-   the empty literals `[]` and `[:]` take the same way with S7.
+   so too, as in Lyric 5. Lyric 5 infers no binding from a later use ([03 Leer](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
+   `var xs = []` and `let xs = []` take the same way (S7b2b): the first use that fixes a list
+   type — a push of a `T`, an assignment of a `T[]`, the binding standing where a `T[]` is
+   taken — makes it a `T[]`; nothing fixing it is `LYS-SEM0010`. `[:]` follows with the maps
+   (S7d).
 9. **Tuples.** Lyric 5 §6 rules 1–5 apply: `(A, B)` from two elements (`(1,)` is refused,
    `LYS-PAR0010`); labels `(x: A, y: B)`, no part of the type and seen through the type they
    were written on; `t.0` and `t.x` (`LYS-SEM0012` for an element the tuple lacks); elements
