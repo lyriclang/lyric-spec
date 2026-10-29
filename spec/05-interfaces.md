@@ -82,7 +82,15 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    type left open keeps the interface a constraint only (`LYS-SEM0126`); a member that names
    `Self` itself, a static or a generic member keeps it one whatever is fixed — `Self.Item`
    alone does not.
-12. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
+12. **Generic extend blocks** (§13 rules 1–4): `extend<T :: [Show]> Box<T> { … }` adds members
+   to every instance whose arguments meet the block's constraints — on another one the member is
+   not there (`LYS-SEM0134`) —, and `extend<T :: [Show]> Box<T> :: [Show] { … }` its
+   conformance to those alone (**conditional conformance**; `Box<int>` is no `Show` where `int`
+   is none, `LYS-SEM0028`). A type conforms to an interface once, from whichever site
+   (`LYS-SEM0133` at the second). The target is the type at the block's parameters, in its order;
+   a block on one instance, on a built-in constructor and the blanket blocks (rules 6–9) come
+   with the collections (S7).
+13. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
    `call.i` runs the receiver's function of a slot, `is.t` and `is.i` answer `is`.

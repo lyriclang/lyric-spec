@@ -1,0 +1,27 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | box s
+//! | 3
+//! | box box s
+// §5 rule 12 (Lyric 5 §13 rules 1–3): a generic block's members and its conformance, for the
+// instances whose arguments meet its constraints — `Box<Box<S>>` too, since `Box<S>` does.
+interface Show {
+    fn show(): string
+}
+struct Box<T> {
+    v: T
+}
+extend<T :: [Show]> Box<T> :: [Show] {
+    fn show(): string = "box " + this.v.show()
+}
+extend<T> Box<T> {
+    fn get(): T = this.v
+}
+struct S :: [Show] {
+    fn show(): string = "s"
+}
+fn showIt<X :: [Show]>(x: X): string = x.show()
+println(showIt(Box { v = S { } }))
+println(Box { v = 3 }.get())
+println(showIt(Box { v = Box { v = S { } } }))
