@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0127
+// §5 rule 10 (Lyric 5 §7 rule 2): an interface's constant is each conformer's; it has no value.
+interface Zero {
+    static let zero: int = 1
+}

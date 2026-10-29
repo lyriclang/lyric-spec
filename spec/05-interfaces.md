@@ -57,8 +57,11 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    interface that names `Self` beyond the receiver, declares a static or a generic member, or
    extends one that does, is a constraint only (`LYS-SEM0126` where it is written for a value).
    A type parameter satisfies what its constraints and their parents are, also where it is
-   handed to another generic. `static let` members, and generic members of an interface that
-   names `Self`, come later.
+   handed to another generic. A type's constant, `static let zero: P = P { x = 0 }` with its type
+   and its value (`LYS-SEM0010` otherwise), is set before the script's own statements (Lyric 5 04
+   §1 rule 2) and read as `P.zero`; an interface asks one of its conformers without a value
+   (`LYS-SEM0127`), `static let zero: Self`, read through a type parameter, `T.zero`. A constant of
+   a generic type, and generic members of an interface that names `Self`, come later.
 11. **Associated types** (§8 rules 1–4): an interface declares `type Item`, with a default
    `type Item = T` or none; a conforming type answers in its body or its extend block,
    `type Item = int` — without an answer and a default it is refused (`LYS-SEM0128`), an answer

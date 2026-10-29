@@ -1,0 +1,37 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+//! | 0
+//! | 0
+//! | 7
+//! | true
+//! | 5
+// §5 rule 10 (Lyric 5 §7 rule 2, 04 §1 rule 2): a type's constant, set before the script's own
+// statements, read through the type and through a type parameter; a class's is one object. A
+// `var` the script fixes later (03 Leer) leaves the constants where they are.
+interface Zero {
+    static let zero: Self
+}
+struct P :: [Zero] {
+    x: int
+    static let zero: P = P { x = 0 }
+}
+extend int :: [Zero] {
+    static let zero: int = 0
+}
+class C :: [Zero, Identity] {
+    var n: int = 7
+    static let zero: C = C { }
+}
+fn zeroOf<T :: [Zero]>(): T = T.zero
+println(P.zero.x)
+println(zeroOf<P>().x)
+println(zeroOf<int>())
+println(zeroOf<C>().n)
+let a = zeroOf<C>()
+let b = C.zero
+println(a == b)
+var later = null
+later = 5
+println(later)
