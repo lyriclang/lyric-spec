@@ -22,7 +22,7 @@ channels, `select` and time, and I/O come with S6b–S6e — until then the desi
    then ends the run with it: an error exits 1, also where it was awaited and caught; a panic
    101. A task that fails after it is none of the scope's. Until S6c the others are not
    cancelled: they run to their end.
-3. Where every task waits for another and none can go on, the run panics (`LYS-RT0900`) — the
+3. Where every task waits for another and none can go on, the run panics (`LYS-RT0018`) — the
    end Lyric 5 §2 rule 12 comes to as well, where the oldest waiting task panics and what awaits
    it panics again.
 
