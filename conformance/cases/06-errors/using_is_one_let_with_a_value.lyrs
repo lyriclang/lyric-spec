@@ -1,0 +1,13 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0052
+// §6 rule 11 (Lyric 5 §7 rule 1): `using var` is refused.
+class Res :: Closeable {
+    fn close() {
+    }
+}
+fn work() {
+    using var r = Res { }
+    println("x")
+}
+work()

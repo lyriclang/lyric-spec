@@ -1,0 +1,48 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | body
+//! | second
+//! | first
+//! | leaving
+//! | 6
+//! | turn 0
+//! | end of turn 0
+//! | end of turn 1
+//! | end of turn 2
+//! | in
+//! | block ends
+//! | 42
+// §6 rule 10 (Lyric 5 §5 rule 2): a defer runs when its scope is left — its end, a `return` with
+// its value taken first, a `continue`, a `break` — the last registered first; a value block is a
+// scope too.
+fn order() {
+    defer println("first")
+    defer println("second")
+    println("body")
+}
+order()
+fn early(n: int): int {
+    defer println("leaving")
+    if (n > 0) {
+        return n * 2
+    }
+    return 0
+}
+println(early(3))
+for (i in 0..4) {
+    defer println(f"end of turn {i}")
+    if (i == 1) {
+        continue
+    }
+    if (i == 2) {
+        break
+    }
+    println(f"turn {i}")
+}
+let v = {
+    defer println("block ends")
+    println("in")
+    41 + 1
+}
+println(v)

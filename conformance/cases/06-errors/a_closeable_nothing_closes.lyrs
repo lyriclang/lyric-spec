@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! warning: LYS-SEM0144
+// §6 rule 11 (Lyric 5 §7 rule 4): a `Closeable` an expression statement makes and drops is warned
+// about.
+class Res :: Closeable {
+    fn close() {
+    }
+}
+fn open(): Res = Res { }
+open()

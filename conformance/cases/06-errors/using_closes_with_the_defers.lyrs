@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | both
+//! | close b
+//! | between
+//! | close a
+// §6 rule 11 (Lyric 5 §7 rule 1): `using let` closes what it binds when its scope is left, in the
+// scope's one list with its defers, the last first.
+class Res :: Closeable {
+    name: string
+    fn close() {
+        println("close " + this.name)
+    }
+}
+fn work() {
+    using let a = Res { name = "a" }
+    defer println("between")
+    using let b = Res { name = "b" }
+    println("both")
+}
+work()

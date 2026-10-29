@@ -2,13 +2,14 @@
 
 **Base.** Lyric 5.0 [§6](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/06-errors.md) applies, with the deviations below.
 
-**Status.** Written for what S4a–S4d build: what is thrown, `throw`, the `try` block and its
+**Status.** Written for what S4a–S4e build: what is thrown, `throw`, the `try` block and its
 clauses with the rules among them, the record of where an error was first thrown, the error path
 through the frames and the report of an error that leaves the script, the thrown sets inferred
-and a written `throws` held against them, the mark `try` and the expression forms `try?`, `try!`
-and `try … catch`. `defer` and `using` with the suppressed errors (S4e), panics and `never` as a
-return type (S4f) are written with the slices that build them, `e.suppressed()` with the arrays
-(S7), the lint `unmarked-throw` with the lints (S11); until then the design documents decide.
+and a written `throws` held against them, the mark `try`, the expression forms `try?`, `try!`
+and `try … catch`, `defer` and `using` with the suppressed errors. Panics and `never` as a return
+type (S4f) are written with the slice that builds them, `e.suppressed()` with the arrays (S7),
+the lint `unmarked-throw` and the `let` half of `LYS-SEM0144` with the lints (S11); until then
+the design documents decide.
 
 ## Written (S4)
 
@@ -41,8 +42,9 @@ return type (S4f) are written with the slices that build them, `e.suppressed()` 
 4. **The error path** (§5 rules 1 and 3). An error leaves frame after frame, each a return
    without a value, until a clause takes it; in a caller the call stands where it was thrown.
    One that leaves the script's code ends the run with exit code 1: `error: <message>` on the
-   error stream, then `  caused by: <message>` for each `cause()` in the chain, then the frames
-   of its record (rule 3). A chain is followed for at most 64 causes, so a cycle in it ends; an
+   error stream, then `  caused by: <message>` for each `cause()` in the chain and
+   `  suppressed: <message>` for each error a defer threw while it was in flight (rule 10), then
+   the frames of its record (rule 3). A chain is followed for at most 64 causes, so a cycle in it ends; an
    error whose `message()` throws is named by its type.
 5. **Thrown sets** (§2, §3 rules 3–5; [05 K, K7](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
    What a function may throw — its **set** — is inferred from its body: the types its `throw`s
@@ -85,12 +87,31 @@ return type (S4f) are written with the slices that build them, `e.suppressed()` 
    clause or of the clause without a type carries the set that reaches the clause (rule 5): a
    `match (e)` whose type patterns cover that set needs no `_` (`LYS-SEM0050` names a type no arm
    takes, and where anything may reach the clause only `_` covers it).
-10. *Informative.* A function's code carries a table of regions, innermost first, each sending
+10. **`defer`** (§5 rules 2–5). `defer { … }` or `defer e` runs its body when its scope is left —
+    the end of the block, a `return`, a `break`, a `continue`, an error — on every way out but a
+    panic, the last registered first; a value block is a scope too. A `return`'s value is taken
+    before the defers run. On the error path the defers run and the error goes on. A defer that
+    throws on a normal exit ends that exit: its error leaves like any other, and the defers
+    registered before it run all the same. One that throws while an error is in flight does not
+    replace it: the first wins, the second goes with it as **suppressed** (rule 4), and the
+    remaining defers run. A defer runs where it was registered — under the `try`s around its
+    scope, not those inside it. A `return`, or a `break` or `continue` to a loop outside it,
+    does not stand in a defer's body (`LYS-SEM0904`).
+11. **`using let f = e`** (§7) binds `f` like a `let` and closes it — calls `f.close()` — when
+    its scope is left, in the scope's one list with its defers: `using let a = …; defer d;
+    using let b = …` closes `b`, runs `d`, closes `a`. What it binds is a `Closeable`, the
+    prelude's `interface Closeable { fn close() }` (`LYS-SEM0143`); `using var`, or a `using`
+    without one name and a value, is refused (`LYS-PAR0052`). An error of `close()` is a defer's.
+    A `Closeable` an expression statement makes and drops is warned about (`LYS-SEM0144`).
+12. *Informative.* A function's code carries a table of regions, innermost first, each sending
    the errors of its instructions to its clauses' tests — one test of the value's descriptor
    each, as `is` makes it. An error looks for the first region that covers it, in its frame and
    then at each caller's call; a throw that no clause takes costs the returns it makes. The
    record is the frames' functions and instructions, made at each `throw` and carried by a
-   region's second register and `rethrow`; its text is made only when asked. The report asks the
+   region's second register and `rethrow`; its text is made only when asked. A defer is placed
+   on every way out by the compiler: the rest of its scope is a region whose handler runs the
+   defer and throws on; a `return`, a `break` or a `continue` through it runs the defer's copy
+   outside the region, which has a gap there. The report asks the
    error for its message and its causes in the same run, where the script's globals still are.
 
 ## Deviations
@@ -98,6 +119,7 @@ return type (S4f) are written with the slices that build them, `e.suppressed()` 
 - Thrown sets are inferred (rule 5); a written `throws` is a checked contract (rule 6); `try` is accepted without effect (rule 7); lint `unmarked-throw` ([02 K2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [05 Th](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)). A call through an interface member that writes no `throws` throws what the member's implementations in the script throw; Lyric 5 declares every set.
 - Function types carry no `throws`; iterators have no error type ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
 - An error that escapes the top level ends the script with exit 1; embedded it is `.Error` at the host ([05 E6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md), [01 S11](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)).
+- A jump out of a defer's body is refused (`LYS-SEM0904`); Lyric 5 does not say what one does.
 - The binding of a set clause or of the clause without a type is an `Error` even where one type reaches the clause (Lyric 5 binds that type, review M5-6): the sets are inferred after the bodies are checked. A `match` over it with type patterns reaches the type.
 - A script keeps an error's frames: the report always ends with them, as a panic's does, and `e.backtrace()` is never `null` (Lyric 5 keeps them in the debug profile only, §4 rule 4, §5 rule 3). The trace form names no file; with modules (S5) it will.
 

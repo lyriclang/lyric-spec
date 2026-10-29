@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0904
+// §6 rule 10 (Script's own): a defer runs where its scope is left and goes on from there; a
+// `return` out of its body would drop that way.
+fn g(): int {
+    defer {
+        return 1
+    }
+    return 2
+}
+println(g())

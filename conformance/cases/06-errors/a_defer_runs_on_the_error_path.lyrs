@@ -1,0 +1,38 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | cleanup
+//! | caught oops
+//! | body done
+//! | outer
+//! | caught late
+// §6 rule 10 (Lyric 5 §5 rules 2, 5): on the error path the defer runs and the error goes on; a
+// defer that throws on a normal exit sends its error out, and the defers registered before it
+// run all the same.
+struct Oops :: Error {
+    fn message(): string = "oops"
+}
+struct Late :: Error {
+    fn message(): string = "late"
+}
+fn failing() {
+    defer println("cleanup")
+    throw Oops { }
+}
+try {
+    failing()
+} catch (e) {
+    println("caught " + e.message())
+}
+fn deferThrows() {
+    defer println("outer")
+    defer {
+        throw Late { }
+    }
+    println("body done")
+}
+try {
+    deferThrows()
+} catch (e) {
+    println("caught " + e.message())
+}

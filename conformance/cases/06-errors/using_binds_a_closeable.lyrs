@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0143
+// §6 rule 11 (Lyric 5 §7 rule 2): what `using` binds is a `Closeable`.
+fn work() {
+    using let n = 5
+    println(n)
+}
+work()
