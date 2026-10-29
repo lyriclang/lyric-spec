@@ -2,14 +2,13 @@
 
 **Base.** Lyric 5.0 [§6](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/06-errors.md) applies, with the deviations below.
 
-**Status.** Written for what S4a–S4e build: what is thrown, `throw`, the `try` block and its
-clauses with the rules among them, the record of where an error was first thrown, the error path
-through the frames and the report of an error that leaves the script, the thrown sets inferred
-and a written `throws` held against them, the mark `try`, the expression forms `try?`, `try!`
-and `try … catch`, `defer` and `using` with the suppressed errors. Panics and `never` as a return
-type (S4f) are written with the slice that builds them, `e.suppressed()` with the arrays (S7),
-the lint `unmarked-throw` and the `let` half of `LYS-SEM0144` with the lints (S11); until then
-the design documents decide.
+**Status.** Written for what S4 builds: what is thrown, `throw`, the `try` block and its clauses
+with the rules among them, the record of where an error was first thrown, the error path through
+the frames and the report of an error that leaves the script, the thrown sets inferred and a
+written `throws` held against them, the mark `try`, the expression forms `try?`, `try!` and
+`try … catch`, `defer` and `using` with the suppressed errors, panics and `never`.
+`e.suppressed()` comes with the arrays (S7), the lint `unmarked-throw` and the `let` half of
+`LYS-SEM0144` with the lints (S11); function values that throw are Script's own (02 K2).
 
 ## Written (S4)
 
@@ -103,7 +102,18 @@ the design documents decide.
     prelude's `interface Closeable { fn close() }` (`LYS-SEM0143`); `using var`, or a `using`
     without one name and a value, is refused (`LYS-PAR0052`). An error of `close()` is a defer's.
     A `Closeable` an expression statement makes and drops is warned about (`LYS-SEM0144`).
-12. *Informative.* A function's code carries a table of regions, innermost first, each sending
+12. **Panics and `never`** (§9). A panic is no error: no clause takes it, no defer runs past it,
+    and it ends the script with its report and exit code 101. The prelude's four: `panic(m)` says
+    its message as written (`LYS-RT0008`); `unreachable(m)` and `todo(m)` say their word first —
+    `unreachable`, `not implemented` — and the message behind it where one is given
+    (`LYS-RT0012`, `LYS-RT0013`); `assert(c) { m }` checks where it stands and, where `c` is
+    false, says `assertion failed`, the condition as written and the message, built only then
+    (`LYS-RT0011`). `never` is the type of what gives no value — a `throw`, a call of one of these,
+    a `loop` no `break` leaves — and fits every type. It is written only as a return type
+    (`LYS-SEM0145`); a function returning it does not return: every path ends in a `throw`, a
+    panic or a call that does not return (`LYS-SEM0017`), and a `return` in it is refused unless
+    what it returns does not return either (`LYS-SEM0146`).
+13. *Informative.* A function's code carries a table of regions, innermost first, each sending
    the errors of its instructions to its clauses' tests — one test of the value's descriptor
    each, as `is` makes it. An error looks for the first region that covers it, in its frame and
    then at each caller's call; a throw that no clause takes costs the returns it makes. The

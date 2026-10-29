@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0102
+// §7 rule 5 (Lyric 5 §1 rule 3): a label repeating one around it would make a jump ambiguous.
+a: for (i in 0..2) {
+    a: for (j in 0..2) {
+        break a
+    }
+}

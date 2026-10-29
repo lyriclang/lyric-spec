@@ -1,0 +1,25 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 11
+//! | 704
+// §7 rule 5 (Lyric 5 §1 rules 1, 5): `do { … } while (c)` runs its block, then the condition; a
+// `continue` goes to the condition.
+var n = 10
+do {
+    n += 1
+} while (false)
+println(n)
+var m = 0
+var odd = 0
+do {
+    m += 1
+    if (m % 2 == 0) {
+        continue
+    }
+    odd += 1
+    if (m > 6) {
+        break
+    }
+} while (m < 10)
+println(m * 100 + odd)

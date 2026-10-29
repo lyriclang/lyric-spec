@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0145
+// §6 rule 12 (Lyric 5 §9 rule 3): `never` types no value: it stands only as a return type.
+fn take(x: never) {
+}
+println("x")

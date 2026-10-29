@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0011
+//! stdout:
+//! | 5
+//! stderr:
+//! | panic [LYS-RT0011]: assertion failed: n > 2: n = 1
+// §6 rule 12 (Lyric 5 §9 rule 1): `assert(c) { m }` says `assertion failed`, the condition as
+// written and the message, built only where the condition is false.
+fn check(n: int): int {
+    assert(n > 2) { f"n = {n}" }
+    return n
+}
+println(check(5))
+println(check(1))

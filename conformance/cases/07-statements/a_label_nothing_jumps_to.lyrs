@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! warning: LYS-SEM0103
+// §7 rule 5 (Lyric 5 §1 rule 3): a label nothing jumps to is warned about.
+b: for (i in 0..2) {
+    println(i)
+}

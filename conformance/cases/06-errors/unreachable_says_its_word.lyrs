@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0012
+//! stdout:
+//! | positive
+//! stderr:
+//! | panic [LYS-RT0012]: unreachable
+// §6 rule 12 (Lyric 5 §9 rule 1): `unreachable()` says its word.
+fn sign(n: int): string {
+    if (n > 0) {
+        return "positive"
+    }
+    unreachable()
+}
+println(sign(1))
+println(sign(0))

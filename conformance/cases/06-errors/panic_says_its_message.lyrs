@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0008
+//! stdout:
+//! | before
+//! stderr:
+//! | panic [LYS-RT0008]: the disk is gone
+// §6 rule 12 (Lyric 5 §9 rule 1): `panic(m)` ends the script with its message as written; no
+// clause takes it, no defer runs past it.
+fn fail() {
+    defer println("not run")
+    panic("the disk is gone")
+}
+println("before")
+try {
+    fail()
+} catch (_) {
+    println("not taken")
+}

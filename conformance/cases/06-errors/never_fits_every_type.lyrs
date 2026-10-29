@@ -1,0 +1,10 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+//! | true
+// §6 rule 12 (Lyric 5 §9 rule 2): `never` fits every type where a value is wanted.
+fn pick(x: ?int): int = x ?? unreachable("x is there")
+println(pick(4))
+fn ok(b: bool): bool = b || panic("why")
+println(ok(true))
