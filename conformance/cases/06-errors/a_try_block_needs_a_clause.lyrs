@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0036
+// §2 (Lyric 5 §4 rule 1): a `try` block without a clause is refused.
+try {
+    println("x")
+}

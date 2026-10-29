@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0030
+// §1 (Lyric 5 §1 rule 2): a number is not thrown; what is thrown conforms to `Error`.
+fn f(n: int): int {
+    if (n < 0) {
+        throw n
+    }
+    return n
+}
+println(f(1))

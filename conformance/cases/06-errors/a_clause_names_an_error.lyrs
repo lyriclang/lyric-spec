@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0030
+// §2 (Lyric 5 §4 rule 2): a clause's type conforms to `Error`.
+struct Point {
+    x: int
+}
+try {
+    println("x")
+} catch (p: Point) {
+    println(p.x)
+}

@@ -1,0 +1,15 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0018
+// §3 (with 06 §2): a clause may run after any part of the body — here before `n = 1` — so it
+// knows assigned only what was before the `try`.
+fn f(): int {
+    var n: int
+    try {
+        n = 1
+    } catch (_) {
+        return n
+    }
+    return n
+}
+println(f())

@@ -20,9 +20,11 @@
    out — it returns, breaks, continues or gives `never` — adds nothing to what follows; a `while`
    and a `for` may not run their block; a `loop` is assigned after it what each of its breaks
    has assigned; the right side of `&&`, `||` and `??`, the value of `??=` and the arguments
-   after `?.` may not be evaluated, and what they assign does not count. Script has no `do`
-   loop and no `try` yet; their rules come with them. A `let` declared without a value is never
-   written (`LYS-SEM0019`), as in Lyric 5.
+   after `?.` may not be evaluated, and what they assign does not count. A clause of a `try`
+   may run after any part of its body: it knows assigned only what was before the `try`, and
+   after the `try` a binding is assigned where the body and every clause assign it
+   ([06](06-errors.md) rule 2). Script has no `do` loop yet; its rule comes with it. A `let`
+   declared without a value is never written (`LYS-SEM0019`), as in Lyric 5.
 4. **A global of the script takes its value where it is declared** (`LYS-SEM0903`): a function
    may run, and read it, before any statement of the script's code assigns it.
 

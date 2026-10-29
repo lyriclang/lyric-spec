@@ -1,0 +1,26 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+//! | none
+//! | 5
+//! | -1
+// §1 (Lyric 5 §1 rule 3, §9): `throw e` is an expression of type `never` where a value stands,
+// and `never` fits every type — the right of `??`, a lambda's body.
+fn need(x: ?int): int = x ?? throw Exception("none")
+fn attempt(f: fn() -> int): int {
+    try {
+        return f()
+    } catch (_) {
+        return -1
+    }
+}
+try {
+    println(need(4))
+    println(need(null))
+    println("not here")
+} catch (e) {
+    println(e.message())
+}
+println(attempt { 5 })
+println(attempt { throw Exception("x") })
