@@ -1,0 +1,5 @@
+import geo.shapes { Sq }
+
+fn area(q: Sq): int = q.s * q.s
+
+internal fn secret(): int = 7

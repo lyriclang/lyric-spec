@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-RES0003
+//! since: 1.0.0
+// §15 rule 2 (Lyric 5 04 §2 rule 1a): `src/lib.lyrs` is the module `geo`; there is no `geo.lib`.
+import geo.lib { area }
+
+println(1)

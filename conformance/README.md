@@ -43,6 +43,13 @@ The differences from Lyric 5's format:
 - A program of modules is a folder with a `main.lyrs`: the runner checks and runs that file, and
   the folder's other `.lyrs` files, at any depth, are its modules, not cases; they carry no
   header.
+- A **package case** is a folder with a `lyric-script.toml`: its header stands in its
+  `src/main.lyrs`, and the runner checks and runs it from the folder without naming a file, as a
+  user does ([15](../spec/15-project.md) rule 2). It holds its dependencies itself, each in a
+  folder of its own below `deps/`, named by a relative path; a package nested in a case is no
+  case of its own.
+- `exit:` beside `error:` is the exit code of a rejection that is a fault of the environment,
+  2 (`LYS-PKG0009`); without it a rejection exits 1.
 
 ## What a case may use
 

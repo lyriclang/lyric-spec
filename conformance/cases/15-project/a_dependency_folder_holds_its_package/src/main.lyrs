@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-PKG0004
+//! since: 1.0.0
+// §15 rule 3 (Lyric 5 15 §2 rule 1): the folder holds the package the dependency names.
+println(1)

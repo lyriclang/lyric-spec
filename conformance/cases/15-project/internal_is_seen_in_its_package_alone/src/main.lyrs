@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-RES0009
+//! since: 1.0.0
+// §15 rule 4 (07 V2): `internal` keeps a declaration to its package.
+import geo { secret }
+
+println(secret())

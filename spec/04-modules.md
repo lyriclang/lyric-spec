@@ -16,7 +16,8 @@ from imports come with S5b–S5e — until then the design documents decide.
    path is `a.b`. An import of a module no such file provides is refused (`LYS-RES0003`). A
    folder is a namespace and no module; `a.lyrs` beside `a/` is a module of its own. A path
    names its file **exactly**, case included, on every platform (Lyric 5 §2 rule 4): `import
-   Util` does not find `util.lyrs`, also where the file system would (`LYS-RES0003`).
+   Util` does not find `util.lyrs`, also where the file system would (`LYS-RES0003`). With a
+   manifest Lyric 5's path rule holds instead ([15](15-project.md) rule 2).
 2. **A file is one module** (Lyric 5 §2 rule 5). A module several others import is read once,
    and its bindings exist once. Imports form no cycle: one that does is refused, and the error
    names the modules on it (`LYS-RES0005`).

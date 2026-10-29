@@ -3,7 +3,8 @@
 
 Lyric 5's runner (tools/run_conformance.py on main) with a script's differences: one executable,
 `lyric-script check` and `lyric-script run`; `since:` required; a header that may trail the case;
-a program of modules is a folder with a `main.lyrs`, the case its entry.
+a program of modules is a folder with a `main.lyrs`, the case its entry; a package case is a
+folder with a `lyric-script.toml`, read from its `src/main.lyrs` and built from its folder.
 """
 
 import argparse
@@ -83,24 +84,48 @@ def program_of(path, root):
     return None
 
 
+def package_of(path, root):
+    """The outermost folder above a file, below `root`, that holds a `lyric-script.toml`: the
+    package case it belongs to — a package nested in it is its dependency; None for none."""
+    found = None
+    for parent in path.parents:
+        if parent == root or root not in parent.parents:
+            break
+        if (parent / "lyric-script.toml").is_file():
+            found = parent
+    return found
+
+
 def is_case(path, root):
-    """A file of one file's case, or a program's entry; a program's other files are its modules."""
+    """A file of one file's case, a program's entry, or a package case's `src/main.lyrs`; the
+    other files of a program or a package are its modules."""
+    package = package_of(path, root)
+    if package is not None:
+        return path == package / "src" / "main.lyrs"
     program = program_of(path, root)
     return program is None or path == program / "main.lyrs"
 
 
-def run_case(path, spec, exe):
+def run_case(path, spec, exe, package=None):
     def fail(reason):
         return (False, reason)
 
-    checked = subprocess.run([str(exe), "check", str(path)], capture_output=True, text=True)
+    # a package case is built from its folder, naming no file, as a user builds a package
+    def command(verb):
+        if package is not None:
+            return subprocess.run([str(exe), verb], capture_output=True, text=True, cwd=package)
+        return subprocess.run([str(exe), verb, str(path)], capture_output=True, text=True)
+
+    checked = command("check")
     diagnostics = checked.stderr
 
     if spec["errors"]:
+        # a rejection exits 1; a fault of the environment as the case's `exit:` says
+        wanted_exit = spec["exit"] or 1
         if checked.returncode == 0:
             return fail("expected rejection, checked cleanly")
-        if checked.returncode != 1:
-            return fail(f"check exited {checked.returncode}, expected 1:\n{diagnostics}")
+        if checked.returncode != wanted_exit:
+            return fail(f"check exited {checked.returncode}, expected {wanted_exit}:\n{diagnostics}")
         # a case may expect warnings beside its errors
         for code in spec["errors"] + spec["warnings"]:
             if code not in diagnostics:
@@ -117,7 +142,7 @@ def run_case(path, spec, exe):
             return fail(f"expected silence, got:\n{diagnostics}")
         return (True, "")
 
-    executed = subprocess.run([str(exe), "run", str(path)], capture_output=True, text=True)
+    executed = command("run")
     expected_exit = 101 if spec["panic"] else spec["exit"]
     if executed.returncode != expected_exit:
         return fail(f"exit {executed.returncode}, expected {expected_exit};"
@@ -168,7 +193,10 @@ def main():
     for case in cases:
         spec = parse_header(case)
         label = case.relative_to(args.cases)
-        if case.name == "main.lyrs" and program_of(case, args.cases) is not None:
+        package = package_of(case, args.cases)
+        if package is not None:
+            label = f"{package.relative_to(args.cases).as_posix()}/"
+        elif case.name == "main.lyrs" and program_of(case, args.cases) is not None:
             label = f"{label.parent.as_posix()}/"
         if version and spec["since"] > version:
             skipped += 1
@@ -178,7 +206,7 @@ def main():
             skipped += 1
             print(f"SKIP {label} (until {'.'.join(map(str, spec['until']))})")
             continue
-        ok, reason = run_case(case, spec, args.lyric_script)
+        ok, reason = run_case(case, spec, args.lyric_script.resolve(), package)
         if ok:
             print(f"PASS {label}")
         else:
