@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | starts with one: a
+//! | 11
+//! | 9 [8, 7]
+//! | none
+//! | [1, 2]
+//! | [1, 2, 3]
+//! since: 1.0.0
+// §9 rule 5: elements are patterns at every depth; a list through an optional; `let … else`;
+// `[..rest]` takes every list; the rest is a copy.
+let pairs = [(1, "a"), (2, "b")]
+match (pairs) {
+    [(1, s), ..] => println(f"starts with one: {s}"),
+    _ => println("other"),
+}
+let maybe: ?int[] = [5, 6]
+match (maybe) {
+    [a, b] => println(a + b),
+    _ => println("no"),
+}
+fn split(xs: int[]): string {
+    let [only, ..others] = xs else {
+        return "none"
+    }
+    return f"{only} {others}"
+}
+println(split([9, 8, 7]))
+println(split([]))
+let xs = [1, 2, 3]
+match (xs) {
+    [..all] => {
+        all.pop()
+        println(all)
+    }
+}
+println(xs)
