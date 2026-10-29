@@ -1,0 +1,11 @@
+//! run
+//! error: LYR-LNK0001
+//! since: 5.0.0
+// 15 §5.2 rule 12: an extern no C of the link defines fails the link, at its declaration.
+import std.io { println };
+
+extern "C" fn lyric_conformance_defined_nowhere(x: int): int;
+
+fn main(): void {
+    println(f"{lyric_conformance_defined_nowhere(1)}");
+}

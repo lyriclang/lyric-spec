@@ -173,8 +173,11 @@ def run_case(case, spec, lyric5, profile, workdir):
     diagnostics = compiled.stderr
 
     if spec["errors"]:
-        if compiled.returncode != 1:
-            return fail(f"expected rejection (exit 1), got exit {compiled.returncode}:\n{diagnostics}")
+        # a check case is refused by the front end (exit 1); a run case's build fails after it,
+        # at the C compiler or the link (exit 2)
+        refused = 2 if spec["mode"] == "run" else 1
+        if compiled.returncode != refused:
+            return fail(f"expected rejection (exit {refused}), got exit {compiled.returncode}:\n{diagnostics}")
         # Exactly the codes the header names: one mistake, the errors it names, and no cascade
         # behind them. A case that only asked "is the code among them" passed with a second error
         # for the same mistake.

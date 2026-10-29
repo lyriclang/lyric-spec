@@ -201,11 +201,8 @@ C a package brings with it, compiled with the program and linked into it
 
 **Conformance.** `conformance/cases/13-abi/` and `conformance/cases/15-project/`, package cases
 that call their native part or whose manifest a rule refuses; the toolchain's own tests
-(`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`).
+(`tests/Lyric5.Tests`, `NativeTests`, `VendorTests`, `BindingsTests`, `LinkDiagnosticsTests`, `LinkerTextTests`).
 
-*(The findings `LYR-LNK…` of rule 12 are written ahead of their implementation, milestone M14b of the Lyric 5 plan — the
-decisions of [11, review 2026-10-28](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md);
-each comes with its cases.)*
 
 ### 5.1 Sources
 
@@ -273,9 +270,20 @@ each comes with its cases.)*
 12. The link takes, in this order: the program's objects and the native parts' — the packages
     **before the packages they depend on**, the root's first —, their `archives` and `dylibs` in that order, the
     libraries by name and from `pkgConfig`, then the frameworks; each archive, library and framework
-    once, where it first stands. A symbol two packages define fails the link (`LYR-LNK0003`), and
-    so does one nothing defines (`LYR-LNK0001`) or a library the linker does not find
-    (`LYR-LNK0002`) — each exit 2, as the link is ([14 §1.3](14-cli.md)). A binary is linked anew
+    once, where it first stands. A link that fails is read for what failed it, and each such
+    finding is said, exit 2 ([14 §1.3](14-cli.md)):
+    - a symbol nothing the link takes defines — `LYR-LNK0001`, at the `extern` declaration of
+      the program that names it, else with what references it;
+    - a library or a framework the linker does not find — `LYR-LNK0002`, at the line of the
+      manifest whose `libs` or `frameworks` names it, else naming the build script or the
+      `pkgConfig` that gave it;
+    - a symbol two inputs define — `LYR-LNK0003`, naming who defines it: a package, the
+      program, the runtime.
+
+    What the linker says that none of them is said as it is (`LYR-BLD0001`) — the reading never
+    guesses. *(Informative: the toolchain reads lld, zig's Mach-O linker, ld64 and GNU ld.)* A C
+    source that includes a header no directory holds fails its compile (`LYR-BLD0001`) with the
+    directories it was searched in. A binary is linked anew
     where an archive's or a shared library's bytes changed, not only its time.
 
 ### 5.3 Source trees

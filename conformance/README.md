@@ -23,7 +23,8 @@ The header is the leading block of lines starting `//!`. Directives:
 //! stdin:                   the program's standard input: each line that follows, with its
 //! | a line                 newline; without the directive the input is empty
 //! check                    compile only; expect acceptance in silence
-//! error: LYR-SEM0001       compile only; expect rejection with exactly these codes (repeatable)
+//! error: LYR-SEM0001       expect rejection with exactly these codes (repeatable): by the
+//!                          front end after check, by the C compiler or the link after run
 //! warning: LYR-SEM0076     compilation succeeds and reports this code (repeatable)
 //! since: 5.0.0             the case pins behavior of this language version and later; a
 //!                          runner given an older --toolchain-version skips it
@@ -35,8 +36,9 @@ The header is the leading block of lines starting `//!`. Directives:
 //!                          right, says nothing (16 §5 rule 9; repeatable)
 ```
 
-Exactly one of `run` / `check` leads the header. `error:` implies rejection (compile exit 1)
-with exactly the listed error codes — every one reported, none besides them, so a cascade behind
+Exactly one of `run` / `check` leads the header. `error:` implies rejection — in a `check` case by
+the front end (compile exit 1), in a `run` case by the build after it, at the C compiler or the
+link (exit 2) — with exactly the listed error codes — every one reported, none besides them, so a cascade behind
 the one mistake fails the case; warnings are not compared in a rejected case. `check` without
 `error:` expects silence — no diagnostics at all. `tools/check_lints.py` holds the suite to a
 case with `warning:` and a case with `clean:` for every lint, the two that 16 §5 rule 9 names aside. A `|` line is the text after the bar less one

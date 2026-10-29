@@ -1,0 +1,6 @@
+[package]
+name = "app"
+version = "0.1.0"
+
+[native]
+libs = ["lyric_conformance_no_such_library"]
