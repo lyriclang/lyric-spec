@@ -5,8 +5,8 @@
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
 `sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
 cancellation (S6c1), task scopes (S6c2), a task's status with its values (S6c3), channels and
-semaphores (S6d1); `select`, time and I/O come with S6d2–S6e — until then the design documents
-decide.
+semaphores (S6d1), `select` (S6d2); time and I/O come with S6d3–S6e — until then the design
+documents decide.
 
 ## Written (S6a, tasks)
 
@@ -136,6 +136,18 @@ decide.
     `release()` gives one back, to the task that has waited longest; `available()` is the count.
     A value or a permit handed over already belongs to the task a cancel finds waking: the cancel
     acts at its next wait.
+
+## Written (S6d2, select)
+
+16. **Select** (Lyric 5 §7 rules 1–2, 4; [07 N5](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). A select waits on several channels at
+    once. It is library — the prelude's source, as Lyric 5's `std.task` writes it: `Select.on(c) { v
+    => … }` begins one, a `Selection`, whose `.on(c) { v => … }` adds a case and `.run()` runs it. A
+    case receives from its channel: its body gets what `recv()` would give, the value or `null`
+    once the channel is closed and empty. `run()` runs the first case, in the order they were
+    added, whose channel can be received from without a wait — a value in it, a sender waiting, or
+    closed; is there none, the task waits on all of them, and the first channel to get something
+    or to close runs its case. One body runs, once. `run()` is a wait (rule 11) and throws what the
+    body that runs throws. *(Informative: a select is biased to its first case.)*
 
 ## Deviations
 

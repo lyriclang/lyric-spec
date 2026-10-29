@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | closed meanwhile
+// §10 rule 16: a channel that closes while the select waits runs its case.
+let a = Channel<int>.new()
+spawn {
+    yieldNow()
+    a.close()
+}
+Select.on(a) { v => println(if (v == null) "closed meanwhile" else "value") }.run()

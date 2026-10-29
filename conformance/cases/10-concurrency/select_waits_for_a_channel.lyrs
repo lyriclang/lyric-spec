@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | b 7
+// §10 rule 16: none ready: the task waits on all; a sender on one wakes it.
+let a = Channel<int>.new()
+let b = Channel<int>.new()
+spawn {
+    yieldNow()
+    b.send(7)
+}
+Select.on(a) { v => println("a") }.on(b) { v => println(f"b {v ?? 0}") }.run()

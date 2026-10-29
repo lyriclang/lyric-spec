@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | got 5
+// §10 rule 16: a value put into the buffer wakes the select.
+let a = Channel<int>.new(1)
+spawn { a.send(5) }
+Select.on(a) { v => println(f"got {v ?? 0}") }.run()

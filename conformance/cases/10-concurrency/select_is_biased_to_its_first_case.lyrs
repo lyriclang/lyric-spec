@@ -1,0 +1,10 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | a
+// §10 rule 16: of two ready cases, the first added runs.
+let a = Channel<int>.new(1)
+let b = Channel<int>.new(1)
+a.send(1)
+b.send(2)
+Select.on(a) { v => println("a") }.on(b) { v => println("b") }.run()
