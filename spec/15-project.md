@@ -2,9 +2,9 @@
 
 **Base.** Lyric 5.0 [§15](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/15-project.md) applies, with the deviations below.
 
-**Status.** The manifest and path dependencies written (S5b); git dependencies, the lock and
-`[override]` come with S5c, a script's frontmatter with S5d, `[lints]` with S11 — until then the
-design documents decide.
+**Status.** The manifest, path and git dependencies written (S5b, S5c1); the lock, version lines
+and `[override]` come with S5c2–S5c3, a script's frontmatter with S5d, `[lints]` with S11 — until
+then the design documents decide.
 
 ## Written (S5b, the manifest and path dependencies)
 
@@ -36,6 +36,25 @@ design documents decide.
    package (Lyric 5 §1 rule 6): a toolchain below what any package of the program asks for
    refuses the program with exit code 2, a fault of the environment (`LYS-PKG0009`); a
    development build counts as its version.
+
+## Written (S5c1, git dependencies)
+
+6. **A git dependency** (Lyric 5 §2 rules 2, 4) reads one revision of its repository:
+   `geo = { git = "https://…", tag = "v1.0.0" }`, a `branch`, a commit — `rev`, its id or the
+   first 7 to 64 hexadecimal digits of it —, or, naming none, the branch the repository's `HEAD`
+   names. Its `git` is a URL — `https://`, `http://`, `ssh://`, `git://`, `file://` — or
+   `user@host:path` (`LYS-PKG0002`, as for two revisions, or a revision beside a `path`). The URL
+   is compared, cached and read in its **normal form**: a `/` and a `.git` at its end dropped, the
+   scheme and the host in lower case. A revision the repository does not have, a repository
+   without the package at its root, and a tag that is a version over a manifest of another
+   version are refused (`LYS-PKG0006`); a repository that cannot be reached is a fault of the
+   environment (`LYS-PKG0007`, exit 2). A package read from git names its own dependencies by
+   git (`LYS-PKG0004`).
+7. **The user's cache** (Lyric 5 §2 rule 3; [14](14-cli.md)) keeps what is read from git, beside
+   the bytecode: each repository once, each commit's tree once, for every project. A tag or a
+   commit the cache holds is not fetched again; a branch, or no revision, is read at its head,
+   fetched. **`--offline`** (`run`, `check`) fetches nothing: what the cache does not hold is
+   refused (`LYS-PKG0007`, exit 2).
 
 ## Deviations
 

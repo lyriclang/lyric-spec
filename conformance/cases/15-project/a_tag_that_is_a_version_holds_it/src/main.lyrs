@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0006
+//! since: 1.0.0
+// §15 rule 6: a tag that is a version names a manifest of that version.
+import geo { area }
+
+println(area(3))

@@ -49,7 +49,14 @@ The differences from Lyric 5's format:
   folder of its own below `deps/`, named by a relative path; a package nested in a case is no
   case of its own.
 - `exit:` beside `error:` is the exit code of a rejection that is a fault of the environment,
-  2 (`LYS-PKG0009`); without it a rejection exits 1.
+  2 (`LYS-PKG0007`, `LYS-PKG0009`); without it a rejection exits 1.
+- A package case's dependency read from git stands as `repos/<name>/<version>/`, a folder per
+  version. The runner builds the case from a copy, makes each `repos/<name>` a git repository
+  beside it — one commit per version, oldest first, each tagged `v<version>`, on the branch
+  `main`, by a fixed author at fixed times — and writes the repositories' place as a `file://`
+  URL where a manifest or a lock says `{repos}`: `geo = { git = "{repos}/geo", tag = "v1.0.0" }`.
+  Each such case runs with a cache of its own (`LYRIC_SCRIPT_CACHE`).
+- `option: --offline` passes an option to `check` and `run` (repeatable).
 
 ## What a case may use
 

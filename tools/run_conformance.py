@@ -8,9 +8,12 @@ folder with a `lyric-script.toml`, read from its `src/main.lyrs` and built from 
 """
 
 import argparse
+import os
 import pathlib
+import shutil
 import subprocess
 import sys
+import tempfile
 
 
 def header_lines(lines):
@@ -36,7 +39,7 @@ def header_lines(lines):
 
 def parse_header(path):
     spec = {"mode": None, "exit": 0, "panic": None, "stdout": None, "stderr": None,
-            "errors": [], "warnings": [], "since": None, "until": None}
+            "errors": [], "warnings": [], "since": None, "until": None, "options": []}
     out = None
     for line in header_lines(path.read_text(encoding="utf-8").splitlines()):
         body = line[3:].strip()
@@ -64,6 +67,8 @@ def parse_header(path):
             spec["since"] = tuple(int(p) for p in body[6:].strip().split("."))
         elif body.startswith("until:"):
             spec["until"] = tuple(int(p) for p in body[6:].strip().split("."))
+        elif body.startswith("option:"):
+            spec["options"].append(body[7:].strip())
         else:
             raise ValueError(f"{path}: unknown directive '{body}'")
     if spec["mode"] is None:
@@ -106,15 +111,67 @@ def is_case(path, root):
     return program is None or path == program / "main.lyrs"
 
 
-def run_case(path, spec, exe, package=None):
+def version_key(name):
+    """A version folder's name as a sortable key: its numbers, then the rest."""
+    core = name.split("-")[0].split("+")[0]
+    return tuple(int(p) if p.isdigit() else 0 for p in core.split(".")) + (name,)
+
+
+def git(args, cwd):
+    # a fixed author at fixed times, so a case's lock can name the commits
+    env = dict(os.environ, GIT_AUTHOR_NAME="conformance", GIT_AUTHOR_EMAIL="conformance@lyric",
+               GIT_COMMITTER_NAME="conformance", GIT_COMMITTER_EMAIL="conformance@lyric",
+               GIT_AUTHOR_DATE="2026-01-01T00:00:00Z", GIT_COMMITTER_DATE="2026-01-01T00:00:00Z")
+    subprocess.run(["git", "-c", "core.autocrlf=false", "-c", "commit.gpgsign=false", *args],
+                   cwd=cwd, env=env, check=True, capture_output=True)
+
+
+def fill_repos(text, url):
+    return text.replace("{repos}", url)
+
+
+def prepare_package(package, work):
+    """A package case's copy in `work`, as a user's folder: its `repos/<name>/<version>/` made git
+    repositories beside it — one commit per version, oldest first, each tagged `v<version>`, on
+    the branch `main` —, and `{repos}` in its manifests and locks their place as a `file://` URL.
+    Returns the copy's folder."""
+    copy = work / package.name
+    shutil.copytree(package, copy, ignore=shutil.ignore_patterns("repos"))
+    repos = work / "repos"
+    url = repos.resolve().as_uri()
+    source = package / "repos"
+    if source.is_dir():
+        for repo in sorted(p for p in source.iterdir() if p.is_dir()):
+            target = repos / repo.name
+            target.mkdir(parents=True)
+            git(["init", "-q", "-b", "main"], target)
+            for ver in sorted((v for v in repo.iterdir() if v.is_dir()), key=lambda v: version_key(v.name)):
+                for old in target.iterdir():
+                    if old.name != ".git":
+                        shutil.rmtree(old) if old.is_dir() else old.unlink()
+                shutil.copytree(ver, target, dirs_exist_ok=True)
+                for f in target.rglob("*"):
+                    if f.is_file() and f.name in ("lyric-script.toml", "lyric-script.lock"):
+                        f.write_text(fill_repos(f.read_text(encoding="utf-8"), url), encoding="utf-8", newline="\n")
+                git(["add", "-A"], target)
+                git(["commit", "-q", "-m", f"v{ver.name}"], target)
+                git(["tag", f"v{ver.name}"], target)
+    for f in copy.rglob("*"):
+        if f.is_file() and f.name in ("lyric-script.toml", "lyric-script.lock"):
+            f.write_text(fill_repos(f.read_text(encoding="utf-8"), url), encoding="utf-8", newline="\n")
+    return copy
+
+
+def run_case(path, spec, exe, package=None, env=None):
     def fail(reason):
         return (False, reason)
 
     # a package case is built from its folder, naming no file, as a user builds a package
     def command(verb):
         if package is not None:
-            return subprocess.run([str(exe), verb], capture_output=True, text=True, cwd=package)
-        return subprocess.run([str(exe), verb, str(path)], capture_output=True, text=True)
+            return subprocess.run([str(exe), verb, *spec["options"]], capture_output=True, text=True,
+                                  cwd=package, env=env)
+        return subprocess.run([str(exe), verb, *spec["options"], str(path)], capture_output=True, text=True)
 
     checked = command("check")
     diagnostics = checked.stderr
@@ -206,7 +263,15 @@ def main():
             skipped += 1
             print(f"SKIP {label} (until {'.'.join(map(str, spec['until']))})")
             continue
-        ok, reason = run_case(case, spec, args.lyric_script.resolve(), package)
+        if package is None:
+            ok, reason = run_case(case, spec, args.lyric_script.resolve())
+        else:
+            # built from a copy, with a cache of its own: what it fetches and locks stays there
+            with tempfile.TemporaryDirectory() as work:
+                work = pathlib.Path(work)
+                copy = prepare_package(package, work)
+                env = dict(os.environ, LYRIC_SCRIPT_CACHE=str(work / "cache"))
+                ok, reason = run_case(copy / "src" / "main.lyrs", spec, args.lyric_script.resolve(), copy, env)
         if ok:
             print(f"PASS {label}")
         else:

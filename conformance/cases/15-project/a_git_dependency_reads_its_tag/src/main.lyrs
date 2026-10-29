@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 9
+// §15 rule 6 (Lyric 5 15 §2 rule 2): a git dependency reads one revision of its repository: a tag.
+import geo { area }
+
+println(area(3))
