@@ -1,0 +1,19 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0142
+// §6 rule 9 (Lyric 5 §4 rule 5): a clause whose type a clause above covers takes nothing.
+interface Io :: Error {
+}
+struct Disk :: Io {
+    fn message(): string = "disk"
+}
+fn read(): int {
+    throw Disk { }
+}
+try {
+    println(read())
+} catch (_: Io) {
+    println("io")
+} catch (_: Disk) {
+    println("disk")
+}

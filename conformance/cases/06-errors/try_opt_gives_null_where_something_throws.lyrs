@@ -1,0 +1,30 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+//! | null
+//! | present, null
+// §6 rule 8 (Lyric 5 §6 rule 1): `try? e` is `e`'s value, or `null` where something under it
+// throws; not flattened — over a `?int` it is a `??int`.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+println(try? f(0))
+println(try? f(1))
+let w: ?int = null
+let x = try? w
+if (let inner = x) {
+    println(if (inner == null) "present, null" else "present")
+}

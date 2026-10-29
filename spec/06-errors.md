@@ -2,14 +2,13 @@
 
 **Base.** Lyric 5.0 [§6](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/06-errors.md) applies, with the deviations below.
 
-**Status.** Written for what S4a–S4c build: what is thrown, `throw`, the `try` block with typed
-clauses and the clause without a type, the record of where an error was first thrown, the error
-path through the frames and the report of an error that leaves the script, the thrown sets
-inferred and a written `throws` held against them, the mark `try`. The expression forms, the
-set clause and the rules among clauses (S4d), `defer` and `using` with the suppressed errors
-(S4e), panics and `never` as a return type (S4f) are written with the slices that build them,
-`e.suppressed()` with the arrays (S7), the lint `unmarked-throw` with the lints (S11); until
-then the design documents decide.
+**Status.** Written for what S4a–S4d build: what is thrown, `throw`, the `try` block and its
+clauses with the rules among them, the record of where an error was first thrown, the error path
+through the frames and the report of an error that leaves the script, the thrown sets inferred
+and a written `throws` held against them, the mark `try` and the expression forms `try?`, `try!`
+and `try … catch`. `defer` and `using` with the suppressed errors (S4e), panics and `never` as a
+return type (S4f) are written with the slices that build them, `e.suppressed()` with the arrays
+(S7), the lint `unmarked-throw` with the lints (S11); until then the design documents decide.
 
 ## Written (S4)
 
@@ -65,7 +64,28 @@ then the design documents decide.
    the member throws what it writes.
 7. **The mark `try e`** (§3 rules 1–2) is accepted and changes nothing: it covers what stands to
    its right — `a + try b * c` marks `b * c` —, and a call need not stand under it.
-8. *Informative.* A function's code carries a table of regions, innermost first, each sending
+8. **The expression forms** (§6). `try? e` is `e`'s value as an optional, or `null` where
+   something under it throws; it is not flattened — over a `?int` a `??int`. Over what gives no
+   value it stands as a statement, where it only drops the error (`LYS-SEM0140`). `try! e` is
+   `e`'s value; where something under it throws, the script ends with the panic `LYS-RT0010`,
+   `'try!' on an error: <message>`, exit code 101. The sign is written against the keyword:
+   `try !done()` is the mark over a negation. `try e catch (x: A) v catch (y) w` is `e`'s value,
+   or the value of the clause that took the error, its clauses asked as a block's are; a
+   clause's value is an expression or a value block, and the parts give one type as a match's
+   arms do (`LYS-SEM0016`); as a statement they give none. A clause belongs to the nearest `try`
+   on its left — `try f() catch (_: A) try g() catch (_: B) 0` gives the clause for `B` to `g` —
+   and parentheses give it to the outer one. These three forms stand at the start of what they
+   cover, not right of an operator (`LYS-PAR0050`); `try?` and `try!` take no clause
+   (`LYS-PAR0051`).
+9. **Among clauses** (§4 rules 2, 5–6; 05 K7). `catch (e in [A, B])` takes a value of any of its
+   types — one alone, `catch (e in A)`, is the typed clause —, and `e` is an `Error`. A type is
+   caught once per `try`, within a set too (`LYS-SEM0141`); a clause whose type a type caught
+   above covers is refused, no error reaching it (`LYS-SEM0142`); the clause without a type
+   stands last (`LYS-SEM0035`), and below it its own error is the one said. The binding of a set
+   clause or of the clause without a type carries the set that reaches the clause (rule 5): a
+   `match (e)` whose type patterns cover that set needs no `_` (`LYS-SEM0050` names a type no arm
+   takes, and where anything may reach the clause only `_` covers it).
+10. *Informative.* A function's code carries a table of regions, innermost first, each sending
    the errors of its instructions to its clauses' tests — one test of the value's descriptor
    each, as `is` makes it. An error looks for the first region that covers it, in its frame and
    then at each caller's call; a throw that no clause takes costs the returns it makes. The
@@ -78,6 +98,7 @@ then the design documents decide.
 - Thrown sets are inferred (rule 5); a written `throws` is a checked contract (rule 6); `try` is accepted without effect (rule 7); lint `unmarked-throw` ([02 K2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [05 Th](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)). A call through an interface member that writes no `throws` throws what the member's implementations in the script throw; Lyric 5 declares every set.
 - Function types carry no `throws`; iterators have no error type ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
 - An error that escapes the top level ends the script with exit 1; embedded it is `.Error` at the host ([05 E6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md), [01 S11](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)).
+- The binding of a set clause or of the clause without a type is an `Error` even where one type reaches the clause (Lyric 5 binds that type, review M5-6): the sets are inferred after the bodies are checked. A `match` over it with type patterns reaches the type.
 - A script keeps an error's frames: the report always ends with them, as a panic's does, and `e.backtrace()` is never `null` (Lyric 5 keeps them in the debug profile only, §4 rule 4, §5 rule 3). The trace form names no file; with modules (S5) it will.
 
 **Conformance.** `conformance/cases/06-errors/` (`since: 1.0.0`).

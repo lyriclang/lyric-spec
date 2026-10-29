@@ -1,0 +1,37 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ok
+//! | A
+//! | B
+// §6 rule 9 (Script 05 K7): the binding of a clause without a type carries the set that reaches
+// the clause; a match whose type patterns cover that set needs no `_`.
+struct A :: Error {
+    fn message(): string = "a"
+}
+struct B :: Error {
+    fn message(): string = "b"
+}
+fn f(n: int): int {
+    if (n == 1) {
+        throw A { }
+    }
+    if (n == 2) {
+        throw B { }
+    }
+    return n
+}
+fn h(n: int): string {
+    try {
+        f(n)
+        return "ok"
+    } catch (e) {
+        return match (e) {
+            _: A => "A",
+            _: B => "B",
+        }
+    }
+}
+println(h(0))
+println(h(1))
+println(h(2))

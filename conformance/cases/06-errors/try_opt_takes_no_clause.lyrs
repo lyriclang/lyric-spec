@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-PAR0051
+// §6 rule 8 (Lyric 5 §6 rule 5): `try?` and `try!` take no clause.
+fn f(): int = 1
+let v = try? f() catch (_) 0
