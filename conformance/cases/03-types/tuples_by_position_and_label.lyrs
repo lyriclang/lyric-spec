@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | a
+//! | 34
+//! | 12
+//! | z
+//! | 21
+// §3 rule 9 (Lyric 5 §6): a tuple's elements by position and by the labels of its written type;
+// a literal takes the types an expected tuple gives; tuples as parameters and results; a tuple
+// is replaced whole.
+fn swap(p: (int, string)): (string, int) = (p.1, p.0)
+let t = (1, "a", 3.5)
+println(t.0)
+println(t.1)
+let p: (x: int, y: int) = (3, 4)
+println(p.x * 10 + p.y)
+let o: (int, ?int) = (5, null)
+println(o.0 + (o.1 ?? 7))
+println(swap((7, "z")).0)
+var s = (1, 2)
+s = (s.1, s.0)
+println(s.0 * 10 + s.1)

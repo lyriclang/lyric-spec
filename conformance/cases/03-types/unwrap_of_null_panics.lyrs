@@ -1,0 +1,10 @@
+//! run
+//! since: 1.0.0
+//! panic: LYS-RT0004
+//! stdout:
+//! | 1
+// Lyric 5 §3.1: `!` on null is the script's panic.
+let a: ?int = 1
+let b: ?int = null
+println(a!)
+println(b!)

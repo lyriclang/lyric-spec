@@ -1,0 +1,54 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+//! | 10
+//! | 42
+//! | 12
+//! | 42
+// §3 rule 11 (Lyric 5 §8.2, §8.4): trailing blocks with `it` and named parameters, a method bound
+// to its object, a static as a value, a field holding a function called by its name.
+fn each(n: int, f: fn(int) -> void): void {
+    var i = 0
+    while (i < n) {
+        f(i)
+        i += 1
+    }
+}
+fn fold(n: int, start: int, f: fn(int, int) -> int): int {
+    var acc = start
+    var i = 1
+    while (i <= n) {
+        acc = f(acc, i)
+        i += 1
+    }
+    return acc
+}
+fn run(f: fn() -> int): int = f() * 2
+class Acc {
+    var total: int = 0
+    fn add(n: int): void {
+        this.total += n
+    }
+    static fn make(): Acc = Acc { }
+}
+struct H {
+    f: fn(int) -> int
+}
+var sum = 0
+each(4) {
+    sum += it
+}
+println(sum)
+println(fold(4, 0) { acc, x => acc + x })
+println(run { 21 })
+let a = Acc { }
+let addTo = a.add
+addTo(5)
+addTo(6)
+let mk = Acc.make
+let other = mk()
+other.add(1)
+println(a.total + other.total)
+let h = H { f = x => x + 1 }
+println(h.f(41))

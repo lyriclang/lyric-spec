@@ -1,0 +1,40 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | pos
+//! | green
+//! | abab
+//! | neg!
+//! | 257
+// §5 rules 2–3: extend blocks on built-in types; a scalar, a string or a plain enum as an
+// interface value, its method called with the value inside.
+interface Named {
+    fn name(): string
+    fn shout(): string = this.name() + "!"
+}
+interface Num {
+    fn twice(): int
+}
+extend int :: [Named, Num] {
+    fn name(): string = if (this > 0) "pos" else "neg"
+    fn twice(): int = this * 2
+}
+extend string {
+    fn doubled(): string = this + this
+}
+enum Color :: [Named] {
+    Red, Green
+    fn name(): string = match (this) {
+        .Red => "red",
+        .Green => "green",
+    }
+}
+fn label(n: Named): string = n.name()
+let a: Num = 21
+let b: Num = 100
+let c = 7 + 8
+println(label(5))
+println(label(Color.Green))
+println("ab".doubled())
+println((-3).shout())
+println(a.twice() + b.twice() + c)

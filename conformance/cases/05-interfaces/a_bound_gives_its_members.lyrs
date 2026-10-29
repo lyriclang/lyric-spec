@@ -1,0 +1,43 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 1
+// §5 rule 11 (Lyric 5 §8 rules 2 and 4): through `A.Iter` the associated type is what its bound
+// is, has its members, and a path goes on through it.
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+interface Iterable {
+    type Iter :: [Iterator]
+    fn iter(): Self.Iter
+}
+class Counter :: [Iterator] {
+    var n: int = 0
+    type Item = int
+
+    fn next(): ?int {
+        if (this.n >= 3) {
+            return null
+        }
+        this.n += 1
+        return this.n
+    }
+}
+struct Three :: [Iterable] {
+    type Iter = Counter
+
+    fn iter(): Counter = Counter { }
+}
+fn count<I :: [Iterator]>(it: I): int {
+    var n = 0
+    while (it.next() != null) {
+        n += 1
+    }
+    return n
+}
+fn countAll<A :: [Iterable]>(a: A): int = count(a.iter())
+fn firstOfAll<A :: [Iterable]>(a: A): ?A.Iter.Item = a.iter().next()
+println(countAll(Three { }))
+println(firstOfAll(Three { }))

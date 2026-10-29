@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0058
+// §3 rule 9 (Lyric 5 §6 rule 4): a pattern names each element of the tuple once.
+let (a, b) = (1, 2, 3)
+println(a + b)

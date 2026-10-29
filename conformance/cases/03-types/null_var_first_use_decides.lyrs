@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0001
+// §3 rule 8: the first use that fixes a type decides; a later value of another type is refused.
+var x = null
+x = 3
+x = "three"

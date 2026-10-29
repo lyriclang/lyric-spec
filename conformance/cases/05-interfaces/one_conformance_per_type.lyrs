@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0133
+// §5 rule 12 (Lyric 5 §13 rule 4): a type conforms to an interface at one site.
+interface Show {
+    fn show(): string
+}
+struct D :: [Show] {
+    fn show(): string = "d"
+}
+extend D :: [Show] {
+}

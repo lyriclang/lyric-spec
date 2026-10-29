@@ -1,0 +1,53 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 500
+//! | 1
+//! | 300
+//! | 150
+//! | 400
+//! | 700
+//! | 1
+//! | -1
+// §3 rule 14 (03 Lit): a literal where its place's type conforms is built by the type's member —
+// a binding, an optional's value, an argument, a type parameter's; `true` and `null` too.
+struct Money :: [FromIntLiteral, FromStringLiteral, FromFloatLiteral] {
+    cents: int
+
+    static fn fromIntLiteral(v: int): Money = Money { cents = v * 100 }
+    static fn fromStringLiteral(v: string): Money = Money { cents = 1 }
+    static fn fromFloatLiteral(v: float): Money = Money { cents = (v * 100.0) as int }
+}
+class Flag :: [FromBoolLiteral, FromNullLiteral] {
+    var on: int = 0
+
+    static fn fromBoolLiteral(v: bool): Flag {
+        let f = Flag { }
+        f.on = if (v) 1 else 0
+        return f
+    }
+    static fn fromNullLiteral(): Flag {
+        let f = Flag { }
+        f.on = -1
+        return f
+    }
+}
+fn twice(m: Money): int = m.cents * 2
+fn make<T :: [FromIntLiteral]>(): T {
+    let x: T = 7
+    return x
+}
+let a: Money = 5
+let b: Money = "x"
+let c: ?Money = 3
+let d: Money = 1.5
+let f: Flag = true
+let g: Flag = null
+println(a.cents)
+println(b.cents)
+println(c?.cents ?? 0)
+println(d.cents)
+println(twice(2))
+println(make<Money>().cents)
+println(f.on)
+println(g.on)

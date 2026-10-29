@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0019
+// Lyric 5 §3.3: nothing is assigned through `?.`; the optional is narrowed first.
+class C {
+    var n: int = 0
+}
+let c: ?C = C { }
+c?.n = 1

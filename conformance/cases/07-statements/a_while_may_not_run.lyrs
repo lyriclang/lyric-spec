@@ -1,0 +1,13 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0018
+// Lyric 5 §7.1 rule 5: a while may not run its block; what it assigns does not count after it.
+fn f(c: bool): int {
+    var n: int
+    while (c) {
+        n = 1
+        break
+    }
+    return n
+}
+println(f(true))

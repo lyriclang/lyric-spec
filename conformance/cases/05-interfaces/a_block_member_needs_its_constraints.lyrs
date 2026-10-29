@@ -1,0 +1,14 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0134
+// §5 rule 12 (Lyric 5 §13 rule 2): `Box<int>` has no `show`, since `int` is no `Show`.
+interface Show {
+    fn show(): string
+}
+struct Box<T> {
+    v: T
+}
+extend<T :: [Show]> Box<T> {
+    fn show(): string = "box " + this.v.show()
+}
+let s = Box { v = 3 }.show()

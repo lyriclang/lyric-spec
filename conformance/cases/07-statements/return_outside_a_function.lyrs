@@ -1,6 +1,6 @@
 //! check
 //! since: 1.0.0
-//! error: LYS-SEM0102
+//! error: LYS-SEM0902
 // §7 rule 1: a script ends at its end; return stands in a function.
 println("start")
 return

@@ -37,7 +37,7 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
    (`LYS-PAR0029`); a variant is a name, and anything after it but `,` or a line end is refused
    (`LYS-PAR0001`).
 2. An enum's methods follow its variants without `;`: a method starts with its words. An enum
-   holds no field (`LYS-PAR0101`).
+   holds no field (`LYS-PAR0901`).
 
 ### D4. Initializers
 
@@ -49,15 +49,15 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
 ### D5. Collection literals
 
 1. `[a, b]` is a list, `["a": 1, "b": 2]` a map, `[:]` the empty map, `[]` the empty list
-   ([02 L](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)). An entry of a map without `:` is refused (`LYS-PAR0102`).
+   ([02 L](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)). An entry of a map without `:` is refused (`LYS-PAR0902`).
 
 ### D6. Bounds and codes
 
 1. The parser refuses nesting deeper than its bound (`LYS-PAR0045`), at least **64** levels of
    expressions, blocks and prefix operators — Lyric 5's floor is 128 levels on a thread; a
    script is compiled on a task's stack as well.
-2. A code below `LYS-PAR0100` means what Lyric 5's `LYR-PAR` code of the same number means;
-   from 0100 on the codes are Lyric-Script's own. `LYS-PAR0100` is a digit beyond its literal's
+2. A code means what Lyric 5's `LYR-PAR` code of the same number means; Lyric-Script's own
+   codes start at 0900 (§16). `LYS-PAR0900` is a digit beyond its literal's
    base (`0b12`).
 
 ### D7. Written with later milestones
@@ -66,7 +66,7 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
   `mut fn` on class methods) and refused forms with a hint (`&x`, width types, `var` struct
   fields, `Slice`, `T[N]`, `comptime`, macros, `inline fn`, `unsafe`, `extern`, `@When`)
   ([09 Cmp](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)) — with the checker.
-- Patterns, lambdas and trailing blocks, generics, interfaces, `match`, labels — with the
-  milestones of the plan that build them.
+- Lambdas and trailing blocks, generics, interfaces, labels — with the milestones of the plan
+  that build them. Patterns and `match` are written in §9.
 
 **Conformance.** `conformance/cases/02-grammar/` (`since: 1.0.0`).

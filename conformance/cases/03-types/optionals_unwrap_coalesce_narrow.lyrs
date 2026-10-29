@@ -1,0 +1,49 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 42
+//! | 7
+//! | 10
+//! | 0
+//! | 104
+//! | 5
+//! | 6
+// Lyric 5 §3.1–3.3: `!`, `??`, a test and an early return narrow, `?.`, `??=`, `while let`.
+struct P {
+    x: int
+}
+class Counter {
+    var n: int = 0
+    fn next(): ?int {
+        if (this.n >= 3) {
+            return null
+        }
+        this.n += 1
+        return this.n
+    }
+}
+fn half(x: ?int): int {
+    if (x == null) {
+        return 0
+    }
+    return x / 2
+}
+let a: ?int = 41
+let b: ?int = null
+println(a! + 1)
+println(b ?? 7)
+println(half(20))
+println(half(null))
+let p: ?P = P { x = 4 }
+let q: ?P = null
+println((p?.x ?? 0) + (q?.x ?? 100))
+var c: ?int = null
+c ??= 5
+c ??= 9
+println(c!)
+let counter = Counter { }
+var sum = 0
+while (let v = counter.next()) {
+    sum += v
+}
+println(sum)

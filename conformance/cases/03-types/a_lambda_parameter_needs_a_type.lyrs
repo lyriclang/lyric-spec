@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0045
+// §3 rule 11 (Lyric 5 §8.2 rule 4): without a function type where it stands, a bare lambda's
+// parameter has no type.
+let f = x => x

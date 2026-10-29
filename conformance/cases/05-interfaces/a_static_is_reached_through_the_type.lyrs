@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0055
+// §5 rule 10 (Lyric 5 §7 rule 2): a static member is not reached on a value of the parameter.
+interface Make {
+    static fn make(n: int): Self
+}
+fn f<T :: [Make]>(x: T): T = x.make(1)

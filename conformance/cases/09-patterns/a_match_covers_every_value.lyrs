@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0050
+// §9 rule 3 (Lyric 5 §9 §3): the unguarded arms cover every value; a guarded arm covers nothing.
+fn f(b: bool, c: bool): int = match (b) {
+    true if c => 1,
+    false => 0,
+}
+println(f(true, true))

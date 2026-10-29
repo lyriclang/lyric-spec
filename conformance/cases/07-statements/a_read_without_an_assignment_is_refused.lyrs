@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0018
+// Lyric 5 §7.1 rule 5: an if without else may leave the var unassigned.
+fn f(c: bool): int {
+    var n: int
+    if (c) {
+        n = 1
+    }
+    return n
+}
+println(f(true))

@@ -1,0 +1,8 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0113
+// §3 rule 10 (Lyric 5 §4.2 rule 2): `.Red` where the position expects no enum is refused.
+enum Color {
+    Red, Green
+}
+let c = .Red

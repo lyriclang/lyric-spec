@@ -1,0 +1,6 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0059
+// Lyric 5 §3.1: `== null` asks an optional; on a value that is never null it is refused.
+let a = 3
+println(a == null)

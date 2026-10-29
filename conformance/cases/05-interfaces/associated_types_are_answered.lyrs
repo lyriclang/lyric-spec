@@ -1,0 +1,52 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+//! | ab
+//! | 5
+//! | i
+//! | 3
+// §5 rule 11: an interface declares an associated type, a type answers it — a scalar, a
+// string, a struct, a built-in's —, `T.Item` reads the answer; a default answers where the type
+// does not.
+interface Container {
+    type Item
+    fn first(): Self.Item
+}
+struct IntBox :: [Container] {
+    v: int
+    type Item = int
+
+    fn first(): int = this.v
+}
+struct StrBox :: [Container] {
+    s: string
+    type Item = string
+
+    fn first(): string = this.s
+}
+class Bag :: [Container] {
+    var n: int = 5
+    type Item = IntBox
+
+    fn first(): IntBox = IntBox { v = this.n }
+}
+extend int :: [Container] {
+    type Item = string
+
+    fn first(): string = "i"
+}
+interface Counted {
+    type Unit = int
+    fn count(): Self.Unit
+}
+struct Z :: [Counted] {
+    fn count(): int = 3
+}
+fn firstOf<T :: [Container]>(c: T): T.Item = c.first()
+fn countOf<T :: [Counted]>(x: T): T.Unit = x.count()
+println(firstOf(IntBox { v = 3 }) + 1)
+println(firstOf(StrBox { s = "a" }) + "b")
+println(firstOf(Bag { }).v)
+println(firstOf(7))
+println(countOf(Z { }))

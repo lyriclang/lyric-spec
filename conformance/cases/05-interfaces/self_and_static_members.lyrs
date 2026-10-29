@@ -1,0 +1,40 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | false
+//! | true
+//! | 4
+//! | 6
+//! | 8
+//! | 12
+// §5 rule 10: `Self` is the conformer, through a constraint the argument; a static member is
+// reached through the type parameter, the argument's own or a default copied for it.
+interface Equal {
+    fn same(o: Self): bool
+    fn differs(o: Self): bool = !this.same(o)
+}
+interface Make {
+    static fn make(n: int): Self
+    static fn twice(n: int): Self = Self.make(n * 2)
+}
+struct P :: [Equal, Make] {
+    x: int
+
+    fn same(o: P): bool = this.x == o.x
+    static fn make(n: int): P = P { x = n }
+}
+extend int :: [Equal, Make] {
+    fn same(o: int): bool = this == o
+    static fn make(n: int): int = n
+}
+fn allSame<T :: [Equal]>(a: T, b: T): bool = a.same(b) && !a.differs(b)
+fn build<T :: [Make]>(n: int): T = T.make(n)
+fn buildTwice<T :: [Make]>(n: int): T = T.twice(n)
+println(allSame(P { x = 1 }, P { x = 1 }))
+println(allSame(P { x = 1 }, P { x = 2 }))
+println(allSame(3, 3))
+println(build<P>(4).x)
+println(build<int>(6))
+println(buildTwice<P>(4).x)
+println(buildTwice<int>(6))

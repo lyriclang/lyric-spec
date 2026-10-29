@@ -1,0 +1,33 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | a
+//! | true
+//! | true
+//! | true
+//! | false
+// §3 rule 12: a generic function as a value at written type arguments and at those the
+// position binds; what a shared copy makes, a lambda of it makes with the same arguments.
+struct Box<T> {
+    v: T
+}
+class Foo {
+    var n: int = 1
+}
+fn id<T>(x: T): T = x
+fn wrap<T>(x: T): Box<T> = Box { v = x }
+fn later<T>(x: T): fn() -> Any = () => Box { v = x }
+fn tester<T>(): fn(Any) -> bool = (v: Any) => v is T
+let f = id<int>
+println(f(3))
+let g: fn(string) -> string = id
+println(g("a"))
+let w = wrap<Foo>
+let b: Any = w(Foo { })
+println(b is Box<Foo>)
+let mk = later(Foo { })
+println(mk() is Box<Foo>)
+let isFoo = tester<Foo>()
+println(isFoo(Foo { }))
+println(isFoo(3))

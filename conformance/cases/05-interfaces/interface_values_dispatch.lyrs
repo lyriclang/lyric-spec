@@ -1,0 +1,46 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 19
+//! | big
+//! | box
+//! | small
+//! | rex woof
+// §5 rules 1–2 (Lyric 5 05 §1, §2, §11): a call through an interface value runs the conformer's
+// method; a default calls through `this` again; a child's value is a parent's.
+interface Shape {
+    fn area(): int
+    fn describe(): string {
+        return if (this.area() > 10) "big" else "small"
+    }
+}
+struct Sq :: [Shape] {
+    side: int
+    fn area(): int = this.side * this.side
+}
+class Box :: Shape {
+    var w: int = 1
+    var h: int = 1
+    fn area(): int = this.w * this.h
+    fn describe(): string = "box"
+}
+interface Named {
+    fn name(): string
+}
+interface Pet :: [Named] {
+    fn sound(): string
+}
+struct Dog :: [Pet] {
+    fn name(): string = "rex"
+    fn sound(): string = "woof"
+}
+fn total(a: Shape, b: Shape): int = a.area() + b.area()
+fn greet(n: Named): string = n.name()
+let s: Shape = Sq { side = 4 }
+let b: Shape = Box { }
+let pet: Pet = Dog { }
+println(total(Sq { side = 3 }, Box { w = 2, h = 5 }))
+println(s.describe())
+println(b.describe())
+println(Sq { side = 1 }.describe())
+println(greet(pet) + " " + pet.sound())

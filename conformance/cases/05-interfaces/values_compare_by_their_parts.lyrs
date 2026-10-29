@@ -1,0 +1,37 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | true
+//! | true
+//! | true
+//! | true
+//! | true
+//! | true
+// §5 rule 8 (03 Eq): structs, enums and tuples compare by their parts without a list; a class
+// only as an `Identity`, by its reference.
+struct P {
+    x: int
+    name: string
+}
+enum Tree {
+    Leaf(int)
+    Node(Tree, Tree)
+}
+class C :: [Identity] {
+    var n: int = 0
+}
+let a = P { x = 1, name = "a" }
+let b = P { x = 1, name = "a" }
+let d = P { x = 1, name = "b" }
+let t1 = Tree.Node(Tree.Leaf(1), Tree.Leaf(2))
+let t2 = Tree.Node(Tree.Leaf(1), Tree.Leaf(2))
+let c = C { }
+let c2 = C { }
+println(a == b)
+println(a != d)
+println((1, 2) == (1, 2))
+println(t1 == t2)
+println(Tree.Leaf(1) != Tree.Leaf(2))
+println(c == c)
+println(c != c2)

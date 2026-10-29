@@ -1,0 +1,9 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0003
+// Lyric 5 §3.2: a module-level `var` is never narrowed — any call may write it. A script's
+// top-level bindings are the module's (§7).
+var x: ?int = 3
+if (x != null) {
+    println(x + 1)
+}

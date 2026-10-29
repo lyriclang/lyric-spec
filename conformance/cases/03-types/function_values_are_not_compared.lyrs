@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0059
+// §3 rule 11 (Lyric 5 §8.1 rule 2): two function values are not compared.
+let f = (x: int): int => x
+let g = f
+println(f == g)

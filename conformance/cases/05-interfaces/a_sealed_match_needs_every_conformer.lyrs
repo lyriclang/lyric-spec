@@ -1,0 +1,16 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0050
+// §5 rule 6 (Lyric 5 05 §10 rule 2): a match over a sealed interface covers every conformer.
+sealed interface Shape {
+    fn area(): int
+}
+struct Sq :: [Shape] {
+    fn area(): int = 1
+}
+struct Rect :: [Shape] {
+    fn area(): int = 2
+}
+fn k(s: Shape): int = match (s) {
+    _: Sq => 1,
+}

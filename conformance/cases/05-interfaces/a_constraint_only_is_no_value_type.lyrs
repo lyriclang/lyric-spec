@@ -1,0 +1,14 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0126
+// §5 rule 10 (Lyric 5 §7 rule 3): an interface that names `Self` beyond the receiver has no
+// values.
+interface Equal {
+    fn same(o: Self): bool
+}
+struct P :: [Equal] {
+    x: int
+
+    fn same(o: P): bool = this.x == o.x
+}
+let e: Equal = P { x = 1 }

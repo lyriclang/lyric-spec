@@ -1,0 +1,37 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 3
+//! | 1
+//! | 4
+//! | 4
+// §5 rule 13 (Lyric 5 §3 rule 2, §4): the type's own member answers both interfaces; `I.m(x)`
+// calls the implementation `x`'s type has for `I` — its own, a default, through a type
+// parameter.
+interface A {
+    fn d(): int = 1
+}
+interface B {
+    fn d(): int = 2
+}
+struct T :: [A, B] {
+    x: int
+
+    fn d(): int = 3
+}
+struct U :: [A] {
+    x: int
+}
+interface W {
+    fn walk(): int
+}
+struct Dog :: [W] {
+    fn walk(): int = 4
+}
+fn viaT<X :: [W]>(x: X): int = W.walk(x)
+println(T { x = 1 }.d())
+println(A.d(T { x = 1 }))
+println(A.d(U { x = 1 }))
+println(W.walk(Dog { }))
+println(viaT(Dog { }))

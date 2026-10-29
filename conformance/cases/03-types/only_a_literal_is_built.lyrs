@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0001
+// §3 rule 14 (03 Lit): a value that is no literal is never converted.
+struct Money :: [FromIntLiteral] {
+    cents: int
+
+    static fn fromIntLiteral(v: int): Money = Money { cents = v * 100 }
+}
+let n = 5
+let m: Money = n

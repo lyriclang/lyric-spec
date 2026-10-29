@@ -1,0 +1,11 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0128
+// §5 rule 11 (Lyric 5 §8 rule 3): a conformer answers an associated type without a default.
+interface Container {
+    type Item
+    fn first(): Self.Item
+}
+struct Q :: [Container] {
+    fn first(): int = 1
+}

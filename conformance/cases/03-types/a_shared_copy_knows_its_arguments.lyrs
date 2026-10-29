@@ -1,0 +1,37 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | false
+//! | true
+//! | false
+//! | true
+//! | true
+//! | false
+// §3 rule 12: a shared copy builds the exact type its arguments make — through a call it hands
+// them on, from a method's receiver too —, and `x is T` tests the argument.
+struct Box<T> {
+    v: T
+
+    fn twice(): Box<Box<T>> = Box { v = this }
+}
+class Foo {
+    var n: int = 1
+}
+class Bar {
+    var n: int = 2
+}
+fn wrap<T>(x: T): Box<T> = Box { v = x }
+fn wrapAgain<T>(x: T): Box<T> = wrap(x)
+fn isA<T>(x: Any): bool = x is T
+let a: Any = wrapAgain(Foo { })
+println(a is Box<Foo>)
+println(a is Box<Bar>)
+let b: Any = wrap(Bar { }).twice()
+println(b is Box<Box<Bar>>)
+println(b is Box<Bar>)
+let f: Any = Foo { }
+println(isA<Foo>(f))
+let n: Any = 3
+println(isA<int>(n))
+println(isA<Bar>(f))
