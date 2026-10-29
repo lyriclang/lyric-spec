@@ -108,7 +108,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    A span is `null` or `{file, start, end}`, `start` and `end` each `{line, column, offset}`, the file as
    the text form says it (§1 rule 5). Every finding is a line — §2's limit is the text form's.
 4. **`artifact`**: what a build wrote — `kind` (`binary`, or `library` for `build --lib`), `name`, `path`;
-   *(written ahead of M14b)* a static library's also `linkArgs`, what a C program links beside it
+   a static library's also `linkArgs`, what a C program links beside it
    ([13 §4](13-abi.md#4-exports-and-libraries) rule 9), an array of strings.
 5. **`test`**: a test of `lyric test` as it ends — `name`, `outcome` (`passed`, `failed`, `skipped`), and
    where there is one a `message` (why it was skipped, what ended it) and the `panic`'s code. **`tests`**:

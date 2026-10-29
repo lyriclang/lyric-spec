@@ -69,7 +69,8 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
 9. **`lyric build --lib`** builds the package's library for C — its `src/lib.lyr` and what that
    imports — instead of its programs ([13 §4](13-abi.md#4-exports-and-libraries)): the archive
    `lib<name>.a` and the header `<name>.h`, or with **`--shared`** a shared library in the
-   archive's place. Without `src/lib.lyr` there is nothing to build (`LYR-CLI0001`); `--shared`
+   archive's place; for the archive it says what a C program links beside it (13 §4 rule 9).
+   Without `src/lib.lyr` there is nothing to build (`LYR-CLI0001`); `--shared`
    without `--lib`, and `--lib` with a file, `--bin` or `--emit`, are refused (exit 2).
 
 ### 1.2 Where the files go
