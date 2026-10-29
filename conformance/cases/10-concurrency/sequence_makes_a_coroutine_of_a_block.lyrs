@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ab
+// §10 rule 7: `sequence { … }`.
+let c = sequence {
+    yield "a"
+    yield "b"
+}
+for (s in c) {
+    print(s)
+}
+println("")

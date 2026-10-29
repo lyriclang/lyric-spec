@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0016
+//! since: 1.0.0
+// §10 rule 7: yields without a common type.
+let g = () => {
+    yield 1
+    yield "x"
+}

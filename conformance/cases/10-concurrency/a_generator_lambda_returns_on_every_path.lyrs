@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0046
+//! since: 1.0.0
+// §10 rule 7: a result type that is not `void`, and a path without a return.
+let g = (b: bool): Coroutine<int, int> => {
+    yield 1
+    if (b) {
+        return 2
+    }
+}

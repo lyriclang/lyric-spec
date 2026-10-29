@@ -2,9 +2,10 @@
 
 **Base.** Lyric 5.0 [§10](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/10-concurrency.md) applies, with the deviations below.
 
-**Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1); generator lambdas,
-`sequence`, `close()` and `for` over a coroutine (S6b2), cancellation and scopes, channels, `select`
-and time, and I/O come with S6b2–S6e — until then the design documents decide.
+**Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
+`sequence` and `for` over a coroutine (S6b2); `close()`, a `yield` in a called function (S6b3),
+cancellation and scopes, channels, `select` and time, and I/O come with S6b3–S6e — until then the
+design documents decide.
 
 ## Written (S6a, tasks)
 
@@ -49,6 +50,23 @@ and time, and I/O come with S6b2–S6e — until then the design documents decid
    parks that task, and once the task runs again the coroutine goes on where it waited (Lyric 5
    §2 rule 6; [07 N3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). Pulling a coroutine that runs — from its own body, or from one it
    pulled — panics (`LYS-RT0014`).
+
+## Written (S6b2, generators and loops)
+
+7. **Generator lambdas** (Lyric 5 §1 rules 11–12). A lambda whose block has a `yield` of its own is
+   a generator lambda: its type is `fn(…) -> Coroutine<Y, R>`, and each call gives a coroutine over
+   the call's arguments and the lambda's captures, which runs nothing until it is pulled. The
+   lambda's written result type, or the type the place it stands in expects, gives `Y` and `R`;
+   without one, the types of the yields unify into `Y` and those of the returns into `R`, or
+   `void` where it returns none (`LYS-SEM0016`). Where `R` is not `void`, every path that ends the
+   body returns (`LYS-SEM0046`). **`sequence { … }`** is a coroutine of a block that yields, its
+   `Y` the place's or the yields', its result none; a block that does not yield is refused
+   (`LYS-SEM0001`).
+8. **`for` over a coroutine.** `for (x in c)` pulls `c` — evaluated once — until a pull gives
+   `null`, binding each value to `x`; `break`, `continue` and a label act as in any loop, and an
+   error out of a pull leaves the loop. A `Coroutine<void>` gives nothing to bind
+   (`LYS-SEM0007`). *(Informative: `Coroutine :: Iterator`, and `for` over any iterable, come with
+   the collections, S7.)*
 
 ## Deviations
 

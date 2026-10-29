@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+// §10 rule 7: the type the place expects gives `Y` and `R`.
+fn sum(make: fn(int) -> Coroutine<int>): int {
+    var s = 0
+    for (x in make(3)) {
+        s += x
+    }
+    return s
+}
+println(sum((n: int) => {
+    var i = 0
+    while (i < n) {
+        i += 1
+        yield i
+    }
+}))

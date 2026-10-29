@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0007
+//! since: 1.0.0
+// §10 rule 8: a `Coroutine<void>` yields no value to bind.
+fn t(): Coroutine<void> {
+    yield
+}
+for (x in t()) {
+}
