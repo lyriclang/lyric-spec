@@ -1,0 +1,9 @@
+//! run
+//! panic: LYS-RT0001
+//! since: 1.0.0
+// §10 rule 12 (Lyric 5 §5 rule 4): nobody could look at a detached task's panic.
+spawnDetached {
+    println(1 / 0)
+}
+yieldNow()
+println("unreached")

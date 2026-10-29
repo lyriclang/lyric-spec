@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 42
+// §10 rule 11: a cancel acts at a wait.
+let t = spawn { 21 * 2 }
+t.cancel()
+println(t.await())

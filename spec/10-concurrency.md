@@ -3,9 +3,9 @@
 **Base.** Lyric 5.0 [§10](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/10-concurrency.md) applies, with the deviations below.
 
 **Status.** Tasks and the top level's scope written (S6a), coroutines (S6b1), generator lambdas,
-`sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3);
-cancellation and scopes, channels, `select` and time, and I/O come with S6c–S6e — until then the
-design documents decide.
+`sequence` and `for` over a coroutine (S6b2), `close()` and a `yield` in a called function (S6b3),
+cancellation (S6c1); `TaskScope` and a task's status with its values (S6c2–3), channels, `select`
+and time, and I/O come with S6c2–S6e — until then the design documents decide.
 
 ## Written (S6a, tasks)
 
@@ -22,8 +22,8 @@ design documents decide.
    end — after `fn main` where `main` is the entry — waits until every task of the run has
    ended. The first task to fail, by the order they ended — with an error or a panic alike —
    then ends the run with it: an error exits 1, also where it was awaited and caught; a panic
-   101. A task that fails after it is none of the scope's. Until S6c the others are not
-   cancelled: they run to their end.
+   101. A task that fails after it is none of the scope's; the first cancels the others
+   (rule 12).
 3. Where every task waits for another and none can go on, the run panics (`LYS-RT0018`) — the
    end Lyric 5 §2 rule 12 comes to as well, where the oldest waiting task panics and what awaits
    it panics again.
@@ -85,6 +85,22 @@ design documents decide.
     where it runs — a value of another type, or such a yield where no coroutine runs, panics
     (`LYS-RT0014`). Every yield throws `Cancelled` where its coroutine is closed, so a function with
     a written `throws` covers it (`LYS-SEM0034`).
+
+## Written (S6c1, cancellation)
+
+11. **Cancellation** (Lyric 5 §3 rules 1–3; [07 N9](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). `t.cancel()` marks the task
+    cancelled: from then on every wait in it — `await()`, `yieldNow()` — throws `Cancelled`, the
+    wait it stands in at once, every later one before it waits, also after one was caught. A task
+    that never waits is not cancelled; one that has ended stays as it ended. The `Cancelled`
+    unwinds the task as any error does; a task that ends with it is `Cancelled` — its `await()`
+    throws it again — and no failure of its scope. A wait in a coroutine the task pulls throws
+    there (rule 6). A wait throws `Cancelled`, so a function with a written `throws` that waits
+    covers it (`LYS-SEM0034`); the top level covers it itself.
+12. **The top level cancels** ([07 End](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); §4 rule 2, §5 rule 3): the first task to fail cancels
+    the others, and the end waits for them before it ends the run with that failure.
+    **`spawnDetached { … }`** (§2 rule 3) starts a task nobody waits for — the top level's end
+    neither — whose block may throw `Cancelled` alone: any other error it handles itself
+    (`LYS-SEM0034`). A panic in it ends the run (§5 rule 4).
 
 ## Deviations
 

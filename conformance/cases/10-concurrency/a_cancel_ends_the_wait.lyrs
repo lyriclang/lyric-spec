@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | cancelled: cancelled
+//! | true
+// §10 rule 11: the wait the task stands in throws `Cancelled`; the task is `Cancelled`.
+let t = spawn {
+    while (true) {
+        yieldNow()
+    }
+}
+yieldNow()
+t.cancel()
+try {
+    t.await()
+} catch (e: Cancelled) {
+    println("cancelled: " + e.message())
+}
+println(t.status() == TaskStatus.Cancelled)

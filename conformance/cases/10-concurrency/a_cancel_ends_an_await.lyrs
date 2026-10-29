@@ -1,0 +1,23 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | w cancelled
+//! | done
+// §10 rule 11: a task waiting for another is taken out of that wait.
+let forever = spawn {
+    while (true) {
+        yieldNow()
+    }
+}
+let w = spawn {
+    try {
+        forever.await()
+    } catch (e: Cancelled) {
+        println("w cancelled")
+    }
+}
+yieldNow()
+w.cancel()
+w.await()
+forever.cancel()
+println("done")

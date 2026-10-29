@@ -1,0 +1,23 @@
+//! run
+//! exit: 1
+//! since: 1.0.0
+//! stdout:
+//! | sibling cleaned up
+//! stderr:
+//! | error: boom
+// §10 rule 12: the top level's first failure cancels the other tasks; the end waits for them.
+fn fail(): int {
+    throw Exception("boom")
+}
+spawn {
+    defer {
+        println("sibling cleaned up")
+    }
+    while (true) {
+        yieldNow()
+    }
+}
+spawn {
+    yieldNow()
+    fail()
+}

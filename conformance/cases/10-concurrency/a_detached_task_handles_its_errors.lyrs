@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0034
+//! since: 1.0.0
+// §10 rule 12: a detached block may throw `Cancelled` alone.
+spawnDetached {
+    throw Exception("x")
+}
