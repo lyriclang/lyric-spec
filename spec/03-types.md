@@ -117,6 +117,21 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    value does not know them —, and a type it builds is interned at run time, so that two
    descriptors of one type are one (`load.t`, `inst.t`, `desc.of`, `new.d`, `is.d`).
 
+## Written (S7, the core collections)
+
+16. **Lists** ([03 S](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)). `T[]` is the one sequence type, a list that grows;
+   `List<T>` names the same type. `[a, b, c]` is a list of the type its place gives, else of its
+   elements' type — an `int` among `float`s is a `float` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) —, and
+   every element must fit it (`LYS-SEM0001`); `[]` takes its type from its place. A list is a
+   reference: `let xs = [1]` binds the list for good, and `xs.push(2)` grows it. `length()` is
+   its number of elements, `push(v)` appends `v`, `pop()` takes the last element off and gives
+   it, `null` where the list is empty. A list's text is its Debug form, `[1, 2, 3]`, each element
+   in its own (`["a", "b"]`). The other methods, `==`, `in`, slices, `+`, an empty literal no
+   place gives a type, and a list as an interface value come with S7b2.
+17. *Informative.* The VM holds a list as one object with the scalar and the reference slots of
+   its elements apart: a list of `int` holds its ints unboxed, a list of tuples their slots in
+   order (`list.new`, `list.push`, `list.get.*`, `list.set.*`, `list.len`, `list.pop`).
+
 ## Deviations (skeleton, written with later milestones)
 
 - Scalars `int` (64-bit), `float` (64-bit), `bool`, `char`; no width family; `Bytes` and `BigInt` in `std`; `int` widens to `float` ([02 T1](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).

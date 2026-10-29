@@ -12,6 +12,14 @@
    (`LYS-SEM0003`) — an f-string does.
 2. **`as`** converts between `int`, `float` and `char` alone (`LYS-SEM0006`).
 
+## Written (S7, the core collections)
+
+3. **Indexing a list** ([03 Index](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)). `xs[i]` is the element at the `int`
+   index `i`, counted from 0; `xs[i] = v` writes it, and `xs[i] op= v` reads and writes it with
+   the list and the index evaluated once. An index below 0, or at the length or above, is a
+   panic, `LYS-RT0003` (Lyric 5's), the list unchanged. `^n` comes with S7b2; indexing a map with
+   S7d, a string with S7e, a type of one's own (`Index<K>`) with S7b3.
+
 ## Deviations (skeleton, written with later milestones)
 
 - Mixed `int`/`float` arithmetic widens to `float`; `int / int` stays integer division; `as` only between `int`, `float` and `char`; no prefix `&`, no `comptime` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md), [09](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)).

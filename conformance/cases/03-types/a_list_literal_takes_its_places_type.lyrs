@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | [1.0, 2.0]
+//! | [1.0, 2.5]
+//! | []
+//! | 2
+//! since: 1.0.0
+// §3 rule 16: a literal takes the type its place gives, else its elements' — an int among floats
+// is a float; `[]` takes its type from its place.
+let fs: float[] = [1, 2]
+println(fs)
+println([1, 2.5])
+let names: string[] = []
+println(names)
+fn count(xs: int[]): int = xs.length()
+println(count([4, 5]))

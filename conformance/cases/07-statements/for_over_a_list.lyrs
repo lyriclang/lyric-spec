@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 6
+//! | 10 20 30
+//! | 13
+//! | [1, 2, 3, 4]
+//! since: 1.0.0
+// §7 rule 6: `for` over a list visits its elements in order, a fresh binding for each, the
+// length read before each step.
+var sum = 0
+for (x in [1, 2, 3]) {
+    sum += x
+}
+println(sum)
+let fs: (fn() -> int)[] = []
+for (x in [1, 2, 3]) {
+    fs.push { x * 10 }
+}
+println(f"{fs[0]()} {fs[1]()} {fs[2]()}")
+for (x in [1, 2, 3, 4, 5]) {
+    if (x == 2) {
+        continue
+    }
+    if (x == 4) {
+        break
+    }
+    print(x)
+}
+println()
+let grow = [1]
+for (x in grow) {
+    if (grow.length() < 4) {
+        grow.push(x + 1)
+    }
+}
+println(grow)

@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | -1
+//! | null
+//! | true
+//! | 2
+//! since: 1.0.0
+// §3 rule 16: `pop()` gives `null` where the list is empty — and a list of optionals tells an
+// element that is null from none.
+let xs: int[] = []
+println(xs.pop() ?? -1)
+let maybe: (?int)[] = [2, null]
+println(maybe.pop())
+let empty: (?int)[] = []
+println(empty.pop() == null)
+println(maybe.pop())

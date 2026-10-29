@@ -43,6 +43,13 @@
    function of its own —, a label repeating one around it too (`LYS-SEM0102`); a label nothing
    jumps to is warned about (`LYS-SEM0103`).
 
+## Written (S7, the core collections)
+
+6. **`for` over a list** visits its elements by index from 0 and reads the length before each
+   step: an element pushed in the loop is visited too. The binding is fresh for each element —
+   a closure keeps the element it saw —, and `break` and `continue` work as in every loop. Other
+   iterables come with the iterator protocol (S7c).
+
 ## Deviations (skeleton, written with later milestones)
 
 - No `mut fn`; class methods write `var` fields without a marker ([03](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
