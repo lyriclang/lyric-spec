@@ -1,0 +1,10 @@
+fn fail() {
+    throw Exception("deep")
+}
+
+struct Thing {
+    fn boom() {
+        let f = () => fail()
+        f()
+    }
+}

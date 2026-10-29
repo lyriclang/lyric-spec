@@ -1,0 +1,13 @@
+//! run
+//! exit: 3
+//! since: 1.0.0
+//! stdout:
+//! | 42
+// §4 rule 15 (07 Top, V1 M7): an entry without statements and with `fn main` runs `main` after its
+// bindings; `fn main(): int` gives the exit code.
+let base = 40
+
+fn main(): int {
+    println(base + 2)
+    return 3
+}

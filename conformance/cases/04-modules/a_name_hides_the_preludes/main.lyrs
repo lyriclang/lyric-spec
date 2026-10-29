@@ -1,0 +1,16 @@
+//! run
+//! warning: LYS-SEM0153
+//! since: 1.0.0
+//! stdout:
+//! | mine: x
+//! | mine: y
+// §4 rule 12 (Lyric 5 §4 rule 5): a name a module declares or imports hides the prelude's of that
+// name there, and is warned; the prelude's own code keeps its own.
+import lib { assert }
+
+fn println(s: string) {
+    print("mine: " + s + "\n")
+}
+
+println("x")
+println(assert("y"))

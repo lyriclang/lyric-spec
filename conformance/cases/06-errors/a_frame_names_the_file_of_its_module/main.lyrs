@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! |     at fail (util/deep.lyrs:2)
+//! |     at <lambda> (util/deep.lyrs:7)
+//! |     at Thing.boom (util/deep.lyrs:8)
+//! |     at <script> (line 13)
+// §6 rule 3: a frame of an imported module's function names its file, relative to the root;
+// the entry's frames keep their line alone.
+import util.deep { Thing }
+
+try {
+    Thing { }.boom()
+} catch (e) {
+    println(e.backtrace()?.show() ?? "")
+}

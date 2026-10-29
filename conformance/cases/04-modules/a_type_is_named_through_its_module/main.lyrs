@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 10
+//! | 100
+//! | 0
+//! | 2
+// §4 rule 10 (Lyric 5 §3 rule 3): a module's type through the module's name — in a binding's
+// type, generic with its arguments, built, its variants, its static functions.
+import shapes
+
+let p = shapes.Point { x = 1, y = 2 }
+let b: shapes.Box<int> = shapes.Box { item = 10 }
+let r = shapes.Shape.Rect { w = 2, h = 50 }
+let c = shapes.Counter.start()
+c.next()
+println(p.x + p.y)
+println(b.item)
+println(shapes.area(r))
+println(shapes.area(shapes.Shape.Dot))
+println(c.next())

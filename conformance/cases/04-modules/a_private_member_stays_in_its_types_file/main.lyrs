@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-RES0009
+//! since: 1.0.0
+// §4 rule 11 (Lyric 5 §3 rule 6): a `private` field or method is named in its type's file alone.
+import lib { make }
+
+let s = make()
+println(s.shown + s.open())
+println(s.code)
+println(s.peek())
