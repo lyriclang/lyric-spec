@@ -1,0 +1,18 @@
+//! run
+//! exit: 1
+//! since: 1.0.0
+//! stdout:
+//! | caught boom
+//! stderr:
+//! | error: boom
+// §10 rules 1–2: `await()` throws the task's error again; the top level is a scope, and its
+// end throws the first failure once more — caught or not (Lyric 5 §4 rule 2).
+fn boom(): int {
+    throw Exception("boom")
+}
+let t = spawn { boom() }
+try {
+    t.await()
+} catch (e) {
+    println("caught " + e.message())
+}

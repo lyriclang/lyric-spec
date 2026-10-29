@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | main ends
+//! | the task ran
+// §10 rule 2 (07 End): the top level's end waits for every task, awaited or not.
+spawn { println("the task ran") }
+println("main ends")

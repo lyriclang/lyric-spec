@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0014
+//! since: 1.0.0
+// §10 rule 1: `spawn` takes one block.
+let t = spawn()

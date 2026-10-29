@@ -1,0 +1,8 @@
+//! run
+//! panic: LYS-RT0001
+//! since: 1.0.0
+//! stdout:
+//! | main ends
+// §10 rule 2: a task's panic, awaited or not, ends the run at the top level's end.
+spawn { 1 / 0 }
+println("main ends")

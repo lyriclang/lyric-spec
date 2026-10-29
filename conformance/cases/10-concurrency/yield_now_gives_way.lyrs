@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0123
+// §10 rule 1: `yieldNow()` gives way to the task that has waited longest.
+var log = ""
+let t = spawn {
+    log = log + "1"
+    yieldNow()
+    log = log + "3"
+}
+log = log + "0"
+yieldNow()
+log = log + "2"
+t.await()
+println(log)
