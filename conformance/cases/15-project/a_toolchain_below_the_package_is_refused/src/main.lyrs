@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0009
+//! exit: 2
+//! since: 1.0.0
+// §15 rule 5 (Lyric 5 15 §1 rule 6): a toolchain below what the package asks for refuses it, a
+// fault of the environment: exit 2.
+println(1)

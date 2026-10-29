@@ -1,0 +1,6 @@
+struct S {
+    private code: int,
+    shown: int,
+}
+
+fn make(): S = S { code = 4, shown = 1 }

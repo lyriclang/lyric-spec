@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0021
+//! since: 1.0.0
+// §4 rule 15: the entry's `main` takes no parameters and returns `void` or `int`.
+fn main(args: string) {
+    println(args)
+}

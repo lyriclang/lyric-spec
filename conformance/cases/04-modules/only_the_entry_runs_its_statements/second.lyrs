@@ -1,0 +1,4 @@
+import first { start }
+
+println("never")
+let total = start * 2

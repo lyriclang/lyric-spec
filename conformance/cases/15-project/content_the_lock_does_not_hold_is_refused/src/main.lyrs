@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0008
+//! since: 1.0.0
+// §15 rule 8: content that is not what the lock holds is refused.
+import geo { area }
+
+println(area(3))

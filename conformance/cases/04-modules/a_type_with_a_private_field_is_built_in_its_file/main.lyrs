@@ -1,0 +1,11 @@
+//! check
+//! error: LYS-RES0009
+//! since: 1.0.0
+// §4 rule 11 (Lyric 5 §3 rule 7): a type with a field this module may not name is built in its
+// own file alone — neither its initializer nor a copy with `with` here; a function of its module
+// builds it.
+import lib { S, make }
+
+let fine = make()
+let built = S { code = 1, shown = 2 }
+let copied = fine with { shown = 3 }

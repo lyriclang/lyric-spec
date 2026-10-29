@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-PKG0007
+//! exit: 2
+//! option: --offline
+//! since: 1.0.0
+// §15 rule 7 (Lyric 5 15 §2 rule 3): `--offline` fetches nothing; what the cache does not hold is refused.
+import geo { area }
+
+println(area(3))

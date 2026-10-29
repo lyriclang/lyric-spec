@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-RES0014
+//! since: 1.0.0
+// §15 rule 3 (Lyric 5 15 §2 rule 5): a module imports from its own package and from the packages
+// its manifest declares, not from what those depend on.
+import units { unit }
+
+println(unit())

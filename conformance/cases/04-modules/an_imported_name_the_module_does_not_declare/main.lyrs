@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-RES0004
+//! since: 1.0.0
+// §4 rule 6: a selective import names what the module declares or passes on.
+import lib { missing }
+
+println(missing())

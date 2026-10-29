@@ -1,0 +1,10 @@
+struct S {
+    private code: int,
+    shown: int,
+
+    private fn peek(): int = this.code
+
+    fn open(): int = this.peek()
+}
+
+fn make(): S = S { code = 4, shown = 1 }

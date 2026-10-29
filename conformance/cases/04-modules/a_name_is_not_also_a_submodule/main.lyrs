@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-RES0012
+//! since: 1.0.0
+// §4 rule 14 (Lyric 5 §4 rule 7): `a.b` declares `x` beside the file `a/b/x.lyrs`, which nothing
+// imports.
+import a.b { z }
+
+println(z())

@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-PKG0011
+//! option: --locked
+//! since: 1.0.0
+// §15 rule 9: under --locked a revision the lock does not hold — `units` here — is refused before anything is fetched.
+import geo { area }
+
+println(area(3))

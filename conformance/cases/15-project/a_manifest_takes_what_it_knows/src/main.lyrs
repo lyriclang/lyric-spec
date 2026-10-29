@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-PKG0003
+//! since: 1.0.0
+// §15 rule 1 (Lyric 5 15 §1 rule 4): a key the manifest does not take is refused.
+println(1)

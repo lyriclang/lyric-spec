@@ -32,6 +32,9 @@ written `throws` held against them, the mark `try`, the expression forms `try?`,
 3. **The error's record** (§4 rule 4). An error keeps where it was first thrown: its frames,
    innermost first, a line `    at <function> (line <n>)` each — the **trace form**, a panic's
    too; the script's code is `<script>`, a method `<Type>.<name>`, a caller stands at its call.
+   A frame of an imported module's function names its file below the root instead,
+   `    at <function> (<path>:<n>)` — `at fail (util/deep.lyrs:2)` ([04](04-modules.md) rule 1);
+   the entry's frames keep their line alone (S5a2).
    A clause's binding tells of it: `e.backtrace()` is a `?Backtrace` of the prelude whose
    `show()` is that text. It is asked of the binding itself, in its clause; an error passed on,
    stored or captured by a lambda is a value like any other and has none (`LYS-SEM0012`), and
@@ -131,6 +134,6 @@ written `throws` held against them, the mark `try`, the expression forms `try?`,
 - An error that escapes the top level ends the script with exit 1; embedded it is `.Error` at the host ([05 E6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md), [01 S11](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)).
 - A jump out of a defer's body is refused (`LYS-SEM0904`); Lyric 5 does not say what one does.
 - The binding of a set clause or of the clause without a type is an `Error` even where one type reaches the clause (Lyric 5 binds that type, review M5-6): the sets are inferred after the bodies are checked. A `match` over it with type patterns reaches the type.
-- A script keeps an error's frames: the report always ends with them, as a panic's does, and `e.backtrace()` is never `null` (Lyric 5 keeps them in the debug profile only, §4 rule 4, §5 rule 3). The trace form names no file; with modules (S5) it will.
+- A script keeps an error's frames: the report always ends with them, as a panic's does, and `e.backtrace()` is never `null` (Lyric 5 keeps them in the debug profile only, §4 rule 4, §5 rule 3). The trace form names a file only for a frame of an imported module (rule 3); Lyric 5 names it always.
 
 **Conformance.** `conformance/cases/06-errors/` (`since: 1.0.0`).

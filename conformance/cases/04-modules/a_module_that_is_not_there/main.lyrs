@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-RES0003
+//! since: 1.0.0
+// §4 rule 1: an import of a module no file below the entry's folder provides.
+import nowhere { f }
+
+println(f())

@@ -1,0 +1,29 @@
+struct Point {
+    x: int,
+    y: int,
+}
+
+struct Box<T> {
+    item: T,
+}
+
+enum Shape {
+    Rect { w: int, h: int },
+    Dot,
+}
+
+fn area(s: Shape): int = match (s) {
+    .Rect { w, h } => w * h,
+    .Dot => 0,
+}
+
+class Counter {
+    var n: int = 0
+
+    static fn start(): Counter = Counter { }
+
+    fn next(): int {
+        this.n += 1
+        return this.n
+    }
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env lyric-script
+---
+[dependencies]
+geo = { git = "{repos}/geo", tag = "v1.0.0" }
+units = { path = "deps/units" }
+---
+import geo { area }
+import units { unit }
+import helper { twice }
+
+println(twice(area(3) + unit()))
+
+// §15 rule 13 (07 Dep, 09 Hd): a single script's frontmatter names its dependencies as a
+// manifest does, a folder relative to the script; its own modules keep the path rule, and an
+// import whose first segment is a dependency reaches that package.
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 20

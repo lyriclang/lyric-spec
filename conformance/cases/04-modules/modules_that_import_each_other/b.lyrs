@@ -1,0 +1,3 @@
+import a { fa }
+
+fn fb(): int = 1

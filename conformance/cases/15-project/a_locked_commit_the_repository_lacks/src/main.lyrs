@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PKG0008
+//! since: 1.0.0
+// §15 rule 8: a locked commit the repository does not have is refused.
+import geo { area }
+
+println(area(3))

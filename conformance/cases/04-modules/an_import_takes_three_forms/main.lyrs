@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2 4 6 8
+// §4 rule 6 (Lyric 5 §4 rule 1): selective, an item renamed with `as`; qualified, the module under
+// its last segment; aliased.
+import tools.math { twice }
+import tools.math { twice as double }
+import tools.math
+import tools.math as m
+
+println(f"{twice(1)} {double(2)} {math.twice(3)} {m.twice(4)}")

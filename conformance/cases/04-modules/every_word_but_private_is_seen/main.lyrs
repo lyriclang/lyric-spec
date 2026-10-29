@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+// §4 rule 5 (02 V): a declaration without a word is seen beyond its file, as one with `pub` or
+// `internal` is; its own module calls a private one.
+import lib { plain, open, inside }
+
+println(plain() + open() + inside())

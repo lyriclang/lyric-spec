@@ -1,0 +1,11 @@
+---
+[package]
+name = "tool"
+---
+println(1)
+
+// §15 rule 13: a script's frontmatter takes [dependencies], [override] and the toolchain in
+// [package]; it names no package.
+//! check
+//! error: LYS-PKG0003
+//! since: 1.0.0

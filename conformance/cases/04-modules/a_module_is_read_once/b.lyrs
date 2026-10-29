@@ -1,0 +1,3 @@
+import c { base }
+
+fn fb(): int = base + 2

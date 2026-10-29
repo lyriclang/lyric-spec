@@ -1,0 +1,13 @@
+//! run
+//! warning: LYS-SEM0905
+//! since: 1.0.0
+//! stdout:
+//! | the entry runs
+//! | 42
+// §4 rule 3 (07 Top): only the entry runs its statements; an imported module's `let`s and `var`s
+// are its bindings, filled before the entry's code — a module's before those of the modules that
+// import it —, and its other statements do not run.
+import second { total }
+
+println("the entry runs")
+println(total)

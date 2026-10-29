@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-RES0011
+//! since: 1.0.0
+// §4 rule 13 (Lyric 5 §4 rule 6): a top-level declaration does not take a builtin type's name.
+struct int {
+    v: int,
+}
+
+fn string(): int = 1

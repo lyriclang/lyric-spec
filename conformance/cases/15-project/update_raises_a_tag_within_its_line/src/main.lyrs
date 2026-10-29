@@ -1,0 +1,9 @@
+//! run
+//! update
+//! stdout:
+//! | 1009
+//! since: 1.0.0
+// §15 rule 12 (Lyric 5 15 §3 rule 3): `update` raises a root manifest's tag that is a version to the newest of its line — 1.1.0, not 2.0.0.
+import geo { area }
+
+println(area(3))

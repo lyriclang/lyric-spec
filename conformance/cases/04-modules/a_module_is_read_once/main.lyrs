@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | c is filled once
+//! | 23
+// §4 rule 2 (Lyric 5 §2 rule 5): a module two others import is read once, its bindings filled
+// once.
+import a { fa }
+import b { fb }
+
+println(fa() + fb())

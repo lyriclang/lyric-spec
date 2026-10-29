@@ -1,0 +1,25 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | said
+//! | said
+//! | error caught: deep
+// §3 rule 11 (Lyric 5 §8): a lambda whose body is a call of no value runs the call, and what the
+// call throws leaves the lambda.
+fn say() {
+    println("said")
+}
+
+fn fail() {
+    throw Exception("deep")
+}
+
+let f = () => say()
+f()
+f()
+let g = () => fail()
+try {
+    g()
+} catch (e) {
+    println("error caught: " + e.message())
+}

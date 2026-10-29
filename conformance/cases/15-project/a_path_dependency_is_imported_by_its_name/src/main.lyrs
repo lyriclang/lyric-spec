@@ -1,0 +1,10 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 9
+// §15 rule 3 (Lyric 5 15 §2 rule 1): a dependency read from a folder relative to the manifest; its
+// modules under its own name.
+import geo { area }
+import geo.shapes { Sq }
+
+println(area(Sq { s = 3 }))

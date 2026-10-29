@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6
+//! | 3
+//! | 2
+// §15 rule 2 (Lyric 5 04 §2 rules 1, 1a): with a manifest a module's path is the package's name
+// and its file's path below `src/`; `src/lib.lyrs` is the package's root module, named by the
+// package alone; `internal` is seen within the package.
+import app { base }
+import app.util { twice }
+import app.deep.inner { one }
+
+println(twice(base()))
+println(base())
+println(one() + one())

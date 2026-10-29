@@ -1,0 +1,12 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | from back
+//! | from back
+// §4 rule 6 (Lyric 5 §4 rule 2): `pub import` passes on what it binds — imported from the module
+// that passes it on, or named through it.
+import front { helper }
+import front as fr
+
+println(helper())
+println(fr.helper())

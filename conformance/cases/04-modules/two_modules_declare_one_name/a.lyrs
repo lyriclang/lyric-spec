@@ -1,0 +1,9 @@
+fn f(): int = 1
+
+struct Point {
+    x: int,
+
+    fn show(): string = f"a{this.x}"
+}
+
+fn make(): Point = Point { x = 1 }

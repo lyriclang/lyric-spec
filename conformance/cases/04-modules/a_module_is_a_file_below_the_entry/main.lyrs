@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | hi x
+//! | 6
+//! | 3
+// §4 rule 1 (07 Path): without a manifest the entry's folder is the root; `import a.b` names the
+// file `a/b.lyrs` below it, and the module's types are named through it.
+import util { greet }
+import util.deep as d
+import shapes
+
+println(greet("x"))
+println(d.twice(3))
+let p: shapes.Point = shapes.make(1, 2)
+println(p.x + p.y)

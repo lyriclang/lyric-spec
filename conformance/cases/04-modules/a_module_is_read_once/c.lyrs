@@ -1,0 +1,6 @@
+fn loud(): int {
+    println("c is filled once")
+    return 10
+}
+
+let base = loud()

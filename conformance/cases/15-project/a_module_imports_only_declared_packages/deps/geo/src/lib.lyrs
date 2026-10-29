@@ -1,0 +1,3 @@
+import units { unit }
+
+fn one(): int = unit()

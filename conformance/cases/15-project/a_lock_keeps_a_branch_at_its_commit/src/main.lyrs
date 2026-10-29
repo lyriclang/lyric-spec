@@ -1,0 +1,8 @@
+//! run
+//! stdout:
+//! | 9
+//! since: 1.0.0
+// §15 rule 8 (Lyric 5 15 §3 rule 2): a revision the lock holds is read at its commit — the branch stays where it was locked.
+import geo { area }
+
+println(area(3))

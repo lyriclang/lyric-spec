@@ -1,0 +1,6 @@
+struct Point {
+    x: int,
+    y: int,
+}
+
+fn make(x: int, y: int): Point = Point { x = x, y = y }

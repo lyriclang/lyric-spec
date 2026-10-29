@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1009
+// §15 rule 6: a branch is read at its head.
+import geo { area }
+
+println(area(3))

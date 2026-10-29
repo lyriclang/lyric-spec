@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 9
+// §4 rule 15 (Lyric 5 §2 rule 8): a `main` of an imported module is an ordinary function.
+import lib as l
+
+println(l.main())

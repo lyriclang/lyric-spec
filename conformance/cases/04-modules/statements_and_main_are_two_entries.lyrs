@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0906
+//! since: 1.0.0
+// §4 rule 15 (07 Top): the entry's statements and `fn main` are two entries.
+println("top")
+
+fn main() {
+    println("main")
+}

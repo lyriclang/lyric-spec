@@ -1,0 +1,1 @@
+fn greet(n: string): string = "hi " + n

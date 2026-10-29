@@ -15,7 +15,8 @@
    the script panicked, its panic reported with the script's frames.
 3. **The bytecode cache** ([11 Fmt](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md), [12 Cache](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)): `run` keeps a
    script's bytecode under the key `sha256(source, toolchain version, bytecode format)` and runs
-   a later run of the same source from it. It lies in the user's cache directory —
+   a later run of the same source from it; a program of modules is keyed by every file it reads,
+   each module's path and text ([04](04-modules.md) rule 1), so a changed module is compiled anew. It lies in the user's cache directory —
    `LYRIC_SCRIPT_CACHE` where it is set, else `$XDG_CACHE_HOME/lyric-script` or
    `~/.cache/lyric-script`, on Windows `%LOCALAPPDATA%\lyric-script\cache` —, under `bytecode/`.
    A file of another toolchain, another source, or one that does not read back is no cache, and

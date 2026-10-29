@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-PKG0002
+//! since: 1.0.0
+// §15 rule 1 (Lyric 5 15 §1 rule 2): `[package]` names its package.
+println(1)

@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-PKG0001
+//! since: 1.0.0
+// §15 rule 1 (Lyric 5 15 §1 rule 1): a manifest is TOML, the part a manifest needs — no float.
+println(1)

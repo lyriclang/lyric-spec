@@ -1,7 +1,9 @@
 # Conformance suite
 
 Every case is ONE `.lyrs` script under `cases/<chapter>/`, named after the sentence it pins, with
-its expectations in a `//!` header. The format is Lyric 5's (`main`, `conformance/README.md`)
+its expectations in a `//!` header — or ONE program of modules, a folder so named that holds the
+entry, `main.lyrs`, with the header, and the modules it imports below it
+([04](../spec/04-modules.md) rule 1). The format is Lyric 5's (`main`, `conformance/README.md`)
 with the differences below; the reference runner is `tools/run_conformance.py`. Every deviation
 from Lyric 5 gets a failing and a passing case.
 
@@ -38,6 +40,29 @@ The differences from Lyric 5's format:
 - Every case carries `since:`, at least `1.0.0`; a case without it is a fault of the suite.
 - The header is the leading block of `//!` lines. A case whose first lines are its point — a `#!`
   line, a frontmatter — carries the header as the **trailing** block instead.
+- A program of modules is a folder with a `main.lyrs`: the runner checks and runs that file, and
+  the folder's other `.lyrs` files, at any depth, are its modules, not cases; they carry no
+  header.
+- A **package case** is a folder with a `lyric-script.toml`: its header stands in its
+  `src/main.lyrs`, and the runner checks and runs it from the folder without naming a file, as a
+  user does ([15](../spec/15-project.md) rule 2). It holds its dependencies itself, each in a
+  folder of its own below `deps/`, named by a relative path; a package nested in a case is no
+  case of its own.
+- `exit:` beside `error:` is the exit code of a rejection that is a fault of the environment,
+  2 (`LYS-PKG0007`, `LYS-PKG0009`); without it a rejection exits 1.
+- A package case's dependency read from git stands as `repos/<name>/<version>/`, a folder per
+  version. The runner builds the case from a copy, makes each `repos/<name>` a git repository
+  beside it — one commit per version, oldest first, each tagged `v<version>`, on the branch
+  `main`, by a fixed author at fixed times — and writes the repositories' place as a `file://`
+  URL where a manifest or a lock says `{repos}`: `geo = { git = "{repos}/geo", tag = "v1.0.0" }`.
+  Each such case runs with a cache of its own (`LYRIC_SCRIPT_CACHE`). A program case — a folder
+  with a `main.lyrs` — that holds `repos/` is built the same way, `{repos}` written in its
+  scripts' frontmatter too.
+- `env: NAME=value` adds to the environment the case runs in (repeatable); `stderr-has:` a text
+  the error stream holds somewhere (repeatable), where the report names paths of the run.
+- `option: --offline` passes an option to `check` and `run` (repeatable); `update` runs
+  `lyric-script update` in a package case before it is checked. A case's `lyric-script.lock` may
+  name the repositories' commits: they are fixed by the fixed author and times.
 
 ## What a case may use
 

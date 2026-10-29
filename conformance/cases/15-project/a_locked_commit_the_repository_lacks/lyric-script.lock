@@ -1,0 +1,9 @@
+version = 1
+
+[[package]]
+name = "geo"
+version = "1.0.0"
+repository = "{repos}/geo"
+revision = "branch main"
+commit = "0123456789abcdef0123456789abcdef01234567"
+hash = "h1:OyHkGHdS0zcHzhZjxyS41cKSOcYzTt/VAV+XzbDjfUo="

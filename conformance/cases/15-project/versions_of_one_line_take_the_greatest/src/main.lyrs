@@ -1,0 +1,8 @@
+//! run
+//! stdout:
+//! | 1009
+//! since: 1.0.0
+// §15 rule 10 (Lyric 5 15 §2 rule 6): of the versions of one line the graph asks for — 1.0.0 here, 1.1.0 through units —, the greatest (minimal version selection).
+import geo { area }
+
+println(area(3))

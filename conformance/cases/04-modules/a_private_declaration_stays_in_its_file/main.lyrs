@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-RES0009
+//! since: 1.0.0
+// §4 rule 5 (02 V): `private` keeps a declaration to its file — imported, or called through its
+// module.
+import lib { hidden }
+import lib as l
+
+println(hidden())
+println(l.hidden())
