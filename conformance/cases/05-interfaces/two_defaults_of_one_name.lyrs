@@ -1,0 +1,14 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0043
+// §5 rule 13 (Lyric 5 §3 rule 2): two defaults of one name the type does not write are its to
+// settle.
+interface A {
+    fn d(): int = 1
+}
+interface B {
+    fn d(): int = 2
+}
+struct S :: [A, B] {
+    x: int
+}

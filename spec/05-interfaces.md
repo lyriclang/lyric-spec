@@ -5,8 +5,8 @@
 **Status.** Written for what S3 builds: interfaces, their values, extends, delegation, `is`, sealed
 interfaces, equality and the Debug form, `Self` and static members, associated types; their
 bounds, fixations and value form, and generic members with the descriptors (S3i), the family written in a list and the operator interfaces
-with the prelude's interfaces (S7), the qualified call and members per interface (§3 rule 4,
-§4) with the milestones that build them.
+with the prelude's interfaces (S7), members per interface in separate blocks (§3 rule 4) with
+S7.
 
 ## Written (S3)
 
@@ -90,7 +90,16 @@ with the prelude's interfaces (S7), the qualified call and members per interface
    (`LYS-SEM0133` at the second). The target is the type at the block's parameters, in its order;
    a block on one instance, on a built-in constructor and the blanket blocks (rules 6–9) come
    with the collections (S7).
-13. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
+13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
+   every conformance's member of its name; two defaults of one name from two interfaces, which the
+   type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the
+   member, one function for both. `I.m(x, …)` calls the member of `I` with `x` as its receiver,
+   the implementation `x`'s type has for `I`: on a value of a type, through a type parameter,
+   through an interface value; the receiver conforms (`LYS-SEM0125`) and comes first
+   (`LYS-SEM0014`); a static member is not called through its interface (`LYS-SEM0231`). One
+   name implemented apart per interface in separate blocks (§3 rule 4, `LYS-SEM0122`) comes with
+   S7.
+14. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
    `call.i` runs the receiver's function of a slot, `is.t` and `is.i` answer `is`.
