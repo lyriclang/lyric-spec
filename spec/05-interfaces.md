@@ -24,7 +24,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    **default** body. A member carries no `pub` (`LYR-SEM0118`): an interface's members are
    public always (D14).
 2. A struct, a class or an enum **conforms** in its interface list, `struct S :: [I, J] { … }`,
-   or through an extend block, `extend T :: [I] { … }`; every entry names an interface
+   or through an extend block, `extend T :: [I] { … }` — one interface also without the brackets,
+   `struct S :: I`, `extend T :: I`, the list rule ([02](02-grammar.md)); several without them are refused
+   (`LYR-PAR0066`) —; every entry names an interface
    (`LYR-SEM0078`). A conformance implements every abstract member of the interface's chain with
    an exact signature — arity, parameter types, return type, `mut` (`LYR-SEM0020`,
    `LYR-SEM0042`); a default may be left as it is, and an own member of the name overrides it.
