@@ -77,14 +77,16 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    arguments from its fields' values or takes the instance the position expects; a unit variant
    of a generic enum takes it from the position. Type arguments may be written at a call,
    `none<int>()` (§9.2 rule 4): a `<` after a name or a member opens them where its matching `>`
-   stands before `(`. A generic function as a value, `Self`, static and associated members come
-   with the descriptors (S3i).
+   is followed by what no comparison goes on with — `(`, a closer, `,`, a line end, `.`, `==`,
+   `!=`. A generic function is a value at its type arguments, written, `id<int>`, or bound by
+   the position's function type, `let g: fn(string) -> string = id` (`LYS-SEM0060` where
+   nothing gives them). `Self`, static and associated members are 05's (rules 10–11).
    Unlike Lyric 5 (§9.1 rule 4), an instance is not compiled per argument list: the types whose
    values are objects of the VM share one copy, whose constraint calls go through the value's
    table; every other type has a copy of its own (11 Gen). The arguments are not lost to the
    sharing: what a shared copy builds is of the exact type its arguments make — `wrap(Foo { })`
    of `fn wrap<T>(x: T): Box<T>` is a `Box<Foo>` —, and `x is T` on an interface value tests the
-   argument, as in Lyric 5's copy for it.
+   argument, as in Lyric 5's copy for it — in a lambda of the copy too.
 13. **`with`.** Lyric 5 §2.5 applies as written: `p with { x = 3, pos.y = 4 }` is a copy of
    the struct `p` with the named fields replaced, its values left to right over the old `p`, after
    `p` itself; a path reaches into the structs `p` holds; on a class, a tuple or an enum refused
