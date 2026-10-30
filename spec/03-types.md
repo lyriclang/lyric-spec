@@ -105,8 +105,11 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    a parameter's, a field's, a return's, an optional's value type, a type parameter's — is built
    by that type's member: `let m: Money = 5` is `Money.fromIntLiteral(5)`. Only a literal is: a
    value of a variable is never converted (`LYS-SEM0001`), and `null` where an optional is taken
-   stays the optional's `null`. `FromArrayLiteral` and `FromMapLiteral` come with the collections
-   (S7).
+   stays the optional's `null`. `FromArrayLiteral<T>` (S7c2; Lyric 5 10 K4, its member named by
+   this rule's kind, `static fn fromArrayLiteral(items: T[]): Self`): a list literal where its
+   place's type conforms is a list of `T`, its elements checked against `T`, given to that member
+   — `let b: Bag = [1, 2]`, also through a type parameter `B :: [FromArrayLiteral<int>]`.
+   `FromMapLiteral` comes with the maps (S7d).
 15. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
    slots in order, inline; an enum without payloads as an `int`, one with payloads as an object

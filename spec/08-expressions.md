@@ -23,8 +23,14 @@
    the length less `n`, `^1` the last element, `^0` past it — at an index, at a write and at an
    end of a range, the list evaluated once (Lyric 5 03 T14); a range may leave out its ends:
    `xs[a..]` is `xs[a..^0]`, `xs[..b]` is `xs[0..b]`, `xs[..]` the whole list. `^` counts from the
-   end in a list's brackets only. Indexing a map comes with S7d, a string with S7e, a type of
-   one's own (`Index<K>`) with S7b3.
+   end in a list's brackets only. Indexing a map comes with S7d, a string with S7e.
+4. **Indexing a type of one's own** (03 Index; Lyric 5 `Index<K>`, `IndexSet<K>`; S7c2). The
+   prelude declares `interface Index<K> { type Output; fn index(k: K): Self.Output }` and
+   `interface IndexSet<K> :: Index<K> { fn setIndex(k: K, v: Self.Output) }`. `x[k]` is
+   `x.index(k)` where `x`'s type is an `Index` — on the type, through a constraint, through an
+   interface value —, else `LYS-SEM0007`; `x[k] = v` is `x.setIndex(k, v)` where it is an
+   `IndexSet`, else `LYS-SEM0019`; `x[k] op= v` reads and writes with `x` and `k` evaluated once.
+   `^` counts from the end of a list alone (`LYS-SEM0007`).
 
 ## Deviations (skeleton, written with later milestones)
 
