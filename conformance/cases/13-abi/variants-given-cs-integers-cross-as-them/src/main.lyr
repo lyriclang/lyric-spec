@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | Write After Read
+//! | 2 5 4
+//! | Exec true After
+//! | Low -1
+//! since: 5.0.0
+// 13 §3 rule 5: a variant given C's integer crosses as it, out and back; one not given one is one
+// more than the variant before; CEnum reads an integer as its variant and gives it back.
+import std.io { println };
+import std.ffi { CEnum };
+
+@Layout(C)
+enum Mode :: [CEnum] { Read = 1, Write = 2, Exec = 4, After }
+
+@Layout(int8)
+enum Level :: [CEnum] { Low = -1, Mid, High }
+
+extern "C" {
+    fn next_mode(m: Mode): Mode;
+    fn as_int(m: Mode): int;
+    fn lowest(): Level;
+}
+
+fn main(): void {
+    println(f"{next_mode(Mode.Read).name()} {next_mode(Mode.Exec).name()} {next_mode(Mode.After).name()}");
+    println(f"{as_int(Mode.Write)} {as_int(Mode.After)} {Mode.Exec.value()}");
+    println(f"{Mode.from(4)!.name()} {Mode.from(3) == null} {Mode.from(5)!.name()}");
+    println(f"{lowest().name()} {Level.Low.value()}");
+}
