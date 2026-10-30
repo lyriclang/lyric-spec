@@ -1,0 +1,8 @@
+//! run
+//! stdout:
+//! | "1" null
+//! since: 1.0.0
+// §12 rule 3: a program imports an adapter's class where it writes the type.
+import std.iter { MapIter }
+let m: MapIter<ListIter<int>, string> = [1].iter().map((x) => f"{x}")
+println(f"{m.next()} {m.next()}")
