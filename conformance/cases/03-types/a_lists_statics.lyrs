@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | [] [1, 2] [0, 1, 2] [] false
+//! since: 1.0.0
+// §3 rule 16 (Lyric 5 12 Collections): `List<T>.new()`, `of(xs)` — a new list —, `from(it)`,
+// `withCapacity(n)`; a `List<T>` is a `T[]`.
+let xs = [1, 2]
+let ys = List<int>.of(xs)
+ys.push(3)
+println(f"{List<int>.new()} {xs} {List<int>.from((0..3).iter())} {List<string>.withCapacity(4)} {xs == ys}")

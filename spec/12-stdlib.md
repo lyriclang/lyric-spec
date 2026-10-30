@@ -52,9 +52,9 @@
    `sum()`, `product()` and `average()` of `int` or of `float` values, Script's two numbers —
    zero, one and `null` where there is none, `average()` a `float` summed as one —; `min()` and
    `max()` of an `Ordered` value, the first of equal ones, `null` without a value. Where the
-   items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` and
-   `sortedBy(cmp)` come with `sort` (S7c6c), `groupBy`, `toMap` and `toSet` with the map and the
-   set (S7d).
+   items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` of a
+   `TotalOrder` item and `sortedBy(cmp)` put the values in a list, stably sorted ([03](03-types.md)
+   rule 16; S7c6c2); `groupBy`, `toMap` and `toSet` come with the map and the set (S7d).
 
 ## Deviations (skeleton, written with later milestones)
 

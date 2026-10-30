@@ -159,7 +159,18 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    then the elements in order (`LYS-SEM0059` where they do not compare). The comparing methods
    are the prelude's block `extend<T :: [Equatable]> T[]`, so over a type parameter `T ::
    [Equatable]` they are there too ([05](05-interfaces.md) rule 8; S7c5a). An empty
-   literal no place gives a type comes with S7b2b; sorting with S7c. Every list is an
+   literal no place gives a type comes with S7b2b. **Sorting** (Lyric 5 12 §Arrays; S7c6c2):
+   `sortBy(cmp)` puts the elements in the order `cmp` gives and `sortByKey(key)` in that of a
+   `TotalOrder` key; of a `TotalOrder` element `sort()` ascends and `sortUnstable()` is the same
+   sort; all are **stable** — equal elements keep their order —, take a buffer of the length and
+   make `O(n log n)` comparisons; where `cmp` throws the list is as it was. A list of `int`,
+   `char`, `float` or `string` the VM sorts itself — a float by IEEE 754's total order, a string
+   by its bytes; any other sort runs its comparisons in Script, each a call. Of a `TotalOrder`
+   element `binarySearch(x)` finds an index of an element equal to `x` in sorted elements, any of
+   several equal ones, or `null`; `partitionPoint(p)` is the first index whose element fails `p`;
+   `join(sep)` writes the elements as `{x}` does, `sep` between each two. `List<T>.new()`,
+   `List<T>.of(xs)` (a new list), `List<T>.from(it)` and `List<T>.withCapacity(n)` (a negative
+   `n` panics, `LYS-RT0008`) are Lyric 5's statics, `List<T>` being `T[]`. Every list is an
    `Iterable` (S7c4a): `xs.iter()` gives an iterator over it, which panics as the loop does
    after a change of the list's length (`LYS-RT0016`). A list is an interface
    value (S7c3) — an `Any`, or of an interface `extend<T> T[] :: [I]` gives it — in a box of its
