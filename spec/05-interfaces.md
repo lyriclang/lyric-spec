@@ -46,8 +46,13 @@ S7.
    where the type has none. Over a type parameter `==` asks `T :: [Equatable]` (`LYS-SEM0059`
    otherwise) and compares as the argument's type does — a parameter so constrained gets a copy
    per argument type, not a shared one (11 Gen). The comparing methods of a list are the
-   prelude's `extend<T :: [Equatable]> T[]` ([03](03-types.md) rule 16), `x in xs` its
-   `contains`. `Identity` is a name of the prelude, as `Any` is.
+   prelude's `extend<T :: [Equatable]> T[] :: Contains<T>` ([03](03-types.md) rule 16). `x in xs`
+   is `xs.contains(x)` through the right operand's `Contains<T>` (`interface Contains<T> { fn
+   contains(x: T): bool }`, Lyric 5 §12 rule 10; S7c5c3), `x` evaluated first and adapting to `T`,
+   `x !in xs` its negation; without it `in` is refused (`LYS-SEM0059`) — over a string and a map it
+   comes with S7e and S7d. A conditional conformance to an instance of a generic interface holds
+   where the condition does, at compile time and at run time (S7c5c3). `Identity` is a name of the
+   prelude, as `Any` is.
 9. **The Debug form, given unasked** (Lyric 5 §14 rules 2–3 and 7): every value prints. A
    scalar and a string print as themselves; `{x}` and `println(x)` print any other value in its
    Debug form — `P { x = 1, name = "a" }`, `E.B(3)`, `E.R { w = 4 }`, `E.A`, `(1, "a")`, an

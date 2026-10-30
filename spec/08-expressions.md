@@ -32,6 +32,11 @@
    `IndexSet`, else `LYS-SEM0019`; `x[k] op= v` reads and writes with `x` and `k` evaluated once.
    `^` counts from the end of a list alone (`LYS-SEM0007`).
 
+5. **`++` and `--`** (Lyric 5 §6, §3 rules 2–3; S7c5c3) step a number's place — a `var`, a field,
+   an element of a list or of an `IndexSet` —: `x++` and `x--` are worth the old value, `++x` and
+   `--x` the new; what leads to the place is evaluated once; a place that cannot be written is
+   refused (`LYS-SEM0019`), one that holds no number too (`LYS-SEM0003`).
+
 ## Deviations (skeleton, written with later milestones)
 
 - Mixed `int`/`float` arithmetic widens to `float`; `int / int` stays integer division; `as` only between `int`, `float` and `char`; no prefix `&`, no `comptime` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md), [09](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)).
