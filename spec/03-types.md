@@ -93,10 +93,15 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    arguments from its fields' values or takes the instance the position expects; a unit variant
    of a generic enum takes it from the position. Type arguments may be written at a call,
    `none<int>()` (§9.2 rule 4), and at a method, `it.collect<int[]>()` — its own, after those its
-   receiver binds, as many as it declares (`LYS-SEM0026`; S7c4c2); the placeholder `_` among
-   them comes with S7c6. A `<` after a name or a member opens them where its matching `>`
-   is followed by what no comparison goes on with — `(`, a closer, `,`, a line end, `.`, `==`,
-   `!=`. A generic function is a value at its type arguments, written, `id<int>`, or bound by
+   receiver binds, as many as it declares (`LYS-SEM0026`; S7c4c2). An initializer's are written
+   after the type's name, `Pair<int, string> { … }` (§9.3 rule 1; S7c6d). Among the type
+   arguments of a call, a method, an initializer and a function's value the placeholder `_`
+   stands for one the inference fills (§9.2 rule 4, §9.3 rule 2): `pair<_, string>(1, "x")`,
+   `Pair<float, _> { first = 2, second = true }` — a field checked with as much of its type as
+   is known —, `let f: fn(int) -> int = id<_>`; one nothing fills is refused (`LYS-SEM0060`), and
+   `_` anywhere else, `let p: Pair<_, int>`, too (`LYS-SEM0117`). A `<` after a name or a member
+   opens them where its matching `>` is followed by what no comparison goes on with — `(`, `{`, a
+   closer, `,`, a line end, `.`, `==`, `!=`. A generic function is a value at its type arguments, written, `id<int>`, or bound by
    the position's function type, `let g: fn(string) -> string = id` (`LYS-SEM0060` where
    nothing gives them). `Self`, static and associated members are 05's (rules 10–11).
    Unlike Lyric 5 (§9.1 rule 4), an instance is not compiled per argument list: the types whose
