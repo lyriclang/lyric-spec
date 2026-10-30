@@ -34,13 +34,33 @@
    program imports a class where it writes the type, `import std.iter { MapIter }` (`LYS-SEM0011`
    otherwise). An adapter over a `Closeable` iterator is `Closeable` and passes `close()` on —
    `rev` excepted —, so a loop that leaves `gen().map(f)` early closes the coroutine; `zip` and
-   `chain` close both of theirs where both are. `cycle()` comes with `Clone` (S7c6c), the
-   terminators with S7c6b2.
+   `chain` close both of theirs where both are. `cycle()` comes with `Clone` (S7c6c).
+4. **The terminators of every iterator** (Lyric 5 12 §Iteration; S7c6b2), `std.iter`'s too: each
+   walks the iterator — a class one where it stands, so what a terminator leaves stays left — to
+   an answer. `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a value;
+   `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
+   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
+   decides; `find(p)` and `position(p)`; `forEach(f)`, a function as any — there is no `inline
+   fn` ([03](03-types.md) rule 11), so a `return` in its lambda leaves the lambda; `toArray()` and
+   `toList()`, the values in a list in one pass, a `List<T>` being a `T[]`; `minBy(key)` and
+   `maxBy(key)` over a `TotalOrder` key, the first of equal ones, `null` without a value;
+   `partition(p)`, two lists in order; `chunks(n)`, the last shorter, and `windows(n)`, none where
+   there are fewer, `n` below 1 a panic (`LYS-RT0008`); `join(sep)`, each value as `{x}` writes
+   it — every value prints ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) — with `sep` between each two. Of an element kind:
+   `sum()`, `product()` and `average()` of `int` or of `float` values, Script's two numbers —
+   zero, one and `null` where there is none, `average()` a `float` summed as one —; `min()` and
+   `max()` of an `Ordered` value, the first of equal ones, `null` without a value. Where the
+   items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` and
+   `sortedBy(cmp)` come with `sort` (S7c6c), `groupBy`, `toMap` and `toSet` with the map and the
+   set (S7d).
 
 ## Deviations (skeleton, written with later milestones)
 
 - An adapter is a class, as Script's iterators are (a pull changes it); the functions it takes
   throw what they throw, without a `throws` clause ([12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
+- `join` takes every item, written as `{x}` writes it, where Lyric 5's asks a `Display` — every
+  value prints in Script, its `Display` comes with S7e; `sum` and `product` stand on `int` and
+  `float` items, not on a `Num` (STATUS P25).
 - Lyric 5's API adapted to Lyric-Script's types, plus the batteries `cli`, `csv`, `log`, `fs.glob`, and `reflect`; no `sync`, `thread`, `ffi`, `meta`, `syntax`, `build` ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
 
 **Conformance.** `conformance/cases/12-stdlib/` (`since: 1.0.0`).
