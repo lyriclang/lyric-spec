@@ -258,7 +258,7 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
 1. **`Ptr<T>`** is an address C gave, never null: C's `T *`. Lyric does not read or write through
    it here, and makes none of its own; `T` says what it points at, which C alone holds to.
    **`?Ptr<T>`** is a pointer that may be null: `null` crosses as C's null, and a null pointer C
-   returns comes back as `null`.
+   returns comes back as `null`. It is one word, as C's pointer: the address, null for none.
 2. **`CStr`** is C's `const char *`: bytes up to a NUL, which C owns. Its `length()` counts the
    bytes before the NUL; its `toString()` copies them into a `string`, and throws `Utf8Error`
    where they are no well-formed UTF-8. **`?CStr`** may be null, as `?Ptr<T>`.
@@ -268,9 +268,11 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    keep the address past its return.
 4. A struct with **`@Layout(C)`** is laid out as C lays out a struct of the same fields in the same
    order on the target platform, and crosses by value, as a parameter and as a result. Its fields
-   are what C holds: the scalars of §2, `char`, `Ptr<T>`, `CStr`, another `@Layout(C)` struct, and an
-   inline array `T[N]` of one of them. A field of another type — an optional, an enum, a string —
-   is refused (`LYR-SEM0099`). A struct without `@Layout(C)` is the compiler's to lay out and does
+   are what C holds: the scalars of §2, `char`, `Ptr<T>`, `CStr` and their optionals `?Ptr<T>` and
+   `?CStr` — a pointer field that may be null, one word as C's (rule 1) —, a C function's pointer,
+   another `@Layout(C)` struct, and an inline array `T[N]` of one of them. A field of another type —
+   another optional, a C function's pointer that may be null among them (wider than C's), an enum, a
+   string — is refused (`LYR-SEM0099`). A field may be `var`, written in place as any struct's. A struct without `@Layout(C)` is the compiler's to lay out and does
    not cross (`LYR-SEM0099`).
 5. An enum with **`@Layout(C)`** is C's `enum`, an `int`; with **`@Layout(uint8)`** — or any other
    integer type of §2 — it is that integer. Its variants carry no payload (`LYR-SEM0099`). The
