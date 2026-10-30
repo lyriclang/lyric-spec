@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 3 2 0
+//! | true 2 4 true
+//! since: 5.0.0
+// 13 §3 rule 4: a pointer field of a @Layout(C) struct may be null, '?Ptr<T>' or '?CStr', one
+// word as C's pointer: C reads null where Lyric wrote it, and Lyric reads null where C left it.
+import std.io { println };
+import std.ffi { Ptr, CStr };
+
+@Layout(C)
+struct Node { var value: int32, var name: ?CStr, var next: ?Ptr<Node> }
+
+extern "C" {
+    fn nulls(n: Node): int32;
+    fn head(): Node;
+    fn follow(p: Ptr<Node>): Node;
+}
+
+fn main(): void {
+    var n = Node { value = 0, name = null, next = null };
+    let first = nulls(n);
+    let h = head();
+    let t = follow(h.next!);
+    n.name = t.name;
+    let second = nulls(n);
+    n.next = h.next;
+    println(f"{first} {second} {nulls(n)}");
+    println(f"{h.name == null} {t.value} {t.name!.length()} {t.next == null}");
+}

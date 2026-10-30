@@ -341,8 +341,9 @@ that call their native part or whose manifest a rule refuses; the toolchain's ow
     declarations of the header and of the headers beside and below it, in the order they come, not
     the system's:
     - a function as `extern "C" fn` ([13 §2](13-abi.md)), with `...` where it is variadic;
-    - a struct as a `@Layout(C)` struct of the same fields ([13 §3](13-abi.md) rule 4); a struct
-      C declares without its fields as `Ptr<void>` where a pointer names it;
+    - a struct as a `@Layout(C)` struct of the same fields ([13 §3](13-abi.md) rule 4), each `var`
+      — C writes any of them —; a struct C declares without its fields as `Ptr<void>` where a
+      pointer names it;
     - an enum's constants as module-level constants of its integer type, and the enum's name as an
       alias of that type;
     - a `typedef` as an alias ([03 §10](03-types.md)), a pointer to a C function as its type
@@ -352,9 +353,9 @@ that call their native part or whose manifest a rule refuses; the toolchain's ow
     The C types as [13 §2–§3](13-abi.md) cross them: the integers by their width on the target —
     `char` as the target's `int8` or `uint8`, `size_t` as `uint`, `ptrdiff_t` as `int` —, `float`
     and `double`, `bool`; `const char *` as `?CStr`; any other `T *` as `?Ptr<T>`, `void *` as
-    `?Ptr<void>`; an array parameter as the pointer it is. In a **field**, where 13 §3 rule 4 takes
-    no optional, a pointer is `Ptr<T>`, `CStr` or the function pointer's type — a null there is the
-    program's to look for —, and an array of arrays is one array of all their elements,
+    `?Ptr<void>`; an array parameter as the pointer it is. In a **field** a pointer is `?Ptr<T>` or
+    `?CStr` as well; a C function's pointer is its type, not optional — 13 §3 rule 4 takes none —,
+    so a null there is the program's to look for; and an array of arrays is one array of all their elements,
     `float m[4][4]` as `float32[16]`, laid out alike. A constant is a `pub let`: an enum's of its
     integer type; a `#define`'s integer of the type C gives the literal — the first of `int32` and
     `int` it fits, unsigned with a `u` suffix or where a hexadecimal or octal one needs it, `int`
