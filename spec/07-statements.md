@@ -49,7 +49,15 @@
    each element — a closure keeps the element it saw —, and `break` and `continue` work as in
    every loop. A change of the list's length while the loop walks it — a push, a pop, an
    insert, a removal — makes the next step panic, `LYS-RT0016` (Lyric 5's `List` iterator);
-   writing an element is no change. Other iterables come with the iterator protocol (S7c).
+   writing an element is no change.
+7. **`for` over an Iterator or an Iterable** (Lyric 5 §1; S7c4a). The prelude declares
+   `interface Iterator { type Item; fn next(): ?Self.Item }` — without Lyric 5's error type
+   ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md): every call may throw) — and `interface Iterable { type Iter :: [Iterator];
+   fn iter(): Self.Iter }`. `for (x in e)` over an `Iterator` pulls `e.next()` until it gives
+   `null`, `e` evaluated once; over an `Iterable` it pulls the iterator `e.iter()` gives. Where
+   the iterator is a `Closeable` it is closed at every way out of the loop — its end, a `break`,
+   a `return`, an error (05 E7). Over a value that is neither: `LYS-SEM0007`. A list, a range
+   and a coroutine are walked as rules 6 and §10 say.
 
 ## Deviations (skeleton, written with later milestones)
 

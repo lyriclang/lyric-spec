@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 123
+//! | [10, 20, 30]
+//! | 3 3
+//! since: 1.0.0
+// §7 rule 7: `for` over an Iterator, over an Iterable through its `iter()`, and through a
+// constraint.
+class Count :: Iterator {
+    type Item = int
+    var n: int = 0
+    limit: int
+    fn next(): ?int {
+        if (this.n >= this.limit) {
+            return null
+        }
+        this.n += 1
+        return this.n
+    }
+}
+for (x in Count { limit = 3 }) {
+    print(x)
+}
+println()
+struct Three :: Iterable {
+    type Iter = Count
+    fn iter(): Count = Count { limit = 3 }
+}
+var tens: int[] = []
+for (x in Three { }) {
+    tens.push(x * 10)
+}
+println(tens)
+fn total<I :: [Iterable]>(xs: I): int {
+    var n = 0
+    for (_ in xs) {
+        n += 1
+    }
+    return n
+}
+println(f"{total([4, 5, 6])} {total(Three { })}")

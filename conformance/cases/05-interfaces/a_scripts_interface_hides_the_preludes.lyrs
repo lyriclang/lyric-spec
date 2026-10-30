@@ -1,0 +1,24 @@
+//! run
+//! warning: LYS-SEM0153
+//! stdout:
+//! | 1
+//! | 1
+//! since: 1.0.0
+// §5: a script's own `Iterator` hides the prelude's in the script, warned — the prelude keeps
+// its own (a list is still walked through it).
+interface Iterator {
+    type Item
+    fn next(): ?Self.Item
+}
+class C :: [Iterator] {
+    var n: int = 0
+    type Item = int
+    fn next(): ?int {
+        this.n += 1
+        return if (this.n > 2) null else this.n
+    }
+}
+let c = C { }
+println(c.next() ?? 0)
+let w = [1, 2].iter()
+println(w.next() ?? 0)

@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | line
+//! | line
+//! | closed
+//! | closed
+//! | closed
+//! | 7
+//! since: 1.0.0
+// §7 rule 7: a Closeable iterator is closed at the loop's end, at a `break`, at a `return`.
+class Lines :: [Iterator, Closeable] {
+    type Item = string
+    var left: int = 2
+    fn next(): ?string {
+        this.left -= 1
+        return if (this.left < 0) null else "line"
+    }
+    fn close() {
+        println("closed")
+    }
+}
+for (l in Lines { }) {
+    println(l)
+}
+for (l in Lines { }) {
+    break
+}
+fn early(): int {
+    for (l in Lines { }) {
+        return 7
+    }
+    return 0
+}
+println(early())

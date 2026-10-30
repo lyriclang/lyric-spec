@@ -143,7 +143,9 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    negative `n` panics); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
    then the elements in order (`LYS-SEM0059` where they do not compare). Over a type parameter
    the comparing methods and operators come with `Equatable` as an interface (S7d). An empty
-   literal no place gives a type comes with S7b2b; sorting with S7c. A list is an interface
+   literal no place gives a type comes with S7b2b; sorting with S7c. Every list is an
+   `Iterable` (S7c4a): `xs.iter()` gives an iterator over it, which panics as the loop does
+   after a change of the list's length (`LYS-RT0016`). A list is an interface
    value (S7c3) — an `Any`, or of an interface `extend<T> T[] :: [I]` gives it — in a box of its
    type's own, so `x is int[]` tells it and `{x}` prints its Debug form; a list of a type
    parameter as an interface value comes with S7c4.
