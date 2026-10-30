@@ -105,6 +105,19 @@ S7.
    slots — every interface method of the program has one — and the interfaces it conforms to;
    `call.i` runs the receiver's function of a slot, `is.t` and `is.i` answer `is`.
 
+## Written (S7, the core collections)
+
+15. **Generic interfaces** (§5; S7c1a): `interface I<T, …> { … }` declares type parameters, with
+   constraints as a generic function's; its members may name them. `I<int>` — written in a
+   conformance (`:: [I<int>]`, in an extend block's too), a constraint (`T :: [I<int>]`), a
+   parent (`interface J<T> :: I<T>`), or as a value's type — is an interface of its own: a type
+   conforms to it by members whose signatures are the members' at those arguments
+   (`LYS-SEM0042` otherwise), and a value of it is no `I<string>` (`LYS-SEM0001`). The arguments
+   are written, as many as the parameters (`LYS-SEM0026`). A generic type conforms at its own
+   parameters, `class Cell<T> :: Store<T>`, and each instance at its arguments (`Cell<int>` is a
+   `Store<int>`). A call through an `I<int>` value or a `T :: [I<int>]` reads the members at
+   `int`. `Self` in a generic interface, and a default member of one, come with S7c1b.
+
 ## Deviations
 
 - Synthesis from the compiler's fixed list; derivable interfaces of one's own through reflection in default bodies ([05 Syn](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).

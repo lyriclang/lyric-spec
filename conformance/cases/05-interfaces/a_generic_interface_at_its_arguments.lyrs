@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | 1
+//! | 5
+//! | 4
+//! | hi
+//! | 4
+//! | hi
+//! since: 1.0.0
+// §5 rule 15: `I<int>` in a conformance, a constraint and as a value's type; a call reads the
+// members at the instance's arguments.
+interface Source<T> {
+    fn take(): T
+}
+interface Sink<T> {
+    fn put(x: T): int
+}
+class Counter :: [Source<int>, Sink<string>] {
+    var n: int = 0
+    fn take(): int {
+        this.n += 1
+        return this.n
+    }
+    fn put(x: string): int = 4
+}
+struct Word :: Source<string> {
+    text: string
+    fn take(): string = this.text
+}
+fn twice<S :: [Source<int>]>(s: S): int = s.take() + s.take()
+let c = Counter { }
+println(c.take())
+println(twice(c))
+let src: Source<int> = c
+println(src.take())
+let w: Source<string> = Word { text = "hi" }
+println(w.take())
+let sink: Sink<string> = c
+println(sink.put("four"))
+fn firstOf<T>(s: Source<T>): T = s.take()
+println(firstOf(w))
