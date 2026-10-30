@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 1
+//! | b
+//! since: 1.0.0
+// §3 rule 12: two types of one name in two modules are two arguments — `Holder<a.Item>` and
+// `Holder<b.Item>` are two instances.
+import a
+import b
+struct Holder<T> {
+    v: T,
+}
+let ha: Holder<a.Item> = Holder { v = a.make() }
+let hb: Holder<b.Item> = Holder { v = b.make() }
+println(ha.v.n)
+println(hb.v.s)

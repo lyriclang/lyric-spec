@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | [1, 2, 3]
+//! | [5, 6]
+//! | ["a", "b"]
+//! | [10, 20]
+//! | [1, 2]
+//! since: 1.0.0
+// §7 rule 7: `collect()` into the type the position expects or the one written — a list, or a
+// type of the program that is a `FromIterator` — from a class, a list's iterator, a coroutine,
+// and through a type parameter.
+class Count :: Iterator {
+    type Item = int
+    var n: int = 0
+    fn next(): ?int {
+        this.n += 1
+        return if (this.n > 3) null else this.n
+    }
+}
+class Tens :: FromIterator<int> {
+    items: int[]
+    static fn fromIter<I :: [Iterator<Item = int>]>(it: I): Tens {
+        let out: int[] = []
+        while (let x = it.next()) {
+            out.push(x * 10)
+        }
+        return Tens { items = out }
+    }
+}
+fn letters(): Coroutine<string> {
+    yield "a"
+    yield "b"
+}
+fn all<I :: [Iterator]>(it: I): I.Item[] = it.collect()
+let xs: int[] = Count { }.collect()
+println(xs)
+println([5, 6].iter().collect<int[]>())
+let ys: string[] = letters().collect()
+println(ys)
+let t: Tens = [1, 2].iter().collect()
+println(t.items)
+println(all([1, 2].iter()))

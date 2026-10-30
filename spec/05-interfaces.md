@@ -91,8 +91,17 @@ S7.
    (`LYS-SEM0133` at the second). The target is the type at the block's parameters, in its order;
    `extend<T> T[] { … }` (or `List<T>`) adds members to every list, `this` the list (S7b2a), and
    `extend<T> T[] :: [I] { … }` makes every list an `I` (S7c3), for a value of `I` and a
-   constraint alike. A block on one instance and the blanket blocks (rules 6–9) come with the
-   collections (S7).
+   constraint alike. A **blanket block** (§13 rule 7; S7c4c2), `extend<T :: [Named]> T { … }`,
+   adds its members to every type its constraints admit — a struct, class, enum, built-in type
+   or list, an interface value, and in a generic body a type parameter whose constraints admit
+   it: the receiver binds the parameter the target names, a fixation in a constraint the others
+   (`extend<I :: [Iterator<Item = T>], T> I`), `this` is the receiver; a parameter neither binds
+   is refused (`LYS-SEM0170`). A member the type has itself — written, from another block, an
+   interface's default, left to a field — comes first and is warned about where it stands
+   (`LYS-SEM0168`); generic code that reaches the name through the block's constraints calls
+   the block's, for that type too. Two blanket blocks that give a type one name are refused at
+   its call (`LYS-SEM0121`). A blanket block that conforms (rules 8–9), its static members and a
+   block on one instance come with S7c4c3; the other shapes of rule 6 with the collections (S7).
 13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
    every conformance's member of its name; two defaults of one name from two interfaces, which the
    type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the
@@ -122,7 +131,11 @@ S7.
    it with the interface's parameters, `static fn make(items: T[]): Self` through
    `B :: [Maker<int>]` —, and a default member may read the parameters: each conformer runs its
    copy at its instance's arguments, through its table too, and so does each instance of a
-   generic conformer (S7c1b).
+   generic conformer (S7c1b). A member may have type parameters of its own, `static fn
+   fromIter<I :: [Iterator<Item = T>]>(it: I): Self` (S7c4c2): a conformer's has as many,
+   constrained by the same interfaces and fixations (`LYS-SEM0042` otherwise); called through a
+   type parameter, the copy for its argument binds them from the call's arguments. An interface
+   with such a member is a constraint only (rule 11, `LYS-SEM0126`).
 
 ## Deviations
 

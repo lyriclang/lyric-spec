@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | [1, 2]
+//! | s3
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2 rule 4): type arguments written at a method are its own, after those
+// its receiver binds.
+struct Box<T> {
+    v: T,
+    fn map<U>(f: fn(T) -> U): Box<U> = Box { v = f(this.v) }
+}
+println([1, 2].iter().collect<int[]>())
+let b: Box<int> = Box { v = 3 }
+println(b.map<string>((x) => f"s{x}").v)

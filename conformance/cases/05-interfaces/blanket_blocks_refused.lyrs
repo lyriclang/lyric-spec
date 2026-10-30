@@ -1,0 +1,22 @@
+//! check
+//! error: LYS-SEM0170
+//! error: LYS-SEM0121
+//! since: 1.0.0
+// §5 rule 12: a blanket block's parameter that neither the target nor a fixation binds; two
+// blanket blocks that give a type one name.
+interface Named {
+    fn name(): string
+}
+extend<T :: [Named]> T {
+    fn hello(): string = "a"
+}
+extend<U :: [Named]> U {
+    fn hello(): string = "b"
+}
+struct Cat :: Named {
+    fn name(): string = "cat"
+}
+extend<I :: [Iterator], X> I {
+    fn lost(): int = 1
+}
+println(Cat { }.hello())

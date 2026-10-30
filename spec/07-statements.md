@@ -57,7 +57,13 @@
    `null`, `e` evaluated once; over an `Iterable` it pulls the iterator `e.iter()` gives. Where
    the iterator is a `Closeable` it is closed at every way out of the loop — its end, a `break`,
    a `return`, an error (05 E7). Over a value that is neither: `LYS-SEM0007`. A list, a range
-   and a coroutine are walked as rules 6 and §10 say.
+   and a coroutine are walked as rules 6 and §10 say. Every iterator **collects** (Lyric 5
+   §12; S7c4c2): the prelude declares `interface FromIterator<T> { static fn fromIter<I ::
+   [Iterator<Item = T>]>(it: I): Self }`, which every list is of its element, and the blanket
+   block `extend<I :: [Iterator]> I { fn collect<C :: [FromIterator<I.Item>]>(): C }`;
+   `it.collect()` pulls the values into the type the position expects, `let xs: string[] =
+   words.iter().collect()`, or the one written, `it.collect<int[]>()` ([03](03-types.md) rule
+   12) — a type of the program that is a `FromIterator` too.
 
 ## Deviations (skeleton, written with later milestones)
 

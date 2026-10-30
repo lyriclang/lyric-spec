@@ -71,18 +71,22 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    `let` copied, a `var` in a box both sides share, fresh in each pass of a loop (02 C1),
    `this` copied; a local `fn` that calls itself. Two function values are not compared
    (`LYS-SEM0059`). A brace after a name that is no type's opens a trailing block (§2 D4).
-12. **Generics.** Lyric 5 §9.1 rules 1–3 and §9.2 rules 1, 3 apply to functions, structs,
+12. **Generics.** Lyric 5 §9.1 rules 1–3 and §9.2 rules 1–4 apply to functions, structs,
    classes and enums: `fn f<T :: [C]>(…)`, `struct Pair<A, B> { … }`; a method of a generic
    type, of every list (`extend<T> T[]`) or of an interface may have type parameters of its own,
    `fn map<U>(f: fn(T) -> U): Box<U>` — the receiver binds its owner's, a call's arguments the
    method's (S7c4c1); a generic is checked once,
    a value of `T` has its constraints' members and no others (`LYS-SEM0012`); the arguments of a
-   call bind the type parameters at any depth, a lambda's after the others, and what nothing
-   binds is refused (`LYS-SEM0060`), as is an argument its constraints do not admit
+   call bind the type parameters at any depth, a lambda's after the others, what they leave open
+   the type the call's position expects, never overriding them (§9.2 rule 2; S7c4c2): `let xs:
+   int[] = empty()`; what nothing binds is refused (`LYS-SEM0060`), as is an argument its
+   constraints do not admit
    (`LYS-SEM0028`) and a wrong count (`LYS-SEM0026`). An initializer of a generic type binds its
    arguments from its fields' values or takes the instance the position expects; a unit variant
    of a generic enum takes it from the position. Type arguments may be written at a call,
-   `none<int>()` (§9.2 rule 4): a `<` after a name or a member opens them where its matching `>`
+   `none<int>()` (§9.2 rule 4), and at a method, `it.collect<int[]>()` — its own, after those its
+   receiver binds, as many as it declares (`LYS-SEM0026`; S7c4c2); the placeholder `_` among
+   them comes with S7c5. A `<` after a name or a member opens them where its matching `>`
    is followed by what no comparison goes on with — `(`, a closer, `,`, a line end, `.`, `==`,
    `!=`. A generic function is a value at its type arguments, written, `id<int>`, or bound by
    the position's function type, `let g: fn(string) -> string = id` (`LYS-SEM0060` where
@@ -151,7 +155,8 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    after a change of the list's length (`LYS-RT0016`). A list is an interface
    value (S7c3) — an `Any`, or of an interface `extend<T> T[] :: [I]` gives it — in a box of its
    type's own, so `x is int[]` tells it and `{x}` prints its Debug form; a list of a type
-   parameter as an interface value comes with S7c4.
+   parameter as an interface value comes with S7c4c3. Every list is a `FromIterator` of its
+   element (S7c4c2): `let xs: int[] = it.collect()` ([07](07-statements.md) rule 7).
 17. *Informative.* The VM holds a list as one object with the scalar and the reference slots of
    its elements apart: a list of `int` holds its ints unboxed, a list of tuples their slots in
    order (`list.new`, `list.push`, `list.get.*`, `list.set.*`, `list.len`, `list.pop`).

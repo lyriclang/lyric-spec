@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0026
+//! error: LYS-SEM0026
+//! since: 1.0.0
+// §3 rule 12: a method takes as many type arguments as it declares itself — none where it
+// declares none.
+let w = [1].iter().collect<int[], int>()
+let z = [1].isEmpty<int>()
