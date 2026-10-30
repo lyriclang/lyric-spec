@@ -44,7 +44,8 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    so too, as in Lyric 5. Lyric 5 infers no binding from a later use ([03 Leer](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
    `var xs = []` and `let xs = []` take the same way (S7b2b): the first use that fixes a list
    type — a push of a `T`, an assignment of a `T[]`, the binding standing where a `T[]` is
-   taken — makes it a `T[]`; nothing fixing it is `LYS-SEM0010`. `[:]` follows with the maps
+   taken — makes it a `T[]`; nothing fixing it is `LYS-SEM0010`; an empty `[]` elsewhere that
+   no position gives a type is `LYS-SEM0060` (Lyric 5 §9.2 rule 3). `[:]` follows with the maps
    (S7d).
 9. **Tuples.** Lyric 5 §6 rules 1–5 apply: `(A, B)` from two elements (`(1,)` is refused,
    `LYS-PAR0010`); labels `(x: A, y: B)`, no part of the type and seen through the type they

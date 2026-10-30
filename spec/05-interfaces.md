@@ -108,7 +108,7 @@ S7.
    interface's default, left to a field — comes first and is warned about where it stands
    (`LYS-SEM0168`); generic code that reaches the name through the block's constraints calls
    the block's, for that type too. Two blanket blocks that give a type one name are refused at
-   its call (`LYS-SEM0121`). Its static members are reached through a type it reaches,
+   its call (`LYS-SEM0121`); it holds no constant (`LYS-SEM0124`). Its static members are reached through a type it reaches,
    `Cat.kind()`, or a type parameter, `T.kind()` (S7c4c3a). A blanket block may **conform**
    (rule 8; S7c4c3a), `extend<T :: [Named]> T :: [Greets] { … }`: it gives the interface and its
    chain to every type its constraints admit, its signatures checked at `T` (`LYS-SEM0042`,
