@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 1.0.0
+// §5 rule 20 (Script 01 S8): an object of an `Identity` class hashes by its number — the same
+// object alike, two equal-looking objects apart; no address is read.
+fn hashOf<T :: [Hashable]>(x: T): int {
+    let h = Hasher { }
+    x.hash(h)
+    return h.finish()
+}
+class Node :: [Identity] {
+    var n: int = 0
+}
+let a = Node { }
+let b = Node { }
+println(f"{hashOf(a) == hashOf(a)} {hashOf(a) == hashOf(b)}")

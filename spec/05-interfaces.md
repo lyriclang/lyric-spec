@@ -233,6 +233,18 @@ S7.
    constraint). Through `T :: [Clone]` and `T :: [Default]`, `x.clone()` and `T.default()` are
    the argument's own; a member the compiler synthesizes — `equals`, `compare`, `clone` — is never
    called through a table, which holds none.
+20. **`Hashable` and `Hasher`** (Lyric 5 §14, 12 §Hashing; Script [03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md), [05 Fl](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md), [01 S8](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); S7d1).
+   The prelude declares `interface Hashable :: Equatable { fn hash(h: Hasher) }` and `class
+   Hasher` with `writeByte(b)`, `writeInt(v)` and `finish()`: one hasher, SipHash-1-3 under a key
+   the process draws, its mixing the VM's — where Lyric 5 passes `&h` to an interface of hashers,
+   Script hands the one class on. An `int` writes its word, a `char` its code point, a `bool` a
+   byte, a `string` its bytes; a `float` hashes not (05 Fl), nor a list. A struct, an enum, a
+   tuple and an optional of hashable parts hash by themselves, as they compare (03 Eq): the
+   fields in order, an enum its variant's position and then its payload, an optional a mark and
+   its value; a class through `:: Hashable`, by its fields, or as an `Identity` by its number —
+   given the first time it is hashed, no address read (01 S8). Equal values write the same;
+   `x.hash(h)` and `T :: [Hashable]` reach the synthesis, a tuple's too (`LYS-SEM0028` where a
+   part does not hash).
 
 ## Deviations
 
