@@ -15,7 +15,8 @@ What the command line does for a single file (M2) and for a package (M7). The pr
 the NDJSON stream and the other verbs follow with their milestones; the rules below stay.
 
 **Conformance.** Until the suite can drive the command line (M13), the toolchain's own tests
-are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `DriverTests`).
+are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `DriverTests` and
+`BuildStatusTests`).
 
 ### 1.1 Verbs and options
 
@@ -76,6 +77,23 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests` and `Dri
     of the C compiler, the archiver and the linker on the standard error as it starts —
     `running: ` and the command —, the build scripts' and the bindings' among them; what is up to
     date runs nothing and says nothing. It writes text: with `--json` it is refused (exit 2).
+11. **Status lines.** `build`, `run`, `check`, `expand`, `test` and `bench` say each step that does
+    work on the standard error as it starts, one line each — a word right-aligned in twelve
+    columns, then what it works on —, whether or not the standard error is a terminal:
+    `Fetching` and `Updating` a package or a source tree read from git, `Running` a build script,
+    `Binding` a module made from a header, `Compiling` a program's front end (`app v0.1.0
+    (src/main.lyr)`), the runtime, and the C units — `3 of 14 C units of app`, the ones whose
+    object is not cached —, `Checking` a program (`check`), `Linking` a binary or a shared library,
+    `Archiving` a static one. What is up to date says nothing. A `build`, `run` or `check` that
+    succeeds ends with **`Finished`**, the profile, its level and debug information, and the time the command took
+    (`Finished debug [opt 0, debug info] in 0.42s`); one that fails ends with its findings. `run`
+    then says the binary it runs (`Running out/debug/<target>/app`). Where the standard error is
+    a terminal, the C units compiled so far are counted on a line drawn over itself and erased
+    when they are done (`Building [3/14] app`), unless `-v` says commands. The word is coloured
+    as the diagnostics are ([16 §1](16-diagnostics.md)). **`-q`** (`--quiet`) says no status line,
+    and `--json` none ([11 C6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
+    the findings stay. The lines are text for a reader, not a format: their words and their
+    order may change.
 
 ### 1.2 Where the files go
 
@@ -257,12 +275,12 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 
 | verb | words | options | lints | `--json` |
 |---|---|---|---|---|
-| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--emit <ir|c>`, `--lib`, `--shared` | yes | yes |
-| `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | yes |
-| `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | yes |
-| `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v` | yes | — |
-| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--filter, -f <text>`, `--no-run` | yes | yes |
-| `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
+| `build` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q`, `--emit <ir|c>`, `--lib`, `--shared` | yes | yes |
+| `run` | `[<file.lyr>] [-- <args>…]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q` | yes | yes |
+| `check` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q` | yes | yes |
+| `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q` | yes | — |
+| `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q`, `--filter, -f <text>`, `--no-run` | yes | yes |
+| `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
 | `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |

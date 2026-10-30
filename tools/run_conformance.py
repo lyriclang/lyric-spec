@@ -158,6 +158,8 @@ def run_case(case, spec, lyric5, profile, workdir):
     if spec["bin"]:
         command += ["--bin", spec["bin"]]
     command += spec["options"]
+    # The status lines of a build (14 §1.1 rule 11) are no diagnostics: a case reads findings alone.
+    command += ["-q"]
     front_end_only = spec["mode"] == "check"
     if front_end_only:
         command += ["--emit", "ir"]
