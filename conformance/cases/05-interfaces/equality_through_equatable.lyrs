@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | true false true true false
+//! | true false
+//! | true true
+//! | true false
+//! | false true
+//! since: 1.0.0
+// §5 rule 8 (Lyric 5 §12 rule 5, §14): `==` over `T :: [Equatable]` compares as the argument's
+// type does; a class compares through its own `equals` or, declaring `Equatable` without one,
+// field by field; a struct's own `equals` is what `==` calls; `x.equals(y)` everywhere.
+struct P {
+    x: int,
+    s: string,
+}
+fn same<T :: [Equatable]>(a: T, b: T): bool = a == b
+let p = P { x = 1, s = "a" }
+println(f"{same(1, 1)} {same("a", "b")} {same(p, p)} {same([1, 2], [1, 2])} {same((1, "x"), (1, "y"))}")
+class C :: Equatable {
+    n: int
+    fn equals(o: C): bool = this.n % 10 == o.n % 10
+}
+println(f"{C { n = 3 } == C { n = 13 }} {same(C { n = 3 }, C { n = 4 })}")
+class D :: Equatable {
+    n: int
+}
+println(f"{D { n = 1 } == D { n = 1 }} {D { n = 1 } != D { n = 2 }}")
+struct Loose {
+    v: int,
+    fn equals(o: Loose): bool = this.v / 10 == o.v / 10
+}
+println(f"{Loose { v = 11 } == Loose { v = 19 }} {Loose { v = 11 } == Loose { v = 21 }}")
+println(f"{p.equals(P { x = 1, s = "b" })} {5.equals(5)}")

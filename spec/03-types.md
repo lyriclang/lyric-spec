@@ -149,8 +149,9 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    `contains(x)`, `indexOf(x)`, `remove(x)`, `dedup()`, else they are not there
    (`LYS-SEM0134`). `xs + ys` is a new list of both, `xs * n` one of `n` times the elements (a
    negative `n` panics); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
-   then the elements in order (`LYS-SEM0059` where they do not compare). Over a type parameter
-   the comparing methods and operators come with `Equatable` as an interface (S7c5). An empty
+   then the elements in order (`LYS-SEM0059` where they do not compare). The comparing methods
+   are the prelude's block `extend<T :: [Equatable]> T[]`, so over a type parameter `T ::
+   [Equatable]` they are there too ([05](05-interfaces.md) rule 8; S7c5a). An empty
    literal no place gives a type comes with S7b2b; sorting with S7c. Every list is an
    `Iterable` (S7c4a): `xs.iter()` gives an iterator over it, which panics as the loop does
    after a change of the list's length (`LYS-RT0016`). A list is an interface

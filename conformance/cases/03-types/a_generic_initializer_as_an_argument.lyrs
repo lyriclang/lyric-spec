@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 1
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2 rule 1, §9.3 rule 1): an initializer of a generic type at a parameter
+// naming the callee's type parameter binds it from its field values.
+struct Box<T> {
+    v: T,
+}
+fn first<T>(a: Box<T>, b: Box<T>): T = a.v
+println(first(Box { v = 1 }, Box { v = 2 }))

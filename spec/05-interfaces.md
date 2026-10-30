@@ -36,10 +36,18 @@ S7.
 8. **Equality without a list** ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md); Lyric 5 §14 rules 2–3): `==` and `!=` compare a
    struct, an enum or a tuple part by part, without a conformance written — a struct's fields in
    declaration order, an enum's variant first and then its payload, a tuple's elements in order
-   — when every part compares; an optional compares its value. A class compares only as an
-   `Identity` (`class C :: [Identity]`), by its reference; any other class, a
-   function value and an interface value do not compare, and neither does a type holding one
-   (`LYS-SEM0059`, the part named). `Identity` is a name of the prelude, as `Any` is.
+   — when every part compares; an optional compares its value, a list its elements in order.
+   Such a value **is** an `Equatable`: the prelude declares `interface Equatable { fn equals(o:
+   Self): bool }` (Lyric 5 §12 rule 5; S7c5a), a constraint only (rule 10). A class compares as
+   an `Identity` (`class C :: [Identity]`), by its reference, or as the `Equatable` it declares —
+   through its own `equals`, else field by field; any other class, a function value and an
+   interface value do not compare, and neither does a type holding one (`LYS-SEM0059`, the part
+   named). A type's own `equals(o: Self): bool` is what `==` calls; `x.equals(y)` is `x == y`
+   where the type has none. Over a type parameter `==` asks `T :: [Equatable]` (`LYS-SEM0059`
+   otherwise) and compares as the argument's type does — a parameter so constrained gets a copy
+   per argument type, not a shared one (11 Gen). The comparing methods of a list are the
+   prelude's `extend<T :: [Equatable]> T[]` ([03](03-types.md) rule 16), `x in xs` its
+   `contains`. `Identity` is a name of the prelude, as `Any` is.
 9. **The Debug form, given unasked** (Lyric 5 §14 rules 2–3 and 7): every value prints. A
    scalar and a string print as themselves; `{x}` and `println(x)` print any other value in its
    Debug form — `P { x = 1, name = "a" }`, `E.B(3)`, `E.R { w = 4 }`, `E.A`, `(1, "a")`, an
