@@ -159,6 +159,22 @@ S7.
    constrained by the same interfaces and fixations (`LYS-SEM0042` otherwise); called through a
    type parameter, the copy for its argument binds them from the call's arguments. An interface
    with such a member is a constraint only (rule 11, `LYS-SEM0126`).
+16. **Ordering** (Lyric 5 §12 rule 6, §14 rules 2–3; S7c5b): the prelude declares
+   `enum Ordering { Less, Equal, Greater }`, `interface Ordered :: Equatable { fn compare(o:
+   Self): ?Ordering }` and `interface TotalOrder :: Ordered { fn totalCompare(o: Self): Ordering
+   }`, constraints only, and gives both to `int`, `char` and `string` — and to `float`, unlike
+   Lyric 5 ([05 Fl](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)): its `compare` is `null` where a NaN takes part, its
+   `totalCompare` IEEE 754's total order, -NaN, -infinity, …, -0.0, 0.0, …, infinity, NaN (the
+   sign of a computed NaN is the hardware's). `<`, `<=`, `>` and `>=` on another type read its
+   `compare`: `.Less`, not `.Greater`, `.Greater`, not `.Less`; `null` makes all four false;
+   without `Ordered` they are refused (`LYS-SEM0003`). A struct, class or enum that lists
+   `Ordered` or `TotalOrder` without the member has it synthesized, lexicographic over its
+   fields in declaration order — an enum's variant position first, then its payload —, the
+   first part not `.Equal` deciding and a `compare` meeting `null` giving `null`; each part is
+   one, else the conformance is refused (`LYS-SEM0020`). A type's own `compare` or
+   `totalCompare` replaces the synthesis; `x.compare(y)` and `x.totalCompare(y)` stand on every
+   conformer. Over a type parameter `T :: [Ordered]` the comparison is its argument's, in the
+   copy (rule 8). A list, an optional and a tuple are no `Ordered`, as in Lyric 5.
 
 ## Deviations
 
