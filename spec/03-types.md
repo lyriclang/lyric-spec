@@ -86,7 +86,7 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    of a generic enum takes it from the position. Type arguments may be written at a call,
    `none<int>()` (§9.2 rule 4), and at a method, `it.collect<int[]>()` — its own, after those its
    receiver binds, as many as it declares (`LYS-SEM0026`; S7c4c2); the placeholder `_` among
-   them comes with S7c5. A `<` after a name or a member opens them where its matching `>`
+   them comes with S7c6. A `<` after a name or a member opens them where its matching `>`
    is followed by what no comparison goes on with — `(`, a closer, `,`, a line end, `.`, `==`,
    `!=`. A generic function is a value at its type arguments, written, `id<int>`, or bound by
    the position's function type, `let g: fn(string) -> string = id` (`LYS-SEM0060` where
@@ -149,7 +149,7 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    (`LYS-SEM0134`). `xs + ys` is a new list of both, `xs * n` one of `n` times the elements (a
    negative `n` panics); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
    then the elements in order (`LYS-SEM0059` where they do not compare). Over a type parameter
-   the comparing methods and operators come with `Equatable` as an interface (S7d). An empty
+   the comparing methods and operators come with `Equatable` as an interface (S7c5). An empty
    literal no place gives a type comes with S7b2b; sorting with S7c. Every list is an
    `Iterable` (S7c4a): `xs.iter()` gives an iterator over it, which panics as the loop does
    after a change of the list's length (`LYS-RT0016`). A list is an interface
