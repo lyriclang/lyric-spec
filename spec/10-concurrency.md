@@ -67,8 +67,9 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
 8. **`for` over a coroutine.** `for (x in c)` pulls `c` — evaluated once — until a pull gives
    `null`, binding each value to `x`; `break`, `continue` and a label act as in any loop, and an
    error out of a pull leaves the loop. A `Coroutine<void>` gives nothing to bind
-   (`LYS-SEM0007`). *(Informative: `Coroutine :: Iterator`, and `for` over any iterable, come with
-   the collections, S7.)*
+   (`LYS-SEM0007`). A `Coroutine<Y, R>` is an `Iterator` of `Item = Y` (S7c4b): a value of
+   `Iterator<Item = Y>`, an argument for `I :: [Iterator<Item = Y>]`, walked by `for` through
+   either; `for` over any iterable is chapter 7's rule 7.
 
 ## Written (S6b3, closing and called yields)
 
@@ -114,7 +115,7 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
     task of it outlives the block. `scope.cancel()` cancels every task of it that has not ended. A
     task cancelled while it waits in `close()` cancels the scope's tasks and still waits for them;
     then `close()` returns or throws as before. A closed scope takes no task: `scope.spawn` after
-    `close()` panics (`LYS-RT0008`). A scope is no interface value either (deviations).
+    `close()` panics (`LYS-RT0008`). A scope is a `Closeable` value too (rule 19).
 
 ## Written (S6d1, channels and semaphores)
 
@@ -173,10 +174,18 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
     brings `IoError` (S7). A read is a wait (rule 11): a cancel ends it, and a line its reader
     brings after the cancel is dropped.
 
+## Written (S7, the core collections)
+
+19. **Interface values of what the VM holds** (S7c4b). A task, a coroutine, a task scope, a
+    channel and a semaphore are interface values — an `Any`; a coroutine a `Closeable` and an
+    `Iterator`, a scope a `Closeable` — in a box that carries their type, so `x is Task<int>`
+    tells it; through the interface their methods act as on the value itself (a coroutine's
+    `close()` closes it). Their Debug form is their type, `<Task>`.
+
 ## Not yet written
 
-- `Coroutine :: Iterator` and a `for` over any iterable, signals as a channel (Lyric 5 §12; the
-  right `os`), and `IoError` for `readLine`: with the std core (S7). A host's waits — `call`,
+- Signals as a channel (Lyric 5 §12; the right `os`), and `IoError` for `readLine`: with the
+  std core (S7). A host's waits — `call`,
   `start`, `step` — and the instance's halt on its budget with its tasks: with the embedding (S8).
 
 ## Deviations
@@ -189,7 +198,7 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
 - `Task<T>` carries no `throws`: `await()` throws any `Error` ([07 N4](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); 03: no errors in
   function types). Nor does `Coroutine<Y, R>`: a pull throws any `Error` (Lyric 5 §1 rule 6
   puts the coroutine function's clause on the type).
-- A task, a coroutine, a task scope, a channel or a semaphore is no interface value — not of `Closeable`, not of `Any` — until they
-  have descriptors at run time, with the collections (S7); `using` and `==` take them as they are.
+- *(Retired with S7c4b: a task, a coroutine, a task scope, a channel and a semaphore are
+  interface values now, rule 19.)*
 
 **Conformance.** `conformance/cases/10-concurrency/` (`since: 1.0.0`).
