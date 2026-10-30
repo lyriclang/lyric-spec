@@ -1,0 +1,39 @@
+//! run
+//! stdout:
+//! | hi good day hi good day
+//! | hi good day hihi
+//! | 6.0 8.0 8.0 4.0
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 §3 rules 4–5, §12 rule 2): one name implemented apart per interface in
+// separate conformance blocks, reached through the qualified call, an interface value, a
+// constraint and a default; an operator's conformance block beside the type's own member.
+interface Greeter {
+    fn greet(): string
+    fn twice(): string = this.greet() + this.greet()
+}
+interface Polite {
+    fn greet(): string
+}
+class C { }
+extend C :: [Greeter] {
+    fn greet(): string = "hi"
+}
+extend C :: [Polite] {
+    fn greet(): string = "good day"
+}
+let c = C { }
+let g: Greeter = c
+let p: Polite = c
+println(f"{Greeter.greet(c)} {Polite.greet(c)} {g.greet()} {p.greet()}")
+fn viaGreeter<T :: [Greeter]>(t: T): string = t.greet()
+fn viaPolite<T :: [Polite]>(t: T): string = t.greet()
+println(f"{viaGreeter(c)} {viaPolite(c)} {c.twice()}")
+struct V :: [Mul] {
+    x: float,
+    fn mul(rhs: V): V = V { x = this.x * rhs.x }
+}
+extend V :: [Mul<float>] {
+    fn mul(rhs: float): V = V { x = this.x * rhs }
+}
+let v = V { x = 2.0 }
+println(f"{(v * 3.0).x} {v.mul(4.0).x} {(v * 4).x} {v.mul(v).x}")

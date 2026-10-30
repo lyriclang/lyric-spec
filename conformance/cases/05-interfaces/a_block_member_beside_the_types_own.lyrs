@@ -1,0 +1,18 @@
+//! check
+//! error: LYS-SEM0121
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 §3 rule 1): a conformance block's member beside the type's own of the name
+// is refused at any count.
+interface I {
+    fn g(): int
+}
+interface J {
+    fn h(): int
+}
+struct S :: [I] {
+    fn g(): int = 1
+}
+extend S :: [J] {
+    fn h(): int = 1
+    fn g(x: int): int = 2
+}

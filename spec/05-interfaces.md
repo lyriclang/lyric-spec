@@ -136,10 +136,9 @@ S7.
    member, one function for both. `I.m(x, …)` calls the member of `I` with `x` as its receiver,
    the implementation `x`'s type has for `I`: on a value of a type, through a type parameter,
    through an interface value; the receiver conforms (`LYS-SEM0125`) and comes first
-   (`LYS-SEM0014`); a static member is not called through its interface (`LYS-SEM0231`). One
-   name implemented apart per interface in separate blocks (§3 rule 4, `LYS-SEM0122`), and the
-   members of several instances of one generic interface side by side (§3 rule 5), come with
-   S7c5d.
+   (`LYS-SEM0014`); a static member is not called through its interface (`LYS-SEM0231`). A
+   name implemented apart per conformance block, and the members of several instances of one
+   generic interface side by side, are rule 18's.
 14. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
@@ -192,9 +191,31 @@ S7.
    `a op= b` is `a = a op b` on a place whose type that `Out` is (`LYS-SEM0001` otherwise), what
    leads to the place evaluated once. The scalars keep their own arithmetic and conform besides —
    `int` to all, `float` to the arithmetic and `Neg`, `string` to `Add` —, so `T :: [Add<Out =
-   T>]` takes them; under `T :: [Add]` alone `a + b` is a `T.Out`. A type conforms to one instance
-   of an operator's interface (rule 13: one member of a name); several, an answer each, come with
-   S7c5d.
+   T>]` takes them; under `T :: [Add]` alone `a + b` is a `T.Out`. A type may conform to several
+   instances of an operator's interface, each answering its own `Out` (rule 18): `v * 3.0` takes
+   `Mul<float>` and its answer.
+18. **Several members of one name** (Lyric 5 §3 rules 1, 4–5, §8 rule 3, 08 §1.2; S7c5d). A
+   type's members, its blocks' among them, share a name at different counts — a default widens a
+   count to a range, a function's too (`LYS-SEM0085`) —, a call taking the one that takes as many
+   arguments (`LYS-SEM0087` where none does). One name implemented apart in separate conformance
+   blocks belongs to each block: the unqualified call is refused (`LYS-SEM0122`); the qualified
+   call, an interface value, a constraint and a default of the interface reach each. Members of one
+   name and count stand side by side where each answers its own instance of one generic interface
+   — `struct Label :: [From<int>, From<string>]`, or an operator's conformance block,
+   `extend V :: [Mul<float>]`, beside the type's own `mul` —; two answering one instance are
+   refused (`LYS-SEM0085`). A call chooses among them by the arguments' types: the member whose
+   parameters take them, of several the one whose parameters are those types, a literal its
+   default type (`LYS-SEM0086` where none or several are left); a constraint chooses by the
+   instance it names, an interface value by its table — each instance has slots of its own. A
+   method read without a call is one of several where the position's function type says which
+   (`LYS-SEM0089`). Any other second member of a name is refused where it is declared
+   (`LYS-SEM0121`), a conformance block's beside the type's own at any count. An answer belongs to
+   its conformance instance: a conformance block's answers are its conformances', the body's every
+   conformance's — `Mul<float>` answers `Out = float` beside the type's `Mul`, and `T :: [Mul<float>]`
+   reads that answer. The prelude gives `int` `Add<float>`, `Sub<float>`, `Mul<float>`,
+   `Div<float>` and `Rem<float>`, `Out = float`, and `float` the same over `int` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)):
+   `T :: [Add<float, Out = float>]` takes either. A block on one instance (`extend Box<int>`)
+   holds one member of a name (STATUS P22).
 
 ## Deviations
 
