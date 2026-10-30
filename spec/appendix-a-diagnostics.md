@@ -99,6 +99,7 @@ The parser's. A declaration that does not parse reports these and nothing that f
 | LYR-PAR0064 | E | [16-diagnostics](16-diagnostics.md) | a field that ends with ';' | A field of a struct or class, or a field of an initializer, ends with `;` where its list separates with `,`; read as the `,` it stands for. |
 | LYR-PAR0065 | E | [16-diagnostics](16-diagnostics.md) | a 'continue', 'break' or 'return' where a value stands | A jump stands where an expression is wanted — a match arm, a branch of an `if` expression —; it is a statement and goes in a block, `=> { continue; }`. |
 | LYR-PAR0066 | E | [05-interfaces](05-interfaces.md) | several interfaces after '::' without brackets | Several interfaces follow `::` — of a struct, class, enum, interface or extend block, or of an associated type's bound — without brackets around them. One interface stands without them, several in them. |
+| LYR-PAR0067 | E | [13-abi](13-abi.md) | an 'unsafe' block where a value stands | `unsafe { … }` stands where an expression is wanted — after `=`, after `return`, as an argument —; it is a statement and gives no value. |
 
 ## A.3 RES — Names and modules
 

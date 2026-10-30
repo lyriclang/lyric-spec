@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0067
+//! since: 5.0.0
+// 13 §3 rule 8: 'unsafe { … }' is a statement; where a value stands it is refused, once, and is
+// not a call of a name 'unsafe' with a trailing lambda.
+import std.ffi { Ptr, alloc, free };
+
+fn main(): void {
+    let p: Ptr<int> = unsafe { alloc<int>(1) };
+    unsafe { free(p); }
+}
