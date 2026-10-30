@@ -88,9 +88,10 @@ S7.
    conformance to those alone (**conditional conformance**; `Box<int>` is no `Show` where `int`
    is none, `LYS-SEM0028`). A type conforms to an interface once, from whichever site
    (`LYS-SEM0133` at the second). The target is the type at the block's parameters, in its order;
-   `extend<T> T[] { … }` (or `List<T>`) adds members to every list, `this` the list (S7b2a). A
-   block on one instance, a list's conformances and the blanket blocks (rules 6–9) come with
-   the collections (S7).
+   `extend<T> T[] { … }` (or `List<T>`) adds members to every list, `this` the list (S7b2a), and
+   `extend<T> T[] :: [I] { … }` makes every list an `I` (S7c3), for a value of `I` and a
+   constraint alike. A block on one instance and the blanket blocks (rules 6–9) come with the
+   collections (S7).
 13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
    every conformance's member of its name; two defaults of one name from two interfaces, which the
    type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the
