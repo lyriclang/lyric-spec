@@ -198,8 +198,9 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    class, in declaration order, `index` its place in the answer, `hasDefault` whether the
    declaration writes an initializer — the type's own default counts for nothing; a payload's
    field as a struct's (the sweep after M10, W9, X2); `variants<E>()`, a
-   `VariantInfo { name, index, payload }` per variant, the payload's fields named by their position
-   where they have no names; `members<T>()`, a
+   `VariantInfo { name, index, payload, value }` per variant, the payload's fields named by their position
+   where they have no names, `value` the integer C holds for the variant of an enum with `@Layout`
+   ([13 §3](13-abi.md) rule 5) and its index in any other; `members<T>()`, a
    `MemberInfo { name, visibility, isStatic, isMut, kind, parameters }` per function, constant
    and associated type of the type's own body, in declaration order — `kind` a `MemberKind`
    (`Function`, `Constant`, `AssociatedType`), `parameters` a function's

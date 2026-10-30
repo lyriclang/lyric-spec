@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 5: no two variants are the same integer - here the one after 'B' is 1, as 'A' is.
+@Layout(C)
+enum E { A = 1, B = 0, C }
+
+fn main(): void {
+}
