@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | A1+A2 A1+A2
+//! | B+3
+//! | Pair { a = 1, b = 2 } Pair { a = 1, b = "s" }
+//! | (1, 2)
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.1 rule 5): the trailing type arguments a use leaves out take their
+// defaults — `Self` the conformer in a conformance, the parameter in a constraint; an earlier
+// parameter by name; at a type, a conformance, a call.
+interface Combine<With = Self> {
+    fn combine(o: With): string
+}
+struct A :: Combine {
+    n: int,
+    fn combine(o: A): string = f"A{this.n}+A{o.n}"
+}
+struct B :: Combine<int> {
+    fn combine(o: int): string = f"B+{o}"
+}
+fn twice<T :: [Combine]>(a: T, b: T): string = a.combine(b)
+fn written<T :: [Combine<T>]>(a: T, b: T): string = a.combine(b)
+println(f"{twice(A { n = 1 }, A { n = 2 })} {written(A { n = 1 }, A { n = 2 })}")
+println(B { }.combine(3))
+struct Pair<X, Y = X> {
+    a: X,
+    b: Y,
+}
+let p: Pair<int> = Pair { a = 1, b = 2 }
+let q: Pair<int, string> = Pair { a = 1, b = "s" }
+println(f"{p} {q}")
+fn pairOf<P, Q = P>(a: P, b: Q): (P, Q) = (a, b)
+println(pairOf<int>(1, 2))

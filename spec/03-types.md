@@ -71,12 +71,18 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    `let` copied, a `var` in a box both sides share, fresh in each pass of a loop (02 C1),
    `this` copied; a local `fn` that calls itself. Two function values are not compared
    (`LYS-SEM0059`). A brace after a name that is no type's opens a trailing block (§2 D4).
-12. **Generics.** Lyric 5 §9.1 rules 1–3 and §9.2 rules 1–4 apply to functions, structs,
+12. **Generics.** Lyric 5 §9.1 rules 1–3 and 5 and §9.2 rules 1–4 apply to functions, structs,
    classes and enums: `fn f<T :: [C]>(…)`, `struct Pair<A, B> { … }`; a method of a generic
    type, of every list (`extend<T> T[]`) or of an interface may have type parameters of its own,
    `fn map<U>(f: fn(T) -> U): Box<U>` — the receiver binds its owner's, a call's arguments the
    method's (S7c4c1); a generic type may be named with its arguments before its declaration,
-   `fn f(b: Box<int>)` above `struct Box<T>` (S7c4c3b); a generic is checked once,
+   `fn f(b: Box<int>)` above `struct Box<T>` (S7c4c3b); a type parameter may carry a **default**,
+   `interface Add<Rhs = Self>`, `struct Pair<A, B = A>` (§9.1 rule 5; S7c5c1): a use that writes
+   fewer arguments — of a type, of an interface, at a call — takes the trailing defaults, read
+   where the generic is declared, `Self` the conforming type in a conformance and the parameter in
+   a constraint, so `V :: [Add]` is `V :: [Add<V>]` (`LYS-SEM0026` where one without a default is
+   left out); `Coroutine<Y>` is `Coroutine<Y, void>` so (10); an extend block's parameters take
+   none, its target binds them (`LYS-SEM0026`); a generic is checked once,
    a value of `T` has its constraints' members and no others (`LYS-SEM0012`); the arguments of a
    call bind the type parameters at any depth, a lambda's after the others, what they leave open
    the type the call's position expects, never overriding them (§9.2 rule 2; S7c4c2): `let xs:
