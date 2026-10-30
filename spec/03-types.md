@@ -17,7 +17,8 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    (`LYS-SEM0019`), and so is `var` on one (`LYS-SEM0901`). A class is the mutable reference: its
    `var` fields are written by any code that holds it, its methods without `mut fn` (§7).
 4. **Omitted return types** (Kotlin's rule, [09 Ret](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)): `fn f(…) = e`
-   has the type of `e`; a block body without a written type is `void`. A function whose type
+   has the type of `e`; a block body without a written type is `void`. Where `e` gives no
+   value the function runs it and gives none, `fn say(s: string) = println(s)` (S7d2). A function whose type
    depends on itself through its own body is refused until the type is written (`LYS-SEM0010`).
 5. A code means what Lyric 5's `LYR-SEM` code of the same number means; Lyric-Script's own
    codes start at 0900 (§16). `LYS-NYI0001` names a form a later milestone of the
@@ -45,8 +46,9 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    `var xs = []` and `let xs = []` take the same way (S7b2b): the first use that fixes a list
    type — a push of a `T`, an assignment of a `T[]`, the binding standing where a `T[]` is
    taken — makes it a `T[]`; nothing fixing it is `LYS-SEM0010`; an empty `[]` elsewhere that
-   no position gives a type is `LYS-SEM0060` (Lyric 5 §9.2 rule 3). `[:]` follows with the maps
-   (S7d).
+   no position gives a type is `LYS-SEM0060` (Lyric 5 §9.2 rule 3). `[:]`, the empty map, takes
+   the map type its position names, `let m: Map<string, int> = [:]`; where none does it is
+   refused so (`LYS-SEM0060`; S7d2).
 9. **Tuples.** Lyric 5 §6 rules 1–5 apply: `(A, B)` from two elements (`(1,)` is refused,
    `LYS-PAR0010`); labels `(x: A, y: B)`, no part of the type and seen through the type they
    were written on; `t.0` and `t.x` (`LYS-SEM0012` for an element the tuple lacks); elements
@@ -94,7 +96,10 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    of a generic enum takes it from the position. Type arguments may be written at a call,
    `none<int>()` (§9.2 rule 4), and at a method, `it.collect<int[]>()` — its own, after those its
    receiver binds, as many as it declares (`LYS-SEM0026`; S7c4c2). An initializer's are written
-   after the type's name, `Pair<int, string> { … }` (§9.3 rule 1; S7c6d). Among the type
+   after the type's name, `Pair<int, string> { … }` (§9.3 rule 1; S7c6d). A static called
+   through a generic type takes the arguments written after the type's name,
+   `Box<string>.none()`, `Map<string, int>.withCapacity(4)`, and binds the rest from its
+   arguments and its position, `let m: Map<string, int> = Map.new()` (§9.2 rule 6; S7d2). Among the type
    arguments of a call, a method, an initializer and a function's value the placeholder `_`
    stands for one the inference fills (§9.2 rule 4, §9.3 rule 2): `pair<_, string>(1, "x")`,
    `Pair<float, _> { first = 2, second = true }` — a field checked with as much of its type as
@@ -129,7 +134,10 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    this rule's kind, `static fn fromArrayLiteral(items: T[]): Self`): a list literal where its
    place's type conforms is a list of `T`, its elements checked against `T`, given to that member
    — `let b: Bag = [1, 2]`, also through a type parameter `B :: [FromArrayLiteral<int>]`.
-   `FromMapLiteral` comes with the maps (S7d).
+   `FromMapLiteral<K, V>` (S7d2; Script 02 K4), `static fn fromMapLiteral(entries: (K, V)[]):
+   Self`: a map literal, `["a": 1]` or `[:]`, where its place's type conforms is a list of its
+   entries, each key checked against `K` and each value against `V`, given to that member; where
+   no place names a type it is a `Map` of its first entry's types ([12](12-stdlib.md) rule 5).
 15. *Informative.* The VM holds a `?T` of a reference type as the reference, `null` as none; any
    other `?T` as the slots of `T` and one presence slot after them; a tuple as its elements'
    slots in order, inline; an enum without payloads as an `int`, one with payloads as an object

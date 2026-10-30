@@ -2,7 +2,8 @@
 
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
-**Status.** The core written (S2), the standard library's modules (S7a); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6)
+and maps (S7d2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -55,6 +56,25 @@
    items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` of a
    `TotalOrder` item and `sortedBy(cmp)` put the values in a list, stably sorted ([03](03-types.md)
    rule 16; S7c6c2); `groupBy`, `toMap` and `toSet` come with the map and the set (S7d).
+5. **Maps** (Lyric 5 12 §Collections; Script [12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md); S7d2). `std.collections`
+   holds `class Map<K :: [Hashable], V>`, whose names are the prelude's: the loader adds the
+   module to a program that names `Map` or writes a map literal ([03](03-types.md) rule 14);
+   `import std.collections { Map }`, as Lyric 5's own modules write it, comes with S7d4. A
+   map holds each key once, in the order the keys came — a key taken out and put back comes last.
+   `m[k]` is the value under `k` or `null`, `m[k] = v` puts `v` there, `m[k] = null` takes `k`
+   out (`IndexSet<K>` of `?V`), `k in m` asks the keys. Its members are Lyric 5's:
+   `Map.new()`, `Map.withCapacity(n)` — a negative `n` a panic —, `Map.from(pairs)`, a later
+   value of a key replacing the earlier one; `insert(k, v)` and `remove(k)`, the value replaced
+   or taken, `null` where there was none; `get(k)`, `containsKey(k)`, `getOr(k, d)`,
+   `getOrInsert(k, make)`, `update(k, f)` — whether there was a value —, `retain(p)` — how
+   many went —, `length()`, `isEmpty()`, `clear()`. A map is an `Iterable` of its entries,
+   `(K, V)`, walked in their order, as `entries()`, `keys()` and `values()` are; a key put in or
+   taken out, or the map cleared, while an iterator walks makes its next pull panic
+   (`LYS-RT0016`) — writing the value of a key that is there is no change. Pairs collect into a
+   map (`FromIterator<(K, V)>`). Two maps are equal where they hold the same keys under equal
+   values, in any order, where `V` is an `Equatable`; a map is a `Clone` where `K` and `V` are, a
+   map of the clones in the same order. Its Debug form is `{"a": 1, "b": 2}`, `{}` empty. A key
+   that is no `Hashable` — a `float`, a list — is refused (`LYS-SEM0028`).
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -63,6 +83,10 @@
 - `join` takes every item, written as `{x}` writes it, where Lyric 5's asks a `Display` — every
   value prints in Script, its `Display` comes with S7e; `sum` and `product` stand on `int` and
   `float` items, not on a `Num` (STATUS P25).
+- A map keeps the order its keys came in ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) and has no hasher parameter `H`: one hasher,
+  the prelude's ([05](05-interfaces.md) rule 20); `Map.from` takes a list. The VM keeps where
+  each hash lies; the program hashes the keys and compares them — keys of `int`, `char`, `bool`
+  and `string` too, whose way through the VM alone (STATUS P27) is measured with P21 (S7k).
 - Lyric 5's API adapted to Lyric-Script's types, plus the batteries `cli`, `csv`, `log`, `fs.glob`, and `reflect`; no `sync`, `thread`, `ffi`, `meta`, `syntax`, `build` ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
 
 **Conformance.** `conformance/cases/12-stdlib/` (`since: 1.0.0`).

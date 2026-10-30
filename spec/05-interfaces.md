@@ -42,15 +42,17 @@ S7.
    an `Identity` (`class C :: [Identity]`), by its reference, or as the `Equatable` it declares —
    through its own `equals`, else field by field; any other class, a function value and an
    interface value do not compare, and neither does a type holding one (`LYS-SEM0059`, the part
-   named). A type's own `equals(o: Self): bool` is what `==` calls; `x.equals(y)` is `x == y`
-   where the type has none. Over a type parameter `==` asks `T :: [Equatable]` (`LYS-SEM0059`
+   named). A type's own `equals(o: Self): bool` is what `==` calls — a generic type's at its
+   instance's arguments, one a conditional block gives only where the arguments meet the block's
+   constraints, `Box<C>` of a `C` that does not compare not comparing (S7d2); `x.equals(y)` is
+   `x == y` where the type has none. Over a type parameter `==` asks `T :: [Equatable]` (`LYS-SEM0059`
    otherwise) and compares as the argument's type does — a parameter so constrained gets a copy
    per argument type, not a shared one (11 Gen). The comparing methods of a list are the
    prelude's `extend<T :: [Equatable]> T[] :: Contains<T>` ([03](03-types.md) rule 16). `x in xs`
    is `xs.contains(x)` through the right operand's `Contains<T>` (`interface Contains<T> { fn
    contains(x: T): bool }`, Lyric 5 §12 rule 10; S7c5c3), `x` evaluated first and adapting to `T`,
-   `x !in xs` its negation; without it `in` is refused (`LYS-SEM0059`) — over a string and a map it
-   comes with S7e and S7d. A conditional conformance to an instance of a generic interface holds
+   `x !in xs` its negation; without it `in` is refused (`LYS-SEM0059`) — over a string it comes
+   with S7e; over a map it asks the keys ([12](12-stdlib.md) rule 5). A conditional conformance to an instance of a generic interface holds
    where the condition does, at compile time and at run time (S7c5c3). `Identity` is a name of the
    prelude, as `Any` is.
 9. **The Debug form, given unasked** (Lyric 5 §14 rules 2–3 and 7): every value prints. A

@@ -78,6 +78,11 @@
    05 §12 rule 10): `2.5 in 1.0..3.0`. The protocol gains Lyric 5's `fn sizeHint(): (int, ?int)`
    on `Iterator`, by default `(0, null)`, and `interface DoubleEnded :: Iterator { fn nextBack():
    ?Self.Item }`; a list's iterator walks from both ends and says its size exactly.
+9. **`for` takes its items apart** (Lyric 5 §2 rule 2; S7d2). `for (P in e)` with a pattern `P`
+   that cannot fail — a tuple, a field pattern over a struct, of names and `_` — binds its names
+   from each item, fresh each time, `for ((k, v) in m)`, `for ((i, (a, b)) in
+   xs.iter().enumerate())`, under a label too; a pattern that can fail is refused
+   (`LYS-SEM0098`), as after `let` ([09](09-patterns.md) rule 2).
 
 ## Deviations (skeleton, written with later milestones)
 

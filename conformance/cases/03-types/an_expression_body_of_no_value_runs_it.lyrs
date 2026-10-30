@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | one
+//! | two!
+//! | P 4
+//! since: 1.0.0
+// §3 rule 4: `fn f(…) = e` gives `e`'s value; where `e` gives none, it is run — a function's
+// body and a method's alike.
+fn say(s: string) = println(s)
+fn shout(s: string): void = say(s + "!")
+struct P {
+    n: int,
+    fn show() = println(f"P {this.n}")
+}
+say("one")
+shout("two")
+P { n = 4 }.show()

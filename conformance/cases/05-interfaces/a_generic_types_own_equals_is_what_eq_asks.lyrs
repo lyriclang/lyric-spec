@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | true false true
+//! | true false
+//! since: 1.0.0
+// §5 rule 8 (S7c5a): a type's own `equals` is what `==` asks — a generic type's too, at its
+// instance's arguments, and one a conditional block gives where the arguments meet it.
+class Pair<T :: [Equatable]> :: Equatable {
+    a: T,
+    b: T,
+    fn equals(o: Pair<T>): bool = this.a == o.a
+}
+class Box<T> {
+    v: T,
+}
+extend<T :: [Equatable]> Box<T> :: Equatable {
+    fn equals(o: Box<T>): bool = this.v == o.v
+}
+let p = Pair { a = 1, b = 2 } == Pair { a = 1, b = 3 }
+let q = Pair { a = 1, b = 2 } == Pair { a = 2, b = 2 }
+let r = Pair { a = "x", b = "y" } != Pair { a = "z", b = "y" }
+println(f"{p} {q} {r}")
+println(f"{Box { v = "s" } == Box { v = "s" }} {Box { v = 1 } == Box { v = 2 }}")

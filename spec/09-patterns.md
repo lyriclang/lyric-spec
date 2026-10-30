@@ -15,7 +15,9 @@ interfaces (S3f).
    form the variant does not have, `LYS-SEM0032` for alternatives binding different names,
    `LYS-SEM0097` for a name bound twice, `LYS-SEM0111` for a bare name that spells a variant.
 2. **Where a pattern stands.** In an arm of `match`, after `let`/`var` — `let P = e else { … }`,
-   its `else` leaving on every path, and without `else` only what cannot fail (`LYS-SEM0098`) —
+   its `else` leaving on every path, and without `else` only what matches every value of its
+   type — a field pattern over a struct of such too, `let P { x, y } = p` (S7d2) —
+   (`LYS-SEM0098`) —
    and in `if (let P = e)` and `while (let P = e)`, where a bare name keeps taking the value of
    an optional (Lyric 5 03 §3.2 rule 5); an `if let` whose pattern cannot fail is warned about
    (`LYS-SEM0104`).
