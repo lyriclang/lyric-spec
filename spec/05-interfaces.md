@@ -176,6 +176,20 @@ S7.
    `totalCompare` replaces the synthesis; `x.compare(y)` and `x.totalCompare(y)` stand on every
    conformer. Over a type parameter `T :: [Ordered]` the comparison is its argument's, in the
    copy (rule 8). A list, an optional and a tuple are no `Ordered`, as in Lyric 5.
+17. **Operators** (Lyric 5 §12 rules 1–4 and 7; S7c5c2): the prelude declares `interface Add<Rhs
+   = Self> { type Out = Self; fn add(rhs: Rhs): Self.Out }` and likewise `Sub` `sub`, `Mul`
+   `mul`, `Div` `div`, `Rem` `rem`, `BitAnd` `bitAnd`, `BitOr` `bitOr`, `BitXor` `bitXor`,
+   `Shl<Rhs = int>` `shl`, `Shr<Rhs = int>` `shr`, and `Neg` with `neg()`, `BitNot` with
+   `bitNot()`. On a struct, a class or an enum, `a + b` is `a.add(b)` through the conformance the
+   right operand's static type picks — `v * 2.5` takes `Mul<float>`, an `int` literal adapting to
+   a `float` where the type takes that —, its result the conformance's `Out`; `-a` and `~a` go
+   through `Neg` and `BitNot`; without the conformance the operator is refused (`LYS-SEM0003`).
+   `a op= b` is `a = a op b` on a place whose type that `Out` is (`LYS-SEM0001` otherwise), what
+   leads to the place evaluated once. The scalars keep their own arithmetic and conform besides —
+   `int` to all, `float` to the arithmetic and `Neg`, `string` to `Add` —, so `T :: [Add<Out =
+   T>]` takes them; under `T :: [Add]` alone `a + b` is a `T.Out`. A type conforms to one instance
+   of an operator's interface (rule 13: one member of a name); several, an answer each, come with
+   S7c5d.
 
 ## Deviations
 

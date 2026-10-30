@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | V { x = 4.0, y = 6.0 } V { x = -2.0, y = -2.0 }
+//! | V { x = 2.5, y = 5.0 } V { x = 2.0, y = 4.0 }
+//! | 6 V { x = 4.0, y = 6.0 } ab 8
+//! since: 1.0.0
+// §5 rule 17 (Lyric 5 §12 rules 1–2, 7): `a + b` through the conformance the right operand's type
+// picks, an `int` literal adapting; over `T :: [Add<Out = T>]` the scalars and a type alike.
+struct V :: [Add, Sub, Mul<float>] {
+    x: float,
+    y: float,
+    fn add(rhs: V): V = V { x = this.x + rhs.x, y = this.y + rhs.y }
+    fn sub(rhs: V): V = V { x = this.x - rhs.x, y = this.y - rhs.y }
+    fn mul(rhs: float): V = V { x = this.x * rhs, y = this.y * rhs }
+}
+let a = V { x = 1.0, y = 2.0 }
+let b = V { x = 3.0, y = 4.0 }
+println(f"{a + b} {a - b}")
+println(f"{a * 2.5} {a * 2}")
+fn sum<T :: [Add<Out = T>]>(xs: T[], zero: T): T {
+    var s = zero
+    for (x in xs) {
+        s = s + x
+    }
+    return s
+}
+println(f"{sum([1, 2, 3], 0)} {sum([a, b], V { x = 0.0, y = 0.0 })} {sum(["a", "b"], "")} {5.add(3)}")
