@@ -1,0 +1,12 @@
+//! check
+//! warning: LYR-SEM0234
+//! since: 5.0.0
+// 13 §3 rule 8: an 'unsafe' block that holds no memory operation marks nothing —
+// 'unused-unsafe' says it; calling a C function is not unsafe.
+extern "C" fn abs(n: int32): int32;
+
+fn main(): void {
+    unsafe {
+        let _ = abs(-3);
+    }
+}

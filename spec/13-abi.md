@@ -299,7 +299,9 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    about the block differs, and calling a C function is not unsafe. As a statement it gives no
    value: `unsafe {` where an expression stands — after `=`, after `return`, as an operand — is
    refused (`LYR-PAR0067`), not read as a call of a name `unsafe` with a trailing lambda; a value
-   made inside goes to a variable declared before the block.
+   made inside goes to a variable declared before the block. A block that holds none of the
+   memory operations, or stands within another `unsafe` block, marks nothing: the lint
+   `unused-unsafe` (`LYR-SEM0234`, warn) says so — the block is kept as small as what it holds.
    - `read()` is the `T` at the pointer's address, `write(v)` puts one there; `T` is what a field
      of a `@Layout(C)` struct may be (rule 4, `LYR-SEM0099`), and the memory's layout is C's.
    - `offset(n)` is the address `n` values of `T` further — before it for a negative `n`;

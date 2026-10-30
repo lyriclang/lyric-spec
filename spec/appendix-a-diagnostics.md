@@ -348,6 +348,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0231 | E | [05-interfaces](05-interfaces.md) | a static member of an interface called through the interface | A static member of an interface is called on the interface's name, `Make.make<Item>(s)`: the interface has no value to call it for. |
 | LYR-SEM0232 | E | [07-statements](07-statements.md) | a loop over a string | A `for` loop walks a `string`, which is no `Iterable`: `s.chars()` gives its characters, `s.lines()` its lines. |
 | LYR-SEM0233 | E | [13-abi](13-abi.md) | a memory operation outside an unsafe block | A pointer's `read`, `write`, `offset` or `cast`, `std.ffi`'s `alloc` or `free`, or `GcHandle.from`, is called outside an `unsafe { … }` block. |
+| LYR-SEM0234 | W | [13-abi](13-abi.md) | an unsafe block that holds no memory operation | An `unsafe { … }` block calls none of `std.ffi`'s memory operations, or stands within another `unsafe` block, which covers what it holds already. |
 
 ## A.5 MAC — Macros
 
@@ -566,6 +567,7 @@ Every warning is a lint (16 §5): its name, its code, its group and its level un
 | `unused-parameter` | LYR-SEM0198 | unused | warn | a parameter that is never used |
 | `unused-result` | LYR-SEM0178 | unused | warn | the value of a '@MustUse' call is dropped |
 | `unused-task` | LYR-SEM0212 | resources | warn | a task's handle dropped |
+| `unused-unsafe` | LYR-SEM0234 | unused | warn | an unsafe block that holds no memory operation |
 | `unused-var` | LYR-SEM0075 | unused | warn | a 'var' that is never reassigned |
 | `unused-variable` | LYR-SEM0071 | unused | warn | a local that is never used |
 | `useless-allow` | LYR-SEM0180 | unused | warn | an '@Allow' that takes back nothing |
