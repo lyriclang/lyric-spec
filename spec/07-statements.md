@@ -66,8 +66,24 @@
    12) — a type of the program that is a `FromIterator` too. Every iterator is an `Iterable`
    whose `iter()` is itself, through the prelude's blanket block `extend<I :: [Iterator]> I ::
    [Iterable<Iter = I>]` ([05](05-interfaces.md) rule 12; S7c4c3a), as in Lyric 5.
+8. **Ranges as values** (Lyric 5 12 §Iteration; S7c6a). `a..b` and `a..=b` outside a `for` head
+   are values of the prelude's `struct Range<T> { start: T, end: T }` and `struct
+   RangeInclusive<T>`, `T` the bounds' type — the one the position names, `let r: Range<float> =
+   0..3`, else the first bound's. A range of `int` or `char` is an `Iterable`: `r.iter()` gives a
+   new `RangeIter<T>` or `RangeInclusiveIter<T>` each time, which walks it from both ends — a range
+   of characters its scalar values, the surrogates passed over; an inclusive range up to its type's
+   last value ends there, no bound leaving the type. `for (x in a..b)` over `int` bounds stays the
+   counted loop; over a range value, or bounds of `char`, it walks `iter()`'s iterator, so a range
+   walked twice walks twice. A range of an ordered type contains its values, `x in r` (Lyric 5
+   05 §12 rule 10): `2.5 in 1.0..3.0`. The protocol gains Lyric 5's `fn sizeHint(): (int, ?int)`
+   on `Iterator`, by default `(0, null)`, and `interface DoubleEnded :: Iterator { fn nextBack():
+   ?Self.Item }`; a list's iterator walks from both ends and says its size exactly.
 
 ## Deviations (skeleton, written with later milestones)
+
+- A range is a value that never changes ([02 T7](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)), an `Iterable`, not an `Iterator` as Lyric 5's
+  struct with `var` bounds is: `r.next()` and an adapter on the range itself, `(0..n).map(f)`, are
+  refused (`LYS-SEM0012`); `r.iter()` walks it (STATUS P24).
 
 - No `mut fn`; class methods write `var` fields without a marker ([03](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
 
