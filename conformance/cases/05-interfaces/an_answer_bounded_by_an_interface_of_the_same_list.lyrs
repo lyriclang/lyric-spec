@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1
+//! since: 1.0.0
+// §5 rule 11: an answer meets its bound with every conformance of the type's list in place —
+// `type Next = Step` of a `Step :: [Walker, Source]`.
+interface Walker {
+    fn walk(): int
+}
+interface Source {
+    type Next :: [Walker]
+    fn source(): Self.Next
+}
+class Step :: [Walker, Source] {
+    type Next = Step
+    fn walk(): int = 1
+    fn source(): Step = this
+}
+println(Step { }.source().walk())

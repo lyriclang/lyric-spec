@@ -100,8 +100,19 @@ S7.
    interface's default, left to a field — comes first and is warned about where it stands
    (`LYS-SEM0168`); generic code that reaches the name through the block's constraints calls
    the block's, for that type too. Two blanket blocks that give a type one name are refused at
-   its call (`LYS-SEM0121`). A blanket block that conforms (rules 8–9), its static members and a
-   block on one instance come with S7c4c3; the other shapes of rule 6 with the collections (S7).
+   its call (`LYS-SEM0121`). Its static members are reached through a type it reaches,
+   `Cat.kind()`, or a type parameter, `T.kind()` (S7c4c3a). A blanket block may **conform**
+   (rule 8; S7c4c3a), `extend<T :: [Named]> T :: [Greets] { … }`: it gives the interface and its
+   chain to every type its constraints admit, its signatures checked at `T` (`LYS-SEM0042`,
+   `LYS-SEM0020`), the associated types answered in its body or by a fixation in its list —
+   `extend<I :: [Iterator]> I :: [Iterable<Iter = I>]`, §8 rule 3 (`LYS-SEM0128`,
+   `LYS-SEM0129`); such a type meets a constraint on the interface, and a value of the interface
+   made from it has the block's members in its table. A type that conforms to one of the chain
+   itself where the block reaches it is refused at its conformance, a second blanket block that
+   gives one of a chain at the block (`LYS-SEM0133`). A value of such an interface from a list,
+   from a generic type the VM holds or reached only through a conformance on a condition, and a
+   block on one instance come with S7c4c3b; a parameter only the conformance names (rule 9) with
+   `From`/`Into` (S7f); the other shapes of rule 6 with the collections (S7).
 13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
    every conformance's member of its name; two defaults of one name from two interfaces, which the
    type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the

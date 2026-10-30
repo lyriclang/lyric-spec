@@ -63,7 +63,9 @@
    block `extend<I :: [Iterator]> I { fn collect<C :: [FromIterator<I.Item>]>(): C }`;
    `it.collect()` pulls the values into the type the position expects, `let xs: string[] =
    words.iter().collect()`, or the one written, `it.collect<int[]>()` ([03](03-types.md) rule
-   12) — a type of the program that is a `FromIterator` too.
+   12) — a type of the program that is a `FromIterator` too. Every iterator is an `Iterable`
+   whose `iter()` is itself, through the prelude's blanket block `extend<I :: [Iterator]> I ::
+   [Iterable<Iter = I>]` ([05](05-interfaces.md) rule 12; S7c4c3a), as in Lyric 5.
 
 ## Deviations (skeleton, written with later milestones)
 
