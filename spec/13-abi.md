@@ -298,7 +298,10 @@ The pointer types are `std.ffi`'s; `@Layout` is a compiler instruction of the pr
    within which `std.ffi`'s memory operations may be called: a pointer's `read()`, `write(v)`,
    `offset(n)` and `cast<U>()`, `alloc<T>(n)` and `free(p)`. Called outside one, each is refused
    (`LYR-SEM0233`), as `GcHandle.from` is (rule 12); the block is lexical, a lambda written within it is within it. Nothing else
-   about the block differs, and calling a C function is not unsafe.
+   about the block differs, and calling a C function is not unsafe. As a statement it gives no
+   value: `unsafe {` where an expression stands — after `=`, after `return`, as an operand — is
+   refused (`LYR-PAR0067`), not read as a call of a name `unsafe` with a trailing lambda; a value
+   made inside goes to a variable declared before the block.
    - `read()` is the `T` at the pointer's address, `write(v)` puts one there; `T` is what a field
      of a `@Layout(C)` struct may be (rule 4, `LYR-SEM0099`), and the memory's layout is C's.
    - `offset(n)` is the address `n` values of `T` further — before it for a negative `n`;

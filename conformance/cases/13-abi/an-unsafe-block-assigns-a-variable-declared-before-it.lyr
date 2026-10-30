@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 7
+//! since: 5.0.0
+// 13 §3 rule 8: a value made in an 'unsafe' block goes to a variable declared before it.
+import std.ffi { Ptr, alloc, free };
+import std.io { println };
+
+fn main(): void {
+    var p: Ptr<int>;
+    unsafe {
+        p = alloc<int>(1);
+        p.write(7);
+    }
+    var n: int;
+    unsafe {
+        n = p.read();
+        free(p);
+    }
+    println(f"{n}");
+}
