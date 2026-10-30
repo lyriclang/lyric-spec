@@ -77,9 +77,10 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 **Conformance.** Every rejecting case names its codes; the catalogue against the compiler in the toolchain's
 own tests (`tests/Lyric5.Tests`, `CatalogTests`).
 
-1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `CT`, `CG`, `PKG`, `BLD`, `LNK`, `CLI`,
+1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `MIG`, `CT`, `CG`, `PKG`, `BLD`, `LNK`, `CLI`,
    `ICE`, `RT`, and `IR`, retired —, and four digits. `LNK` holds the link's findings
-   ([15 §5.2](15-project.md#52-linking) rule 12). The code and its severity are contract; the message's wording is not.
+   ([15 §5.2](15-project.md#52-linking) rule 12), `MIG` the migration's (§6 rule 5). The code and its severity are
+   contract; the message's wording is not.
 2. Every code the toolchain reports stands in [Appendix A](appendix-a-diagnostics.md), generated from the
    toolchain's catalogue, with its severity, the chapter whose rule it is, and when it is reported. A code no
    longer reported is **retired** there: its number is not given to another finding.
@@ -190,3 +191,11 @@ programs; it does not change them.
    A change that needs a reader: `naming`'s new name, written where the name is declared (its uses are an
    editor's rename); `self-assignment`'s removal of `x = x`, which may stand for an assignment meant
    otherwise; an unknown name's closest known one (`did you mean`).
+5. *(Informative.)* **`lyric fix --from-4 [<file.lyr>]`** migrates a Lyric 4 program — the `lyric.json` of the
+   directory (`-C`), or the file — to Lyric 5. It reads the program with Lyric 4.6's own front end, frozen in
+   the toolchain, and a program 4.6 refuses is not changed (`LYR-MIG0001`, exit 1; a `lyric.json` 4.6 would
+   not read, `LYR-MIG0002`, exit 2). The rules of the migration rewrite the program's own files in place —
+   spans of the text, so comments and layout stay —, make a `lyric.toml` of the `lyric.json`, and say what
+   they leave to a person as hints of the area `MIG`, on the standard error and in `fix-from-4.txt` beside
+   the manifest or the file. `--dry-run` prints the changes as a unified diff and writes nothing; `--json`
+   does not go with it. The migration promises no program that compiles: `lyric check` says what is left.
