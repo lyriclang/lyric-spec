@@ -109,10 +109,14 @@ S7.
    `LYS-SEM0129`); such a type meets a constraint on the interface, and a value of the interface
    made from it has the block's members in its table. A type that conforms to one of the chain
    itself where the block reaches it is refused at its conformance, a second blanket block that
-   gives one of a chain at the block (`LYS-SEM0133`). A value of such an interface from a list,
-   from a generic type the VM holds or reached only through a conformance on a condition, and a
-   block on one instance come with S7c4c3b; a parameter only the conformance names (rule 9) with
-   `From`/`Into` (S7f); the other shapes of rule 6 with the collections (S7).
+   gives one of a chain at the block (`LYS-SEM0133`) — a list, a generic type the VM holds, and
+   one a conformance on a condition reaches, on that condition (S7c4c3b), among them. A **block
+   on one instance** (rules 1–3; S7c4c3b), `extend Box<int> { … }`, `extend int[] { … }`, adds
+   its members and conformances to that instance alone, checked at it — another instance has
+   none of them (`LYS-SEM0012`), and one whose template conforms already, unconditionally or
+   on a condition the instance meets, conforms at a second site (`LYS-SEM0133`). A parameter
+   only the conformance names (rule 9) comes with `From`/`Into` (S7f); the other shapes of rule
+   6 with the collections (S7).
 13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
    every conformance's member of its name; two defaults of one name from two interfaces, which the
    type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the

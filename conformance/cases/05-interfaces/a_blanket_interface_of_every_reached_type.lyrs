@@ -1,0 +1,45 @@
+//! run
+//! stdout:
+//! | hi 3 things
+//! | hi co
+//! | hi cond of 1 things
+//! | hi cond of 2 things
+//! | true false
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 8): a blanket block gives its interface, with a table, to a list,
+// to a coroutine and to a generic type a conformance on a condition reaches — on that condition.
+interface Named {
+    fn name(): string
+}
+interface Greets {
+    fn greet(): string
+}
+extend<T :: [Named]> T :: [Greets] {
+    fn greet(): string = f"hi {this.name()}"
+}
+extend<T> T[] :: Named {
+    fn name(): string = f"{this.length()} things"
+}
+extend<Y, R> Coroutine<Y, R> :: Named {
+    fn name(): string = "co"
+}
+fn letters(): Coroutine<string> {
+    yield "a"
+}
+struct Cond<T> {
+    v: T,
+}
+extend<T :: [Named]> Cond<T> :: Named {
+    fn name(): string = f"cond of {this.v.name()}"
+}
+fn viaParam<G :: [Greets]>(x: G): string = x.greet()
+let g: Greets = [1, 2, 3]
+println(g.greet())
+let c: Greets = letters()
+println(c.greet())
+let h: Greets = Cond { v = [9] }
+println(h.greet())
+println(viaParam(Cond { v = [1, 2] }))
+let yes: Any = Cond { v = [1] }
+let no: Any = Cond { v = 1 }
+println(f"{yes is Greets} {no is Greets}")

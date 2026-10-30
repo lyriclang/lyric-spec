@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | 3
+//! | x
+//! since: 1.0.0
+// §3 rule 12: a generic type may be named with its arguments before it is declared.
+fn f(b: Box<int>): int = b.v + 1
+struct Holder {
+    b: Box<string>,
+}
+struct Box<T> {
+    v: T,
+}
+println(f(Box { v = 2 }))
+println(Holder { b = Box { v = "x" } }.b.v)

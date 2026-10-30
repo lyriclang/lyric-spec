@@ -75,7 +75,8 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    classes and enums: `fn f<T :: [C]>(…)`, `struct Pair<A, B> { … }`; a method of a generic
    type, of every list (`extend<T> T[]`) or of an interface may have type parameters of its own,
    `fn map<U>(f: fn(T) -> U): Box<U>` — the receiver binds its owner's, a call's arguments the
-   method's (S7c4c1); a generic is checked once,
+   method's (S7c4c1); a generic type may be named with its arguments before its declaration,
+   `fn f(b: Box<int>)` above `struct Box<T>` (S7c4c3b); a generic is checked once,
    a value of `T` has its constraints' members and no others (`LYS-SEM0012`); the arguments of a
    call bind the type parameters at any depth, a lambda's after the others, what they leave open
    the type the call's position expects, never overriding them (§9.2 rule 2; S7c4c2): `let xs:
@@ -155,7 +156,8 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    after a change of the list's length (`LYS-RT0016`). A list is an interface
    value (S7c3) — an `Any`, or of an interface `extend<T> T[] :: [I]` gives it — in a box of its
    type's own, so `x is int[]` tells it and `{x}` prints its Debug form; a list of a type
-   parameter as an interface value comes with S7c4c3. Every list is a `FromIterator` of its
+   parameter is one too, in the box of its copy's element — a shared copy makes its descriptor
+   where it runs —, and `x is T[]` tests it (S7c4c3b). Every list is a `FromIterator` of its
    element (S7c4c2): `let xs: int[] = it.collect()` ([07](07-statements.md) rule 7).
 17. *Informative.* The VM holds a list as one object with the scalar and the reference slots of
    its elements apart: a list of `int` holds its ints unboxed, a list of tuples their slots in
