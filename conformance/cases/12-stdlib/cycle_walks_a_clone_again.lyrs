@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | [1, 2, 1, 2, 1] [0, 1, 0, 1, 0] []
+//! since: 1.0.0
+// §12 rule 3 (Lyric 5 12 Iteration): `cycle()` of an iterator that clones — a list's walk, a
+// range's — gives its values over and over, none where it has none.
+let cyc: int[] = [1, 2].iter().cycle().take(5).collect()
+let cr: int[] = (0..2).iter().cycle().take(5).collect()
+let empty: int[] = []
+let ce: int[] = empty.iter().cycle().take(3).collect()
+println(f"{cyc} {cr} {ce}")

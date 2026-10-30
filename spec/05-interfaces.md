@@ -216,6 +216,23 @@ S7.
    `Div<float>` and `Rem<float>`, `Out = float`, and `float` the same over `int` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)):
    `T :: [Add<float, Out = float>]` takes either. A block on one instance (`extend Box<int>`)
    holds one member of a name (STATUS P22).
+19. **`Clone` and `Default`** (Lyric 5 §14 rules 1–4; Script [05 D13](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md); S7c6c1). The prelude declares
+   `interface Clone { fn clone(): Self }` and `interface Default { static fn default(): Self }`,
+   constraints only; the scalars and `string` conform to both, a list to `Default` and, of a
+   `Clone` element, to `Clone` — a new list of the elements' clones. A struct, a class or an enum
+   that lists one without the member has it synthesized: `clone` copies the value parts — a
+   scalar, a string, a struct, an enum, a function — and clones the reference parts, an object
+   and a list, an optional's value and a tuple's elements alike, an enum's variant rebuilt with
+   its payload so; a value without a reference part is itself. `default` takes each field's
+   initializer, else its type's default: zero, `false`, `'\0'`, `""`, `null`, `[]`, a tuple of
+   its elements' defaults, a type's `default()`. A reference part that does not clone, a field
+   without an initializer whose type has no default, is refused at the declaration
+   (`LYS-SEM0020`); an enum's `Default` too (`LYS-SEM0135`). A generic type clones and defaults
+   where its arguments do: at its declaration a part over a type parameter is conditional, so
+   `Box<NoClone>` has no `clone` (`LYS-SEM0012`) and is no `Clone` (`LYS-SEM0028` at a
+   constraint). Through `T :: [Clone]` and `T :: [Default]`, `x.clone()` and `T.default()` are
+   the argument's own; a member the compiler synthesizes — `equals`, `compare`, `clone` — is never
+   called through a table, which holds none.
 
 ## Deviations
 

@@ -29,12 +29,14 @@
    `Iterable`, `chain(other)` of the same items, `mapNotNull(f)`, `flatMap(f)` and, over an
    iterator of `Iterable`s, `flatten()`, `dedupBy(same)` and, of an `Equatable` item, `dedup()`,
    `scan(init, f)` — `init` first —, `peekable()` with `peek()`, and `rev()` of a `DoubleEnded`
-   iterator ([07](07-statements.md) rule 8). Each gives a class of its own under Lyric 5's name
+   iterator ([07](07-statements.md) rule 8), and `cycle()` of a `Clone` iterator — its values over
+   and over, from a clone each time, none where it has none: a list's walk and a range's clone
+   ([05](05-interfaces.md) rule 19). Each gives a class of its own under Lyric 5's name
    (`MapIter`, `FilterIter`, …), lazy: a pull takes from the iterator below what it needs. A
    program imports a class where it writes the type, `import std.iter { MapIter }` (`LYS-SEM0011`
    otherwise). An adapter over a `Closeable` iterator is `Closeable` and passes `close()` on —
    `rev` excepted —, so a loop that leaves `gen().map(f)` early closes the coroutine; `zip` and
-   `chain` close both of theirs where both are. `cycle()` comes with `Clone` (S7c6c).
+   `chain` close both of theirs where both are; `cycle` passes no `close()` on, as Lyric 5's.
 4. **The terminators of every iterator** (Lyric 5 12 §Iteration; S7c6b2), `std.iter`'s too: each
    walks the iterator — a class one where it stands, so what a terminator leaves stays left — to
    an answer. `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a value;

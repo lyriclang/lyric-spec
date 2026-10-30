@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 1 42 (3, 3) ([1, 2], [1, 2])
+//! | 0 3 0 5
+//! since: 1.0.0
+// §5 rule 19 (Lyric 5 §14 rule 4): `x.clone()` through `T :: [Clone]`, over an object too; a
+// generic type clones where its arguments do; a list of objects clones each.
+class Counter :: [Clone] {
+    var n: int = 0
+}
+fn twin<T :: [Clone]>(x: T): (T, T) = (x, x.clone())
+let a = Counter { n = 1 }
+let (p, q) = twin(a)
+q.n = 42
+println(f"{p.n} {q.n} {twin(3)} {twin([1, 2])}")
+class Box<T> :: [Clone] {
+    var v: T
+}
+let bx = Box { v = Counter { } }
+let by = bx.clone()
+by.v.n = 3
+let cs = [Counter { }]
+let ds = cs.clone()
+ds[0].n = 5
+println(f"{bx.v.n} {by.v.n} {cs[0].n} {ds[0].n}")
