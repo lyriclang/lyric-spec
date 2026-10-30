@@ -281,7 +281,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `expand` | `[<file.lyr>]` | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--bin <name>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q` | yes | — |
 | `test` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q`, `--filter, -f <text>`, `--no-run` | yes | yes |
 | `bench` | — | `--profile <name>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--target <triple>`, `-C <dir>`, `--offline`, `--locked`, `--verbose, -v`, `--quiet, -q`, `--filter, -f <text>`, `--save <file>`, `--compare <file>` | yes | — |
-| `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run` | yes | yes |
+| `fix` | `[<file.lyr>]` | `-C <dir>`, `--offline`, `--dry-run`, `--from-4` | yes | yes |
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
 | `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
