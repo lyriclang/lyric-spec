@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | Box { v = [C { n = 1 }] }
+//! | [C { n = 1 }]
+//! since: 1.0.0
+// §5 rule 9: a generic type's form in a generic body whose argument is a list of the body's own
+// parameter, `Box<T[]>`, its values printed through their tables.
+class C {
+    n: int,
+}
+class Box<T> {
+    v: T,
+}
+fn k<T>(x: T) {
+    let b: Box<T[]> = Box { v = [x] }
+    println(b)
+    println(b.v)
+}
+k(C { n = 1 })

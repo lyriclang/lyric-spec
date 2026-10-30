@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 0 2
+//! since: 1.0.0
+// §3 rule 12: in a generic body an argument takes the type the receiver binds its parameter to,
+// though that type names the body's own parameters — `m.getOr(1, [])` of a `Map<int, T[]>`.
+class Box<T> {
+    v: T,
+    fn or(d: T): T = this.v
+}
+fn g<T>(x: T): int {
+    let m: Map<int, T[]> = Map.new()
+    return m.getOr(1, []).length()
+}
+fn h<T>(x: T): int {
+    let b: Box<T[]> = Box { v = [x, x] }
+    return b.or([]).length()
+}
+println(f"{g(5)} {h("a")}")

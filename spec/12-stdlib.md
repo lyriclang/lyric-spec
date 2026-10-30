@@ -2,8 +2,8 @@
 
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
-**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6)
-and maps (S7d2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
+maps and sets (S7d2–S7d3); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -55,7 +55,7 @@ and maps (S7d2); the rest a skeleton, written with the milestone that builds it 
    `max()` of an `Ordered` value, the first of equal ones, `null` without a value. Where the
    items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` of a
    `TotalOrder` item and `sortedBy(cmp)` put the values in a list, stably sorted ([03](03-types.md)
-   rule 16; S7c6c2); `groupBy`, `toMap` and `toSet` come with the map and the set (S7d).
+   rule 16; S7c6c2); `groupBy`, `toMap` and `toSet` are std.collections' (rule 6).
 5. **Maps** (Lyric 5 12 §Collections; Script [12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md); S7d2). `std.collections`
    holds `class Map<K :: [Hashable], V>`, whose names are the prelude's: the loader adds the
    module to a program that names `Map` or writes a map literal ([03](03-types.md) rule 14);
@@ -75,6 +75,23 @@ and maps (S7d2); the rest a skeleton, written with the milestone that builds it 
    values, in any order, where `V` is an `Equatable`; a map is a `Clone` where `K` and `V` are, a
    map of the clones in the same order. Its Debug form is `{"a": 1, "b": 2}`, `{}` empty. A key
    that is no `Hashable` — a `float`, a list — is refused (`LYS-SEM0028`).
+6. **Sets** (Lyric 5 12 §Collections; S7d3). `std.collections` holds `class Set<T :: [Hashable]>`,
+   a map's keys, in the order the values came; a program that names `Set` gets the module as
+   one that names `Map` does. `Set.new()`, `Set.of(xs)`, `Set.withCapacity(n)` — a negative `n` a
+   panic —; `insert(v)`, whether `v` was not there, `remove(v)`, whether it was, `contains(v)` and
+   `x in s`, `length()`, `isEmpty()`, `clear()`. A list literal where a set is taken builds one
+   (`FromArrayLiteral<T>`), `let s: Set<int> = [1, 2, 2]`, so do `collect()` and `toSet()`. Its
+   operations are methods that make a new set, this one's values first, or answer a question:
+   `union`, `intersect`, `difference`, `symmetricDifference`, `isSubset` — the empty set is a
+   subset of every set —, `isSuperset`, `isDisjoint`. A set is an `Iterable` of its values in
+   their order; a value put in or taken out while it is walked makes the next pull panic,
+   `LYS-RT0016` naming the set. Two sets are equal where they hold the same values, in any
+   order; a set is a `Clone` where `T` is; its Debug form is `{1, 2}`; a value that is no
+   `Hashable` — a `float`, a set — is refused (`LYS-SEM0028`). Over every iterator, std.collections
+   gathers as Lyric 5's does, a program that names one of them getting the module: `groupBy(key)`,
+   a map from each key, in the order the keys came, to its values in their order; `toMap()` of an
+   iterator of pairs, a later value of a key replacing the earlier one; `toSet()` of hashable
+   values. Where the items are of no such kind the member is not there (`LYS-SEM0012`).
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -86,7 +103,9 @@ and maps (S7d2); the rest a skeleton, written with the milestone that builds it 
 - A map keeps the order its keys came in ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) and has no hasher parameter `H`: one hasher,
   the prelude's ([05](05-interfaces.md) rule 20); `Map.from` takes a list. The VM keeps where
   each hash lies; the program hashes the keys and compares them — keys of `int`, `char`, `bool`
-  and `string` too, whose way through the VM alone (STATUS P27) is measured with P21 (S7k).
+  and `string` too, whose way through the VM alone (STATUS P27) is measured with P21 (S7k). A
+  set keeps the order its values came in and has no hasher parameter either; `Set.of` takes a
+  list.
 - Lyric 5's API adapted to Lyric-Script's types, plus the batteries `cli`, `csv`, `log`, `fs.glob`, and `reflect`; no `sync`, `thread`, `ffi`, `meta`, `syntax`, `build` ([12](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
 
 **Conformance.** `conformance/cases/12-stdlib/` (`since: 1.0.0`).

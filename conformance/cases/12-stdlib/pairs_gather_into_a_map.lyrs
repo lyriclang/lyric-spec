@@ -1,0 +1,7 @@
+//! run
+//! stdout:
+//! | {"x": 3, "y": 2}
+//! since: 1.0.0
+// §12 rule 6 (Lyric 5 12 §Collections): `toMap()` gathers an iterator of pairs into a map, a
+// later value of a key replacing the earlier one — a program that names only it gets the module.
+println([("x", 1), ("y", 2), ("x", 3)].iter().toMap())

@@ -1,0 +1,7 @@
+//! run
+//! stdout:
+//! | {1, 2, 3}
+//! since: 1.0.0
+// §12 rule 6 (Lyric 5 12 §Collections): `toSet()` gathers an iterator's hashable values into a
+// set, each once — a program that names only it gets the module.
+println([1, 2, 2, 3, 1].iter().toSet())
