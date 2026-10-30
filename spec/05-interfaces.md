@@ -132,8 +132,9 @@ S7.
    the implementation `x`'s type has for `I`: on a value of a type, through a type parameter,
    through an interface value; the receiver conforms (`LYS-SEM0125`) and comes first
    (`LYS-SEM0014`); a static member is not called through its interface (`LYS-SEM0231`). One
-   name implemented apart per interface in separate blocks (§3 rule 4, `LYS-SEM0122`) comes with
-   S7.
+   name implemented apart per interface in separate blocks (§3 rule 4, `LYS-SEM0122`), and the
+   members of several instances of one generic interface side by side (§3 rule 5), come with
+   S7c5d.
 14. *Informative.* An interface value is the conformer's own reference; a scalar's, a string's or
    a plain enum's value lies in a box of its type. Each type's descriptor carries its table of
    slots — every interface method of the program has one — and the interfaces it conforms to;
