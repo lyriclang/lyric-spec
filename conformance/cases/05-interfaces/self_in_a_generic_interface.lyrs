@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | Bag { total = 6 }
+//! | Bag { total = 9 }
+//! | true false
+//! since: 1.0.0
+// §5 rule 15: `Self` in a generic interface — a static member that gives `Self`, through a type
+// parameter and on the type; a member that takes `Self`.
+interface Maker<T> {
+    static fn make(items: T[]): Self
+}
+struct Bag :: Maker<int> {
+    total: int
+    static fn make(items: int[]): Bag {
+        var t = 0
+        for (x in items) {
+            t += x
+        }
+        return Bag { total = t }
+    }
+}
+fn build<B :: [Maker<int>]>(xs: int[]): B = B.make(xs)
+println(build<Bag>([1, 2, 3]))
+println(Bag.make([4, 5]))
+interface Same<T> {
+    fn same(other: Self): bool
+    fn get(): T
+}
+struct Box :: Same<string> {
+    v: string
+    fn same(other: Box): bool = this.v == other.v
+    fn get(): string = this.v
+}
+fn check<X :: [Same<string>]>(a: X, b: X): bool = a.same(b)
+let a1 = Box { v = "a" }
+let a2 = Box { v = "a" }
+let b1 = Box { v = "b" }
+println(f"{check(a1, a2)} {check(a1, b1)}")

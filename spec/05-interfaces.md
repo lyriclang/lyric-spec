@@ -116,7 +116,11 @@ S7.
    are written, as many as the parameters (`LYS-SEM0026`). A generic type conforms at its own
    parameters, `class Cell<T> :: Store<T>`, and each instance at its arguments (`Cell<int>` is a
    `Store<int>`). A call through an `I<int>` value or a `T :: [I<int>]` reads the members at
-   `int`. `Self` in a generic interface, and a default member of one, come with S7c1b.
+   `int`. `Self` stands in a generic interface as in any (rule 10) — a member over `Self` binds
+   it with the interface's parameters, `static fn make(items: T[]): Self` through
+   `B :: [Maker<int>]` —, and a default member may read the parameters: each conformer runs its
+   copy at its instance's arguments, through its table too, and so does each instance of a
+   generic conformer (S7c1b).
 
 ## Deviations
 
