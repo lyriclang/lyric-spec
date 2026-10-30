@@ -390,7 +390,11 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    review's M8a-1); `&&=`, `||=` and `??=` read once and write only when they assign. The order
    and the value of an assignment are [08 §3](08-expressions.md)'s. An element so read is a
    value, no place: `x[k].f = v` is refused (03 §2.2). The index of an array, a view and an
-   inline array is built in ([03 §5](03-types.md)).
+   inline array is built in ([03 §5](03-types.md)). **From the end**: on a type with its own
+   `Index<int>` that conforms to `Length { fn length(): int; }` of `std.core`, `x[^n]` is
+   `x.index(x.length() - n)` and its writes go through `setIndex` the same way, `x` evaluated
+   **once** for both calls; without `Length` the type takes the index as written, and `^n` there
+   is refused (`LYR-SEM0114`). `List<T>` and `Deque<T>` conform ([12](12-stdlib.md)).
 10. **Membership.** `x in xs` is `xs.contains(x)` through `Contains<T> { fn contains(x: T): bool; }`
     (04 D6, design 10 C12) — a range, an array, a view, a list, a set and a map's keys conform
     ([12](12-stdlib.md)) — and `x !in xs` its negation. The conformance is the **right operand's**,

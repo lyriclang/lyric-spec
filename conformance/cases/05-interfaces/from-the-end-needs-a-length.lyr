@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0114
+//! since: 5.0.0
+// 05 §12 rule 9: a type with its own index and no Length takes the index as written; '^n' is
+// refused there.
+class Fixed :: [Index<int>] {
+    type Output = int;
+
+    fn index(k: int): int {
+        return k;
+    }
+}
+
+fn main(): void {
+    let f = Fixed { };
+    let _ = f[^1];
+}

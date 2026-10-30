@@ -1,0 +1,54 @@
+//! run
+//! stdout:
+//! | 3 2 12 30 | 4
+//! | 9 1
+//! since: 5.0.0
+// 05 §12 rule 9: on a type with its own Index<int> and a Length, 'x[^n]' is
+// 'x.index(x.length() - n)', read and written, 'x' evaluated once (one call of 'through' each);
+// a struct is written in place.
+import std.io { println };
+import std.collections { List };
+
+class Counter {
+    var calls: int = 0,
+}
+
+fn through(c: Counter, xs: List<int>): List<int> {
+    c.calls += 1;
+    return xs;
+}
+
+struct Pair :: [IndexSet<int>, Length] {
+    type Output = int;
+    var a: int,
+    var b: int,
+
+    fn index(k: int): int {
+        return if (k == 0) this.a else this.b;
+    }
+
+    mut fn setIndex(k: int, v: int): void {
+        if (k == 0) {
+            this.a = v;
+        } else {
+            this.b = v;
+        }
+    }
+
+    fn length(): int {
+        return 2;
+    }
+}
+
+fn main(): void {
+    let xs = List<int>.of([1, 2, 3]);
+    let c = Counter { };
+    let last = through(c, xs)[^1];
+    through(c, xs)[^1] = 30;
+    through(c, xs)[^2] += 10;
+    through(c, xs)[^3]++;
+    println(f"{last} {xs[0]} {xs[1]} {xs[2]} | {c.calls}");
+    var p = Pair { a = 1, b = 2 };
+    p[^1] = 9;
+    println(f"{p[^1]} {p[^2]}");
+}

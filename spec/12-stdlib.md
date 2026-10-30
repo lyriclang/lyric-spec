@@ -1258,7 +1258,8 @@ order — and `Map<K, V>` is one of `(K, V)`, a later value of a key replacing t
   `withCapacity(n)` — room for `n` elements before
   it grows, taken at the first push, since a list holds no value it was not given (10 N3; M8a S14);
   every container's `withCapacity(n)` panics on a negative `n`. `xs[i]` and `xs[i] = v` through `IndexSet<int>`
-  ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`); `get(i)`,
+  ([05 §12](05-interfaces.md) rule 9), outside `0 ≤ i < length()` a panic (`LYR-RT0003`), and from
+  the end, `xs[^1]`, through `Length`; `get(i)`,
   `null` there. `push(v)`, `pushAll(xs)`, `pop()` (`null` for none), `insert(i, v)`, `removeAt(i)`,
   `removeWhere(p)` (how many went; a `p` that throws ends it there — what it decided is done,
   the rest kept), `clear()` (the room stays), `truncate(n)`, `swap(i, j)`,
@@ -1297,7 +1298,8 @@ order — and `Map<K, V>` is one of `(K, V)`, a later value of a key replacing t
 - Every iterator's **`toList()`** collects what it gives into a `List` (I4).
 - **`Deque<T>`** (C6), a class over a ring buffer: `new()`, `withCapacity(n)`, `pushFront(v)`, `pushBack(v)`,
   `popFront()` and `popBack()` (the value or `null`), `peekFront()`, `peekBack()`, `length()`,
-  `isEmpty()`; `[i]` from the front, panicking outside `0 ≤ i < length()` (`LYR-RT0003`);
+  `isEmpty()`; `[i]` from the front, panicking outside `0 ≤ i < length()` (`LYR-RT0003`), `[^n]` from
+  the back through `Length`;
   `Iterable` front to back, a change while it is walked panicking at the next pull (I9).
 - **`Heap<T :: [TotalOrder]>`** (C1), a binary heap over a list, **the least value first** (the
   review's A1; the greatest first is a heap of a type whose order is reversed):
