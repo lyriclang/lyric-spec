@@ -278,6 +278,14 @@ S7, `Debug` and `Display` (S7e3).
    with an element that is none prints its Debug form. A list, a map, a set and a deque are
    `Display`s, their text their Debug form (Lyric 5 12 §Collections; S7e3b), so `T :: [Display]`
    takes them.
+22. **A parent list is a constraint on `Self`** (Lyric 5 §8 rule 7; S7f1a). A parent that names
+   `Self`, fixes an associated type to it, or leaves out a type argument whose default is it —
+   `interface Ring :: [Add<Out = Self>]`, and `Add` for `Add<Self>` — is read where `Self` is known:
+   through a constraint `T :: [Ring]` it is `Add<T>` with `Out` fixed to `T`, so `a + b` is a `T`;
+   unfixed, `a + b` is a `T.Out` (`LYS-SEM0001` where a `T` is wanted). A type that lists the
+   interface takes the parent along where it does not conform to it already, its members from the
+   same list (`LYS-SEM0020` where one is missing), and answers as the parent is fixed
+   (`LYS-SEM0042` otherwise).
 
 ## Deviations
 
