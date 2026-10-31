@@ -1,0 +1,14 @@
+//! run
+//! panic: LYS-RT0008
+//! stdout:
+//! | 0xff
+//! since: 1.0.0
+// §12 rule 11 (Lyric 5 12 §2 rule 5): a spec read at run time is checked as the compiler checks
+// one an f-string writes; what the compiler refuses there panics here.
+fn formatted<T :: [Format]>(x: T, spec: string): string {
+    let b = StringBuilder.new()
+    x.format(spec, b)
+    return b.toString()
+}
+println(formatted(255, "#x"))
+println(formatted(1, ".2"))

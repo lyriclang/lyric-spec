@@ -1,0 +1,28 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | |[x5]12.34|Money { cents = 5 }|
+//! | 0xff|  ab|1.500|c**|[>3]0.7
+// §12 rule 11 (Lyric 5 12 §2 rule 2): a type with formats of its own conforms to `Format` and
+// reads the spec as written, unchecked; `?` stays its Debug form. The scalars and the string are
+// `Format`s, through a constraint too.
+struct Money :: Format {
+    cents: int
+    fn format(spec: string, out: StringBuilder) {
+        out.appendStr(f"[{spec}]{this.cents / 100}.{this.cents % 100}")
+    }
+}
+fn formatted<T :: [Format]>(x: T, spec: string): string {
+    let b = StringBuilder.new()
+    x.format(spec, b)
+    return b.toString()
+}
+println(f"|{Money { cents = 1234 }:x5}|{Money { cents = 5 }:?}|")
+let all = [
+    formatted(255, "#x"),
+    formatted("ab", ">4"),
+    formatted(1.5, ".3"),
+    formatted('c', "*<3"),
+    formatted(Money { cents = 7 }, ">3"),
+]
+println(all.iter().join("|"))

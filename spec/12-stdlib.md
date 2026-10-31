@@ -3,8 +3,8 @@
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
-collections (S7d), the strings' members, reading values from text and builders of text
-(S7e1–S7e3); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+collections (S7d), the strings' members, reading values from text, builders of text and the
+format language (S7e1–S7e4b); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -153,6 +153,18 @@ collections (S7d), the strings' members, reading values from text and builders o
    in bytes, `clear()`, `toString()`. `Display` and `Debug` write into one
    ([05](05-interfaces.md) rule 21). The VM holds its text, so its Debug
    form is its type, `<StringBuilder>`, as a task's is ([10](10-concurrency.md) rule 19).
+11. **The format language** (Lyric 5 12 §2 rules 1–3; S7e4b). A hole names a format after a
+   colon, `{x:>8}`, `{n:#x}`, `{f:.2f}`, `{v:?}`, in Lyric 5's language,
+   `[[fill]align][sign][#][0][width][grouping][.precision][type]`, checked where it is written: an
+   `int` takes all but a precision and a float's type, a `float` all but `#` and an integer's type,
+   a `string` fill, alignment, width and a precision, a `char`, a `bool` and any other value fill,
+   alignment and width on its text — a `Display`'s `show()`, else its Debug form —, `?` the same on
+   its Debug form; a spec that is no format or holds a part the type does not take is refused
+   (`LYS-SEM0164`). The text is Lyric 5's own formatting, its defaults and its rounding — half away
+   from zero on the value's exact binary digits. A type with formats of its own conforms to
+   `interface Format { fn format(spec: string, out: StringBuilder) }` and reads the spec as written,
+   unchecked, `?` staying its Debug form; the scalars and the string conform, and a spec they read
+   at run time is checked as the compiler checks one, its fault a panic (`LYS-RT0008`).
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -162,7 +174,8 @@ collections (S7d), the strings' members, reading values from text and builders o
   value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script; `sum`
   and `product` stand on `int` and `float` items, not on a `Num` (STATUS P25).
 - A builder has none of Lyric 5's `sized`, `putInt` and the other members f-strings write
-  through: Script's f-strings concatenate.
+  through: Script's f-strings concatenate. `Format.format` takes the spec as a `string`, Script
+  having no `StringView`; a width or a precision of more than nine digits is no spec.
 - A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
   with `Bytes` (S7f). A string's parts and lines are new strings, not views; `T.parse(s)`
   takes a string. A string's `contains` takes every pattern; `c in s` asks it for a character,
