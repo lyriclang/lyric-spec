@@ -1,0 +1,20 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0166
+//! error: LYS-SEM0119
+//! stderr-has: and 'one' has none
+//! stderr-has: and this argument goes to 'x'
+//! stderr-has: a spread is the whole rest
+//! stderr-has: this is a second
+//! stderr-has: and what this calls has none
+//! stderr-has: by no name
+// §8 rule 6 (Lyric 5 §8 §1.1 rule 1): `xs...` is a variadic parameter's whole rest — one spread,
+// at that parameter, alone there; the parameter takes no name.
+fn one(x: int) { }
+fn two(x: int, xs: int...) { }
+one([1]...)
+two([1]...)
+two(1, 2, [3]...)
+two(1, [2]..., [3]...)
+println([1]...)
+two(1, xs: [2])

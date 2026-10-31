@@ -38,6 +38,16 @@
    `--x` the new; what leads to the place is evaluated once; a place that cannot be written is
    refused (`LYS-SEM0019`), one that holds no number too (`LYS-SEM0003`).
 
+## Written (S7e4a, variadic parameters)
+
+6. **Variadic parameters** (Lyric 5 §8 §1.1 rule 1; S7e4a). `xs: T...` takes the remaining
+   positional arguments as a `T[]`, the empty array where there are none; it stands last and has
+   no default (`LYS-SEM0024`), takes no name in a call (`LYS-SEM0119`), and a local function's
+   parameter is none (`LYS-PAR0060`). Each remaining argument is one element, an array too where
+   `T` takes it. `xs...` spreads an array over the parameter — one spread, at it, alone in the rest
+   (`LYS-SEM0166`), the array itself, no copy. A function value of a variadic function is a
+   `fn(T[]) -> R`, called with the array.
+
 ## Deviations (skeleton, written with later milestones)
 
 - Mixed `int`/`float` arithmetic widens to `float`; `int / int` stays integer division; `as` only between `int`, `float` and `char`; no prefix `&`, no `comptime` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md), [09](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)).

@@ -1,0 +1,14 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0024
+//! error: LYS-PAR0060
+//! stderr-has: must be the last parameter
+//! stderr-has: takes no default
+//! stderr-has: is no variadic one
+// §8 rule 6 (Lyric 5 §8 §1.1 rule 1): a variadic parameter stands last and takes no default; a
+// local function's parameter is none.
+fn first(xs: int..., y: int) { }
+fn defaulted(xs: int... = [1]) { }
+fn outer() {
+    fn local(xs: int...): int = 1
+}
