@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-NYI0001
+//! error: LYS-SEM0012
+//! stderr-has: S7f
+//! since: 1.0.0
+// §12 rule 8: a string's bytes come with `Bytes` (S7f); a member Lyric 5's string has not is no
+// member of Script's.
+let b = "a".toBytes()
+let c = "a".nope()

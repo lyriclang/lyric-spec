@@ -22,7 +22,11 @@ S7.
 3. **Extend blocks** (§6 rule 1) add methods and conformances to a type of the program or a
    built-in one — `extend int :: [Named] { … }`, `extend string { … }`, `this` the value; an
    interface is not extended (`LYS-SEM0124`). A block on a function type, an optional or a tuple
-   (Lyric 5 §13 rule 6) comes with S7e2 and is refused till then (`LYS-NYI0001`).
+   at fixed types (Lyric 5 §13 rule 6; S7e2) — `extend fn(char) -> bool :: [Pattern]`,
+   `extend ?int { … }`, `extend (int, string) { … }` — adds members and conformances to that
+   shape, `this` its value and `this(x)` a function's call; its conformance's defaults reach it
+   through a box, as a scalar's do. A block over a shape of the block's parameters,
+   `extend<T> ?T { … }`, comes with S7e2c and is refused till then (`LYS-NYI0001`).
 4. **Delegation** (§5): `I by field` forwards every abstract member of the chain the type does
    not write to the field, read at each call, and the forwarded member is the type's too; the
    field holds a value of the interface (`LYS-SEM0123`); an enum delegates nothing

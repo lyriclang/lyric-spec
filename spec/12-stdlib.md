@@ -3,7 +3,7 @@
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
-collections (S7d) and the strings' members (S7e1); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+collections (S7d), the strings' members and reading values from text (S7e1–S7e2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -115,14 +115,19 @@ collections (S7d) and the strings' members (S7e1); the rest a skeleton, written 
    `s[a..b]`, in a range's every form, `^n` among its bounds, is a **new string** of those bytes
    (03 Str), a bound outside them or inside a character a panic (`LYS-RT0003`). `chars()` gives
    the characters from either end, `charIndices()` each with the byte it begins at;
-   `string.fromChars(it)` joins an iterator's characters. A **pattern** is a string or a
-   character, `interface Pattern` of the prelude with Lyric 5's members `matchAt`,
+   `string.fromChars(it)` joins an iterator's characters. A **pattern** is a string, a
+   character or a test of characters, `fn(char) -> bool` (S7e2), `interface Pattern` of the
+   prelude with Lyric 5's members `matchAt`,
    `matchBefore` and `nextIn` over a string's bytes: `contains(p)`, `startsWith(p)`,
    `endsWith(p)`; `find(p)` and `rfind(p)`, the byte of the first and the last match or `null`,
    an empty pattern at 0 and at the length; `count(p)`, none overlapping another; `c in s` for a
    character; `trimMatches(p)`, `trimStartMatches(p)`, `trimEndMatches(p)`, again and again;
    `stripPrefix(p)` and `stripSuffix(p)`, the rest or `null`; `replace(p, with)` and
-   `replaceN(p, with, n)` — a pattern that matches the empty text panics. `trim()`,
+   `replaceN(p, with, n)` — a pattern that matches the empty text panics. `split(sep)` gives the
+   parts in order, empty ones kept, `splitN(sep, n)` at most `n`, the last the rest,
+   `splitOnce(sep)` the parts before and after the first or `null`, `matches(p)` the matches,
+   `lines()` the lines — split at `\n`, a `\r` before it taken off, no empty line after a last
+   `\n` —, each a new string; a separator that matches the empty text panics (S7e2). `trim()`,
    `trimStart()`, `trimEnd()` take off the white space — the property White_Space —, `isBlank()`
    holds for nothing but it; `toUpper()` and `toLower()` map each character simply, one for one,
    no locale; `padStart(width, fill = ' ')` and `padEnd(…)` count characters; `s * n` is the text
@@ -132,6 +137,15 @@ collections (S7d) and the strings' members (S7e1); the rest a skeleton, written 
    `toLower()`, the ASCII tests, `toDigit(radix)` and `char.fromDigit(n, radix)` — `null` where
    there is no such digit, a radix outside 2–36 a panic. A scalar's or the string's static is
    called through its name, `char.fromDigit(…)`, `string.fromChars(…)`.
+9. **Values from text** (Lyric 5 12 §Parsing; S7e2). `interface Parse { static fn parse(s:
+   string): Self }`: `bool.parse(s)` takes `true` and `false` exactly, `int.parse(s)` and
+   `int.parse(s, radix)` an optional sign, ASCII digits of the base and `_` between two of them,
+   `float.parse(s)` a float's form — an optional sign, then `inf`, `nan`, or digits with an
+   optional fraction and exponent —, read to the nearest float; `s.parse<T>()` is `T.parse(s)`,
+   `T` from where the result goes, `let n: int = s.parse()`. A text that is none throws a
+   **`ParseError`** — its `kind` `Empty`, `Invalid` for a character outside the form however many
+   digits run before it, `Overflow` for a well-formed number beyond the type's range; `detail` and
+   `offset` where the parser says more; `message()` Lyric 5's words. A radix outside 2–36 panics.
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -141,9 +155,8 @@ collections (S7d) and the strings' members (S7e1); the rest a skeleton, written 
   value prints in Script, its `Display` comes with S7e; `sum` and `product` stand on `int` and
   `float` items, not on a `Num` (STATUS P25).
 - A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
-  with `Bytes` (S7f), `split`, `lines` and `parse` with S7e2. A pattern is a string or a
-  character: a test of characters, `fn(char) -> bool`, waits for blocks on function types (05
-  rule 3, S7e2). A string's `contains` takes every pattern; `c in s` asks it for a character,
+  with `Bytes` (S7f). A string's parts and lines are new strings, not views; `T.parse(s)`
+  takes a string. A string's `contains` takes every pattern; `c in s` asks it for a character,
   but a string is no `Contains<char>` to a constraint (STATUS P29).
 - A map keeps the order its keys came in ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) and has no hasher parameter `H`: one hasher,
   the prelude's ([05](05-interfaces.md) rule 20); `Map.from` takes a list. The VM keeps where
