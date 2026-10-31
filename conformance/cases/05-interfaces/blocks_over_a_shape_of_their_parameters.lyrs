@@ -1,7 +1,7 @@
 //! run
 //! stdout:
 //! | 3 x
-//! | ("a", 1) (2.5, true)
+//! | (a, 1) (2.5, true)
 //! | 3
 //! | some P1 none some P1! some P1
 //! since: 1.0.0

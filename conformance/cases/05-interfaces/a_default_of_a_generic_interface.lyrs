@@ -3,8 +3,8 @@
 //! | (1, 2)
 //! | (3, 4)
 //! | (5, 6)
-//! | ("x", "x")
-//! | ("x", "x")
+//! | (x, x)
+//! | (x, x)
 //! since: 1.0.0
 // §5 rule 15: a default member reads the interface's parameters; each conformer runs it at its
 // instance's arguments — on the type, through a value, through a constraint, for an instance of a

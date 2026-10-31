@@ -9,10 +9,11 @@
 //! | C { n = 1 }
 //! | null
 //! | 7
-//! | (1, "a", 'c')
+//! | (1, a, c)
 //! | raw
 // §5 rule 9 (03 Eq, Lyric 5 05 §14 rule 2): every value prints; what has no Display prints in
-// its Debug form, given unasked — a string inside quoted, a char in single quotes.
+// its Debug form, given unasked — a string inside quoted, a char in single quotes; a tuple of
+// `Display`s is one, its elements' texts (§5 rule 21; S7e3b).
 struct P {
     x: int
     name: string

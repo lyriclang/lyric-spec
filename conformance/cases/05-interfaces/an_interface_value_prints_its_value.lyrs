@@ -3,12 +3,13 @@
 //! stdout:
 //! | Circle { r = 2 }
 //! | 7
-//! | "hi"
+//! | hi
 //! | Pair { a = Circle { r = 1 } }
 //! | raw
 //! | Pair { a = "x" }
 // §5 rule 9: an interface value and a type parameter's value print the form of what they
-// hold; a generic type under its declared name.
+// hold, alone a string as itself (quoted until S7e3b, against the rule); a generic type under
+// its declared name.
 interface Shape {
     fn area(): int
 }

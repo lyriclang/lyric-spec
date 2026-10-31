@@ -1,0 +1,26 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | (1, a) (1, c, 2.5) (1, (2, b))
+//! | (1, P { x = 2 }) (1, "q")
+//! | (R1, z) (1, a) <(1, a)>
+//! | (1, 2, 3, 4, 5, 6, 7, 8)
+//! | [(1, "a")] (1, "a")
+// §5 rule 21 (Lyric 5 12 §Strings): a tuple whose elements are `Display`s is one — its elements'
+// texts between parentheses; one with an element that is none prints its Debug form, as a list
+// prints its elements' and `debug()` gives it.
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+struct P {
+    x: int
+}
+fn angled<T :: [Display]>(x: T): string = f"<{x}>"
+
+let o: ?string = "q"
+println(f"{(1, "a")} {(1, 'c', 2.5)} {(1, (2, "b"))}")
+println(f"{(1, P { x = 2 })} {(1, o)}")
+println(f"{(R { v = 1 }, "z")} {(1, "a").show()} {angled((1, "a"))}")
+println((1, 2, 3, 4, 5, 6, 7, 8))
+println(f"{[(1, "a")]} {(1, "a").debug()}")

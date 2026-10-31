@@ -1,7 +1,7 @@
 //! run
 //! stdout:
 //! | 0 5
-//! | ("a", 1) 7
+//! | (a, 1) 7
 //! | point 1,2 point 3,4
 //! | point 1,2! point 3,4! none! none!
 //! since: 1.0.0

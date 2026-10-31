@@ -73,9 +73,10 @@ S7, `Debug` and `Display` (S7e3).
    class's fields as a struct's, a generic type's under its declared name, `Pair { a = 1 }`; the
    one value of `void`, a void task's `Done` holds it, `()` (Lyric 5 03 M6-5: `void` stands for
    the empty tuple).
-   An interface value and a value of a type parameter print the form of the value they hold —
-   through a slot every type's table fills (S3i) —, alone a string as itself and inside another
-   value quoted, as for any value; a function value prints as `<fn>`.
+   An interface value and a value of a type parameter print what they hold: alone its text —
+   a string itself, a `Display`'s `show()` (rule 21) —, inside another value its Debug form, each
+   through a slot every type's table fills (S3i; the text's S7e3b, before which an interface value
+   printed a string quoted); a function value prints as `<fn>`.
 10. **`Self` and static members** (§7 rules 1–3): `Self` is the conforming type — in an
    interface the conformer, written as its own type by an implementation (`LYS-SEM0042`); in a
    struct, a class, an enum or an extend block the type itself. An interface may declare
@@ -272,7 +273,11 @@ S7, `Debug` and `Display` (S7e3).
    value whose type is a `Display` print its `show()`: a type that lists it, an interface value
    of it or of an interface that extends it, a value of a type parameter or an associated type
    it bounds; a list prints its elements' Debug forms, whatever they are. `:: Display` without a
-   `show` is refused (`LYS-SEM0020`); no `Display` is synthesized.
+   `show` is refused (`LYS-SEM0020`). A tuple whose elements are `Display`s is one, its text
+   theirs between parentheses, `(1, a)` — the prelude's blocks of arity 2 to 8, Lyric 5's; one
+   with an element that is none prints its Debug form. A list, a map, a set and a deque are
+   `Display`s, their text their Debug form (Lyric 5 12 §Collections; S7e3b), so `T :: [Display]`
+   takes them.
 
 ## Deviations
 
@@ -284,9 +289,5 @@ S7, `Debug` and `Display` (S7e3).
   its synthesized Debug form, the method one of its own — Lyric 5 makes such a type no `Debug`.
   Through a type parameter or a `Debug` value `x.debugTo(out)` appends the Debug form, not a
   `debugTo` the type writes (rule 21).
-- `{x}` of a value of an unconstrained type parameter in a copy shared by every argument, and of
-  an interface value that is no `Display`, `Any`, prints the Debug form even where the value's
-  type is a `Display` — its `show()` through a slot of the table with S7e3b; a copy made for one
-  type, `join`'s, prints `show()` already.
 
 **Conformance.** `conformance/cases/05-interfaces/` (`since: 1.0.0`).

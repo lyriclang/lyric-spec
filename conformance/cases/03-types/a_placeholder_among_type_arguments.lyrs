@@ -1,6 +1,6 @@
 //! run
 //! stdout:
-//! | (1, "x") (1.0, "y") [1, 2] 5
+//! | (1, x) (1.0, y) [1, 2] 5
 //! since: 1.0.0
 // §3 rule 12 (Lyric 5 §9.2 rules 4–5, §9.4): `_` among the type arguments of a call, a method and a
 // function's value stands for one the inference fills — from the arguments, the position.

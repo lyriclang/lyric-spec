@@ -149,8 +149,9 @@ collections (S7d), the strings' members, reading values from text and builders o
    `offset` where the parser says more; `message()` Lyric 5's words. A radix outside 2–36 panics.
 10. **Builders of text** (Lyric 5 12 §Strings; S7e3). `class StringBuilder` builds a text a part
    at a time in one buffer that grows, no chain of concatenations: `StringBuilder.new()`,
-   `appendStr(s)`, `appendChar(c)`, `length()` in bytes, `clear()`, `toString()`. `Display` and
-   `Debug` write into one ([05](05-interfaces.md) rule 21). The VM holds its text, so its Debug
+   `appendStr(s)`, `appendChar(c)`, `append(v)` of any `Display` through its `showTo`, `length()`
+   in bytes, `clear()`, `toString()`. `Display` and `Debug` write into one
+   ([05](05-interfaces.md) rule 21). The VM holds its text, so its Debug
    form is its type, `<StringBuilder>`, as a task's is ([10](10-concurrency.md) rule 19).
 
 ## Deviations (skeleton, written with later milestones)
@@ -160,8 +161,8 @@ collections (S7d), the strings' members, reading values from text and builders o
 - `join` takes every item, written as `{x}` writes it — a `Display` its `show()`, any other
   value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script; `sum`
   and `product` stand on `int` and `float` items, not on a `Num` (STATUS P25).
-- A builder has no `append<T :: [Display]>(v)` yet (S7e3b), nor Lyric 5's `sized`, `putInt` and
-  the other members f-strings write through: Script's f-strings concatenate.
+- A builder has none of Lyric 5's `sized`, `putInt` and the other members f-strings write
+  through: Script's f-strings concatenate.
 - A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
   with `Bytes` (S7f). A string's parts and lines are new strings, not views; `T.parse(s)`
   takes a string. A string's `contains` takes every pattern; `c in s` asks it for a character,

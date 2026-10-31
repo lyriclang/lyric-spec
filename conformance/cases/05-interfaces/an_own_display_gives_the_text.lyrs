@@ -7,10 +7,12 @@
 //! | sq3 9
 //! | <R=7> <4> <s> <c> <true> <1.5>
 //! | 5 c s
+//! | Gen(1) Gen(a)
 // §5 rule 21: `{x}` and `println(x)` of a value whose type is a `Display` print its `show()` — a
 // type that lists it, an interface value of an interface that extends it, a value of a type
 // parameter it bounds; the scalars and the string are `Display`. A list prints its elements'
-// Debug forms.
+// Debug forms. A generic type's own `show()` too (S7e3b: S7e3a printed it empty, a copy made
+// before its body was checked).
 struct R :: Display {
     v: int
     fn show(): string = f"R={this.v}"
@@ -23,6 +25,10 @@ struct Sq :: Shape {
     fn area(): int = this.s * this.s
     fn show(): string = f"sq{this.s}"
 }
+class Gen<T> :: Display {
+    v: T
+    fn show(): string = f"Gen({this.v})"
+}
 fn angled<T :: [Display]>(x: T): string = f"<{x}>"
 
 let r = R { v = 2 }
@@ -33,3 +39,4 @@ let sh: Shape = Sq { s = 3 }
 println(f"{sh} {sh.area()}")
 println(f"{angled(R { v = 7 })} {angled(4)} {angled("s")} {angled('c')} {angled(true)} {angled(1.5)}")
 println(f"{5.show()} {'c'.show()} {"s".show()}")
+println(f"{Gen { v = 1 }} {Gen { v = "a" }.show()}")
