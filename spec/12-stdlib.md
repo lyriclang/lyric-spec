@@ -2,8 +2,8 @@
 
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
-**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
-maps and sets (S7d2–S7d3); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6)
+and collections (S7d); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -58,8 +58,10 @@ maps and sets (S7d2–S7d3); the rest a skeleton, written with the milestone tha
    rule 16; S7c6c2); `groupBy`, `toMap` and `toSet` are std.collections' (rule 6).
 5. **Maps** (Lyric 5 12 §Collections; Script [12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md); S7d2). `std.collections`
    holds `class Map<K :: [Hashable], V>`, whose names are the prelude's: the loader adds the
-   module to a program that names `Map` or writes a map literal ([03](03-types.md) rule 14);
-   `import std.collections { Map }`, as Lyric 5's own modules write it, comes with S7d4. A
+   module to a program that names `Map` or writes a map literal ([03](03-types.md) rule 14).
+   `import std.collections { Map }`, as Lyric 5's own modules write it, names the prelude's own,
+   `{ Map as Dict }` under a name of its own — its types and `List`; a name it does not declare
+   is `LYS-RES0004`, the module named as a whole `LYS-RES0003` (S7d4). A
    map holds each key once, in the order the keys came — a key taken out and put back comes last.
    `m[k]` is the value under `k` or `null`, `m[k] = v` puts `v` there, `m[k] = null` takes `k`
    out (`IndexSet<K>` of `?V`), `k in m` asks the keys. Its members are Lyric 5's:
@@ -76,8 +78,8 @@ maps and sets (S7d2–S7d3); the rest a skeleton, written with the milestone tha
    map of the clones in the same order. Its Debug form is `{"a": 1, "b": 2}`, `{}` empty. A key
    that is no `Hashable` — a `float`, a list — is refused (`LYS-SEM0028`).
 6. **Sets** (Lyric 5 12 §Collections; S7d3). `std.collections` holds `class Set<T :: [Hashable]>`,
-   a map's keys, in the order the values came; a program that names `Set` gets the module as
-   one that names `Map` does. `Set.new()`, `Set.of(xs)`, `Set.withCapacity(n)` — a negative `n` a
+   a map's keys, in the order the values came; a program that names `Set`, `Deque` or `Heap`
+   gets the module as one that names `Map` does. `Set.new()`, `Set.of(xs)`, `Set.withCapacity(n)` — a negative `n` a
    panic —; `insert(v)`, whether `v` was not there, `remove(v)`, whether it was, `contains(v)` and
    `x in s`, `length()`, `isEmpty()`, `clear()`. A list literal where a set is taken builds one
    (`FromArrayLiteral<T>`), `let s: Set<int> = [1, 2, 2]`, so do `collect()` and `toSet()`. Its
@@ -92,6 +94,19 @@ maps and sets (S7d2–S7d3); the rest a skeleton, written with the milestone tha
    a map from each key, in the order the keys came, to its values in their order; `toMap()` of an
    iterator of pairs, a later value of a key replacing the earlier one; `toSet()` of hashable
    values. Where the items are of no such kind the member is not there (`LYS-SEM0012`).
+7. **Deques and heaps** (Lyric 5 12 §Collections; S7d4). `class Deque<T>` takes and gives values
+   at either end — `pushBack`, `pushFront`, `popFront`, `popBack`, `peekFront`, `peekBack`, the
+   last four `null` where it is empty —, `Deque.new()`, `Deque.withCapacity(n)`, `length()`,
+   `isEmpty()`; `d[i]` is the value `i` places from the front (`Index<int>`, never written,
+   `LYS-SEM0019`), a panic outside `0 ≤ i < length()` (`LYS-RT0003`, a list's text). It is an
+   `Iterable` front to back — a push or a pop while it is walked makes the next pull panic,
+   `LYS-RT0016` naming the deque —, equal where its values are, in order, where `T` is an
+   `Equatable`, a `Clone` where `T` is; its Debug form is a list's, `[1, 2]`. `class Heap<T ::
+   [TotalOrder]>` is a binary min-heap: `push(v)`, `peek()` and `pop()` the least value or `null`,
+   `Heap.new()`, `Heap.withCapacity(n)`, `Heap.of(xs)` built in linear time, `length()`,
+   `isEmpty()`; its Debug form is its values as it holds them, a list's; a `Clone` where `T` is.
+   A list literal builds either where it is taken, `let d: Deque<int> = [1, 2]`, so does
+   `collect()`.
 
 ## Deviations (skeleton, written with later milestones)
 
