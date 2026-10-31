@@ -1,0 +1,33 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 5x(1, a)R2[1, 2]
+//! | <{"a": 1}> <{1, 2}> <[3, 4]> <[5]> <[(1, "a")]>
+//! | [1, 2] [1, 2]["b"]
+//! | [7] [7] [7]
+// §12 rule 10, §5 rule 21: `append(v)` appends a `Display`'s text; a list, a map, a set and a
+// deque are `Display`s, their text their Debug form — through a `Display` value too.
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+fn angled<T :: [Display]>(x: T): string = f"<{x}>"
+
+let b = StringBuilder.new()
+b.append(5)
+b.append("x")
+b.append((1, "a"))
+b.append(R { v = 2 })
+b.append([1, 2])
+println(b.toString())
+let s: Set<int> = [1, 2]
+let d: Deque<int> = [3, 4]
+println(f"{angled(["a": 1])} {angled(s)} {angled(d)} {angled([5])} {angled([(1, "a")])}")
+let out = StringBuilder.new()
+[1, 2].showTo(out)
+["b"].showTo(out)
+println(f"{[1, 2].show()} {out.toString()}")
+let dv: Display = [7]
+let out2 = StringBuilder.new()
+dv.showTo(out2)
+println(f"{dv} {dv.show()} {out2.toString()}")

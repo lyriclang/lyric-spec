@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-RES0003
+//! stderr-has: no module 'std.nothere': the standard library has none of that name
+//! since: 1.0.0
+// §12 rule 2: a module the standard library does not have.
+import std.nothere { x }
+
+println(x)

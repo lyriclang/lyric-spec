@@ -1,0 +1,8 @@
+//! run
+//! panic: LYS-RT0003
+//! stderr:
+//! | panic [LYS-RT0003]: range 1..5 out of bounds for length 2
+//! since: 1.0.0
+// §8 rule 3: a slice's range must lie within the list.
+let xs = [1, 2]
+println(xs[1..5])

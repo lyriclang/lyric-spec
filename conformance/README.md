@@ -61,7 +61,8 @@ The differences from Lyric 5's format:
   with a `main.lyrs` — that holds `repos/` is built the same way, `{repos}` written in its
   scripts' frontmatter too.
 - `env: NAME=value` adds to the environment the case runs in (repeatable); `stderr-has:` a text
-  the error stream holds somewhere (repeatable), where the report names paths of the run.
+  the error stream holds somewhere (repeatable), where the report names paths of the run — of
+  the run, or of `check` where the case is rejected or only checked.
 - `option: --offline` passes an option to `check` and `run` (repeatable); `update` runs
   `lyric-script update` in a package case before it is checked. A case's `lyric-script.lock` may
   name the repositories' commits: they are fixed by the fixed author and times.

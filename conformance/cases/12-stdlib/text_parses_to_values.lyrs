@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 42 -1000 255 7 true 25.0
+//! | 123 -9223372036854775808 9223372036854775807
+//! | [] null
+//! | [12a] null
+//! | [9223372036854775808] null
+//! | [+] null
+//! | [1__0] null
+//! | [_1] null
+//! | ParseErrorKind.Overflow the number is beyond the type's range
+//! | ParseErrorKind.Invalid ParseErrorKind.Empty
+//! since: 1.0.0
+// §12 rule 9 (Lyric 5 12 §Parsing): `T.parse(s)` and `s.parse<T>()` read a value of `bool`, `int`
+// — `int.parse(s, radix)` too — and `float` from a text; a text that is none throws a
+// `ParseError`: `Empty`, `Invalid` for a character outside the form, `Overflow` for a number
+// beyond the type's range — the least `int` read as the most is.
+println(f"{int.parse("42")} {int.parse("-1_000")} {int.parse("ff", 16)} {"7".parse<int>()} {bool.parse("true")} {float.parse("2.5e1")}")
+let n: int = "123".parse()
+println(f"{n} {int.parse("-9223372036854775808")} {int.parse("9223372036854775807")}")
+for (t in ["", "12a", "9223372036854775808", "+", "1__0", "_1"]) {
+    let r = try? int.parse(t)
+    println(f"[{t}] {r}")
+}
+try {
+    int.parse("99999999999999999999")
+} catch (e: ParseError) {
+    println(f"{e.kind} {e.message()}")
+}
+var kinds: ParseErrorKind[] = []
+for (t in ["1.e5x", ""]) {
+    try {
+        float.parse(t)
+    } catch (e: ParseError) {
+        kinds.push(e.kind)
+    }
+}
+println(f"{kinds[0]} {kinds[1]}")

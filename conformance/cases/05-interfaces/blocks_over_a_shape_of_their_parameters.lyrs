@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | 3 x
+//! | (a, 1) (2.5, true)
+//! | 3
+//! | some P1 none some P1! some P1
+//! since: 1.0.0
+// §5 rule 3 (Lyric 5 §13 rule 6): a block over a shape of its own parameters, in their order —
+// `extend<T> ?T`, `extend<A, B> (A, B)`, `extend<A, R> fn(A) -> R` — reaches every value of that
+// shape, the value binding the parameters; its conformance is conditional on the block's
+// constraints, its defaults reached too, through a constraint as well.
+extend<T> ?T {
+    fn orElse(d: T): T = this ?? d
+}
+let a: ?int = null
+let b: ?string = "x"
+println(f"{a.orElse(3)} {b.orElse("y")}")
+extend<A, B> (A, B) {
+    fn swap(): (B, A) = (this.1, this.0)
+}
+println(f"{(1, "a").swap()} {(true, 2.5).swap()}")
+extend<A, R> fn(A) -> R {
+    fn at(x: A): R = this(x)
+}
+let len = (s: string) => s.length()
+println(len.at("abc"))
+interface Named {
+    fn name(): string
+    fn shout(): string = this.name() + "!"
+}
+extend<T :: [Named]> ?T :: Named {
+    fn name(): string {
+        if (let v = this) {
+            return "some " + v.name()
+        }
+        return "none"
+    }
+}
+struct P :: Named {
+    n: int,
+    fn name(): string = f"P{this.n}"
+}
+fn nameOf<T :: [Named]>(x: T): string = x.name()
+let p: ?P = P { n = 1 }
+let q: ?P = null
+println(f"{p.name()} {nameOf(q)} {p.shout()} {nameOf(p)}")

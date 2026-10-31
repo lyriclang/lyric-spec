@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | empty
+//! | one 7
+//! | 1 then [2, 3]
+//! | p..r
+//! | p..q
+//! | short
+//! | 10
+//! since: 1.0.0
+// §9 rule 5: `[p, q]`, `[first, ..rest]`, `[a, .., z]` — elements from the front before the `..`,
+// from the end after it; `..rest` a new list.
+fn describe(xs: int[]): string = match (xs) {
+    [] => "empty",
+    [x] => f"one {x}",
+    [first, ..rest] => f"{first} then {rest}",
+}
+println(describe([]))
+println(describe([7]))
+println(describe([1, 2, 3]))
+fn ends(xs: string[]): string = match (xs) {
+    [a, .., z] => f"{a}..{z}",
+    _ => "short",
+}
+println(ends(["p", "q", "r"]))
+println(ends(["p", "q"]))
+println(ends(["p"]))
+fn sum(xs: int[]): int = match (xs) {
+    [] => 0,
+    [h, ..t] => h + sum(t),
+}
+println(sum([1, 2, 3, 4]))

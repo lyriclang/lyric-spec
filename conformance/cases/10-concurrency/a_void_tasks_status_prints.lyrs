@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | TaskStatus.Done(())
+//! | done ()
+//! | 1
+// §10 rule 1, §5 rule 9: a void task's status holds the void value — it prints, alone and where
+// anything else prints through a table, `Any`.
+let t = spawn {
+    yieldNow()
+}
+t.await()
+println(t.status())
+println(match (t.status()) {
+    .Done(v) => f"done {v}",
+    _ => "other",
+})
+let a: Any = 1
+println(a)

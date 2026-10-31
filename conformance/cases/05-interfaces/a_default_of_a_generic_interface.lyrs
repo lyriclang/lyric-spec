@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | (1, 2)
+//! | (3, 4)
+//! | (5, 6)
+//! | (x, x)
+//! | (x, x)
+//! since: 1.0.0
+// §5 rule 15: a default member reads the interface's parameters; each conformer runs it at its
+// instance's arguments — on the type, through a value, through a constraint, for an instance of a
+// generic conformer.
+interface Source<T> {
+    fn take(): T
+    fn pair(): (T, T) = (this.take(), this.take())
+}
+class Counter :: Source<int> {
+    var n: int = 0
+    fn take(): int {
+        this.n += 1
+        return this.n
+    }
+}
+let c = Counter { }
+println(c.pair())
+let s: Source<int> = c
+println(s.pair())
+fn both<S :: [Source<int>]>(x: S): (int, int) = x.pair()
+println(both(c))
+class Cell<T> :: Source<T> {
+    var v: T
+    fn take(): T = this.v
+}
+let cell: Cell<string> = Cell { v = "x" }
+println(cell.pair())
+let cs: Source<string> = cell
+println(cs.pair())

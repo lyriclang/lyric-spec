@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0003
+//! stdout:
+//! | a
+//! stderr:
+//! | panic [LYS-RT0003]: byte 2 does not begin a character
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings rule 2): a bound of `s[a..b]` inside a character panics, as one
+// outside the bytes does.
+let s = "aé"
+println(s[0..1])
+println(s[0..2])

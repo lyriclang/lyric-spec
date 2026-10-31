@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | {"a": 1} {1} [2] 3 [4]
+//! | {"x": 2}
+//! since: 1.0.0
+// §12 rule 5 (Lyric 5 12 §Collections): `import std.collections { … }`, as Lyric 5's modules
+// write it, names the prelude's own — under a name of its own too.
+import std.collections { Map, Set, List, Deque, Heap, Map as Dict }
+let m: Map<string, int> = ["a": 1]
+let s: Set<int> = [1]
+let d: Deque<int> = [2]
+let h: Heap<int> = [3]
+let l: List<int> = [4]
+println(f"{m} {s} {d} {h.peek()} {l}")
+let x: Dict<string, int> = Dict.new()
+x["x"] = 2
+println(x)

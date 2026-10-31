@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 2 a V { a = 0, b = "z" }
+//! | Ordering.Less Ordering.Greater null Ordering.Less Ordering.Greater
+//! | (1, 5)
+//! since: 1.0.0
+// §5 rule 16: over `T :: [Ordered]` the argument's comparison, in its copy; the scalars' `compare`
+// and `totalCompare` — `float`'s `null` with a NaN, its total order of -0.0 and of negatives.
+struct V :: Ordered {
+    a: int,
+    b: string,
+}
+fn smaller<T :: [Ordered]>(a: T, b: T): T = if (a < b) a else b
+println(f"{smaller(3, 2)} {smaller("b", "a")} {smaller(V { a = 1, b = "x" }, V { a = 0, b = "z" })}")
+let nan = 0.0 / 0.0
+println(f"{3.compare(5)} {2.5.totalCompare(-1.0)} {nan.compare(1.0)} {(-0.0).totalCompare(0.0)} {(-1.0).totalCompare(-2.0)}")
+fn sortTwo<T :: [TotalOrder]>(a: T, b: T): (T, T) = if (a.totalCompare(b) == Ordering.Greater) (b, a)
+    else (a, b)
+println(sortTwo(5, 1))

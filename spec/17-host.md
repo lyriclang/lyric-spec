@@ -17,9 +17,10 @@ allocation budget, ownership and reload come with S8 — until then the design d
    class). Where stdin and stderr are a terminal, the run lists what it was not given, each with
    its import, and asks once; else every missing right is reported at once, with its import
    (`LYS-CAP0001`), exit 2. `check` asks for none. A script holds no rights of its own: not in
-   its frontmatter, not in a manifest. The standard library's table is fixed with S7, which
-   brings `std`; until then `LYRIC_SCRIPT_RIGHTS` — `module=class` pairs between commas — stands
-   in for it in tests: it can ask for rights, never give them.
+   its frontmatter, not in a manifest. The standard library's table: `std.fs` asks for `file`;
+   `std.net` and `std.http` for `net`; `std.process` for `process`; `std.os`, `std.time` and
+   `std.random` for `os`; every other module of it for none — a module below a row counts as
+   the row (`std.fs.glob` asks for `file`).
 
 ## Scope
 

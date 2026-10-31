@@ -1,0 +1,43 @@
+//! run
+//! stdout:
+//! | 1 2 3 3 1
+//! | 1.5
+//! | 0 1 1
+//! | 10 [11, 20] 1
+//! | 4
+//! since: 1.0.0
+// §8 rule 5 (Lyric 5 §6): `x++` is worth the old value, `++x` the new; a variable, a field, an
+// element, what leads to it evaluated once.
+var i = 1
+let first = i++
+let second = i
+let third = ++i
+let fourth = i--
+let fifth = --i
+println(f"{first} {second} {third} {fourth} {fifth}")
+var f = 0.5
+f++
+println(f)
+class C {
+    var n: int = 0
+}
+let c = C { }
+var picks = 0
+fn pick(): C {
+    picks += 1
+    return c
+}
+let was = pick().n++
+println(f"{was} {c.n} {picks}")
+let xs = [10, 20]
+var k = 0
+fn next(): int {
+    k += 1
+    return k - 1
+}
+let item = xs[next()]++
+println(f"{item} {xs} {k}")
+for (j in 0..3) {
+    i++
+}
+println(i)

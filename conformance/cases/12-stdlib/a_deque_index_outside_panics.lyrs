@@ -1,0 +1,11 @@
+//! run
+//! panic: LYS-RT0003
+//! stdout:
+//! | 3
+//! stderr:
+//! | panic [LYS-RT0003]: index 3 out of bounds for length 3
+//! since: 1.0.0
+// §12 rule 7: `d[i]` outside `0 ≤ i < length()` panics as a list's index does.
+let d: Deque<int> = [1, 2, 3]
+println(d[2])
+println(d[3])

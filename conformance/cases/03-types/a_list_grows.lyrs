@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | [3, 1, 2]
+//! | 3
+//! | [3, 1, 2, 7]
+//! | 7
+//! | 2
+//! | [3, 1]
+//! | ["a", "b"]
+//! | [(1, "one"), (2, "two")]
+//! | [[1, 2], [3]]
+//! | 0
+//! since: 1.0.0
+// §3 rule 16: a list grows; `length()`, `push(v)`, `pop()`; its text is its Debug form.
+let xs = [3, 1, 2]
+println(xs)
+println(xs.length())
+xs.push(7)
+println(xs)
+println(xs.pop() ?? -1)
+println(xs.pop() ?? -1)
+println(xs)
+println(["a", "b"])
+println([(1, "one"), (2, "two")])
+println([[1, 2], [3]])
+let none: List<int> = []
+println(none.length())

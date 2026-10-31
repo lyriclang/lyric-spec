@@ -1,0 +1,12 @@
+//! run
+//! option: -A
+//! stdout:
+//! | true
+//! | unset
+//! since: 1.0.0
+// §17 rule 1: `-A` gives every right.
+import std.fs { exists }
+import std.os { env }
+
+println(exists("."))
+println(env("LYRIC_SCRIPT_NEVER_SET_9F2") ?? "unset")

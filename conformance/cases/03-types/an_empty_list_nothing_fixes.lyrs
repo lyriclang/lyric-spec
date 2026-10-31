@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0010
+//! stderr-has: nothing in this function fixes the type of 'xs'
+//! since: 1.0.0
+// §3 rule 8: where nothing fixes an empty list's type, it is written.
+var xs = []
+println(xs.length())

@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 3
+//! | null
+//! | ["a"]
+//! | {"a": 1}
+//! since: 1.0.0
+// §3 rule 12: a static of a generic type called through the type with its arguments written,
+// `Box<string>.none()`, takes them — where no argument binds them too.
+class Box<T> {
+    v: T,
+    static fn of(v: T): Box<T> = Box { v = v }
+    static fn none(): ?Box<T> = null
+    static fn empty(): T[] = []
+}
+println(Box<int>.of(3).v)
+println(Box<string>.none())
+let xs = Box<string>.empty()
+xs.push("a")
+println(xs)
+let m = Map<string, int>.new()
+m["a"] = 1
+println(m)

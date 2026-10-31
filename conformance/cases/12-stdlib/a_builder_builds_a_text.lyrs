@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | abé! 5
+//! | 0 true
+//! | xyz 3
+//! | <StringBuilder> [<StringBuilder>]
+// §12 rule 10: a `StringBuilder` appends strings and characters to one buffer; its length counts
+// bytes; `clear()` empties it; its Debug form is its type, the VM holding its text.
+let b = StringBuilder.new()
+b.appendStr("ab")
+b.appendChar('é')
+b.appendChar('!')
+println(f"{b.toString()} {b.length()}")
+b.clear()
+println(f"{b.length()} {b.toString() == ""}")
+for (c in ["x", "y", "z"]) {
+    b.appendStr(c)
+}
+println(f"{b.toString()} {b.length()}")
+println(f"{b} {[b]}")

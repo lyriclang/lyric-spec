@@ -1,0 +1,54 @@
+//! run
+//! stdout:
+//! | hi cat hi cat
+//! | hi owl hi owl
+//! | hi five hi five
+//! | hi box
+//! | hi cat
+//! | hi five
+//! | true false
+//! | named named
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 8): a blanket block gives an interface to every type its
+// constraints admit — a struct, a class, a built-in type, an instance of a generic type —
+// through a constraint, as a value of the interface (with the interface's default in its table)
+// and to `is`; its static member through the type and through a type parameter.
+interface Named {
+    fn name(): string
+}
+interface Greets {
+    fn greet(): string
+    fn twice(): string = f"{this.greet()} {this.greet()}"
+}
+extend<T :: [Named]> T :: [Greets] {
+    fn greet(): string = f"hi {this.name()}"
+    static fn kind(): string = "named"
+}
+struct Cat :: Named {
+    fn name(): string = "cat"
+}
+class Owl :: Named {
+    fn name(): string = "owl"
+}
+class Box<T> :: Named {
+    v: T
+    fn name(): string = "box"
+}
+extend int :: Named {
+    fn name(): string = "five"
+}
+fn both<G :: [Greets]>(g: G): string = g.twice()
+println(both(Cat { }))
+println(both(Owl { }))
+println(both(5))
+let g: Greets = Box { v = 1 }
+println(g.greet())
+let h: Greets = Cat { }
+println(h.greet())
+let i: Greets = 7
+println(i.greet())
+let a: Any = Owl { }
+let s: Any = "s"
+println(f"{a is Greets} {s is Greets}")
+fn kindOf<T :: [Named]>(): string = T.kind()
+println(f"{Cat.kind()} {kindOf<Owl>()}")

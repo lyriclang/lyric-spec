@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | first
+//! | 2 second third
+//! | 0
+//! since: 1.0.0
+// §6 rule 10: `e.suppressed()` gives the errors defers threw while `e` was in flight, in order.
+class Named :: Error {
+    text: string
+    fn message(): string = this.text
+}
+fn work() {
+    defer {
+        throw Named { text = "third" }
+    }
+    defer {
+        throw Named { text = "second" }
+    }
+    throw Named { text = "first" }
+}
+try {
+    work()
+} catch (e) {
+    println(e.message())
+    let more = e.suppressed()
+    println(f"{more.length()} {more[0].message()} {more[1].message()}")
+}
+try {
+    throw Named { text = "alone" }
+} catch (e) {
+    println(e.suppressed().length())
+}

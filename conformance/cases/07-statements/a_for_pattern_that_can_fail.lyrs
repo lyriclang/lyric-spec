@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-SEM0098
+//! since: 1.0.0
+// §7 rule 9: a `for` takes its items apart only by a pattern that cannot fail; one that can is a
+// `match`'s or an `if let`'s.
+enum E {
+    A(int),
+    B(int),
+}
+for (E.A(n) in [E.A(1), E.B(2)]) {
+    println(n)
+}

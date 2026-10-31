@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 9223372036854775806 9223372036854775807 null
+//! | 2
+//! since: 1.0.0
+// §7 rule 8 (Lyric 5 12 Iteration): an inclusive range up to the type's last value ends there,
+// no bound leaving the type.
+let top = (9223372036854775806..=9223372036854775807).iter()
+println(f"{top.next()} {top.next()} {top.next()}")
+var n = 0
+for (c in (1114110 as char)..=(1114111 as char)) {
+    n += 1
+}
+println(n)

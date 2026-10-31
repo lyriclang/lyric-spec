@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | true false Ordering.Equal
+//! | true true Ordering.Equal
+//! | false true
+//! since: 1.0.0
+// §5 rule 16 (Lyric 5 §12 rule 6, §14): `<` … through `compare` — synthesized for a struct and an
+// enum that list the interface, the variant's position first; a class's own, `null` making the
+// comparisons false.
+struct V :: Ordered {
+    a: int,
+    b: string,
+}
+let v1 = V { a = 1, b = "x" }
+println(f"{v1 < V { a = 1, b = "y" }} {V { a = 2, b = "a" } <= V { a = 1, b = "z" }} {v1.compare(v1)}")
+enum Shape :: TotalOrder {
+    Dot,
+    Circle(int),
+    Square(int),
+}
+println(f"{Shape.Circle(3) < Shape.Circle(4)} {Shape.Square(1) > Shape.Circle(9)} {Shape.Dot.totalCompare(Shape.Dot)}")
+class C :: Ordered {
+    n: int
+    fn compare(o: C): ?Ordering = if (this.n % 2 == o.n % 2) Ordering.Equal else null
+}
+println(f"{C { n = 1 } < C { n = 2 }} {C { n = 1 } <= C { n = 3 }}")

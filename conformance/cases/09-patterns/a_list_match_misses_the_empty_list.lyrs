@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0050
+//! stderr-has: no arm takes []
+//! since: 1.0.0
+// §9 rule 5: `[_, ..]` leaves the empty list out.
+fn f(xs: int[]): int = match (xs) {
+    [_, ..] => 1,
+}
+println(f([1]))

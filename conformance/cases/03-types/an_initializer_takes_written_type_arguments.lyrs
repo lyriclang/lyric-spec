@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | Pair { first = 1, second = "x" } Pair { first = 3, second = "y" } Pair { first = 2.0, second = true }
+//! | [] null
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.3 rules 1–2): an initializer's type arguments written, a placeholder among
+// them filled by the fields — each checked with as much of its type as is known.
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+let q = Pair<int, string> { first = 1, second = "x" }
+let r = Pair<_, string> { first = 3, second = "y" }
+let s = Pair<float, _> { first = 2, second = true }
+println(f"{q} {r} {s}")
+let t = Pair<int[], _> { first = [], second = 1 }
+class Box<T> {
+    var v: ?T = null
+}
+println(f"{t.first} {Box<int> { }.v}")

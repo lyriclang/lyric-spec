@@ -43,7 +43,52 @@
    function of its own —, a label repeating one around it too (`LYS-SEM0102`); a label nothing
    jumps to is warned about (`LYS-SEM0103`).
 
+## Written (S7, the core collections)
+
+6. **`for` over a list** visits its elements in order from the first. The binding is fresh for
+   each element — a closure keeps the element it saw —, and `break` and `continue` work as in
+   every loop. A change of the list's length while the loop walks it — a push, a pop, an
+   insert, a removal — makes the next step panic, `LYS-RT0016` (Lyric 5's `List` iterator);
+   writing an element is no change.
+7. **`for` over an Iterator or an Iterable** (Lyric 5 §1; S7c4a). The prelude declares
+   `interface Iterator { type Item; fn next(): ?Self.Item }` — without Lyric 5's error type
+   ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md): every call may throw) — and `interface Iterable { type Iter :: [Iterator];
+   fn iter(): Self.Iter }`. `for (x in e)` over an `Iterator` pulls `e.next()` until it gives
+   `null`, `e` evaluated once; over an `Iterable` it pulls the iterator `e.iter()` gives. Where
+   the iterator is a `Closeable` it is closed at every way out of the loop — its end, a `break`,
+   a `return`, an error (05 E7). Over a value that is neither: `LYS-SEM0007`. A list, a range
+   and a coroutine are walked as rules 6 and §10 say. Every iterator **collects** (Lyric 5
+   §12; S7c4c2): the prelude declares `interface FromIterator<T> { static fn fromIter<I ::
+   [Iterator<Item = T>]>(it: I): Self }`, which every list is of its element, and the blanket
+   block `extend<I :: [Iterator]> I { fn collect<C :: [FromIterator<I.Item>]>(): C }`;
+   `it.collect()` pulls the values into the type the position expects, `let xs: string[] =
+   words.iter().collect()`, or the one written, `it.collect<int[]>()` ([03](03-types.md) rule
+   12) — a type of the program that is a `FromIterator` too. Every iterator is an `Iterable`
+   whose `iter()` is itself, through the prelude's blanket block `extend<I :: [Iterator]> I ::
+   [Iterable<Iter = I>]` ([05](05-interfaces.md) rule 12; S7c4c3a), as in Lyric 5.
+8. **Ranges as values** (Lyric 5 12 §Iteration; S7c6a). `a..b` and `a..=b` outside a `for` head
+   are values of the prelude's `struct Range<T> { start: T, end: T }` and `struct
+   RangeInclusive<T>`, `T` the bounds' type — the one the position names, `let r: Range<float> =
+   0..3`, else the first bound's. A range of `int` or `char` is an `Iterable`: `r.iter()` gives a
+   new `RangeIter<T>` or `RangeInclusiveIter<T>` each time, which walks it from both ends — a range
+   of characters its scalar values, the surrogates passed over; an inclusive range up to its type's
+   last value ends there, no bound leaving the type. `for (x in a..b)` over `int` bounds stays the
+   counted loop; over a range value, or bounds of `char`, it walks `iter()`'s iterator, so a range
+   walked twice walks twice. A range of an ordered type contains its values, `x in r` (Lyric 5
+   05 §12 rule 10): `2.5 in 1.0..3.0`. The protocol gains Lyric 5's `fn sizeHint(): (int, ?int)`
+   on `Iterator`, by default `(0, null)`, and `interface DoubleEnded :: Iterator { fn nextBack():
+   ?Self.Item }`; a list's iterator walks from both ends and says its size exactly.
+9. **`for` takes its items apart** (Lyric 5 §2 rule 2; S7d2). `for (P in e)` with a pattern `P`
+   that cannot fail — a tuple, a field pattern over a struct, of names and `_` — binds its names
+   from each item, fresh each time, `for ((k, v) in m)`, `for ((i, (a, b)) in
+   xs.iter().enumerate())`, under a label too; a pattern that can fail is refused
+   (`LYS-SEM0098`), as after `let` ([09](09-patterns.md) rule 2).
+
 ## Deviations (skeleton, written with later milestones)
+
+- A range is a value that never changes ([02 T7](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)), an `Iterable`, not an `Iterator` as Lyric 5's
+  struct with `var` bounds is: `r.next()` and an adapter on the range itself, `(0..n).map(f)`, are
+  refused (`LYS-SEM0012`); `r.iter()` walks it (STATUS P24).
 
 - No `mut fn`; class methods write `var` fields without a marker ([03](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)).
 

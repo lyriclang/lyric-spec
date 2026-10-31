@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0029
+//! since: 1.0.0
+// §9 rule 5: a list pattern against a value that is no list.
+match (5) {
+    [a] => println(a),
+    _ => println(0),
+}

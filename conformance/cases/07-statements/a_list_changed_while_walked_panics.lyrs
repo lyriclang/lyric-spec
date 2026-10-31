@@ -1,0 +1,13 @@
+//! run
+//! panic: LYS-RT0016
+//! stdout:
+//! | 1
+//! stderr:
+//! | panic [LYS-RT0016]: List: changed while it was walked
+//! since: 1.0.0
+// §7 rule 6: a push while the loop walks the list makes the next step panic.
+let xs = [1, 2, 3]
+for (x in xs) {
+    println(x)
+    xs.push(x)
+}

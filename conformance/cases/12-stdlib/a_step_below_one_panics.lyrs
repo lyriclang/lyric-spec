@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 3 (Lyric 5 12 Iteration): `stepBy(n)` with `n` below 1 panics.
+let n = 0
+let s: int[] = [1, 2].iter().stepBy(n).collect()
+println(s)

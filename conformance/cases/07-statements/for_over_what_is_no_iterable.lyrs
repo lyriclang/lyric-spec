@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0007
+//! since: 1.0.0
+// §7 rule 7: a value that is no Iterator or Iterable is not walked.
+for (x in 5) {
+    println(x)
+}

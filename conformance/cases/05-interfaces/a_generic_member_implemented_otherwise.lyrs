@@ -1,0 +1,11 @@
+//! check
+//! error: LYS-SEM0042
+//! since: 1.0.0
+// §5 rule 15: a conformer's member has as many type parameters of its own as the interface's.
+interface Build<T> {
+    static fn build<I :: [Iterator<Item = T>]>(it: I): Self
+}
+struct Sum :: Build<int> {
+    total: int,
+    static fn build(it: int[]): Sum = Sum { total = 0 }
+}

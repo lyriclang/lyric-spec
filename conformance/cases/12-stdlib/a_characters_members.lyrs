@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | true true true true true A true
+//! | 35 null 'b' null
+//! | UnicodeCategory.UppercaseLetter UnicodeCategory.DecimalNumber
+//! | true false true true
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Characters): a character's category and the tests on it, of any script;
+// its simple case mappings; the ASCII tests; `toDigit(radix)` and `char.fromDigit(n, radix)`,
+// `null` where there is no such digit.
+println(f"{'a'.isAlpha()} {'5'.isDigit()} {'٣'.isDigit()} {' '.isWhitespace()} {'A'.isUpper()} {'a'.toUpper()} {'ß'.isLower()}")
+println(f"{'z'.toDigit(36)} {'z'.toDigit(10)} {char.fromDigit(11, 16)} {char.fromDigit(3, 2)}")
+println(f"{'A'.category()} {'٣'.category()}")
+println(f"{'F'.isAsciiHexDigit()} {'é'.isAsciiAlpha()} {'\t'.isAsciiWhitespace()} {'_'.isControl() == false}")

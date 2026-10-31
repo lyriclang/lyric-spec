@@ -1,0 +1,11 @@
+//! check
+//! error: LYS-SEM0007
+//! error: LYS-SEM0012
+//! since: 1.0.0
+// §7 rule 8: a range is an Iterable of `int` or `char` alone, never an iterator itself — `r.next()`
+// is refused, `r.iter().next()` walks it.
+for (x in 0.5..2.5) {
+    println(x)
+}
+let r = 0..3
+let b = r.next()

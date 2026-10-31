@@ -1,0 +1,11 @@
+//! run
+//! panic: LYS-RT0016
+//! stdout:
+//! | 1
+//! since: 1.0.0
+// §3 rule 16: a list is an Iterable; its iterator panics after a change of the list's length.
+let xs = [1, 2, 3]
+let walker = xs.iter()
+println(walker.next() ?? -1)
+xs.push(4)
+println(walker.next() ?? -1)

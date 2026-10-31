@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | Point { x = 0, y = 1.5, name = "" } 0 [] null
+//! | 0 0 [] (0, false)
+//! since: 1.0.0
+// §5 rule 19 (Lyric 5 §14 rule 2): `default` of a type that lists Default without one takes each
+// field's initializer, else its type's default; through a type parameter, `T.default()`.
+struct Point :: [Default] {
+    x: int,
+    y: float = 1.5,
+    name: string,
+}
+class Counter :: [Default] {
+    var n: int
+    tags: string[]
+    last: ?string
+}
+let d = Counter.default()
+println(f"{Point.default()} {d.n} {d.tags} {d.last}")
+fn fresh<T :: [Default]>(): T = T.default()
+let fc: Counter = fresh()
+let fi: int = fresh()
+let fs: string[] = fresh()
+struct Pair :: [Default] {
+    p: (int, bool),
+}
+println(f"{fc.n} {fi} {fs} {Pair.default().p}")

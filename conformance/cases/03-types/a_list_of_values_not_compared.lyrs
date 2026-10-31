@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0134
+//! error: LYS-SEM0059
+//! since: 1.0.0
+// §3 rule 16: where the elements do not compare, the comparing methods are not there and `==`
+// does not compare the lists.
+fn one(): int = 1
+let fs = [one]
+println(fs.contains(one))
+println(fs == fs)

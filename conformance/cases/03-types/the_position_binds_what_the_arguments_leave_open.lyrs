@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 0
+//! | 3
+//! | []
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2 rule 2): what the arguments leave open, the position's type binds —
+// a binding's, a return's —, and it never overrides the arguments: `ident(3)` is an `int` that
+// a `?int` then holds.
+fn empty<T>(): T[] = []
+fn ident<T>(x: T): T = x
+fn none(): string[] {
+    return empty()
+}
+let xs: int[] = empty()
+println(xs.length())
+let o: ?int = ident(3)
+println(o)
+println(none())

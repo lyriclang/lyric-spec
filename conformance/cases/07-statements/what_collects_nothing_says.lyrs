@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0060
+//! error: LYS-SEM0028
+//! since: 1.0.0
+// §7 rule 7: a `collect()` whose target nothing gives, and one into a type that is no
+// `FromIterator` of the values.
+let a = [1].iter().collect()
+let n: int = [1].iter().collect()

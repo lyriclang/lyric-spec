@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | <Task>
+//! | true false
+//! | <Coroutine>
+//! | done
+//! since: 1.0.0
+// §10 rule 19: a task, a coroutine, a scope are interface values in a box of their type.
+fn count(n: int): Coroutine<int> {
+    yield n
+}
+let t: Any = spawn { 1 }
+println(t)
+println(f"{t is Task<int>} {t is Task<string>}")
+let a: Any = count(1)
+println(a)
+let scope: Closeable = TaskScope.new()
+scope.close()
+println("done")

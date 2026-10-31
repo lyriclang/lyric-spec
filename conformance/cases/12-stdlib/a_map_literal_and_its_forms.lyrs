@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | {"a": 1, "b": 2}
+//! | {} true
+//! | {"a": 2} 0
+//! | true false true
+//! | "p" null
+//! | {P { x = 1, y = 2 }: [1, 2]}
+//! | {"k": {"i": 1}}
+//! | {"a": 1, "b": 2} {"a": 100, "b": 2}
+//! | Holder { m = {"q": 1} }
+//! since: 1.0.0
+// §12 rule 5, §3 rule 14 (Script 02 K4, 03 Lit): `["a": 1]` and `[:]` build a map through
+// `FromMapLiteral`; `Map.from` and `withCapacity`; maps of equal keys and values are equal in any
+// order; the Debug form `{"a": 1}`; a clone is a map of its own.
+let lit = ["a": 1, "b": 2]
+println(lit)
+let e: Map<int, string> = [:]
+println(f"{e} {e.isEmpty()}")
+let f = Map<string, int>.from([("a", 1), ("a", 2)])
+let g = Map<string, bool>.withCapacity(8)
+println(f"{f} {g.length()}")
+println(f"{lit == ["b": 2, "a": 1]} {lit == ["a": 1]} {lit != ["a": 1, "b": 3]}")
+struct P {
+    x: int,
+    y: int,
+}
+let pm = [P { x = 1, y = 2 }: "p"]
+println(f"{pm[P { x = 1, y = 2 }]} {pm[P { x = 2, y = 1 }]}")
+println([P { x = 1, y = 2 }: [1, 2]])
+println(["k": ["i": 1]])
+let c = lit.clone()
+c["a"] = 100
+println(f"{lit} {c}")
+struct Holder {
+    m: Map<string, int>,
+}
+println(Holder { m = ["q": 1] })

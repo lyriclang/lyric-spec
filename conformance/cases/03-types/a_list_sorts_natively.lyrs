@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | [-3, -3, 0, 2, 5, 9] ['a', 'm', 'z'] [-1.5, -0.0, 0.0, 2.5, inf] ["Apple", "apple", "fig", "pear"]
+//! since: 1.0.0
+// §3 rule 16 (Lyric 5 12 Arrays): `sort()` of a list of ints, chars, floats or strings, in their
+// own order — a float's IEEE 754 total order, a string's bytes.
+let xs = [5, -3, 9, 0, -3, 2]
+xs.sort()
+let cs = ['z', 'a', 'm']
+cs.sort()
+let fs = [2.5, 0.0, -0.0, -1.5, 1.0 / 0.0]
+fs.sort()
+let ss = ["pear", "apple", "fig", "Apple"]
+ss.sort()
+println(f"{xs} {cs} {fs} {ss}")

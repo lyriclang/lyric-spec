@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | b
+//! | z
+//! | b!
+//! | 1
+//! | z
+//! since: 1.0.0
+// §8 rule 4: `x[k]` is `x.index(k)`, `x[k] = v` is `x.setIndex(k, v)`, `x[k] op= v` evaluates `x`
+// and `k` once; through a constraint too.
+class Grid :: IndexSet<int> {
+    type Output = string
+    var cells: string[]
+    fn index(k: int): string = this.cells[k]
+    fn setIndex(k: int, v: string) {
+        this.cells[k] = v
+    }
+}
+class Count {
+    var n: int = 0
+}
+let calls = Count { }
+let g = Grid { cells = ["a", "b"] }
+fn grid(): Grid {
+    calls.n += 1
+    return g
+}
+println(g[1])
+g[0] = "z"
+println(g[0])
+grid()[1] += "!"
+println(g[1])
+println(calls.n)
+fn at<G :: [Index<int>]>(x: G, k: int): G.Output = x[k]
+println(at(g, 0))

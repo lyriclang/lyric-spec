@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | woof
+//! | hi dog
+//! stderr-has: LYS-SEM0168
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 7): a member of the type's own comes first and is warned about;
+// generic code that reaches the name through the block's constraints calls the block's.
+interface Named {
+    fn name(): string
+}
+extend<T :: [Named]> T {
+    fn greeting(): string = f"hi {this.name()}"
+}
+struct Dog :: Named {
+    fn name(): string = "dog"
+    fn greeting(): string = "woof"
+}
+fn greet<T :: [Named]>(x: T): string = x.greeting()
+println(Dog { }.greeting())
+println(greet(Dog { }))

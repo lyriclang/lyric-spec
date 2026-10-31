@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ()
+//! | () 2
+//! | <()> 3
+// §5 rule 9 (Lyric 5 03 M6-5): `void` has one value, standing for the empty tuple; it prints as
+// `()`, and what gives it still runs.
+var n = 0
+fn tick() {
+    n += 1
+}
+fn angled<T>(x: T): string = f"<{x}>"
+
+println(tick())
+println(f"{tick()} {n}")
+println(f"{angled(tick())} {n}")

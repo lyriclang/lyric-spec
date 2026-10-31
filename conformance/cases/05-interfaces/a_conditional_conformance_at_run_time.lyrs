@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | true false
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 3): an instance that does not meet a conditional conformance's
+// condition is no value of the interface at run time either.
+interface Named {
+    fn name(): string
+}
+struct Cond<T> {
+    v: T,
+}
+struct Cat :: Named {
+    fn name(): string = "cat"
+}
+extend<T :: [Named]> Cond<T> :: Named {
+    fn name(): string = "cond"
+}
+let yes: Any = Cond { v = Cat { } }
+let no: Any = Cond { v = 1 }
+println(f"{yes is Named} {no is Named}")

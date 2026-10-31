@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 12 10 [0, 1, 2, 3, 4]
+//! | 1 3 2 null
+//! | (3, 3) 3 1 (1, 1) null
+//! since: 1.0.0
+// §7 rule 8: a range is walked by the iterator `iter()` gives, a new one each time — walked twice,
+// it walks twice —, from both ends; a list's iterator too, its size exact.
+let r = 1..4
+var s = 0
+for (x in r) {
+    s += x
+}
+for (x in r) {
+    s += x
+}
+fn total<I :: [Iterable<Iter = RangeIter<int>>]>(x: I): int {
+    var t = 0
+    for (v in x) {
+        t += v
+    }
+    return t
+}
+let collected: int[] = (0..5).iter().collect()
+println(f"{s} {total(1..5)} {collected}")
+let it = r.iter()
+println(f"{it.next()} {it.nextBack()} {it.next()} {it.next()}")
+let li = [1, 2, 3].iter()
+println(f"{li.sizeHint()} {li.nextBack()} {li.next()} {li.sizeHint()} {(1..1).iter().next()}")

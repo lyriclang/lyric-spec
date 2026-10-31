@@ -1,0 +1,11 @@
+//! check
+//! error: LYS-SEM0042
+//! since: 1.0.0
+// §5 rule 15: a member's signature is the interface's at the instance's arguments.
+interface Source<T> {
+    fn take(): T
+}
+struct Bad :: Source<int> {
+    fn take(): string = "x"
+}
+println(1)

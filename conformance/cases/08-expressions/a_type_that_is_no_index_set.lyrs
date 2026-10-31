@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0019
+//! since: 1.0.0
+// §8 rule 4: an `Index` that is no `IndexSet` is read, not written.
+class R :: Index<int> {
+    type Output = int
+    fn index(k: int): int = k
+}
+let r = R { }
+r[0] = 5

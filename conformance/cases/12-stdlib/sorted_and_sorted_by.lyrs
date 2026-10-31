@@ -1,0 +1,7 @@
+//! run
+//! stdout:
+//! | [1, 2, 3] [3, 2, 1] ["b", "a"]
+//! since: 1.0.0
+// §12 rule 4 (Lyric 5 12 Iteration): `sorted()` of a TotalOrder item and `sortedBy(cmp)`, the
+// values in a list, stably.
+println(f"{[3, 1, 2].iter().sorted()} {[3, 1, 2].iter().sortedBy((a, b) => b.totalCompare(a))} {["a", "b"].iter().sortedBy((a, b) => Ordering.Equal).iter().rev().toArray()}")

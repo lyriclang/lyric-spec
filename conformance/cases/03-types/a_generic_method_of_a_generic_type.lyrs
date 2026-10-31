@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 6
+//! | n3
+//! | Box { v = P { v = 3 } }
+//! | Box { v = P { v = 1 } }
+//! since: 1.0.0
+// §3 rule 12: a method of a generic type with a type parameter of its own — the receiver binds
+// `T`, the argument `U`, a struct among them.
+struct P {
+    v: int,
+}
+struct Box<T> {
+    v: T,
+    fn map<U>(f: fn(T) -> U): Box<U> = Box { v = f(this.v) }
+}
+let b: Box<int> = Box { v = 3 }
+println(b.map { it * 2 }.v)
+println(b.map { f"n{it}" }.v)
+println(b.map { P { v = it } })
+let s: Box<string> = Box { v = "a" }
+println(s.map { P { v = 1 } })

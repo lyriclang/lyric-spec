@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-SEM0098
+//! since: 1.0.0
+// §9 rules 2 and 5: a list pattern of elements can fail — `let` takes it with `else` only.
+let [a, b] = [1, 2]
+println(a + b)

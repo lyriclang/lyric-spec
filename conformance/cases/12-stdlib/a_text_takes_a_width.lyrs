@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | |  abc|abc|**ab**|  x|true  |
+//! | |   R1|(1, "a")|"q"|  [1, 2]|Some 7    |
+// §12 rule 11 (Lyric 5 12 §2 rules 1–2): a string takes fill, alignment, width and a precision,
+// its most characters; a `char`, a `bool` and any other value fill, alignment and width, on its
+// text; under `?` its Debug form, padded alike.
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+enum O {
+    Some(int),
+    None,
+}
+extend O :: Display {
+    fn show(): string = match (this) {
+        .Some(n) => f"Some {n}",
+        .None => "None",
+    }
+}
+println(f"|{"abc":>5}|{"abcdef":.3}|{"ab":*^6}|{'x':>3}|{true:<6}|")
+println(f"|{R { v = 1 }:>5}|{(1, "a"):?}|{"q":?}|{[1, 2]:>8}|{O.Some(7):10}|")

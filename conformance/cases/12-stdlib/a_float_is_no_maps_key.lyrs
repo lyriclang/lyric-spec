@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-SEM0028
+//! stderr-has: float is no Hashable
+//! since: 1.0.0
+// §12 rule 5: a map's key is a Hashable; a float is none (§5 rule 20).
+let f: Map<float, int> = Map.new()

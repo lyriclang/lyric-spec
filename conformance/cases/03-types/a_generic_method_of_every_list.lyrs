@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | [10, 20]
+//! | [P { v = 2 }]
+//! since: 1.0.0
+// §3 rule 12: a method of every list with a type parameter of its own.
+struct P {
+    v: int,
+}
+extend<T> T[] {
+    fn mapped<U>(f: fn(T) -> U): U[] {
+        let out: U[] = []
+        for (x in this) {
+            out.push(f(x))
+        }
+        return out
+    }
+}
+println([1, 2].mapped { it * 10 })
+println(["a"].mapped { P { v = 2 } })

@@ -193,14 +193,18 @@ def run_case(path, spec, exe, package=None, env=None):
     def command(verb):
         args = [str(exe), verb, *spec["options"]] + ([] if package is not None else [str(path)])
         try:
-            return subprocess.run(args, capture_output=True, text=True, cwd=package, env=env,
+            # UTF-8 both ways: a text mode without it decodes with the locale's code page on
+            # Windows, which turned a non-ASCII line of the output into another (S7e1)
+            return subprocess.run(args, capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", cwd=package, env=env,
                                   timeout=CASE_TIMEOUT, input=given)
         except subprocess.TimeoutExpired:
             return None
 
     # `update`: the package's git dependencies read anew before the build
     if spec.get("update") and package is not None:
-        updated = subprocess.run([str(exe), "update"], capture_output=True, text=True, cwd=package, env=env)
+        updated = subprocess.run([str(exe), "update"], capture_output=True, text=True,
+                                 encoding="utf-8", errors="replace", cwd=package, env=env)
         if updated.returncode != 0:
             return fail(f"update exited {updated.returncode}:\n{updated.stderr}")
 
@@ -220,6 +224,10 @@ def run_case(path, spec, exe, package=None, env=None):
         for code in spec["errors"] + spec["warnings"]:
             if code not in diagnostics:
                 return fail(f"expected {code}, diagnostics were:\n{diagnostics}")
+        # `stderr-has:` of a rejection reads the diagnostics (ignored before S7a)
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     if checked.returncode != 0:
@@ -230,6 +238,9 @@ def run_case(path, spec, exe, package=None, env=None):
     if spec["mode"] == "check":
         if not spec["warnings"] and diagnostics.strip():
             return fail(f"expected silence, got:\n{diagnostics}")
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     executed = command("run")
