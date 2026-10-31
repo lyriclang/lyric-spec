@@ -25,8 +25,11 @@ S7.
    at fixed types (Lyric 5 §13 rule 6; S7e2) — `extend fn(char) -> bool :: [Pattern]`,
    `extend ?int { … }`, `extend (int, string) { … }` — adds members and conformances to that
    shape, `this` its value and `this(x)` a function's call; its conformance's defaults reach it
-   through a box, as a scalar's do. A block over a shape of the block's parameters,
-   `extend<T> ?T { … }`, comes with S7e2c and is refused till then (`LYS-NYI0001`).
+   through a box, as a scalar's do. A block over a shape of its own parameters — `extend<T> ?T`,
+   `extend<A, B> (A, B)`, `extend<A, R> fn(A) -> R`, each parameter once in their order, as a
+   generic type's block names them (rule 12) — reaches every value of that shape, the value
+   binding the parameters (S7e2c): its conformances are conditional on the block's constraints,
+   and a value whose parts do not meet them has not its members (`LYS-SEM0134`).
 4. **Delegation** (§5): `I by field` forwards every abstract member of the chain the type does
    not write to the field, read at each call, and the forwarded member is the type's too; the
    field holds a value of the interface (`LYS-SEM0123`); an enum delegates nothing
@@ -256,6 +259,8 @@ S7.
 ## Deviations
 
 - Synthesis from the compiler's fixed list; derivable interfaces of one's own through reflection in default bodies ([05 Syn](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
+- A block over a shape of its parameters names each once in their order, as a generic type's
+  does (`LYS-SEM0124`); Lyric 5 §13 rule 6 takes any shape, `extend<T> fn(T) -> T`.
 - A struct becomes an interface value shared, not copied; `Clone` matters for classes ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
 
 **Conformance.** `conformance/cases/05-interfaces/` (`since: 1.0.0`).

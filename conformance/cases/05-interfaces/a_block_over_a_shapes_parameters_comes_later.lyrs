@@ -1,9 +1,0 @@
-//! check
-//! error: LYS-NYI0001
-//! stderr-has: S7e2c
-//! since: 1.0.0
-// §5 rule 3: a block over a function type, an optional or a tuple of a block's parameters,
-// `extend<T> ?T` (Lyric 5 §13 rule 6), comes with S7e2c; it is refused, never taken without a word.
-extend<T> ?T {
-    fn orElse(d: T): T = this ?? d
-}
