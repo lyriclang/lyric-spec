@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-NYI0001
+//! stderr-has: S7e2
+//! since: 1.0.0
+// §5 rule 3: an extend block on a function type, an optional or a tuple (Lyric 5 05 §13 rule 6)
+// comes with S7e2; it is refused, never taken without a word.
+extend fn(int) -> int {
+    fn twice(): int = 2
+}

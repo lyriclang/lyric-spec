@@ -1,6 +1,9 @@
 //! run
-//! panic: LYS-RT0008
+//! panic: LYS-RT0007
+//! stderr:
+//! | panic [LYS-RT0007]: repeat count -1 is negative
 //! since: 1.0.0
-// §3 rule 16: `xs * n` with a negative `n` panics, as Lyric 5's does.
+// §3 rule 16: `xs * n` with a negative `n` panics, as Lyric 5's does — a precondition's panic,
+// `LYS-RT0007` (S7e1: it was `LYS-RT0008`).
 let n = -1
 println([1] * n)

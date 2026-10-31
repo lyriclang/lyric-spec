@@ -2,8 +2,8 @@
 
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
-**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6)
-and collections (S7d); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+**Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
+collections (S7d) and the strings' members (S7e1); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -107,6 +107,31 @@ and collections (S7d); the rest a skeleton, written with the milestone that buil
    `isEmpty()`; its Debug form is its values as it holds them, a list's; a `Clone` where `T` is.
    A list literal builds either where it is taken, `let d: Deque<int> = [1, 2]`, so does
    `collect()`.
+8. **Strings and characters** (Lyric 5 12 §Strings, §Characters; Script [03 Str](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md); S7e1).
+   A string is UTF-8: `length()` counts its bytes, `charCount()` its characters, `isEmpty()`.
+   `s[i]` is the character that begins at byte `i` — outside the bytes, or at a byte that
+   continues a character, a panic (`LYS-RT0003`); `^n` is no index of a string, a bound of a range
+   alone (`LYS-SEM0114`), and a character is never written through the index (`LYS-SEM0019`).
+   `s[a..b]`, in a range's every form, `^n` among its bounds, is a **new string** of those bytes
+   (03 Str), a bound outside them or inside a character a panic (`LYS-RT0003`). `chars()` gives
+   the characters from either end, `charIndices()` each with the byte it begins at;
+   `string.fromChars(it)` joins an iterator's characters. A **pattern** is a string or a
+   character, `interface Pattern` of the prelude with Lyric 5's members `matchAt`,
+   `matchBefore` and `nextIn` over a string's bytes: `contains(p)`, `startsWith(p)`,
+   `endsWith(p)`; `find(p)` and `rfind(p)`, the byte of the first and the last match or `null`,
+   an empty pattern at 0 and at the length; `count(p)`, none overlapping another; `c in s` for a
+   character; `trimMatches(p)`, `trimStartMatches(p)`, `trimEndMatches(p)`, again and again;
+   `stripPrefix(p)` and `stripSuffix(p)`, the rest or `null`; `replace(p, with)` and
+   `replaceN(p, with, n)` — a pattern that matches the empty text panics. `trim()`,
+   `trimStart()`, `trimEnd()` take off the white space — the property White_Space —, `isBlank()`
+   holds for nothing but it; `toUpper()` and `toLower()` map each character simply, one for one,
+   no locale; `padStart(width, fill = ' ')` and `padEnd(…)` count characters; `s * n` is the text
+   `n` times, `n * s` refused, a negative `n` a panic (`LYS-RT0007`). A character has its
+   `category()` (`UnicodeCategory`), `isAlpha()`, `isDigit()`, `isAlphanumeric()`,
+   `isWhitespace()`, `isUpper()`, `isLower()`, `isControl()` of any script, `toUpper()`,
+   `toLower()`, the ASCII tests, `toDigit(radix)` and `char.fromDigit(n, radix)` — `null` where
+   there is no such digit, a radix outside 2–36 a panic. A scalar's or the string's static is
+   called through its name, `char.fromDigit(…)`, `string.fromChars(…)`.
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -115,6 +140,11 @@ and collections (S7d); the rest a skeleton, written with the milestone that buil
 - `join` takes every item, written as `{x}` writes it, where Lyric 5's asks a `Display` — every
   value prints in Script, its `Display` comes with S7e; `sum` and `product` stand on `int` and
   `float` items, not on a `Num` (STATUS P25).
+- A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
+  with `Bytes` (S7f), `split`, `lines` and `parse` with S7e2. A pattern is a string or a
+  character: a test of characters, `fn(char) -> bool`, waits for blocks on function types (05
+  rule 3, S7e2). A string's `contains` takes every pattern; `c in s` asks it for a character,
+  but a string is no `Contains<char>` to a constraint (STATUS P29).
 - A map keeps the order its keys came in ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) and has no hasher parameter `H`: one hasher,
   the prelude's ([05](05-interfaces.md) rule 20); `Map.from` takes a list. The VM keeps where
   each hash lies; the program hashes the keys and compares them — keys of `int`, `char`, `bool`

@@ -23,8 +23,8 @@
    the length less `n`, `^1` the last element, `^0` past it — at an index, at a write and at an
    end of a range, the list evaluated once (Lyric 5 03 T14); a range may leave out its ends:
    `xs[a..]` is `xs[a..^0]`, `xs[..b]` is `xs[0..b]`, `xs[..]` the whole list. `^` counts from the
-   end in a list's brackets only. Indexing a map is by its key ([12](12-stdlib.md) rule 5), a
-   string's comes with S7e.
+   end in a list's brackets only — and as a bound of a string's range ([12](12-stdlib.md) rule
+   8). Indexing a map is by its key (rule 5 there), a string by its bytes (rule 8 there).
 4. **Indexing a type of one's own** (03 Index; Lyric 5 `Index<K>`, `IndexSet<K>`; S7c2). The
    prelude declares `interface Index<K> { type Output; fn index(k: K): Self.Output }` and
    `interface IndexSet<K> :: Index<K> { fn setIndex(k: K, v: Self.Output) }`. `x[k]` is

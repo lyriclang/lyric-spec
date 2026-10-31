@@ -1,0 +1,11 @@
+//! run
+//! warning: LYS-SEM0153
+//! stdout:
+//! | 1
+//! since: 1.0.0
+// §12 rule 5: `Map` is the prelude's, a name a module may give its own, as any of the prelude's
+// (§4).
+class Map {
+    n: int,
+}
+println(Map { n = 1 }.n)

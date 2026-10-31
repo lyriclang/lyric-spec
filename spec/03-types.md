@@ -168,7 +168,7 @@ values, generics and `with` (S3) written; the rest a skeleton, written with the 
    `fill(v)`; and where the elements compare — `==` is defined on them ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) —
    `contains(x)`, `indexOf(x)`, `remove(x)`, `dedup()`, else they are not there
    (`LYS-SEM0134`). `xs + ys` is a new list of both, `xs * n` one of `n` times the elements (a
-   negative `n` panics); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
+   negative `n` panics, `LYS-RT0007` as Lyric 5's repetition does — S7e1: it was `LYS-RT0008`); `x in xs` and `x !in xs` ask `contains`; `xs == ys` compares the lengths,
    then the elements in order (`LYS-SEM0059` where they do not compare). The comparing methods
    are the prelude's block `extend<T :: [Equatable]> T[]`, so over a type parameter `T ::
    [Equatable]` they are there too ([05](05-interfaces.md) rule 8; S7c5a). An empty

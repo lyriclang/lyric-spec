@@ -1,0 +1,22 @@
+//! run
+//! stdout:
+//! | 13 11 false true
+//! | h é l
+//! | é|wörld|héll|örld|héll
+//! | 11 dlröw olléh
+//! | 0:a
+//! | 1:é
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings rules 2–3; Script 03 Str): `length()` counts the bytes,
+// `charCount()` the characters; `s[i]` is the character that begins at byte `i`; `s[a..b]` a new
+// string of those bytes, in a range's every form, `^n` among its bounds; `chars()` from either
+// end, `charIndices()` with the byte each begins at; `string.fromChars` joins characters.
+let s = "héllo wörld"
+println(f"{s.length()} {s.charCount()} {s.isEmpty()} {"".isEmpty()}")
+println(f"{s[0]} {s[1]} {s[3]}")
+println(f"{s[1..3]}|{s[7..]}|{s[..5]}|{s[^5..]}|{s[0..=4]}")
+let cs: char[] = s.chars().collect()
+println(f"{cs.length()} {string.fromChars(s.chars().rev())}")
+for ((i, c) in "aé".charIndices()) {
+    println(f"{i}:{c}")
+}

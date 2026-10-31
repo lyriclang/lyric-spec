@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | [a] [b3] [ab]
+//! | "rest" "a" null
+//! | a;b;;c ab,c bbbbbb abc
+//! | [007] [ab  ] [long] [**é]
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): the trims of a pattern, again and again; `stripPrefix` and
+// `stripSuffix`, the rest or `null`; `replace` and `replaceN`, none overlapping, all where `n` is
+// negative; `padStart` and `padEnd`, the width in characters, a longer text as it is.
+println(f"[{"xxaxx".trimMatches('x')}] [{"aab3".trimStartMatches('a')}] [{"ab..".trimEndMatches(".")}]")
+println(f"{"prefix-rest".stripPrefix("prefix-")} {"a.txt".stripSuffix(".txt")} {"a".stripPrefix("b")}")
+let s = "a,b,,c"
+println(f"{s.replace(',', ";")} {s.replaceN(",", "", 2)} {"aaa".replace("a", "bb")} {"abc".replaceN('x', "y", -1)}")
+println(f"[{"7".padStart(3, '0')}] [{"ab".padEnd(4)}] [{"long".padStart(2)}] [{"é".padStart(3, '*')}]")

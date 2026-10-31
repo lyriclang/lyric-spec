@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | STRAßE àb
+//! | [a b] [a] [a] true false
+//! | ababab||
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): the case mappings one character for one, no locale; the trims
+// of the white space — the property White_Space; `isBlank()`, true for the empty text; `s * n`,
+// the text `n` times, none for 0.
+println(f"{"Straße".toUpper()} {"ÀB".toLower()}")
+println(f"[{"  a b  ".trim()}] [{"  a".trimStart()}] [{"a  ".trimEnd()}] {" \t".isBlank()} {"x".isBlank()}")
+println(f"{"ab" * 3}|{"ab" * 0}|{"" * 4}")
