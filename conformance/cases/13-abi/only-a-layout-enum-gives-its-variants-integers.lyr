@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0099
+//! since: 5.0.0
+// 13 §3 rule 5: a variant's integer is C's; an enum without @Layout gives none.
+enum E { A = 1, B }
+
+fn main(): void {
+}

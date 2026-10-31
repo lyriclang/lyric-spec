@@ -1,0 +1,15 @@
+//! check
+//! clean: unused-unsafe
+//! since: 5.0.0
+// 13 §3 rule 8: an 'unsafe' block that calls one of std.ffi's memory operations says
+// nothing, and neither does one whose operation stands in a nested block of its own.
+import std.ffi { alloc, free };
+
+fn main(): void {
+    unsafe {
+        let p = alloc<int>(1);
+        if (true) {
+            free(p);
+        }
+    }
+}
