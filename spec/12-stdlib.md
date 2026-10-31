@@ -3,7 +3,8 @@
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
-collections (S7d), the strings' members and reading values from text (S7e1–S7e2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+collections (S7d), the strings' members, reading values from text and builders of text
+(S7e1–S7e3); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -146,14 +147,21 @@ collections (S7d), the strings' members and reading values from text (S7e1–S7e
    **`ParseError`** — its `kind` `Empty`, `Invalid` for a character outside the form however many
    digits run before it, `Overflow` for a well-formed number beyond the type's range; `detail` and
    `offset` where the parser says more; `message()` Lyric 5's words. A radix outside 2–36 panics.
+10. **Builders of text** (Lyric 5 12 §Strings; S7e3). `class StringBuilder` builds a text a part
+   at a time in one buffer that grows, no chain of concatenations: `StringBuilder.new()`,
+   `appendStr(s)`, `appendChar(c)`, `length()` in bytes, `clear()`, `toString()`. `Display` and
+   `Debug` write into one ([05](05-interfaces.md) rule 21). The VM holds its text, so its Debug
+   form is its type, `<StringBuilder>`, as a task's is ([10](10-concurrency.md) rule 19).
 
 ## Deviations (skeleton, written with later milestones)
 
 - An adapter is a class, as Script's iterators are (a pull changes it); the functions it takes
   throw what they throw, without a `throws` clause ([12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
-- `join` takes every item, written as `{x}` writes it, where Lyric 5's asks a `Display` — every
-  value prints in Script, its `Display` comes with S7e; `sum` and `product` stand on `int` and
-  `float` items, not on a `Num` (STATUS P25).
+- `join` takes every item, written as `{x}` writes it — a `Display` its `show()`, any other
+  value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script; `sum`
+  and `product` stand on `int` and `float` items, not on a `Num` (STATUS P25).
+- A builder has no `append<T :: [Display]>(v)` yet (S7e3b), nor Lyric 5's `sized`, `putInt` and
+  the other members f-strings write through: Script's f-strings concatenate.
 - A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
   with `Bytes` (S7f). A string's parts and lines are new strings, not views; `T.parse(s)`
   takes a string. A string's `contains` takes every pattern; `c in s` asks it for a character,

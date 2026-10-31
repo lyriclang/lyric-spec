@@ -1,0 +1,35 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | P { x = 1 }
+//! | [1, 2] "q" 'c' 3.5 null
+//! | P { x = 2 }|(1, "a")|7
+//! | <P { x = 3 }> <"s">
+//! | P { x = 4 } 5
+//! | true true true
+// §5 rule 21: every value is a `Debug` — `x.debug()` gives its Debug form, `x.debugTo(out)`
+// appends it; `T :: [Debug]` takes every type; an interface value of `Debug` prints the value it
+// holds; `x is Debug` holds for every value.
+struct P {
+    x: int
+}
+fn wrap<T :: [Debug]>(x: T): string = "<" + x.debug() + ">"
+
+println(P { x = 1 }.debug())
+let none: ?int = null
+println(f"{[1, 2].debug()} {"q".debug()} {'c'.debug()} {3.5.debug()} {none.debug()}")
+let out = StringBuilder.new()
+P { x = 2 }.debugTo(out)
+out.appendChar('|')
+(1, "a").debugTo(out)
+out.appendChar('|')
+7.debugTo(out)
+println(out.toString())
+println(f"{wrap(P { x = 3 })} {wrap("s")}")
+let d: Debug = P { x = 4 }
+let e: Debug = 5
+println(f"{d} {e.debug()}")
+let a: Any = P { x = 6 }
+let b: Any = "t"
+let c: Any = [1]
+println(f"{a is Debug} {b is Debug} {c is Debug}")

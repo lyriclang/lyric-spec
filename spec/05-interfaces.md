@@ -6,7 +6,7 @@
 interfaces, equality and the Debug form, `Self` and static members, associated types; their
 bounds, fixations and value form, and generic members with the descriptors (S3i), the family written in a list and the operator interfaces
 with the prelude's interfaces (S7), members per interface in separate blocks (§3 rule 4) with
-S7.
+S7, `Debug` and `Display` (S7e3).
 
 ## Written (S3)
 
@@ -66,8 +66,13 @@ S7.
 9. **The Debug form, given unasked** (Lyric 5 §14 rules 2–3 and 7): every value prints. A
    scalar and a string print as themselves; `{x}` and `println(x)` print any other value in its
    Debug form — `P { x = 1, name = "a" }`, `E.B(3)`, `E.R { w = 4 }`, `E.A`, `(1, "a")`, an
-   optional as its value or `null`, a string inside it quoted and a `char` in single quotes, a
-   class's fields as a struct's, a generic type's under its declared name, `Pair { a = 1 }`.
+   optional as its value or `null`, a string inside it quoted and a `char` in single quotes, each
+   escaped as it would be written (Lyric 5 12 §Strings; S7e3): `\\`, the quote, `\n`, `\r`, `\t`,
+   `\0`, and `\u{…}`, the scalar value in hex, for a character that does not print as itself —
+   a control or format character, a separator but the space, one unassigned or private —, a
+   class's fields as a struct's, a generic type's under its declared name, `Pair { a = 1 }`; the
+   one value of `void`, a void task's `Done` holds it, `()` (Lyric 5 03 M6-5: `void` stands for
+   the empty tuple).
    An interface value and a value of a type parameter print the form of the value they hold —
    through a slot every type's table fills (S3i) —, alone a string as itself and inside another
    value quoted, as for any value; a function value prints as `<fn>`.
@@ -255,6 +260,19 @@ S7.
    given the first time it is hashed, no address read (01 S8). Equal values write the same;
    `x.hash(h)` and `T :: [Hashable]` reach the synthesis, a tuple's too (`LYS-SEM0028` where a
    part does not hash).
+21. **`Debug` and `Display`** (Lyric 5 §14 rules 2–3, 12 §Strings; Script [03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md); S7e3).
+   The prelude declares `interface Debug { fn debug(): string; fn debugTo(out: StringBuilder) }`
+   and `interface Display { fn show(): string; fn showTo(out: StringBuilder) }`, `showTo`
+   appending `show()` unless a type writes its own. Every value is a `Debug`: `x.debug()` gives
+   its Debug form (rule 9), `x.debugTo(out)` appends it to `out`, `T :: [Debug]` takes every type
+   and `x is Debug` holds for every value. A type that lists `Debug` and writes `fn debug():
+   string` prints in that form wherever its Debug form stands — inside a list, a field, through
+   an interface value; one that lists it without writing it has the synthesized form. The
+   scalars and the string are `Display`, each `show()` its text. `{x}` and `println(x)` of a
+   value whose type is a `Display` print its `show()`: a type that lists it, an interface value
+   of it or of an interface that extends it, a value of a type parameter or an associated type
+   it bounds; a list prints its elements' Debug forms, whatever they are. `:: Display` without a
+   `show` is refused (`LYS-SEM0020`); no `Display` is synthesized.
 
 ## Deviations
 
@@ -262,5 +280,13 @@ S7.
 - A block over a shape of its parameters names each once in their order, as a generic type's
   does (`LYS-SEM0124`); Lyric 5 §13 rule 6 takes any shape, `extend<T> fn(T) -> T`.
 - A struct becomes an interface value shared, not copied; `Clone` matters for classes ([05](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md)).
+- Every value is a `Debug` (03 Eq): a type that writes a `debug()` without listing `Debug` keeps
+  its synthesized Debug form, the method one of its own — Lyric 5 makes such a type no `Debug`.
+  Through a type parameter or a `Debug` value `x.debugTo(out)` appends the Debug form, not a
+  `debugTo` the type writes (rule 21).
+- `{x}` of a value of an unconstrained type parameter in a copy shared by every argument, and of
+  an interface value that is no `Display`, `Any`, prints the Debug form even where the value's
+  type is a `Display` — its `show()` through a slot of the table with S7e3b; a copy made for one
+  type, `join`'s, prints `show()` already.
 
 **Conformance.** `conformance/cases/05-interfaces/` (`since: 1.0.0`).
