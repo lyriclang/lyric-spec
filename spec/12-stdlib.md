@@ -3,8 +3,8 @@
 **Base.** Lyric 5.0 [§12](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/12-stdlib.md) applies, with the deviations below.
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
-collections (S7d), the strings' members, reading values from text, builders of text and the
-format language (S7e1–S7e4b); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+collections (S7d), the strings' members, reading values from text, builders of text, the
+format language and `std.fmt` (S7e); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -21,7 +21,8 @@ format language (S7e1–S7e4b); the rest a skeleton, written with the milestone 
    `LYS-RES0003`. Its modules are compiled with the program; what one of them keeps `internal`
    stays its own, and only they reach the VM's natives. Its modules and the rights they ask for
    ([17](17-host.md) rule 1) so far: `std.fs` — `exists(path): bool`; `std.os` —
-   `env(name): ?string`. The rest come with the milestones that build them.
+   `env(name): ?string`; `std.fmt` — `format(template, args: Display...)` (rule 12), no right. The
+   rest come with the milestones that build them.
 3. **The adapters of every iterator** (Lyric 5 12 §Iteration; S7c6b1). `std.iter` holds them,
    members of blanket blocks over `I :: [Iterator]` that reach every module without an import —
    the loader adds the module to a program that names one of them: `it.map(f)`, `filter(p)`,
@@ -165,6 +166,15 @@ format language (S7e1–S7e4b); the rest a skeleton, written with the milestone 
    `interface Format { fn format(spec: string, out: StringBuilder) }` and reads the spec as written,
    unchecked, `?` staying its Debug form; the scalars and the string conform, and a spec they read
    at run time is checked as the compiler checks one, its fault a panic (`LYS-RT0008`).
+12. **Templates read at run time** (Lyric 5 12 §2 rule 5; S7e4c). `std.fmt.format(template: string,
+   args: Display...): string` reads its template when it runs, in the language of rule 11: `{}`
+   takes the next value and `{i}` the i-th from 0 — the two mix, `{}` counting only itself —, either
+   with `:spec`, `?` for the value's Debug text; `{{` and `}}` write a brace, and a value no hole
+   names is left out. A value is passed as a `Display`; one that reads specs itself, a `Format` —
+   the scalars too —, takes its spec, any other has its text padded. What the compiler refuses in
+   an f-string panics here (`LYS-RT0008`), in Lyric 5's words: a brace left open or closed without
+   being opened, a value named that is not given, a spec that is no format or holds a part the
+   value's type does not take. Every value has a Debug text, so `?` never panics for want of one.
 
 ## Deviations (skeleton, written with later milestones)
 
