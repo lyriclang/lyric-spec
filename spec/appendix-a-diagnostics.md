@@ -373,6 +373,9 @@ A macro's own refusal, at its site.
 | LYR-MIG0106 | H | [14-cli](14-cli.md) | declarations the whole package now sees | A note of `lyric fix --from-4`, once a module: declarations without `pub` were private to their module in Lyric 4 and are seen by the whole package in Lyric 5. `main` is left aside. |
 | LYR-MIG0107 | H | [14-cli](14-cli.md) | a build script of Lyric 4 | A note of `lyric fix --from-4`: the project has a `build.lyr` written for Lyric 4, which defined the build. In Lyric 5 `lyric.toml` does — `[[bin]]`, `[profile.*]` —, and a build script only prepares sources. |
 | LYR-MIG0108 | H | [14-cli](14-cli.md) | tests compiled apart | A note of `lyric fix --from-4`: the `lyric.json` names a `testRoot`, whose files Lyric 4 compiled apart from the program. Lyric 5 runs a package's `tests/` with `lyric test`; each test is an `@Test` function. |
+| LYR-MIG0205 | H | [14-cli](14-cli.md) | an opaque type became a struct | A note of `lyric fix --from-4`: an `opaque type H = T;` of Lyric 4 is written as `struct H :: [Equatable] { v: T }`, `x as H` as `H { v = x }` and `h as T` as `h.v`. |
+| LYR-MIG0208 | H | [14-cli](14-cli.md) | a format spec without its old output | A note of `lyric fix --from-4`: a format spec of Lyric 4 (.NET's) that Lyric 5's format language writes otherwise for some values (`D`, `X` on a signed integer), or not at all (`E`, `P`, `C`, `G`, `R`, a custom format). |
+| LYR-MIG0211 | H | [14-cli](14-cli.md) | a generic interface named by an associated type | A note of `lyric fix --from-4`: `Indexable<T>` is `IndexSet<int>` with `type Output = T`, and `Iterable<T>` or `Indexable<T>` as the type of a value has no counterpart in Lyric 5. |
 
 ## A.7 CT — Compile-time evaluation
 
