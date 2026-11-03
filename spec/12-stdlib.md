@@ -102,21 +102,20 @@ with a number — its absolute value, its sign, a root, an angle — is no membe
 `std.math`'s (design 10 B5 Z2, "Review 2026-10-12"; below): what a number *is* stands at its
 type, what one *does* with numbers in `std.math`.
 
-`Integer` says where its arithmetic would leave the type, each a default:
+Where an integer's arithmetic would leave the type, and its bits, are `std.math`'s — free
+functions over `Integer`, as computing with a number is (below; design 10 P8):
 
-- `checkedAdd`, `checkedSub`, `checkedMul`, `checkedDiv`, `checkedRem` (`o: Self`) give `?Self`:
-  `null` where the result does not fit, or the divisor is zero; `min / -1` does not fit, and a
+- `checkedAdd(a, b)`, `checkedSub`, `checkedMul`, `checkedDiv`, `checkedRem` give `?T`: `null`
+  where the result does not fit, or the divisor is zero; `min / -1` does not fit, and a
   remainder by `-1` is `0`.
-- `saturatingAdd`, `saturatingSub`, `saturatingMul` hold at `min` or `max`, by the sign the
+- `saturatingAdd(a, b)`, `saturatingSub`, `saturatingMul` hold at `min` or `max`, by the sign the
   result would have.
-- `wrappingAdd`, `wrappingSub`, `wrappingMul` reduce modulo 2^`bitWidth`, as `+%`, `-%`, `*%` do a
-  builtin's ([08](08-expressions.md)); `wrappingDiv` gives `min` for `min / -1` and
+- `wrappingAdd(a, b)`, `wrappingSub`, `wrappingMul` reduce modulo 2^`bitWidth`, as `+%`, `-%`, `*%`
+  do a builtin's ([08](08-expressions.md)); `wrappingDiv` gives `min` for `min / -1` and
   `wrappingRem` `0` for a remainder by `-1` — a zero divisor panics as `/` does.
-- `pow(n: uint): Self` multiplies by squaring; an overflow is one of `*`
-  ([03](03-types.md)).
-- `leadingZeros`, `trailingZeros` and `popCount` count bits at the type's width (`bitWidth` for
-  zero); `rotateLeft(n)` and `rotateRight(n)` rotate modulo the width, a negative `n` the other
-  way.
+- `leadingZeros(x)`, `trailingZeros(x)` and `popCount(x)` count bits at the type's width
+  (`bitWidth` for zero); `rotateLeft(x, n)` and `rotateRight(x, n)` rotate modulo the width, a
+  negative `n` the other way.
 
 `Float` describes the type in its statics (design 10 B5 Z2): `epsilon` the distance from `1.0`
 to the next value above it, `min` the most negative finite value, `max` the greatest,
@@ -144,8 +143,14 @@ program would ([11 §2](11-metaprogramming.md)):
 - `floor(x)`, `ceil(x)`, `round(x)` — a half away from zero —, `trunc(x)`;
 - `sqrt(x)`, `cbrt(x)`, `exp(x)`, `ln(x)`, `log2(x)`, `log10(x)`; `sin`, `cos`, `tan`, `asin`,
   `acos`, `atan`, `sinh`, `cosh`, `tanh`, in radians; `atan2(y, x)`, the angle of the point
-  (x, y), -π to π; `hypot(x, y)`; `pow(x, e)` — an integer's power by squaring is its own
-  `x.pow(n)`, arithmetic in the type.
+  (x, y), -π to π; `hypot(x, y)`.
+
+**Powers**: `pow(x, e)` over **`Pow`**, `std.math`'s interface
+`Pow { type Exponent; fn pow(e: Self.Exponent): Self; }`, whose exponent is the number's own
+answer (design 10 P8): every integer type conforms with `Exponent = uint` and multiplies by
+squaring, an overflow being one of `*` ([03](03-types.md)); `float32` and `float` conform with the
+float itself as the exponent, the C library's `pow`. So `pow(2, 10)` is `1024` and
+`pow(2.0, 0.5)` the square root of two, and `x.pow(e)` is the same call.
 
 Over `Signed`: `abs(x)`, `0.0` for `-0.0`, which `<` does not tell from `0.0`; `signum(x)`,
 `-1`, `0` or `1` in the type, a float's NaN staying NaN. `uint` is no `Signed`, and has neither.
@@ -164,8 +169,8 @@ integer `v` of any type names, or `null` where it does not fit; `int8.clamping(v
 answers them, and a type parameter bounded by `Integer` reaches them — `U.exact(v)`,
 `U.clamping(v)`.
 
-`x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
-between; `lo` above `hi` is the program's error and panics, and a value unordered with the bounds
+`clamp(x, lo, hi)` over `Ordered`, beside `min` and `max`: `lo` below it, `hi` above it, the value
+itself between; `lo` above `hi` is the program's error and panics, and a value unordered with the bounds
 comes back as it is. A `char`'s code point is `c as uint32` (the review's A9e: the method that
 said the same is gone), and `char.fromUint32(n): ?char` is
 `null` for a surrogate or beyond `0x10FFFF` (Z8), where `n as char` panics
