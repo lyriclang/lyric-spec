@@ -14,5 +14,5 @@ fn square(n: int): int {
 let SMALL: int = comptime square(6);
 
 fn main(): void {
-    println(f"{crc32("123456789".toBytes()):x} {SMALL}");
+    println(f"{crc32("123456789".bytes()):x} {SMALL}");
 }

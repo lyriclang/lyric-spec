@@ -76,7 +76,7 @@ fn serve(listener: TcpListener): void throws Error {
                 let method = parts[0].toString();
                 let path = parts[1].toString();
                 let out = answer(method, path, id);
-                try conn.writeAll(out.toBytes()[..]);
+                try conn.writeAll(out.bytes()[..]);
                 if (path == "/short" || path == "/garbage" || path == "/badlength") {
                     break;
                 }

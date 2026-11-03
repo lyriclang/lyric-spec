@@ -112,7 +112,7 @@ fn serve(listener: TcpListener): void throws Error {
                 bodies[id] = body;
                 let line = head.splitOnce("\r\n")!.0.toString();
                 let parts = line.splitN(' ', 3).toArray();
-                try conn.writeAll(answer(parts[0].toString(), parts[1].toString(), id).toBytes()[..]);
+                try conn.writeAll(answer(parts[0].toString(), parts[1].toString(), id).bytes()[..]);
             }
             try conn.close();
         });
@@ -126,17 +126,17 @@ fn main(): void throws Error {
     let base = f"http://127.0.0.1:{at.port}";
     let u = (p: string) => try! Uri.parse(base + p);
     var client = Client.new();
-    println(try (try client.send(Request.post(u("/post"), "payload".toBytes()[..], "text/plain"))).text());
+    println(try (try client.send(Request.post(u("/post"), "payload".bytes()[..], "text/plain"))).text());
     var streamed = Request { method = Method.Put, uri = u("/echo") };
     let src = ByteBuffer.new();
-    try src.write("streamed body".toBytes()[..]);
+    try src.write("streamed body".bytes()[..]);
     streamed.body = src;
     println(try (try client.send(streamed)).text());
     let r = try client.get(u("/redirect"));
     println(f"{r.status.show()} {r.headers.get("Location") ?? "-"}");
     var following = Client.new(ClientOptions { followRedirects = true, maxRedirects = 2 });
     println(f"{(try following.get(u("/redirect"))).status.show()} {try (try following.get(u("/redirect"))).text()}");
-    println(try (try following.send(Request.post(u("/see-other"), "x".toBytes()[..]))).text());
+    println(try (try following.send(Request.post(u("/see-other"), "x".bytes()[..]))).text());
     try {
         let _ = try following.get(u("/loop"));
     } catch (e: HttpError) {
