@@ -139,6 +139,15 @@ tests (`tests/Lyric5.Tests`, `VisibilityTests`).
 9. An **`extend` block's** word is the default of the methods in it: `private extend Point { … }`
    keeps them to its module; a method's own word wins. A method of a block that a module may not
    name is not there for it (S5).
+
+9a. A block of methods **reaches** a module that imports the block's module — directly, or
+    through a chain of `pub import`s that pass the module on as they pass on names (§4 rule 2):
+    `pub import lib.error { Thing }` passes on `lib.error`'s blocks with `Thing` — and every
+    module where the prelude names its module (§4 rule 5); where it does not reach, its methods
+    are not there. Where blocks of two modules both reach a call and add
+    its name at a count the call takes, the call is refused (`LYR-SEM0235`): taking one would
+    follow the order of the imports
+    ([07 S5′](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md)).
 10. A **conformance** — `extend Point :: [Shape] { … }` — is visible wherever its type is, its
     methods with it, whether or not the module that holds the block is imported: the conformance
     is the program's ([05 §13](05-interfaces.md) rule 4), so a type that comes through a
