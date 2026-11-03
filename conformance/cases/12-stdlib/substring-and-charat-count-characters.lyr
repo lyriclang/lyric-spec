@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | él é 2 false true 5 | €😀
+//! since: 5.0.0
+// 12 §Strings (design 10 P7): substring, charAt and charIndex count characters, where s[a..b] and
+// s[i] count bytes; isCharBoundary says where a text can be cut.
+import std.io { println };
+
+fn main(): void {
+    let s = "héllo";
+    println(f"{s.substring(1, 3)} {s.charAt(1)} {s.charIndex(3)} {s.isCharBoundary(2)} {s.isCharBoundary(6)} {s.charIndex(6)} | {"añ€😀".substring(2, 4)}");
+}

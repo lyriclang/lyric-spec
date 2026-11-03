@@ -1113,7 +1113,25 @@ signature per operation takes any of them:
 - `replace(p, with)`, a new string with every `p` replaced, none overlapping — a `p` that matches
   the empty text panics; `replaceN(p, with, n)`, the first `n` replaced, all of them where `n` is
   negative; `padStart(width, fill = ' ')` and `padEnd(width, fill = ' ')`, a new string, the width
-  in characters.
+  in characters; `repeat(n)`, the text `n` times over — a negative `n` panics.
+- **Counted in characters** (design 10 P7), each walking the bytes, `O(n)` where indexing is
+  `O(1)`: `substring(start, end)`, the view of the characters from `start` up to but not including
+  `end` — outside `0 ≤ start ≤ end ≤ charCount()` a panic; `charAt(i)`, character `i` — outside
+  `0 ≤ i < charCount()` a panic; `charIndex(byte)`, the characters before byte `byte`, which a
+  character begins at or which is the length — else a panic; `isCharBoundary(byte)`, whether it is
+  such a byte, `false` outside `0…length()`.
+- `findFrom(p, from)`, the byte index of the first `p` at or after byte `from` or `null` — a
+  `from` that is no such byte panics; `firstOf(chars)`, the byte index of the first character that
+  is one of `chars`' or `null`; `splitWhitespace()`, the runs of characters between white space
+  (§Characters rule 2), views, no empty one; `rsplitOnce(sep)`, the views before and after the
+  last `sep`, or `null`.
+- `isAscii()`, whether every character is below U+0080, the empty text too;
+  `equalsIgnoreCase(o)` and `compareIgnoreCase(o)`, the two compared character by character,
+  each by its simple lowercase mapping (§Characters rule 3) — `"Straße"` and `"STRASSE"` differ —,
+  a text that ends first ordered first.
+- A forward search for a text pattern — `find`, `findFrom`, `contains`, `count`, `split`,
+  `splitN`, `splitOnce`, `findAll`, `replace`, `replaceN` — takes time linear in the text and the
+  pattern together, whatever they hold (design 10 P11).
 - **Bytes to text** (design 10 S3): `string.fromUtf8(bytes)`, the text the bytes of a
   `Slice<uint8>` are, copied — bytes that are no well-formed UTF-8 (an overlong form, a surrogate,
   beyond U+10FFFF, a byte that begins nothing, a sequence cut short) throw a **`Utf8Error`**
