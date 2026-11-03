@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 4 3 null | a,bc,d | a=b c | ababab | false true | true false Ordering.Less | 195000
+//! since: 5.0.0
+// 12 §Strings (design 10 P7, P11): findFrom from a byte, firstOf any of a set, splitWhitespace
+// without empty parts, rsplitOnce at the last, repeat, isAscii, case by the simple lowercase
+// mapping, and a pattern whose first byte stands everywhere in the text, found.
+import std.io { println };
+
+fn main(): void {
+    let s = "héllo";
+    let words = "  a  bc\td\n".splitWhitespace().toArray();
+    let (left, right) = "a=b=c".rsplitOnce("=")!;
+    let none = if (s.firstOf("xyz") == null) "null" else "found";
+    let hay = "a".repeat(200000) + "b";
+    println(f"{s.findFrom("l", 4)!} {s.firstOf("lo")!} {none} | {words[0]},{words[1]},{words[2]} | {left} {right} | {"ab".repeat(3)} | {s.isAscii()} {"abc".isAscii()} | {"HeLLo".equalsIgnoreCase("hello")} {"Straße".equalsIgnoreCase("STRASSE")} {"abc".compareIgnoreCase("ABD"):?} | {hay.find("a".repeat(5000) + "b")!}");
+}
