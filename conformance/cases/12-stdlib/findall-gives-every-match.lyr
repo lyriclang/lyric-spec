@@ -2,20 +2,20 @@
 //! stdout:
 //! | an an | a a a | 0
 //! since: 5.0.0
-// 12 §Strings (M8a S12): `matches(p)` gives the matches in order, views, none overlapping another.
+// 12 §Strings (M8a S12): `findAll(p)` gives the matches in order, views, none overlapping another.
 import std.io { println };
 
 fn main(): void {
     var out = "";
-    for (m in "banana".matches("an")) {
+    for (m in "banana".findAll("an")) {
         out = out + f"{m} ";
     }
     out = out + "|";
-    for (m in "banana".matches('a')) {
+    for (m in "banana".findAll('a')) {
         out = out + f" {m}";
     }
     var none = 0;
-    for (m in "banana".matches("x")) {
+    for (m in "banana".findAll("x")) {
         none = none + m.length() + 1;
     }
     println(f"{out} | {none}");

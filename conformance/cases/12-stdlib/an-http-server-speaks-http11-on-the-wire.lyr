@@ -32,7 +32,7 @@ fn handle(req: Request): Response throws Error {
 /// The lines of the reply that matter, joined by '|'.
 fn raw(at: SocketAddr, text: string): string throws Error {
     var conn = try TcpStream.connect(at);
-    try conn.writeAll(text.toBytes()[..]);
+    try conn.writeAll(text.bytes()[..]);
     try conn.shutdown(.Write);
     let back = try conn.readToString();
     try conn.close();

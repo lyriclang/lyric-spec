@@ -31,7 +31,7 @@ fn main(): void throws Error {
     let b = string.fromUtf8Lossy((try Gzip.decompress((try Hex.decode("1f8b08000000000002ff4b040043beb7e801000000"))[..]))[..]);
     let c = string.fromUtf8Lossy((try Gzip.decompress((try Hex.decode("1f8b081c0000000002ff0300010203686900636f6d6d656e74004b040043beb7e801000000"))[..]))[..]);
     println(f"{a} {b} {c}");
-    let two = (try Gzip.compress("one,".toBytes()[..], 6)) + (try Gzip.compress("two".toBytes()[..], 6));
+    let two = (try Gzip.compress("one,".bytes()[..], 6)) + (try Gzip.compress("two".bytes()[..], 6));
     println(string.fromUtf8Lossy((try Gzip.decompress(two[..]))[..]));
     println(try refusedGzip("68656c6c6f"));
     println(try refusedGzip("1f8b08000000000002ff4b040043beb7e901000000"));

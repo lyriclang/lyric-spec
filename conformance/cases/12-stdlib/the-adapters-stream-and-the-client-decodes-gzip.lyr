@@ -15,7 +15,7 @@ import std.http { Client, ClientOptions, Request, Response, Server };
 import std.uri { Uri };
 
 fn handle(req: Request): Response throws Error {
-    var r = Response.of(200, (try Gzip.compress("the body was gzipped".toBytes()[..], 6))[..], "text/plain");
+    var r = Response.of(200, (try Gzip.compress("the body was gzipped".bytes()[..], 6))[..], "text/plain");
     r.headers.set("Content-Encoding", "gzip");
     return r;
 }
@@ -24,7 +24,7 @@ fn main(): void throws Error {
     let text = ByteBuffer.new();
     var i = 0;
     while (i < 3000) {
-        try text.write(f"line {i} of the stream\n".toBytes()[..]);
+        try text.write(f"line {i} of the stream\n".bytes()[..]);
         i = i + 1;
     }
     let data = text.toArray();
@@ -42,9 +42,9 @@ fn main(): void throws Error {
     println(f"{packed.toArray().length() < data.length() / 4} {back == data}");
     let mid = ByteBuffer.new();
     var zw = try ZlibWriter<ByteBuffer>.new(mid, 6);
-    try zw.write("first half ".toBytes()[..]);
+    try zw.write("first half ".bytes()[..]);
     try zw.flush();
-    try zw.write("second half".toBytes()[..]);
+    try zw.write("second half".bytes()[..]);
     try zw.close();
     var zr = ZlibReader<ByteBuffer>.new(mid);
     println(try zr.readToString());

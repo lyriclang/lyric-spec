@@ -346,7 +346,8 @@ through one reaches the array. `length()` and the index are the primitives
   every one it holds for before every one it does not; a binary search. Of a `TotalOrder`
   element, `binarySearch(x)`: the index of an element equal to `x` in sorted elements, any of
   several equal ones, or `null`.
-- Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two.
+- Of a `Display` element: `join(sep)`, the elements' texts with `sep` between each two —
+  `std.string`'s, as it makes a text (§Strings).
 - **Clone** (10 K5; N2a): of a `Clone` element, `T[]` is `Clone` — `clone()` is a new array of the
   elements' clones, and `[xs] * n` repeats such an array by `clone` ([03 §5.1](03-types.md)).
 - **Equality and display** (10 C9; M8a S14): of an `Equatable` element, `T[]` and `Slice<T>` are
@@ -389,10 +390,10 @@ S11). Each continues from a running value, as zlib's do: the checksum of the who
 pieces, one after the other — `crc32(rest, crc32(first))`.
 
 - **`crc32(bytes, running = 0)`**, CRC-32 of ISO-HDLC (zip, gzip, PNG):
-  `crc32("123456789".toBytes())` is `0xCBF43926`.
+  `crc32("123456789".bytes())` is `0xCBF43926`.
 - **`crc32c(bytes, running = 0)`**, the Castagnoli polynomial (iSCSI, RFC 3720): `0xE3069283` over
   the same nine bytes.
-- **`adler32(bytes, running = 1)`**, RFC 1950's (zlib): `adler32("Wikipedia".toBytes())` is
+- **`adler32(bytes, running = 1)`**, RFC 1950's (zlib): `adler32("Wikipedia".bytes())` is
   `0x11E60398`.
 
 ## Input and output
@@ -492,7 +493,7 @@ space: `Base64.encode(bytes)`.
    `uint8[N]` — `(258 as uint16).toBytesBE()` is `[1, 2]` (M8c S11). An inline array in a frame
    gives no view ([03 §5.3](03-types.md)): `T.fromBytesLE(v.toBytesLE().toArray())` is `v`. They
    are members of the module's blocks, there where `std.encoding` is imported. *(Informative.)* A string's bytes
-   are `toBytes()` (§Strings).
+   are `bytes()` (§Strings).
 
 ## Cryptography
 
@@ -1058,7 +1059,8 @@ A `char` is a Unicode scalar value ([design 10 S4, S5](https://github.com/lyricl
    `isAsciiWhitespace` the space, tab, line feed, form feed and carriage return.
 3. **Case maps one character to one.** `toUpper()` and `toLower()` are the database's simple
    case mappings; a character without one maps to itself — `'ß'.toUpper()` is `'ß'`. No locale
-   takes part.
+   takes part. They, and `toDigit` (rule 4), are `std.string`'s, a block on `char` the prelude
+   passes on; what classifies a character (rules 1, 2) is `std.core`'s.
 4. **Digits are ASCII**, as `parse` reads them: `toDigit(radix): ?int` reads `0`–`9`, then `a`–`z`
    or `A`–`Z` as 10 to 35, and is `null` for a character that is no digit of the base;
    `char.fromDigit(n, radix): ?char` writes the digit `n`, its letters lowercase, and is `null`
@@ -1066,9 +1068,12 @@ A `char` is a Unicode scalar value ([design 10 S4, S5](https://github.com/lyricl
 
 ## Strings
 
-A `string` is immutable UTF-8 (design 10 S1). Its members are `std.core`'s and stand **once on
-`StringView`** (below), which a string reaches through a view of all of itself (rule 4); `length()`
-and `isEmpty()` it has itself. What cuts gives a **view** of the text, no copy; what builds gives a
+A `string` is immutable UTF-8 (design 10 S1). Its members stand **once on `StringView`** (below),
+which a string reaches through a view of all of itself (rule 4); `length()` and `isEmpty()` it has
+itself. What describes the text — `length`, `isEmpty`, `charCount`, `chars`, `charIndices`,
+`bytes` — is `std.core`'s; what searches in it, takes it apart or makes a new one of it is
+**`std.string`'s**, a block on `StringView` that the prelude passes on, so it stands in every module
+([04 §3](04-modules.md) rule 9a; [design 10 P1–P5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)). What cuts gives a **view** of the text, no copy; what builds gives a
 new string. A pattern `p` is a **`Pattern`** (design 10 S2) — a view or a string, a `char`, a test
 of characters `fn(char) -> bool` (through the block on its function type, [05 §13](05-interfaces.md)
 rule 6), or a type of the program that conforms:
@@ -1091,7 +1096,7 @@ signature per operation takes any of them:
 - `split(sep)`, the parts between the separators in order, views, empty ones kept — a separator
   that matches the empty text panics; `splitN(sep, n)`, at most `n` parts, the last one the rest,
   none for `n` of 0; `splitOnce(sep)`, the views before and after the first, or `null`;
-  `matches(p)`, the matches in order, views, none overlapping another; `lines()`, views split at
+  `findAll(p)`, the matches in order, views, none overlapping another; `lines()`, views split at
   `\n` with a `\r` before it taken off and no empty line after a last `\n`.
 - `trim()`, `trimStart()`, `trimEnd()`, the view without the white space — the characters with
   the property White_Space (§Characters); `trimMatches(p)`, `trimStartMatches(p)`,
@@ -1101,7 +1106,7 @@ signature per operation takes any of them:
   `p` is not there.
 - `toUpper()`, `toLower()`, a new string, each character by its simple case mapping
   (§Characters rule 3): `"straße".toUpper()` is `"STRAßE"`, and a final sigma is no context.
-- `toBytes()`, the bytes, a new `uint8[]` — a copy, since a string does not change (design 10
+- `bytes()`, the bytes, a new `uint8[]` — a copy, since a string does not change (design 10
   S12d); `string.fromChars(chars)`, the text of an iterator's characters in order, throwing what
   the iterator throws; `parse<T :: [Parse]>()`, `T.parse(s)` with `T` from where the result goes
   — `let n: int = try s.parse();`.

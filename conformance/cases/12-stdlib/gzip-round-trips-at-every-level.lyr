@@ -35,8 +35,8 @@ fn main(): void throws Error {
     var x = 17;
     while (i < 10000) {
         x = (x * 1103515245 + 12345) & 0x7FFFFFFF;
-        try buf.write(words[(x >> 8) % words.length()].toBytes()[..]);
-        try buf.write(" ".toBytes()[..]);
+        try buf.write(words[(x >> 8) % words.length()].bytes()[..]);
+        try buf.write(" ".bytes()[..]);
         i = i + 1;
     }
     let text = buf.toArray();

@@ -22,7 +22,7 @@ fn said(text: string): string {
 }
 
 fn main(): void throws Error {
-    let header = "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}".toBytes();
+    let header = "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}".bytes();
     let text = Base64Url.encodeUnpadded(header[..]);
     println(text);
     println((try Base64Url.decodeUnpadded(text)) == header);
