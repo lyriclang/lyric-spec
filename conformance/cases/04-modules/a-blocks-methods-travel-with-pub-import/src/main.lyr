@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | hey! 1
+//! since: 5.0.0
+// 04 §3 rule 9a: a block of methods in another module than its type's reaches a module that
+// imports a module passing it on with 'pub import' - here two such links away.
+import std.io { println };
+import app.far { tag };
+
+fn main(): void {
+    println(f"{"hey".shout()} {tag()}");
+}

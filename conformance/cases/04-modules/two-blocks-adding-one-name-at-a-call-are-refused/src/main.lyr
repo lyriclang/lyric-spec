@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0235
+//! since: 5.0.0
+// 04 §3 rule 9a: two modules this one imports each add 'shout' to 'string'; the call cannot tell
+// which is meant, and is refused rather than taking the first import's.
+import app.loud;
+import app.soft;
+
+fn main(): void {
+    let _ = "hey".shout();
+}

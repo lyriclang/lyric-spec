@@ -1,0 +1,9 @@
+pub extend string {
+    pub fn shout(): string {
+        return this + "!";
+    }
+}
+
+pub fn tag(): int {
+    return 1;
+}
