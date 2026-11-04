@@ -383,6 +383,10 @@ A macro's own refusal, at its site.
 | LYR-MIG0304 | H | [14-cli](14-cli.md) | a compare that returned an int | A note of `lyric fix --from-4`: `compare` returned an `int` in Lyric 4 and returns `?Ordering` in Lyric 5; the migration rewrites the method and the calls compared with 0, and says the others. |
 | LYR-MIG0305 | H | [14-cli](14-cli.md) | a hash that returned an int | A note of `lyric fix --from-4`: `hash()` returned an `int` in Lyric 4; Lyric 5's `hash` writes the value into a hasher, and the migration rewrites the method. |
 | LYR-MIG0309 | H | [14-cli](14-cli.md) | arithmetic that may have meant to wrap | A note of `lyric fix --from-4`: a function computes with an integer constant beyond 32 bits — a hash, a generator —, whose overflow wrapped in Lyric 4 and panics in Lyric 5. |
+| LYR-MIG0311 | H | [14-cli](14-cli.md) | a library function used as a value | A note of `lyric fix --from-4`: a function of Lyric 4's library that is a method in Lyric 5, `sum` or `over`, is used as a value, and no function stands for it. |
+| LYR-MIG0312 | H | [14-cli](14-cli.md) | a string's length in characters | A note of `lyric fix --from-4`: a string's `length()` counted characters in Lyric 4 and counts bytes in Lyric 5; the migration writes `charCount()`. |
+| LYR-MIG0313 | H | [14-cli](14-cli.md) | an argument written twice | A note of `lyric fix --from-4`: `s.substring(start, count)` is written with an end, `start + count`, and a `start` that calls something now runs twice. |
+| LYR-MIG0315 | H | [14-cli](14-cli.md) | an index that changed twice | A note of `lyric fix --from-4`: `s.indexOf(n)` gave a character's index or -1; `find` gives a byte's index or `null`. |
 | LYR-MIG0318 | H | [14-cli](14-cli.md) | an array as a key | A note of `lyric fix --from-4`: an array is the key of a `Map` or the element of a `Set`, which Lyric 4's checker passed and Lyric 5 refuses. |
 
 ## A.7 CT — Compile-time evaluation
