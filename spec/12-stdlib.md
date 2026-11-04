@@ -292,7 +292,7 @@ no text, `Invalid` for a text not of the type's form, `Overflow` for a number be
 range. All three are `std.core`'s. Beside the kind a parser says what it can: **`detail`** — what
 it expected where it stopped, empty where it says nothing more — and **`offset`**, the byte of
 the text the refusal points at, `null` where it knows none; `message()` carries both. The number
-parsers say nothing more; `Uri.parse`, `percentDecode`, the address parsers and the time parsers
+parsers say nothing more; `Uri.parse`, `Percent.decode`, the address parsers and the time parsers
 fill them.
 
 - An **integer** is an optional `+` or `-` and ASCII digits, `_` only between two digits.
@@ -878,7 +878,7 @@ poll requests on the thread's completion port (M8b S11).
 
 **`std.uri`** (design 10 O11; M10 S5) is RFC 3986, strictly: `Uri` is a reference in its five
 parts, `Uri.parse` reads one as the grammar allows, `show` writes it back, `resolve` and
-`normalize` are the RFC's algorithms, `percentEncode`/`percentDecode` the encoding per
+`normalize` are the RFC's algorithms, `Percent.encode`/`Percent.decode` the encoding per
 component, `Query` the pairs of a query. WHATWG's URL is a browser's leniency and not this.
 
 1. **The parts.** `Uri { scheme: ?string, userinfo: ?string, host: ?string, port: ?int, path:
@@ -909,12 +909,12 @@ component, `Query` the pairs of a query. WHATWG's URL is a browser's leniency an
    others' digits in capitals, the dot segments of a path removed where there is a scheme or an
    authority, an empty path with an authority `/`, the scheme's default port dropped — 80 for
    `http` and `ws`, 443 for `https` and `wss`, 21 for `ftp`.
-4. **The encoding.** `percentEncode(text, component)` keeps what the component takes as it is and
+4. **The encoding.** `Percent.encode(text, component)` keeps what the component takes as it is and
    writes every other byte as `%` and two capital hex digits, a character beyond ASCII as the
    bytes of its UTF-8: `Component.Userinfo` keeps unreserved, sub-delims and `:`; `Host`
    unreserved and sub-delims; `Path` pchar and `/`; `Segment` pchar (a `/` is encoded); `Query`
    and `Fragment` pchar, `/` and `?`; `Pair` unreserved alone, for a key or a value of a query.
-   `percentDecode(text)` reads `%XX` back and is `ParseError { kind = .Invalid }` for a `%`
+   `Percent.decode(text)` reads `%XX` back and is `ParseError { kind = .Invalid }` for a `%`
    without two hex digits or bytes that are no UTF-8; a `+` stays. **`Query`** is the pairs of a
    query in the order written, a key more than once allowed: `Query.parse(text)` splits at `&`
    and the first `=` (a part without `=` is a key with an empty value, an empty part is skipped),

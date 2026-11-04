@@ -12,7 +12,7 @@
 // 12 §URIs rules 1, 2, 4: the parts of a URI and its text back, an IPv6 host, the normalization, the
 // percent-encoding per component, the pairs of a query; what the grammar refuses is refused.
 import std.io { println };
-import std.uri { Uri, Query, percentEncode, percentDecode };
+import std.uri { Uri, Query, Percent };
 import std.core { ParseError };
 
 fn verdict(s: string): string {
@@ -31,7 +31,7 @@ fn main(): void throws Error {
     let l = try Uri.parse("ldap://[2001:db8::7]/c=GB?objectClass?one");
     println(f"{l.show()} {l.host ?? "-"}");
     println((try Uri.parse("HTTP://www.EXAMPLE.com:80/a/./b/../%7Eu%2fx?q#f")).normalize().show());
-    println(f"{percentEncode("a b/c?d=\u{e9}", .Segment)} {try percentDecode("a%20b%2Fc")}");
+    println(f"{Percent.encode("a b/c?d=\u{e9}", .Segment)} {try Percent.decode("a%20b%2Fc")}");
     let q = try Query.parse("a=1&b=x+y%21&a=3&c");
     println(f"{q.get("a") ?? "-"} {q.all("a")} {q.get("b") ?? "-"} {q.show()}");
     println(f"{verdict("http://a b/")} {verdict("http://[::1")} {verdict("http://h:99999/")} {verdict("http://h/%zz")} {verdict("1http://x")} {verdict("a#b#c")}");
