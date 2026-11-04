@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | 3 4 null | 1 null | 3 1 | [5, 4, 3]
+//! since: 5.0.0
+// 12 "Iteration", "Arrays and views" (design 10 P6, P9): find gives an index wherever it stands - an
+// iterator's, a slice's, a text's -, and firstWhere gives the value; a slice's search and what it
+// derives (find, binarySearch, partitionPoint, reversed) are std.collections', the prelude passing
+// them on.
+import std.io { println };
+
+fn main(): void {
+    let xs = [3, 4, 5];
+    let none = if ((1..9).find((v) => v == 40) == null) "null" else "found";
+    let gone = if (xs.find(9) == null) "null" else "found";
+    println(f"{(1..9).find((v) => v == 4)!} {(1..9).firstWhere((v) => v * v > 10)!} {none} | {xs.find(4)!} {gone} | {"héllo".find("l")!} {xs.binarySearch(4)!} | {xs.reversed():?}");
+}

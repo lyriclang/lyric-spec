@@ -21,8 +21,8 @@ fn main(): void {
     let rows: Row[] = [Row { cells = [5, 6] }];
     let first = b.cells.first() ?? -1;
     let last = b.cells.last() ?? -1;
-    let at = b.cells.indexOf(1) ?? -1;
-    let inRows = rows[0].cells.indexOf(6) ?? -1;
+    let at = b.cells.find(1) ?? -1;
+    let inRows = rows[0].cells.find(6) ?? -1;
     let grid: int[2][] = [[7, 8]];
     println(f"{b.cells.contains(3)} {b.cells.contains(9)} {first} {last} | {at} {inRows} | {grid[0].first() ?? -1}");
     b.cells.sort();
