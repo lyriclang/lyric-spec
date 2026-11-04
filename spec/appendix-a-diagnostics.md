@@ -388,6 +388,8 @@ A macro's own refusal, at its site.
 | LYR-MIG0313 | H | [14-cli](14-cli.md) | an argument written twice | A note of `lyric fix --from-4`: `s.substring(start, count)` is written with an end, `start + count`, and a `start` that calls something now runs twice. |
 | LYR-MIG0315 | H | [14-cli](14-cli.md) | an index that changed twice | A note of `lyric fix --from-4`: `s.indexOf(n)` gave a character's index or -1; `find` gives a byte's index or `null`. |
 | LYR-MIG0318 | H | [14-cli](14-cli.md) | an array as a key | A note of `lyric fix --from-4`: an array is the key of a `Map` or the element of a `Set`, which Lyric 4's checker passed and Lyric 5 refuses. |
+| LYR-MIG0408 | H | [14-cli](14-cli.md) | a try around all of main | A note of `lyric fix --from-4`: a `try` holds all of `main`, which could not throw in Lyric 4; in Lyric 5 `main` may. |
+| LYR-MIG0409 | H | [14-cli](14-cli.md) | a close that a using says | A note of `lyric fix --from-4`: `defer stream.close(f)` closes by hand what a `using` binding closes in Lyric 5. |
 
 ## A.7 CT — Compile-time evaluation
 
