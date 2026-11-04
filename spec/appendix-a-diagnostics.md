@@ -382,6 +382,8 @@ A macro's own refusal, at its site.
 | LYR-MIG0303 | H | [14-cli](14-cli.md) | two operator results in one declaration | A note of `lyric fix --from-4`: one declaration conforms to operator interfaces with two different results, and Lyric 5 names one `type Out` a declaration. |
 | LYR-MIG0304 | H | [14-cli](14-cli.md) | a compare that returned an int | A note of `lyric fix --from-4`: `compare` returned an `int` in Lyric 4 and returns `?Ordering` in Lyric 5; the migration rewrites the method and the calls compared with 0, and says the others. |
 | LYR-MIG0305 | H | [14-cli](14-cli.md) | a hash that returned an int | A note of `lyric fix --from-4`: `hash()` returned an `int` in Lyric 4; Lyric 5's `hash` writes the value into a hasher, and the migration rewrites the method. |
+| LYR-MIG0309 | H | [14-cli](14-cli.md) | arithmetic that may have meant to wrap | A note of `lyric fix --from-4`: a function computes with an integer constant beyond 32 bits — a hash, a generator —, whose overflow wrapped in Lyric 4 and panics in Lyric 5. |
+| LYR-MIG0318 | H | [14-cli](14-cli.md) | an array as a key | A note of `lyric fix --from-4`: an array is the key of a `Map` or the element of a `Set`, which Lyric 4's checker passed and Lyric 5 refuses. |
 
 ## A.7 CT — Compile-time evaluation
 
