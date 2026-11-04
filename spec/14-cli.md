@@ -83,13 +83,19 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `Driver
     `Fetching` and `Updating` a package or a source tree read from git, `Running` a build script,
     `Binding` a module made from a header, `Compiling` a program's front end (`app v0.1.0
     (src/main.lyr)`), the runtime, and the C units — `3 of 14 C units of app`, the ones whose
-    object is not cached —, `Checking` a program (`check`), `Linking` a binary or a shared library,
-    `Archiving` a static one. What is up to date says nothing. A `build`, `run` or `check` that
-    succeeds ends with **`Finished`**, the profile, its level and debug information, and the time the command took
-    (`Finished debug [opt 0, debug info] in 0.42s`); one that fails ends with its findings. `run`
-    then says the binary it runs (`Running out/debug/<target>/app`). Where the standard error is
-    a terminal, the C units compiled so far are counted on a line drawn over itself and erased
-    when they are done (`Building [3/14] app`), unless `-v` says commands. The word is coloured
+    object is not cached —, `Checking` a program (`check`), the front end's phases `Parsing`,
+    `Expanding`, `Analyzing`, `Evaluating` and `Lowering`, `Emitting` its C, `Linking` a binary or
+    a shared library, `Archiving` a static one. What is up to date says nothing. A `build`, `run`
+    or `check` that succeeds says **`Finished`**, the profile, its level and debug information, and
+    the time the command took (`Finished debug [opt 0, debug info] in 0.42s`), a `build` or `run`
+    **`Produced`**, the file it made with its size, and **`Summary`** where there are warnings or C
+    units from the cache; one that fails ends with its findings. `run` then says the binary it
+    runs (`Running out/debug/<target>/app`). Where the standard error is a terminal, a phase, the C
+    units, a link and an archive each stay one line, drawn over itself: the C units compiled so far
+    are counted on it (`Compiling [3/14] app`), and its end adds its time (`Linking app 0.05s`);
+    elsewhere, or under `-v`, each says a whole line as it starts, and a last line **`Timings`**
+    gives their times. **`-v`** also says each package (`Package std v5.0.0`), each C unit with its
+    time (`Compiled …`) and each command. The word is coloured
     as the diagnostics are ([16 §1](16-diagnostics.md)). **`-q`** (`--quiet`) says no status line,
     and `--json` none ([11 C6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
     the findings stay. The lines are text for a reader, not a format: their words and their
