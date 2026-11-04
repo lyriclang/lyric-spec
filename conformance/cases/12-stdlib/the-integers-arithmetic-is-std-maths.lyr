@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 1024 1.4142 128 | 3 true 127 0 8 2 4 | 'f'
+//! since: 5.0.0
+// 12 "Numbers", "std.math" (design 10 P8): pow over Pow, its exponent the number's own answer
+// (uint for an integer, the float for a float); the checked, saturating and wrapping arithmetic and
+// the bit counts free over Integer; clamp free over Ordered, beside min and max.
+import std.io { println };
+import std.math { pow, clamp, checkedAdd, saturatingMul, wrappingAdd, popCount, rotateLeft, trailingZeros };
+
+fn main(): void {
+    let b: uint8 = 2;
+    println(f"{pow(2, 10)} {pow(2.0, 0.5):.4f} {b.pow(7)} | {clamp(5, 0, 3)} {checkedAdd(int.max, 1) == null} {saturatingMul(100 as int8, 2)} {wrappingAdd(255 as uint8, 1 as uint8)} {popCount(255)} {rotateLeft(1 as uint8, 9)} {trailingZeros(16)} | {clamp('q', 'a', 'f'):?}");
+}
