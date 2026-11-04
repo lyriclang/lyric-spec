@@ -377,6 +377,11 @@ A macro's own refusal, at its site.
 | LYR-MIG0205 | H | [14-cli](14-cli.md) | an opaque type became a struct | A note of `lyric fix --from-4`: an `opaque type H = T;` of Lyric 4 is written as `struct H :: [Equatable] { v: T }`, `x as H` as `H { v = x }` and `h as T` as `h.v`. |
 | LYR-MIG0208 | H | [14-cli](14-cli.md) | a format spec without its old output | A note of `lyric fix --from-4`: a format spec of Lyric 4 (.NET's) that Lyric 5's format language writes otherwise for some values (`D`, `X` on a signed integer), or not at all (`E`, `P`, `C`, `G`, `R`, a custom format). |
 | LYR-MIG0211 | H | [14-cli](14-cli.md) | a generic interface named by an associated type | A note of `lyric fix --from-4`: `Indexable<T>` is `IndexSet<int>` with `type Output = T`, and `Iterable<T>` or `Indexable<T>` as the type of a value has no counterpart in Lyric 5. |
+| LYR-MIG0301 | H | [14-cli](14-cli.md) | a written field became 'var' | A note of `lyric fix --from-4`: a field of the program's own type is written, so the migration declares it `var`. |
+| LYR-MIG0302 | H | [14-cli](14-cli.md) | an equality or order with another type | A note of `lyric fix --from-4`: `Equatable<U>`, `Ordered<U>` or `Hashable<U>` names a type other than its own, which Lyric 5's interfaces cannot say. |
+| LYR-MIG0303 | H | [14-cli](14-cli.md) | two operator results in one declaration | A note of `lyric fix --from-4`: one declaration conforms to operator interfaces with two different results, and Lyric 5 names one `type Out` a declaration. |
+| LYR-MIG0304 | H | [14-cli](14-cli.md) | a compare that returned an int | A note of `lyric fix --from-4`: `compare` returned an `int` in Lyric 4 and returns `?Ordering` in Lyric 5; the migration rewrites the method and the calls compared with 0, and says the others. |
+| LYR-MIG0305 | H | [14-cli](14-cli.md) | a hash that returned an int | A note of `lyric fix --from-4`: `hash()` returned an `int` in Lyric 4; Lyric 5's `hash` writes the value into a hasher, and the migration rewrites the method. |
 
 ## A.7 CT — Compile-time evaluation
 
