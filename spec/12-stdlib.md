@@ -250,7 +250,9 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   throw what it throws: `count()`; `fold(init, f)` and `reduce(f)`, the latter `null` without a
   value; `first()`, `last()` and `nth(n)`, `null` where there is no such value, a negative `n`
   included; `any(p)`, `all(p)` (`true` for none) and `none(p)`, stopping at the value that
-  decides; `find(p)` and `position(p)`; `forEach(f)`, inline
+  decides; `find(p)`, the index of the first value `p` holds for, and `firstWhere(p)`, that
+  value — `find` gives an index wherever it stands, a text's, a slice's, an iterator's (design 10
+  P6); `forEach(f)`, inline
   ([03 §8.5](03-types.md#85-inline-functions)): a lambda written at the call is set in place, its
   `return` the caller's; `toArray()`, in one pass; `minBy(key)`
   and `maxBy(key)`, the value whose `TotalOrder` key is least or greatest, the first of equal
@@ -337,14 +339,16 @@ through one reaches the array. `length()` and the index are the primitives
 - `isEmpty()`; `get(i)`, `null` outside `0 ≤ i < length()`; `first()` and `last()`, `null`
   where there is no element.
 - `swap(i, j)`, an index outside panicking as `[i]` does; `reverse()` in place; `reversed()`, a
-  new array.
+  new array — `std.collections`'s, with `find`, `partitionPoint` and `binarySearch` below: what
+  searches in a slice or makes a new one of it is that module's, a block on `Slice<T>` the prelude
+  passes on; what describes the slice and what changes it in place is `std.core`'s (design 10 P9).
 - `copyInto(into)`: the elements into the view `into`, which is at least as long — a shorter
   one panics as an index outside does (`LYR-RT0003`), a longer one keeps its rest; the two may
   overlap either way (the review's B16). One copy, not an element at a time: what the
   collections grow and shift with.
 - Of an `Equatable` element: `contains(x)`, through which `T[]` and `Slice<T>` are
   `Contains<T>` (10 C12) — what `x in xs` asks ([05 §12](05-interfaces.md) rule 10) — and
-  `indexOf(x)`, the first index or `null`.
+  `find(x)`, the first index or `null`.
 - Of a `Clone` element: `fill(v)`, every element a clone of `v` — no object shared into several
   slots, as `[x] * n` shares none ([03 §5.1](03-types.md)).
 - `partitionPoint(p)`: the first index whose element fails `p`, for elements `p` partitions —
