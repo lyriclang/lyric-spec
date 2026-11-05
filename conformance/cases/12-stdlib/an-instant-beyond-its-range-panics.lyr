@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0002
+//! since: 5.0.0
+// 12 §Time, rule 4: a count of milliseconds whose moment an instant cannot hold panics with an
+// overflow.
+import std.io { println };
+import std.time { Instant };
+
+fn main(): void {
+    println(f"{Instant.ofEpochMillis(9223372036855)}");
+}

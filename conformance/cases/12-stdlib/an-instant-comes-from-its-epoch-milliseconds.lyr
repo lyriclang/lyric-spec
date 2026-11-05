@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 1970-01-01T00:00:01.5Z 1500 1
+//! | 1969-12-31T23:59:59.999Z -1 -1
+//! | true 9223372036854
+//! since: 5.0.0
+// 12 §Time, rule 4: an instant from its milliseconds since the epoch, before it for a negative
+// count, as far as an instant reaches; epochMillis gives the count back.
+import std.io { println };
+import std.time { Instant };
+
+fn main(): void throws Error {
+    let a = Instant.ofEpochMillis(1500);
+    println(f"{a} {a.epochMillis()} {a.epochSecs()}");
+    let b = Instant.ofEpochMillis(-1);
+    println(f"{b} {b.epochMillis()} {b.epochSecs()}");
+    let zero = try Instant.parse("1970-01-01T00:00:00Z");
+    println(f"{Instant.ofEpochMillis(0) == zero} {Instant.ofEpochMillis(9223372036854).epochMillis()}");
+}

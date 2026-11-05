@@ -574,9 +574,11 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
    taken as Go takes it, `fraction × (unit ÷ 10^digits)` in floating point, so what Go reads this
    reads. A duration's text parses back to it.
 4. **`Instant`** is a moment on the wall clock, nanoseconds since `1970-01-01T00:00:00Z`, POSIX
-   time without leap seconds: `Instant.now()`, `epochSecs()` and `epochMillis()` rounded down,
-   `instant + duration`, `later.since(earlier): Duration`. Instants compare and order as the
-   moments they are. The system may set its wall clock back. **`Monotonic`** is a moment on the
+   time without leap seconds: `Instant.now()`, `Instant.ofEpochMillis(n)`, `epochSecs()` and
+   `epochMillis()` rounded down, `instant + duration`, `later.since(earlier): Duration`. Instants compare and order as the
+   moments they are. `ofEpochMillis` is the inverse of `epochMillis` for a whole millisecond, a
+   negative `n` before the epoch; an `n` whose moment an instant cannot hold panics with an overflow.
+   The system may set its wall clock back. **`Monotonic`** is a moment on the
    clock that only moves forward, from an unspecified start: `Monotonic.now()`,
    `elapsed(): Duration`.
 5. **The calendar** is the proleptic Gregorian one, every year an `int` holds. `Date.of(year,
