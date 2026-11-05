@@ -374,6 +374,7 @@ A macro's own refusal, at its site.
 | LYR-MIG0106 | H | [14-cli](14-cli.md) | declarations the whole package now sees | A note of `lyric fix --from-4`, once a module: declarations without `pub` were private to their module in Lyric 4 and are seen by the whole package in Lyric 5. `main` is left aside. |
 | LYR-MIG0107 | H | [14-cli](14-cli.md) | a build script of Lyric 4 | A note of `lyric fix --from-4`: the project has a `build.lyr` written for Lyric 4, which defined the build. In Lyric 5 `lyric.toml` does — `[[bin]]`, `[profile.*]` —, and a build script only prepares sources. |
 | LYR-MIG0108 | H | [14-cli](14-cli.md) | tests compiled apart | A note of `lyric fix --from-4`: the `lyric.json` names a `testRoot`, whose files Lyric 4 compiled apart from the program. Lyric 5 runs a package's `tests/` with `lyric test`; each test is an `@Test` function. |
+| LYR-MIG0110 | H | [14-cli](14-cli.md) | a file without an entry | A note of `lyric fix --from-4`: a single file has no `main`. Lyric 4 ran it as a library of a host; Lyric 5 asks a single file for its entry. |
 | LYR-MIG0205 | H | [14-cli](14-cli.md) | an opaque type became a struct | A note of `lyric fix --from-4`: an `opaque type H = T;` of Lyric 4 is written as `struct H :: [Equatable] { v: T }`, `x as H` as `H { v = x }` and `h as T` as `h.v`. |
 | LYR-MIG0208 | H | [14-cli](14-cli.md) | a format spec without its old output | A note of `lyric fix --from-4`: a format spec of Lyric 4 (.NET's) that Lyric 5's format language writes otherwise for some values (`D`, `X` on a signed integer), or not at all (`E`, `P`, `C`, `G`, `R`, a custom format). |
 | LYR-MIG0211 | H | [14-cli](14-cli.md) | a generic interface named by an associated type | A note of `lyric fix --from-4`: `Indexable<T>` is `IndexSet<int>` with `type Output = T`, and `Iterable<T>` or `Indexable<T>` as the type of a value has no counterpart in Lyric 5. |
@@ -388,6 +389,9 @@ A macro's own refusal, at its site.
 | LYR-MIG0313 | H | [14-cli](14-cli.md) | an argument written twice | A note of `lyric fix --from-4`: `s.substring(start, count)` is written with an end, `start + count`, and a `start` that calls something now runs twice. |
 | LYR-MIG0315 | H | [14-cli](14-cli.md) | an index that changed twice | A note of `lyric fix --from-4`: `s.indexOf(n)` gave a character's index or -1; `find` gives a byte's index or `null`. |
 | LYR-MIG0318 | H | [14-cli](14-cli.md) | an array as a key | A note of `lyric fix --from-4`: an array is the key of a `Map` or the element of a `Set`, which Lyric 4's checker passed and Lyric 5 refuses. |
+| LYR-MIG0320 | H | [14-cli](14-cli.md) | a method that writes under an interface | A note of `lyric fix --from-4`: a method of a class writes the object's state, and the interface it answers declares it without `mut`. |
+| LYR-MIG0321 | H | [14-cli](14-cli.md) | a written parameter | A note of `lyric fix --from-4`: a function writes a struct it took as a parameter. It was a copy in Lyric 4; in Lyric 5 a parameter is a `let`. |
+| LYR-MIG0322 | H | [14-cli](14-cli.md) | an enum that holds itself | A note of `lyric fix --from-4`: an enum holds itself, directly or through a struct. Lyric 4 kept payloads by reference; an enum of Lyric 5 is a value and would have no size. |
 | LYR-MIG0402 | H | [14-cli](14-cli.md) | an operation that answered whether it worked | A note of `lyric fix --from-4`: a silent operation of Lyric 4 answered `false` when it failed, `file.remove(p)`; in Lyric 5 it throws and answers nothing, and its answer is used here. |
 | LYR-MIG0408 | H | [14-cli](14-cli.md) | a try around all of main | A note of `lyric fix --from-4`: a `try` holds all of `main`, which could not throw in Lyric 4; in Lyric 5 `main` may. |
 | LYR-MIG0409 | H | [14-cli](14-cli.md) | a close that a using says | A note of `lyric fix --from-4`: `defer stream.close(f)` closes by hand what a `using` binding closes in Lyric 5. |
@@ -395,6 +399,7 @@ A macro's own refusal, at its site.
 | LYR-MIG0502 | H | [14-cli](14-cli.md) | tasks became a scope | A note of `lyric fix --from-4`: the `spawn`s of a block and its `run()` are a `TaskScope`, whose `close()` waits for the tasks as `run()` did. |
 | LYR-MIG0601 | H | [14-cli](14-cli.md) | a library function without a form | A note of `lyric fix --from-4`: a function of Lyric 4's library has no form in Lyric 5, by decision: an optional has no functions, a `Result` has `of` and `get`. |
 | LYR-MIG0602 | H | [14-cli](14-cli.md) | a library function that behaves otherwise | A note of `lyric fix --from-4`: a function of Lyric 4's library has a form in Lyric 5 that compiles and behaves otherwise somewhere. |
+| LYR-MIG0616 | H | [14-cli](14-cli.md) | a function bound to .NET | A note of `lyric fix --from-4`: an `extern "dotnet"` binds a function of .NET, which Lyric 5 runs without. |
 
 ## A.7 CT — Compile-time evaluation
 
