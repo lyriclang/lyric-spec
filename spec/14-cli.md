@@ -524,23 +524,30 @@ a mirror served on the machine): a conformance case fetches nothing.
    **`LYRIC_HOME`** names: `toolchains/<version>/` holds each as its archive unpacked it,
    `config.toml` names the default (`default = "<version>"`, the one key it takes), and `bin` is a
    link to the default's directory — a symbolic link, on Windows a junction —, so that `bin` on the
-   `PATH` runs the default. A directory an install has not finished is no toolchain.
+   `PATH` runs the default, and `seen/` remembers the newest index of each channel. A directory an
+   install has not finished is no toolchain.
 2. **`lyric toolchain install <version|dev|stable>`** installs a toolchain for this machine's
    target. `dev` and `stable` name the newest version of their channel; a version is one its
    channel lists, written with its build part (`+…`) or without. A development build's version
    (`-dev.…`) is the `dev` channel's, every other the `stable` channel's. The first toolchain
    installed becomes the default. A version installed already is said and fetched no further.
 3. **What an install trusts.** The channel's index is fetched with its signature and checked with
-   the key the toolchain carries; the archive is fetched no further than the size the index gives
+   the keys the toolchain carries for that channel, its own and a reserve; its number is no lower
+   than the highest this machine has seen from the same signer. The archive is fetched no further
+   than the size the index gives
    and checked against its SHA-256; it is unpacked beside the toolchains and checked against its
    own `toolchain.json` — its version, its target and every file; only then is it moved into
    place. A difference anywhere installs nothing (`LYR-CLI0024`), and a run cut short leaves
    nothing a later one counts as installed.
-4. **Where from.** The index and the archives come from the mirror, and from GitHub's releases
-   where the mirror cannot be reached; a signature or a hash that does not hold is never routed
-   around. **`LYRIC_MIRROR`** names another mirror in place of both, and **`LYRIC_MIRROR_KEY`**
-   the key its signatures are checked with — set without a mirror, it is refused. A toolchain
-   that carries no key installs only from such a mirror.
+4. **Where from.** The index and the archives come from the mirror, then from GitHub's releases.
+   A source that cannot be reached is followed by the next; one that serves what rule 3 refuses is
+   followed by the next with a warning, because only a signature and a hash make anything
+   acceptable, whichever source it came from. An index whose signature does not hold is fetched
+   once more, with its signature, before it is refused: the two are two requests, and a publish
+   can fall between them. Where no source serves what holds, nothing is installed: `LYR-CLI0024`
+   where one served something refused, else `LYR-CLI0023`. **`LYRIC_MIRROR`** names another mirror
+   in place of both, and **`LYRIC_MIRROR_KEY`** the key its signatures are checked with — set
+   without a mirror, it is refused.
 5. **`lyric toolchain list`** names the installed toolchains, the newest first, the default
    marked; with **`--available`**, the versions both channels offer, with their dates, those
    installed marked. A channel that cannot be fetched is said, and is an error only where neither
@@ -596,7 +603,9 @@ a mirror served on the machine): a conformance case fetches nothing.
   `{"version", "triple", "files": [{"path", "size", "sha256"}, …]}`, every other file with its
   size and SHA-256.
 - **The index** of a channel is `dev.json` or `stable.json`:
-  `{"channel", "versions": [{"version", "date", "archives": {"<triple>": {"file", "size", "sha256"}}}]}`.
+  `{"channel", "sequence", "versions": [{"version", "date", "archives": {"<triple>": {"file", "size", "sha256"}}}]}`,
+  `sequence` a positive integer that grows from one index of the channel to the next, the newest
+  version first where two compare equal.
   On a mirror it lies at `<base>/<channel>.json`, its archives under `<base>/<channel>/`; on GitHub
   the release `dev` carries the development build with `dev.json`, the release `channels` carries
   `stable.json`, and each stable version has its release `v<version>`.
