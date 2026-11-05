@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0002
+//! since: 1.0.0
+// §12 rule 14 (Lyric 5 12 §Numbers): `gcd` is never negative, and `int.min` has no magnitude.
+import std.math
+println(math.gcd(int.min, 0))

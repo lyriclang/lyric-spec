@@ -4,7 +4,7 @@
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
 collections (S7d), the strings' members, reading values from text, builders of text, the
-format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -21,8 +21,8 @@ format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleto
    `LYS-RES0003`. Its modules are compiled with the program; what one of them keeps `internal`
    stays its own, and only they reach the VM's natives. Its modules and the rights they ask for
    ([17](17-host.md) rule 1) so far: `std.fs` — `exists(path): bool`; `std.os` —
-   `env(name): ?string`; `std.fmt` — `format(template, args: Display...)` (rule 12), no right. The
-   rest come with the milestones that build them.
+   `env(name): ?string`; `std.fmt` — `format(template, args: Display...)` (rule 12), no right;
+   `std.math` (rule 14), no right. The rest come with the milestones that build them.
 3. **The adapters of every iterator** (Lyric 5 12 §Iteration; S7c6b1). `std.iter` holds them,
    members of blanket blocks over `I :: [Iterator]` that reach every module without an import —
    the loader adds the module to a program that names one of them: `it.map(f)`, `filter(p)`,
@@ -193,6 +193,20 @@ format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleto
    `isNan()`, `isInfinite()`, `isFinite()` tell the value, `toBits()` gives its 64 bits.
    `x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
    between, a value unordered with the bounds as it is; `lo` above `hi` panics (`LYS-RT0008`).
+14. **What one computes with numbers** (Lyric 5 12 §`std.math`; S7f2). `std.math` holds free
+   functions, generic over the tower, and the constants `pi`, `e` and `tau`, typed `float`. Over
+   `Float`: `floor(x)`, `ceil(x)`, `round(x)` — a half away from zero —, `trunc(x)`; `sqrt(x)`,
+   `cbrt(x)`, `exp(x)`, `ln(x)`, `log2(x)`, `log10(x)`; `sin`, `cos`, `tan`, `asin`, `acos`,
+   `atan`, `sinh`, `cosh`, `tanh`, in radians; `atan2(y, x)`, the angle of the point (x, y), -π to
+   π; `hypot(x, y)`; `pow(x, e)`. They are Lyric 5's own functions: a script computes the bits a
+   compiled program does, on every platform. `lerp(a, b, t)` is `a` at `t = 0` and `b` at `t = 1`
+   exactly. Over `Signed`: `abs(x)`, `0.0` for `-0.0`, and `signum(x)`, `-1`, `0` or `1` in the
+   type, a float's NaN staying NaN. Over `Ordered`: `min(a, b)` and `max(a, b)`, `a` where the two
+   are equal or unordered. Over `Integer`: `gcd(a, b)` and `lcm(a, b)`, never negative, `gcd(0, 0)`
+   is `0`; a result beyond the type overflows and panics (`LYS-RT0002`), as `abs(int.min)` does.
+   A program's own `Float` reaches what is written over the tower — `lerp`, `abs`, `signum`,
+   `min`, `max` —; an elementary function computes in `float`, and such a value at one is
+   `LYS-SEM0028`.
 
 ## Deviations (skeleton, written with later milestones)
 

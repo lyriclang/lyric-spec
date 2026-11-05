@@ -1,0 +1,27 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1.4142135623730951 3.141592653589793 3 1.5
+//! | 0.3 0.1 15.0
+//! | 6 7 7 12 0
+//! | 1.5707963267948966 0.0 8.0
+//! | 0.0 0.0 0.0 -1 1.0
+//! | nan -inf 1.0 -1.0 2.0
+//! | P { x = 2 } P { x = 1 }
+// §12 rule 14: free functions, generic over the tower, so a generic function reaches them; the text
+// above its last line is what Lyric 5 prints. `a` and `b` of `lerp`, exact at its ends; `atan2` takes
+// `y` first.
+import std.math
+import std.math { sqrt, pi }
+struct P :: Ordered {
+    x: int
+}
+fn root<T :: [Float]>(x: T): T = sqrt(x)
+fn size<T :: [Signed]>(x: T): T = math.abs(x)
+println(f"{root(2.0)} {pi} {size(-3)} {size(-1.5)}")
+println(f"{math.lerp(0.1, 0.3, 1.0)} {math.lerp(0.1, 0.3, 0.0)} {math.lerp(0.0, 10.0, 1.5)}")
+println(f"{math.gcd(-12, -18)} {math.gcd(7, 0)} {math.gcd(0, 7)} {math.lcm(-4, 6)} {math.lcm(3, 0)}")
+println(f"{math.atan2(1.0, 0.0)} {math.atan2(0.0, 1.0)} {math.pow(2.0, 3.0)}")
+println(f"{math.signum(0.0)} {math.signum(-0.0)} {math.abs(-0.0)} {math.signum(-4)} {math.signum(2.5)}")
+println(f"{math.sqrt(-1.0)} {math.ln(0.0)} {math.round(0.5)} {math.round(-0.5)} {math.floor(2.0)}")
+println(f"{math.max(P { x = 1 }, P { x = 2 })} {math.min(P { x = 1 }, P { x = 2 })}")

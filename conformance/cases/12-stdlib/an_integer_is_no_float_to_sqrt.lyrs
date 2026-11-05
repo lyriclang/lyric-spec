@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0028
+//! stderr-has: int is no Float
+//! since: 1.0.0
+// §12 rule 14 (Lyric 5 12 §Numbers): the elementary functions are over `Float`.
+import std.math
+println(math.sqrt(2))

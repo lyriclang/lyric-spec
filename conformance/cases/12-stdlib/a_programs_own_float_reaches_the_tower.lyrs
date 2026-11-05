@@ -1,0 +1,34 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | V2.5
+//! | V2.0
+//! | V-1.0
+//! | V2.0
+// §12 rule 14: what `std.math` writes over the tower takes a program's own number.
+import std.math
+struct V :: Float {
+    n: float = 0.0
+    static let zero: V = V { n = 0.0 }
+    static let one: V = V { n = 1.0 }
+    static let epsilon: V = V { n = 0.0 }
+    static let infinity: V = V { n = 0.0 }
+    static let nan: V = V { n = 0.0 }
+    static let min: V = V { n = 0.0 }
+    static let max: V = V { n = 0.0 }
+    static let leastPositive: V = V { n = 0.0 }
+    static fn fromBits(b: int): V = V { n = float.fromBits(b) }
+    fn toBits(): int = this.n.toBits()
+    static fn parse(s: string): V = V { n = 0.0 }
+    fn add(o: V): V = V { n = this.n + o.n }
+    fn sub(o: V): V = V { n = this.n - o.n }
+    fn mul(o: V): V = V { n = this.n * o.n }
+    fn div(o: V): V = V { n = this.n / o.n }
+    fn rem(o: V): V = V { n = this.n % o.n }
+    fn neg(): V = V { n = -this.n }
+    fn show(): string = f"V{this.n}"
+}
+println(math.lerp(V { n = 0.0 }, V { n = 10.0 }, V { n = 0.25 }))
+println(math.abs(V { n = -2.0 }))
+println(math.signum(V { n = -2.0 }))
+println(math.max(V { n = 1.0 }, V { n = 2.0 }))
