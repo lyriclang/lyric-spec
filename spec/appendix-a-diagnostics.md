@@ -391,6 +391,8 @@ A macro's own refusal, at its site.
 | LYR-MIG0402 | H | [14-cli](14-cli.md) | an operation that answered whether it worked | A note of `lyric fix --from-4`: a silent operation of Lyric 4 answered `false` when it failed, `file.remove(p)`; in Lyric 5 it throws and answers nothing, and its answer is used here. |
 | LYR-MIG0408 | H | [14-cli](14-cli.md) | a try around all of main | A note of `lyric fix --from-4`: a `try` holds all of `main`, which could not throw in Lyric 4; in Lyric 5 `main` may. |
 | LYR-MIG0409 | H | [14-cli](14-cli.md) | a close that a using says | A note of `lyric fix --from-4`: `defer stream.close(f)` closes by hand what a `using` binding closes in Lyric 5. |
+| LYR-MIG0501 | H | [14-cli](14-cli.md) | a task without a form | A note of `lyric fix --from-4`: a use of Lyric 4's `std.task` that the migration cannot write: a wait for a descriptor or an interrupt, a `spawn` apart from its `run()`, a coroutine held in a value, `interrupt()`, `pending()`, or the module named by an alias. |
+| LYR-MIG0502 | H | [14-cli](14-cli.md) | tasks became a scope | A note of `lyric fix --from-4`: the `spawn`s of a block and its `run()` are a `TaskScope`, whose `close()` waits for the tasks as `run()` did. |
 
 ## A.7 CT — Compile-time evaluation
 
