@@ -52,8 +52,9 @@ format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleto
    `partition(p)`, two lists in order; `chunks(n)`, the last shorter, and `windows(n)`, none where
    there are fewer, `n` below 1 a panic (`LYS-RT0008`); `join(sep)`, each value as `{x}` writes
    it — every value prints ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) — with `sep` between each two. Of an element kind:
-   `sum()`, `product()` and `average()` of `int` or of `float` values, Script's two numbers —
-   zero, one and `null` where there is none, `average()` a `float` summed as one —; `min()` and
+   `sum()` and `product()` of a `Num`'s values (rule 13), its `zero` and its `one` where there is
+   none; `average()` of `int` or of `float` values, a `float` summed as one, `null` where there is
+   none; `min()` and
    `max()` of an `Ordered` value, the first of equal ones, `null` without a value. Where the
    items are of no such kind the terminator is not there (`LYS-SEM0012`). `sorted()` of a
    `TotalOrder` item and `sortedBy(cmp)` put the values in a list, stably sorted ([03](03-types.md)
@@ -190,14 +191,15 @@ format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleto
    `trailingZeros()`, `popCount()` count bits at the width, `bitWidth` for zero, and
    `rotateLeft(n)`, `rotateRight(n)` rotate modulo it, a negative `n` the other way. A float's
    `isNan()`, `isInfinite()`, `isFinite()` tell the value, `toBits()` gives its 64 bits.
+   `x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it, `hi` above it, the value itself
+   between, a value unordered with the bounds as it is; `lo` above `hi` panics (`LYS-RT0008`).
 
 ## Deviations (skeleton, written with later milestones)
 
 - An adapter is a class, as Script's iterators are (a pull changes it); the functions it takes
   throw what they throw, without a `throws` clause ([12 Src](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)).
 - `join` takes every item, written as `{x}` writes it — a `Display` its `show()`, any other
-  value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script; `sum`
-  and `product` stand on `int` and `float` items, not on a `Num` (STATUS P25).
+  value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script.
 - One integer and one float type (03 K3): `Integer`'s and `Float`'s members are `int`'s and
   `float`'s, written there, no defaults of the interface; no `exact` and `clamping`, which narrow
   to another integer type; `fromBits` and `toBits` take and give the bits as an `int`, Script

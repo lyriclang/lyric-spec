@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr-has: clamp: lo is above hi
+//! since: 1.0.0
+// §12 rule 13 (Lyric 5 12 §Numbers): `lo` above `hi` is the program's error.
+let hi = 2
+println(1.clamp(3, hi))
