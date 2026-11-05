@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 4 4 6 43 2 3 3
+//! since: 5.0.0
+// 03 §8.4 rule 2: an interface's own method is a closure bound to the object, through its value
+// and through a type parameter, and a call through it runs what a call on the object runs: the
+// conformer's, its default, the instance's of a generic interface.
+import std.io { println };
+
+interface Reads {
+    fn put(n: int): int;
+    fn far(): int { return this.put(40); }
+    mut fn add(n: int): void;
+}
+class Shared :: [Reads] {
+    var v: int,
+    fn put(n: int): int { return this.v + n; }
+    mut fn add(n: int): void { this.v += n; }
+}
+extend int :: [Reads] {
+    fn put(n: int): int { return this + n; }
+    mut fn add(n: int): void { }
+}
+interface Maps<T> { fn get(t: T): T; }
+struct Next :: [Maps<int>] { fn get(t: int): int { return t + 1; } }
+
+fn onValue(w: Reads): int { let g = w.put; return g(1); }
+fn onParameter<T :: [Reads]>(w: T): int { let g = w.put; return g(1); }
+fn itsDefault<T :: [Reads]>(w: T): int { let g = w.far; return g(); }
+fn onGeneric(w: Maps<int>): int { let g = w.get; return g(1); }
+fn written(w: Reads): int { let g = w.add; g(1); return w.put(0); }
+
+fn main(): int {
+    let c = Shared { v = 3 };
+    let d = Shared { v = 2 };
+    println(f"{onValue(c)} {onParameter(c)} {onParameter(5)} {itsDefault(c)} {onGeneric(Next { })} {written(d)} {d.v}");
+    return 0;
+}

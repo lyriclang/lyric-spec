@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | 7 7
+//! since: 5.0.0
+// 05 §13 rule 9: through the constraint its instance binds what a call binds on a receiver, so the
+// member is a value; on a receiver a lambda is.
+import std.io { println };
+
+struct Meters { }
+struct Centimeters { v: int }
+extend Centimeters :: [From<Meters>] { static fn from(m: Meters): Centimeters { return Centimeters { v = 7 }; } }
+
+fn through<T :: [Into<Centimeters>]>(w: T): Centimeters { let g = w.into; return g(); }
+
+fn main(): int {
+    let m = Meters { };
+    let lambda: fn() -> Centimeters = () => m.into();
+    println(f"{through(m).v} {lambda().v}");
+    return 0;
+}

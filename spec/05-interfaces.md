@@ -500,7 +500,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    it, as it binds the member's own parameters ([03 §9.2](03-types.md)) — from the arguments,
    then from the type the position expects: `let c: Centimeters = m.into();`. Where nothing
    determines it the call is refused (`LYR-SEM0060`), and where what binds it fails the block's
-   constraints too (`LYR-SEM0028`). Such a block reaches a type at the instances bound so and at
+   constraints too (`LYR-SEM0028`). The member named without a call on such a receiver is no
+   value (`LYR-SEM0052`, [03 §9.4](03-types.md) rule 3); through the constraint, whose instance
+   binds it, it is. Such a block reaches a type at the instances bound so and at
    no other, so it excludes a type's own conformance (rule 8) at those alone, whole-program:
    `Meters :: [Into<int>]` stands while `int` is no `From<Meters>`, and is refused where it is
    one (`LYR-SEM0133`), said at the type's conformance.

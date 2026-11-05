@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | 8 x y 9 7 5
+//! since: 5.0.0
+// 03 §8.4 rule 2: a generic type's own method on an instance, its type read at the instance's
+// arguments, the struct copied at the binding.
+import std.io { println };
+
+struct Crate<T> {
+    var v: int,
+    item: T,
+    fn plus(n: int): int { return this.v + n; }
+    fn held(): T { return this.item; }
+    fn given(t: T): T { return t; }
+    mut fn bump(): int { this.v += 1; return this.v; }
+}
+class Held<T> {
+    var v: int,
+    item: T,
+    mut fn add(n: int): void { this.v += n; }
+}
+
+fn main(): int {
+    let b = Crate<string> { v = 7, item = "x" };
+    let plus = b.plus;
+    let held = b.held;
+    let given = b.given;
+    let bump = b.bump;
+    bump();
+    let k = Held<int> { v = 3, item = 0 };
+    let add = k.add;
+    add(2);
+    println(f"{plus(1)} {held()} {given("y")} {bump()} {b.v} {k.v}");
+    return 0;
+}
