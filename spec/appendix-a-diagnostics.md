@@ -393,6 +393,7 @@ A macro's own refusal, at its site.
 | LYR-MIG0409 | H | [14-cli](14-cli.md) | a close that a using says | A note of `lyric fix --from-4`: `defer stream.close(f)` closes by hand what a `using` binding closes in Lyric 5. |
 | LYR-MIG0501 | H | [14-cli](14-cli.md) | a task without a form | A note of `lyric fix --from-4`: a use of Lyric 4's `std.task` that the migration cannot write: a wait for a descriptor or an interrupt, a `spawn` apart from its `run()`, a coroutine held in a value, `interrupt()`, `pending()`, or the module named by an alias. |
 | LYR-MIG0502 | H | [14-cli](14-cli.md) | tasks became a scope | A note of `lyric fix --from-4`: the `spawn`s of a block and its `run()` are a `TaskScope`, whose `close()` waits for the tasks as `run()` did. |
+| LYR-MIG0601 | H | [14-cli](14-cli.md) | a library function without a form | A note of `lyric fix --from-4`: a function of Lyric 4's library has no form in Lyric 5, by decision: an optional has no functions, a `Result` has `of` and `get`. |
 
 ## A.7 CT — Compile-time evaluation
 
