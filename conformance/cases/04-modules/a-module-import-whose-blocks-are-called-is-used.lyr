@@ -1,0 +1,13 @@
+//! check
+//! since: 5.0.0
+// 04 §4 rule 3: what the warning leaves, 'import std.io;', says nothing.
+import std.fs { File };
+import std.io;
+
+fn write(f: File, b: uint8[]): void throws Error {
+    try f.writeAll(b);
+}
+
+fn main(): void {
+    let _ = write;
+}

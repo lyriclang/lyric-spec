@@ -182,13 +182,17 @@ programs; it does not change them.
 3. `fix` takes `-C`, `--offline`, the lint options of §5 rule 4 — a lint set to `allow` says nothing and
    so suggests nothing — and `--json` (§4). **`--dry-run`** makes one pass and writes nothing: it prints
    the changes as a unified diff on the standard output.
-4. The safe changes: `unused-import` takes the import out, or the one name out of its list;
+4. The safe changes: `unused-import` takes the import out, or the one name out of its list, or
+   leaves the module alone where the file calls what its blocks add ([04 §4](04-modules.md) rule 3);
    `unused-var` writes `let` for `var`; `useless-try` takes a plain `try` out (`try?` and `try!` change the
    value's type, and a `catch` is code); `needless-return` takes the `return;` out; `self-assignment`
    writes `x++` for `x = x++`; `deprecated` writes the `@Deprecated`'s `replacement` where it is a name;
    a call that writes fewer type arguments than the function has gets a `_` for each one left out
    (`LYR-SEM0026`), the call the inference would have made.
-   A change that needs a reader: `naming`'s new name, written where the name is declared (its uses are an
+   A change that needs a reader: `unused-import`'s removal where the import alone holds in the program a
+   module that gives a conformance of a type and an interface it declares neither of, since a constraint
+   that conformance satisfies names nothing of the module;
+   `naming`'s new name, written where the name is declared (its uses are an
    editor's rename); `self-assignment`'s removal of `x = x`, which may stand for an assignment meant
    otherwise; an unknown name's closest known one (`did you mean`).
 5. *(Informative.)* **`lyric fix --from-4 [<file.lyr>]`** migrates a Lyric 4 program — the `lyric.json` of the

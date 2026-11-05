@@ -1,0 +1,14 @@
+//! check
+//! warning: LYR-SEM0072
+//! since: 5.0.0
+// 04 §4 rule 3: the import brings the block that adds 'writeAll', and it is still no use of 'Writer'.
+import std.fs { File };
+import std.io { Writer };
+
+fn write(f: File, b: uint8[]): void throws Error {
+    try f.writeAll(b);
+}
+
+fn main(): void {
+    let _ = write;
+}

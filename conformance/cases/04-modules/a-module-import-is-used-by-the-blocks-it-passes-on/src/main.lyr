@@ -1,0 +1,8 @@
+//! check
+//! since: 5.0.0
+// 04 §4 rule 3: 'shout' is not 'app.near's own, and reaches this file through its import alone.
+import app.near;
+
+fn main(): void {
+    let _ = "hey".shout();
+}
