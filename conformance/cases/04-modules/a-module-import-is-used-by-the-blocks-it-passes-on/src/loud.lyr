@@ -1,0 +1,13 @@
+//! Adds a method to a text.
+
+pub extend string {
+    /// The text, louder.
+    pub fn shout(): string {
+        return this + "!";
+    }
+}
+
+/// A name to pass on.
+pub fn tag(): int {
+    return 1;
+}

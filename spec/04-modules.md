@@ -195,8 +195,13 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    library passes on what its modules declare: `pub import geo.shapes { rect };` in `src/lib.lyr`
    makes `import geo { rect }` of it.
 3. An import a module never uses is **warned**, in every form (`LYR-SEM0072`) (I5): a qualified
-   import is used when its module is named, or one of its extension methods called. A `pub
-   import` is used by being passed on.
+   import is used when its module is named, or a method of a block it brings (§3 rule 9a) called.
+   A `pub import` is used by being passed on. A selective import is used by its names; one of which
+   no name is used is warned even where it brings a block the file calls. The warning's change
+   leaves the program compiling: where a method the file calls reaches it through this import
+   alone — no other import that stays, not the prelude — the change keeps the module
+   (`import std.io;`), and elsewhere takes the import out. Of two imports that bring the same
+   blocks, one stays.
 4. The **prelude**, the module `std.prelude`, is named in every module without an import (I8;
    [10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)): `panic`, `assert`, `unreachable`, `todo`, `same`, `sequence`; `Error`, `Exception`, `Result`, `Box`,
    `Ordering`, `Range`, `RangeInclusive`, `RangeFrom`, `RangeTo`, `RangeFull`; `Equatable`,
@@ -228,8 +233,9 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    (`LYR-SEM0012`), where the local hides a module the file imports whole or a type of the
    prelude that has the member, says that the name is the local here and what it hides — hiding is
    legal and silent until then (rule 5 warns of a declaration or an import, never of a local); a
-   method a block adds to the type in a module this one cannot see — not imported, or kept to its
-   module — names it, its module and why.
+   method a block adds to the type — a block on the type, on a shape, or a blanket block whose
+   constraints the type satisfies — in a module this one cannot see — not imported, or kept to its
+   module — names it, its module and why. A module the program does not hold has no blocks to name.
 
 ## 5. A type's members by their bare names
 
