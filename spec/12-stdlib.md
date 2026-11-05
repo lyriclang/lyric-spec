@@ -4,7 +4,7 @@
 
 **Status.** The core written (S2), the standard library's modules (S7a), its iterators (S7c6),
 collections (S7d), the strings' members, reading values from text, builders of text, the
-format language and `std.fmt` (S7e); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
+format language and `std.fmt` (S7e), the number tower (S7f1); the rest a skeleton, written with the milestone that builds it — until then the design documents decide.
 
 ## Written (S2, the core)
 
@@ -175,6 +175,21 @@ format language and `std.fmt` (S7e); the rest a skeleton, written with the miles
    an f-string panics here (`LYS-RT0008`), in Lyric 5's words: a brace left open or closed without
    being opened, a value named that is not given, a spec that is no format or holds a part the
    value's type does not take. Every value has a Debug text, so `?` never panics for want of one.
+13. **The number tower** (Lyric 5 12 §Numbers; S7f1b). The prelude declares `Num` — `Equatable`,
+   `Ordered`, `Add` … `Rem` each `<Out = Self>` ([05](05-interfaces.md) rule 22), `Display`,
+   `Debug`, `Parse`, `Default`; `static let zero, one: Self`, `isZero()` —, `Signed` (`Num`,
+   `Neg<Out = Self>`), `Integer` (`Num`, `TotalOrder`, `Hashable`, the bit operators; `min`,
+   `max`, `bitWidth`, `isSigned`) and `Float` (`Signed`; `epsilon`, `infinity`, `nan`, `min`,
+   `max`, `leastPositive`, `fromBits(b)`). `int` is a `Num`, a `Signed` and the `Integer`, `float`
+   a `Num`, a `Signed` and the `Float`. A constant stands at the scalar's name, `int.max`,
+   `float.epsilon` (`LYS-SEM0012` for one it has not). An integer's `checkedAdd` … `checkedRem` give
+   `null` where the result does not fit — a zero divisor, `min / -1`; a remainder by `-1` is `0` —,
+   `saturatingAdd`, `…Sub`, `…Mul` hold at `min` or `max` by the sign the result would have,
+   `wrappingAdd` … `wrappingRem` reduce as `+%`, `-%`, `*%` do, `min / -1` wrapping to `min`;
+   `pow(n)` multiplies by squaring, an overflow panicking as `*` does; `leadingZeros()`,
+   `trailingZeros()`, `popCount()` count bits at the width, `bitWidth` for zero, and
+   `rotateLeft(n)`, `rotateRight(n)` rotate modulo it, a negative `n` the other way. A float's
+   `isNan()`, `isInfinite()`, `isFinite()` tell the value, `toBits()` gives its 64 bits.
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -183,6 +198,11 @@ format language and `std.fmt` (S7e); the rest a skeleton, written with the miles
 - `join` takes every item, written as `{x}` writes it — a `Display` its `show()`, any other
   value its Debug form —, where Lyric 5's asks a `Display`: every value prints in Script; `sum`
   and `product` stand on `int` and `float` items, not on a `Num` (STATUS P25).
+- One integer and one float type (03 K3): `Integer`'s and `Float`'s members are `int`'s and
+  `float`'s, written there, no defaults of the interface; no `exact` and `clamping`, which narrow
+  to another integer type; `fromBits` and `toBits` take and give the bits as an `int`, Script
+  having no `uint64`; `pow` takes an `int` and panics on a negative one (`LYS-RT0007`), Lyric 5's
+  taking a `uint`.
 - A builder has none of Lyric 5's `sized`, `putInt` and the other members f-strings write
   through: Script's f-strings concatenate. `Format.format` takes the spec as a `string`, Script
   having no `StringView`; a width or a precision of more than nine digits is no spec.

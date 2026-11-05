@@ -13,14 +13,9 @@ interface Ring :: [Add<Out = Self>, Mul<Out = Self>] {
     static let one: Self
     fn twice(): Self = this + this
 }
-extend int :: Ring {
-    static let zero: int = 0
-    static let one: int = 1
-}
-extend float :: Ring {
-    static let zero: float = 0.0
-    static let one: float = 1.0
-}
+// `zero` and `one` are the prelude's (S7f1b), and answer here
+extend int :: Ring { }
+extend float :: Ring { }
 struct V :: Ring {
     x: int
     static let zero: V = V { x = 0 }
