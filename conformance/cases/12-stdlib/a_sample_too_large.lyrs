@@ -1,5 +1,6 @@
 //! run
 //! panic: LYS-RT0008
+//! stderr-has: a sample of 2 from 1
 //! since: 1.0.0
 // §12 rule 18: `k` within the list
 import std.random { Random }
