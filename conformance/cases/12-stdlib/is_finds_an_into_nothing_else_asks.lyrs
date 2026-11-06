@@ -1,0 +1,24 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | false
+//! | true
+// §12 rule 15, §5 rule 23: only `is` asks here, at run time, of a value it knows as an `Any`.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>, From<int>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v }
+    static fn from(n: int): Cm = Cm { v = n }
+}
+struct Mm :: [From<Cm>] {
+    v: int,
+    static fn from(c: Cm): Mm = Mm { v = c.v }
+}
+let a: Any = Meters { v = 2 }
+println(a is Into<Cm>)
+println(a is Into<Mm>)
+let n: Any = 3
+println(n is Into<Cm>)

@@ -1,0 +1,20 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+// §12 rule 15, §5 rule 23: a method's parameter, whose constraint names its type's, reads it at the
+// receiver's instance.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}
+class Own<T> {
+    x: T,
+    fn get<U :: [From<T>]>(): U = this.x.into()
+}
+let own = Own<Meters> { x = Meters { v = 2 } }
+let got: Cm = own.get()
+println(got.v)

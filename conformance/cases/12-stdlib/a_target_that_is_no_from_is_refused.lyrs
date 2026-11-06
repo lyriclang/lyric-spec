@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-SEM0028
+//! since: 1.0.0
+// §12 rule 15 (Lyric 5 05 §13 rule 9): a target that is no `From` of the value.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v }
+}
+let x: int = Meters { v = 2 }.into()

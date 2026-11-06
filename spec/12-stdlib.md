@@ -207,6 +207,13 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
    A program's own `Float` reaches what is written over the tower — `lerp`, `abs`, `signum`,
    `min`, `max` —; an elementary function computes in `float`, and such a value at one is
    `LYS-SEM0028`.
+15. **Conversions** (Lyric 5 12 §Conversions; S7f3). The prelude declares `interface From<T> { static
+   fn from(v: T): Self }`, a conversion into a type, which the type writes, `Cm.from(m)`, and
+   `interface Into<T> { fn into(): T }`, which follows from it through `extend<T, U :: [From<T>]> T ::
+   [Into<U>]` ([05 rule 23](05-interfaces.md)): `let c: Cm = m.into()`, the type the position expects
+   choosing the target. A constraint `T :: [Into<X>]` holds for every type `X` is a `From` of, and a
+   value of `Into<X>` is made from such a type. No type is a `From` of itself unless it writes that,
+   and `?Cm` is another target than `Cm`. `as` converts numbers only.
 
 ## Deviations (skeleton, written with later milestones)
 

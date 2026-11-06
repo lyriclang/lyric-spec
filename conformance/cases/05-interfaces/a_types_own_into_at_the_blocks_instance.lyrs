@@ -1,0 +1,14 @@
+//! check
+//! error: LYS-SEM0133
+//! stderr-has: 'Meters' conforms to 'Into<Cm>' itself
+//! since: 1.0.0
+// §5 rule 23 (Lyric 5 §13 rule 9): where the target is a `From` of the type, the block reaches it at
+// that instance, and it is refused at the type's conformance.
+struct Meters :: [Into<Cm>] {
+    v: int,
+    fn into(): Cm = Cm { v = this.v }
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}

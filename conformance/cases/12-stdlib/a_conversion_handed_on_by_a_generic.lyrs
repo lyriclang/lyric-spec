@@ -1,0 +1,38 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+//! | 3
+//! | 3
+//! | 2
+//! | 5
+//! | s
+// §12 rule 15: a function over `U :: [From<Meters>]` names no parameter in its constraint, and its
+// copy still knows its argument where it hands it on to `into`; a target over an unconstrained `A`.
+// The text is what Lyric 5 prints.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}
+struct Mine :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Mine = Mine { v = m.v + 1 }
+}
+struct Wrap<T> :: [From<T>] {
+    v: T,
+    static fn from(x: T): Wrap<T> = Wrap<T> { v = x }
+}
+fn target<U :: [From<Meters>]>(m: Meters): U = m.into()
+fn wrapIt<A>(a: A): Wrap<A> = a.into()
+let m = Meters { v = 2 }
+let a: Cm = target(m)
+let b: Mine = target(m)
+println(a.v)
+println(b.v)
+println(target<Mine>(m).v)
+println(wrapIt(m).v.v)
+println(wrapIt(5).v)
+println(wrapIt("s").v)

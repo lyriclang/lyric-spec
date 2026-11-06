@@ -1,0 +1,79 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | 5
+//! | 10
+//! | 8
+//! | s
+//! | 1
+//! | 1
+//! | 2
+//! | 3
+//! | 1 2 3
+//! | 2
+//! | int 1 str a int 2 str b
+//! | int 5 str d
+//! | 1 7
+//! | 2
+// §5 rule 18 (Lyric 5 §3 rules 1, 5, 08 §1.2): a block on one instance holds several members of a name:
+// at different counts, beside its template's too, and each answering its own instance of a generic
+// interface, in one block or in two; a call chooses as on any type, a constraint and a value by their
+// instance. Another instance has them not.
+struct Cell<T> {
+    v: T,
+    fn f(): int = 1
+}
+extend Cell<int> {
+    fn f(a: int): int = a
+    fn g(): int = 10
+    fn g(a: int): int = a * 2
+}
+extend Cell<int> :: [From<string>, From<bool>] {
+    static fn from(s: string): Cell<int> = Cell<int> { v = 1 }
+    static fn from(b: bool): Cell<int> = Cell<int> { v = 2 }
+}
+extend Cell<int> :: [From<char>] {
+    static fn from(c: char): Cell<int> = Cell<int> { v = 3 }
+}
+extend Cell<string> {
+    fn f(a: string): string = a
+}
+let c = Cell<int> { v = 1 }
+println(c.f())
+println(c.f(5))
+println(c.g())
+println(c.g(4))
+println(Cell<string> { v = "" }.f("s"))
+println(Cell<string> { v = "" }.f())
+println(Cell<int>.from("x").v)
+println(Cell<int>.from(true).v)
+println(Cell<int>.from('c').v)
+let a: Cell<int> = "s".into()
+let b: Cell<int> = false.into()
+let d: Cell<int> = 'c'.into()
+println(f"{a.v} {b.v} {d.v}")
+fn make<U :: [From<bool>]>(x: bool): U = U.from(x)
+let e: Cell<int> = make(true)
+println(e.v)
+interface Show<T> {
+    fn show(x: T): string
+}
+extend Cell<int> :: [Show<int>, Show<string>] {
+    fn show(x: int): string = f"int {x}"
+    fn show(x: string): string = f"str {x}"
+}
+let s: Show<int> = c
+let t: Show<string> = c
+println(f"{s.show(1)} {t.show("a")} {c.show(2)} {c.show("b")}")
+fn viaInt<S :: [Show<int>]>(x: S): string = x.show(5)
+fn viaString<S :: [Show<string>]>(x: S): string = x.show("d")
+println(f"{viaInt(c)} {viaString(c)}")
+extend int[] {
+    fn h(): int = 1
+    fn h(a: int): int = a
+}
+let xs = [1]
+println(f"{xs.h()} {xs.h(7)}")
+xs.push(4)
+println(xs.length())

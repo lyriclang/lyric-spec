@@ -1,0 +1,14 @@
+//! check
+//! error: LYS-SEM0001
+//! since: 1.0.0
+// §5 rules 12, 23 (Lyric 5 §13 rules 7, 9): a member the type has itself comes first, so this call
+// is the `Into<int>` one, whatever the position wants.
+struct Meters :: [Into<int>] {
+    v: int,
+    fn into(): int = this.v
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}
+let y: Cm = Meters { v = 2 }.into()

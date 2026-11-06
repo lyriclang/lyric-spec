@@ -1,0 +1,73 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+//! | 2000
+//! | 2000
+//! | 200
+//! | 2000
+//! | hi
+//! | Tag.B(3)
+//! | 2m
+//! | 4
+//! | 6
+//! | 7
+// §12 rule 15: a class, an enum, a built-in type as the target; a tuple, an optional and a list as the
+// source; one generic function handing the target to another, an argument's parameter and a result
+// as the position. The text but for the enum's form is what Lyric 5 prints.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}
+struct Mm :: [From<Cm>, From<Meters>] {
+    v: int,
+    static fn from(c: Cm): Mm = Mm { v = c.v * 10 }
+    static fn from(m: Meters): Mm = Mm { v = m.v * 1000 }
+}
+class Note :: [From<string>] {
+    text: string,
+    static fn from(s: string): Note = Note { text = s }
+}
+enum Tag :: [From<int>] {
+    A,
+    B(int),
+    static fn from(n: int): Tag = if (n == 0) .A else .B(n)
+}
+extend string :: [From<Meters>] {
+    static fn from(m: Meters): string = f"{m.v}m"
+}
+struct Label :: [From<(int, int)>, From<?int>, From<int[]>] {
+    v: int,
+    static fn from(p: (int, int)): Label = Label { v = p.0 }
+    static fn from(p: ?int): Label = Label { v = p ?? 0 }
+    static fn from(p: int[]): Label = Label { v = p[0] }
+}
+fn w4<T :: [Into<B>], B>(x: T): B = x.into()
+fn w3<T, B :: [From<T>]>(x: T): B = w4<T, B>(x)
+let m = Meters { v = 2 }
+let c: Cm = w3<Meters, Cm>(m)
+println(c.v)
+let k: Mm = w3<Meters, Mm>(m)
+println(k.v)
+let c2: Mm = w3<Cm, Mm>(c)
+println(c2.v)
+fn args(c: Cm): int = c.v
+println(args(m.into()))
+fn ret(m: Meters): Mm = m.into()
+println(ret(m).v)
+let n: Note = "hi".into()
+println(n.text)
+let t: Tag = 3.into()
+println(t)
+let s: string = m.into()
+println(s)
+let a: Label = (4, 5).into()
+println(a.v)
+let o: ?int = 6
+let b: Label = o.into()
+println(b.v)
+let l: Label = [7].into()
+println(l.v)

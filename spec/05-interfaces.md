@@ -144,8 +144,7 @@ S7, `Debug` and `Display` (S7e3).
    its members and conformances to that instance alone, checked at it — another instance has
    none of them (`LYS-SEM0012`), and one whose template conforms already, unconditionally or
    on a condition the instance meets, conforms at a second site (`LYS-SEM0133`). A parameter
-   only the conformance names (rule 9) comes with `From`/`Into` (S7f); the other shapes of rule
-   6 with the collections (S7).
+   only the conformance names is rule 23's; the other shapes of rule 6 with the collections (S7).
 13. **One method set and the qualified call** (§3 rules 1–3, §4): a type's own member answers
    every conformance's member of its name; two defaults of one name from two interfaces, which the
    type does not write itself, are refused at its declaration (`LYS-SEM0043`) — it writes the
@@ -230,8 +229,9 @@ S7, `Debug` and `Display` (S7e3).
    conformance's — `Mul<float>` answers `Out = float` beside the type's `Mul`, and `T :: [Mul<float>]`
    reads that answer. The prelude gives `int` `Add<float>`, `Sub<float>`, `Mul<float>`,
    `Div<float>` and `Rem<float>`, `Out = float`, and `float` the same over `int` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)):
-   `T :: [Add<float, Out = float>]` takes either. A block on one instance (`extend Box<int>`)
-   holds one member of a name (STATUS P22).
+   `T :: [Add<float, Out = float>]` takes either. A block on one instance (`extend Box<int>`;
+   S7f3) holds several as well, beside its template's at another count: the set is the instance's,
+   and a conformance of the template still reaches the template's member.
 19. **`Clone` and `Default`** (Lyric 5 §14 rules 1–4; Script [05 D13](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/05-abstraktion-und-fehler.md); S7c6c1). The prelude declares
    `interface Clone { fn clone(): Self }` and `interface Default { static fn default(): Self }`,
    constraints only; the scalars and `string` conform to both, a list to `Default` and, of a
@@ -286,6 +286,21 @@ S7, `Debug` and `Display` (S7e3).
    interface takes the parent along where it does not conform to it already, its members from the
    same list (`LYS-SEM0020` where one is missing), and answers as the parent is fixed
    (`LYS-SEM0042` otherwise).
+
+23. **A parameter only the conformance names** (Lyric 5 §13 rule 9; S7f3). In `extend<T, U ::
+   [From<T>]> T :: [Into<U>] { … }` neither the target nor a fixation names `U`; the block's
+   conformance does. The instance a constraint or a value asks for binds it: `Meters` is an
+   `Into<Cm>` where `Cm :: [From<Meters>]` holds, a value of `Into<Cm>` is made from it with the
+   block's member at that target in its table, and `is` answers it; a call through the constraint is
+   the block's member with `U` that instance's. At a call of the member on a receiver the call binds
+   it, from the arguments, then from the type the position expects, `let c: Cm = m.into()`. Where
+   nothing determines it the call is refused (`LYS-SEM0060`), and where what binds it fails the
+   constraints too (`LYS-SEM0028`); the target's own constraints are asked first, and a type that
+   fails them has no such member (`LYS-SEM0012`). Such a block reaches a type at the instances bound
+   so and at no other: a block that reaches the type as it is gives the name first, a member the type
+   has itself comes first (rule 12), and a type's conformance of its own stands — `Meters :: [Into<int>]`
+   while `int` is no `From<Meters>` —, refused where the block reaches it at that instance
+   (`LYS-SEM0133`), said at the conformance.
 
 ## Deviations
 

@@ -1,0 +1,32 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | 8
+//! | 10
+//! | 12
+// §5 rule 23 (Lyric 5 §13 rule 9): a program's own block too; its target's constraint still holds. A
+// member the type has of its own name is its own, and no block is hidden by it.
+struct S {
+    fn into(): int = 1
+}
+println(S { }.into())
+interface Cast<T> {
+    fn cast(): T
+}
+interface Make<T> {
+    static fn make(v: T): Self
+}
+extend<T :: [Display], U :: [Make<T>]> T :: [Cast<U>] {
+    fn cast(): U = U.make(this)
+}
+struct L :: [Make<int>] {
+    v: int,
+    static fn make(v: int): L = L { v = v * 2 }
+}
+let l: L = 4.cast()
+println(l.v)
+let iv: Cast<L> = 5
+println(iv.cast().v)
+fn go<A :: [Cast<L>]>(a: A): int = a.cast().v
+println(go(6))
