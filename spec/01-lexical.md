@@ -33,7 +33,8 @@ raw, multi-line, byte strings, f-strings), comments and doc comments.
    character beyond ASCII stands in no name and is refused where it stands (`LYR-LEX0001`); a word
    of letters and digits that holds such characters — `größe` — is refused once, as the name it
    would be, naming them, and read as that name, so its uses refuse it again and say nothing
-   else. `_` alone is the wildcard where a name would bind.
+   else. `_` alone is the wildcard where a name would bind, so one parameter list may hold it
+   more than once.
 2. The **reserved words** are no names: `import as pub internal private static struct class enum
    interface extend fn mut let var if else while do for in is match break continue return yield
    defer try catch throw true false null this`, and the compile-time words `comptime inline quote
