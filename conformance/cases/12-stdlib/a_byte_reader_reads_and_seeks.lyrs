@@ -1,0 +1,33 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | [104, 101]
+//! | 2
+//! | 4
+//! | 1
+//! | [111, 101]
+//! | 0
+//! | 100
+//! | 0
+//! | 1
+//! | 3
+//! | 0
+//! | 3
+// §12 rule 19: a read fills from the front and says how many; a position past the end reads nothing.
+import std.io { ByteReader, SeekFrom }
+let r = ByteReader.new(b"hello")
+let two = Bytes.zeroed(2)
+println(r.read(two))
+println(two)
+println(r.position())
+println(r.seek(SeekFrom.End(-1)))
+println(r.read(two))
+println(two)
+println(r.read(two))
+println(r.seek(SeekFrom.Start(100)))
+println(r.read(two))
+println(r.seek(SeekFrom.Start(1)))
+println(r.seek(SeekFrom.Current(2)))
+println(r.read(Bytes.new()))
+println(r.position())

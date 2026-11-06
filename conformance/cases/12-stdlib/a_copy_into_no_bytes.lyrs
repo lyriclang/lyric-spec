@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 19: the VM asks what a field holds.
+b"ab".copyInto(Bytes { v = "x" }, 0, 0, 1)

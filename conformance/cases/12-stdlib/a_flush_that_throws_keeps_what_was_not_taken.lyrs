@@ -1,0 +1,34 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | system error 0 (the writer took none of 3 bytes)
+//! | [97, 98]
+//! | [99, 100, 101]
+// §12 rule 19: for the next flush.
+import std.io { Writer, BufWriter }
+class Flaky :: [Writer] {
+    got: Bytes = Bytes.new()
+    var left: int = 2
+    fn write(from: Bytes): int {
+        if (this.left == 0) {
+            return 0
+        }
+        let n = this.left
+        this.left = 0
+        this.got.pushAll(from[0..n])
+        return n
+    }
+}
+let f = Flaky { }
+let w = BufWriter.new(f)
+w.write(b"abcde")
+try {
+    w.flush()
+} catch (e: IoError) {
+    println(e.message())
+}
+println(f.got)
+f.left = 3
+f.got.clear()
+w.close()
+println(f.got)

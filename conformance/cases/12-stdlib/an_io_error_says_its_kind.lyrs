@@ -1,0 +1,36 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | not found
+//! | permission denied
+//! | already exists
+//! | is a directory
+//! | not a directory
+//! | invalid input
+//! | invalid data
+//! | unexpected end of input
+//! | timed out
+//! | connection refused
+//! | connection reset
+//! | address in use
+//! | broken pipe
+//! | closed
+//! | unsupported
+//! | system error 7
+//! | not found: a.txt (opened to read)
+//! | closed (x)
+//! | closed: y
+//! | true
+//! | true
+//! | false
+// §12 rule 19: the kind in words, the path and the detail where there are any; the prelude's, and std.io names it.
+import std.io { IoError, IoErrorKind as Kind }
+for (k in [Kind.NotFound, Kind.PermissionDenied, Kind.AlreadyExists, Kind.IsDirectory, Kind.NotDirectory, Kind.InvalidInput, Kind.InvalidData, Kind.UnexpectedEof, Kind.TimedOut, Kind.ConnectionRefused, Kind.ConnectionReset, Kind.AddrInUse, Kind.BrokenPipe, Kind.Closed, Kind.Unsupported, Kind.Other { code = 7 }]) {
+    println(IoError { kind = k }.message())
+}
+println(IoError { kind = Kind.NotFound, path = "a.txt", detail = "opened to read" }.message())
+println(IoError { kind = Kind.Closed, detail = "x" }.message())
+println(IoError { kind = Kind.Closed, path = "y" }.message())
+println(IoError { kind = Kind.Closed }.cause() == null)
+println(Kind.Other { code = 1 } == Kind.Other { code = 1 })
+println(Kind.Other { code = 1 } == Kind.Other { code = 2 })

@@ -1,0 +1,51 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 0
+//! | 3
+//! | 1
+//! | [97, 98, 99, 100, 101]
+//! | 2
+//! | 2
+//! | 9000
+//! | 9006
+//! | 4
+//! | 4
+//! | 5
+//! | 17006
+// §12 rule 19: until its buffer is full, a flush or a close; a write as large goes through, after what is held.
+import std.io { Writer, BufWriter, ByteBuffer }
+class Counting :: [Writer] {
+    got: ByteBuffer = ByteBuffer.new()
+    var writes: int = 0
+    var flushes: int = 0
+    fn write(from: Bytes): int {
+        this.writes += 1
+        return this.got.write(from)
+    }
+    fn flush() {
+        this.flushes += 1
+    }
+}
+let c = Counting { }
+let w = BufWriter.new(c)
+println(w.write(b"abc"))
+println(c.got.length())
+w.flush()
+println(c.got.length())
+println(c.flushes)
+w.write(b"de")
+w.close()
+println(c.got.toBytes())
+println(c.flushes)
+println(c.writes)
+w.write(b"f")
+println(w.write(Bytes.zeroed(9000)))
+println(c.got.length())
+println(c.writes)
+w.write(Bytes.zeroed(8000))
+println(c.writes)
+w.write(Bytes.zeroed(8000))
+println(c.writes)
+println(c.got.length())

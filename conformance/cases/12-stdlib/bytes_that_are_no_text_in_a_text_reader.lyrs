@@ -1,0 +1,31 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | "ab"
+//! | true
+//! | the bytes are no UTF-8 from byte 4 on
+//! | "ok"
+//! | the bytes are no UTF-8 from byte 0 on
+//! | the bytes are no UTF-8 from byte 0 on
+//! | the bytes are no UTF-8 from byte 0 on
+//! | the bytes are no UTF-8 from byte 0 on
+//! | the bytes are no UTF-8 from byte 0 on
+// §12 rule 19: the error's offset counts from the reader's start; a line that throws is consumed.
+import std.io { ByteReader, TextReader }
+let t = TextReader.new(ByteReader.new(b"ab\nc\xFFd\nok\n"))
+println(t.readLine())
+try {
+    println(t.readLine())
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.InvalidData)
+    println(e.cause()?.message() ?? "none")
+}
+println(t.readLine())
+for (bad in [b"\xFF", b"\xC3", b"\xC3a", b"\xF9abcd", b"\x80"]) {
+    let c = TextReader.new(ByteReader.new(bad)).chars()
+    try {
+        println(c.next())
+    } catch (e: IoError) {
+        println(e.cause()?.message() ?? "none")
+    }
+}

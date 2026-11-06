@@ -274,6 +274,49 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     ([17 rule 1](17-host.md)): `fresh()`, Lyric 5's `Random.fresh()`, and the free forms `nextInRange`,
     `nextFloat`, `shuffle` over the program's one generator, keyed when the module is loaded. A program
     without that import, and without the other rights, repeats itself. A draw costs what a call costs.
+19. **Input and output over bytes** (Lyric 5 12 §Input and output; S7g1). **`IoError`** is the one error
+    input and output throw: `kind: IoErrorKind`, `path: ?string`, `detail: string`, `inner: ?Error`, its
+    `message()` the kind in words, then the path and the detail where there are any: `not found: data.txt
+    (opened to read)`. `IoErrorKind` names `NotFound`, `PermissionDenied`, `AlreadyExists`, `IsDirectory`,
+    `NotDirectory`, `InvalidInput`, `InvalidData`, `UnexpectedEof`, `TimedOut`, `ConnectionRefused`,
+    `ConnectionReset`, `AddrInUse`, `BrokenPipe`, `Closed`, `Unsupported`, and `Other { code }`, a system's
+    code no kind names. The two are **the prelude's**, since `readLine()` throws them, and `import std.io {
+    IoError }` names what every module sees; `std.io` itself holds the rest, of no right. A later release may
+    name another kind: a `match` over it writes a `_`.
+
+    **`Reader`** has `read(into: Bytes): int`: it fills `into` from the front and answers how many bytes it
+    put there, **0 only at the end**, and at once for empty bytes; fewer than `into` holds is no end.
+    **`Writer`** has `write(from: Bytes): int`: it takes from the front and may take fewer; `flush()` hands on
+    what it holds back, the default does nothing. **`Seek`** has `seek(to: SeekFrom): int`, `SeekFrom.Start(n)`,
+    `.End(n)` or `.Current(n)`, and answers the position from the start. `read`, `write` and `flush` throw
+    `[IoError, Cancelled]`, `seek` `IoError`; an implementation throws what it may less (§6 rule 6). Bytes have
+    no view: what Lyric 5 hands as a slice, a Script reader takes whole, and from a place inside bytes
+    through a slice, a copy, or `b.copyInto(into, at, from, to)`, which copies `from..to` to `at` in `into`,
+    does not grow it, may have one bytes on both sides, and charges as a slice does (rule 17). A range
+    outside either panics (`LYS-RT0003`).
+
+    What every reader can do: `readExact(into)` fills it whole or throws `UnexpectedEof`, the bytes that came in
+    the detail; `readToEnd()` is everything in new `Bytes`; `readToString()` the same as UTF-8, bytes that are
+    no UTF-8 throwing `InvalidData`, the `Utf8Error` as the cause. What every writer can do: `writeAll(from)`
+    until all of it is taken, a writer that takes no byte of bytes that have some throwing `Other { code = 0 }`
+    rather than being asked forever; `writeString(s)`, the text's UTF-8. **`copy(r, w): int`** copies all `r`
+    holds into `w` and answers how many.
+
+    **`ByteReader.new(b)`** reads `b`, not copied, and seeks: a position past the end reads nothing, one before
+    the start panics; `position()`. **`ByteBuffer.new()`** appends what is written and reads from the front
+    what was not yet read, with `length()` and `toBytes()` of what it holds. **`BufReader.new(r)`** reads `r`
+    8 KiB at a time; a read at least as large, while the buffer is empty, goes to `r` directly.
+    **`BufWriter.new(w)`** holds back what it is handed until its buffer is full, a `flush()` or a `close()`; a
+    write at least as large goes to `w` directly, after what is held. A flush that throws keeps what `w` did
+    not take. `close()` flushes and leaves `w` open.
+
+    **`TextReader.new(r, skipBom: false)`** reads UTF-8 through a buffer of its own. `readLine()` is the next
+    line without its end, a `\n` or a `\r\n`, a `\r` alone being text, or `null` at the end; a last line without an
+    end is a line, the end of the last line starts none. `lines()` iterates the same, `chars()` the
+    codepoints, `readToEnd()` is the rest. A codepoint split between two reads waits for its rest. Bytes that
+    are no UTF-8 throw `InvalidData`, a `Utf8Error` as the cause whose offset counts from the reader's start;
+    a line that throws is consumed. A byte order mark is text unless `skipBom` drops it from the front.
+    **`TextWriter.new(w)`**: `write(s)`, `writeLine(s)` that and a `\n` on every system; it holds nothing back.
 
 ## Deviations (skeleton, written with later milestones)
 

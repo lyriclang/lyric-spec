@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | [195, 169, 120, 10]
+// §12 rule 19: on every system, holding nothing back.
+import std.io { ByteBuffer, TextWriter }
+let b = ByteBuffer.new()
+let t = TextWriter.new(b)
+t.write("é")
+println(b.length())
+t.writeLine("x")
+println(b.toBytes())

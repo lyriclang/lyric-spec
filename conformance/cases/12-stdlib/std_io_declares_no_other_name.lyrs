@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-RES0004
+//! since: 1.0.0
+// §12 rule 19: the two names are the prelude's, no other is passed on by the module.
+import std.io { IoError, Nope }
