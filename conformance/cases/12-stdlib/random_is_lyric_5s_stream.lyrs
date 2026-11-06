@@ -1,0 +1,63 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3536907876931541756
+//! | 1681417456739323905
+//! | -589778313713965409
+//! | 8
+//! | 2
+//! | 1000000
+//! | 0.7486987972627297
+//! | true
+//! | true
+//! | [1, 150, 63, 149, 72, 110, 112, 38, 47, 43, 159]
+//! | 0.25845967199228714
+//! | 11.916837431646524
+//! | [1, 5, 2, 8, 7, 3, 4, 6]
+//! | 8
+//! | [8, 5, 1]
+//! | []
+//! | true
+//! | 823177153185588617
+//! | -4641855298174261784
+//! | 1621237163866687044
+//! | 3415213149992342262
+//! | 8030739420466951513
+// §12 rule 18: the same draws as Lyric 5's in the same order, printed by the same program there, and
+// no right asked. Each draw takes what Lyric 5's takes: `choice` of an empty list takes none.
+import std.random { Random }
+let r = Random.seeded(42)
+println(r.nextInt())
+println(r.nextInt())
+println(r.nextInt())
+println(r.nextInRange(0..10))
+println(r.nextInRange(-5..5))
+println(r.nextInRange(1000000..1000001))
+println(r.nextFloat())
+println(r.nextBool())
+println(r.nextBool())
+let b = Bytes.zeroed(11)
+r.nextBytes(b)
+println(b)
+println(r.nextNormal())
+println(r.nextNormal(10.0, 2.0))
+let xs = [1, 2, 3, 4, 5, 6, 7, 8]
+r.shuffle(xs)
+println(xs)
+println(r.choice(xs) ?? -1)
+println(r.sample(xs, 3))
+println(r.sample(xs, 0))
+let e: int[] = []
+println(r.choice(e) == null)
+println(r.nextInt())
+println(Random.seeded(0).nextInt())
+println(Random.seeded(-1).nextInt())
+let w = Random.seeded(7)
+var i = 0
+var last = 0
+while (i < 20) {
+    last = w.nextInt()
+    i += 1
+}
+println(last)
+println(Random.seeded(1).nextInRange(-9223372036854775807..9223372036854775807))

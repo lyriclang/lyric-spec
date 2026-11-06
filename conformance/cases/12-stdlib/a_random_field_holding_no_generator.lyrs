@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 18: the VM asks what a field holds
+import std.random { Random }
+println(Random { g = "x" }.nextInt())

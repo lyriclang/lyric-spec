@@ -1,0 +1,25 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | true
+//! | [1]
+//! | []
+//! | [1]
+//! | [1]
+// §12 rule 18: two generators of one seed are one stream; a list of one stays, whatever the draw;
+// a shuffle of nothing draws nothing, a sample copies, it does not take from the list.
+import std.random { Random }
+let a = Random.seeded(7)
+let b = Random.seeded(7)
+println(a.nextInt() == b.nextInt())
+let e: int[] = []
+a.shuffle(e)
+a.shuffle([1])
+println(a.nextInt() == b.nextInt())
+let one = [1]
+a.shuffle(one)
+println(one)
+println(e)
+println(a.sample(one, 1))
+println(one)

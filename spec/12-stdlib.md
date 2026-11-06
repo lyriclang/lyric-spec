@@ -262,6 +262,18 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
    `fromUtf8` is two such natives, the check and the text; `fromUtf8Lossy` one. `length`, an index, a
    set and a push cost nothing of their own. The rest is written in Script and costs what its loops
    and calls cost.
+18. **Random numbers** (Lyric 5 12 §Random numbers; S7f6). `std.random` holds `class Random`, Lyric 5's
+    ChaCha8 under it: `Random.seeded(seed)` gives **the stream Lyric 5's generator gives** that seed,
+    an `int` being read as its 64 bits, and it asks for no right, a seeded stream being determinism's
+    own ([01 S8](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)). `nextInt()`, the draw, `nextUint64` having no type here; `nextInRange(r)`,
+    `nextFloat()`, `nextBool()`, `nextBytes(into)` into a `Bytes`, `nextNormal(mean = 0.0, stdDev =
+    1.0)`, `shuffle(s)`, `choice(s)`, `sample(s, k)`, of a list, taking the draws Lyric 5's do. An empty
+    range, and a `k` outside the list, panic (`LYS-RT0008`).
+
+    What draws from the system is the module **`std.random.system`**, of the right `os`
+    ([17 rule 1](17-host.md)): `fresh()`, Lyric 5's `Random.fresh()`, and the free forms `nextInRange`,
+    `nextFloat`, `shuffle` over the program's one generator, keyed when the module is loaded. A program
+    without that import, and without the other rights, repeats itself. A draw costs what a call costs.
 
 ## Deviations (skeleton, written with later milestones)
 

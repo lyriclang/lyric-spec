@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! exit: 2
+//! stderr-has: LYS-CAP0001
+//! stderr-has: std.random.system
+// §17 rule 1: what draws from the system asks for `os`; `std.random`, seeded, for nothing.
+import std.random.system { fresh }
+println(fresh().nextInt() == fresh().nextInt())

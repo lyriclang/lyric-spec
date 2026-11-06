@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 18: an empty range has no number
+import std.random { Random }
+println(Random.seeded(1).nextInRange(3..3))
