@@ -1,0 +1,55 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | null
+//! | true
+//! | false
+//! | true
+//! | false
+//! | false
+//! | true
+//! | false
+//! | true
+//! | 391
+//! | [97, 98, 99, 97]
+//! | [98, 99, 100, 98]
+//! | [1, 2]
+//! | 97
+//! | 97
+//! | (2, 2)
+//! | [97, 99, 98, 97]
+//! | [97, 98, 99, 97]
+//! | [97, 99, 98, 97]
+//! | [100, 99, 98, 97]
+// §12 rule 17: an element is an `int` wherever one is read
+let b = b"abca"
+println(b.indexOf(99))
+println(b.indexOf(100))
+println(b.contains(97))
+println(100 in b)
+println(b.startsWith(b"ab"))
+println(b.startsWith(b"b"))
+println(b.startsWith(b"abcab"))
+println(b.endsWith(b"ca"))
+println(b.endsWith(b"cb"))
+println(b.endsWith(b""))
+var sum = 0
+for (x in b) {
+    sum += x
+}
+println(sum)
+println(b.toList())
+println(b.iter().map((x) => x + 1).toArray())
+println(Bytes.from([1, 2].iter()))
+let i = b.iter()
+println(i.next())
+println(i.nextBack())
+println(i.sizeHint())
+println(b.reversed())
+println(b)
+b.reverse()
+println(b)
+let e = b"abcd"
+e.reverse()
+println(e)

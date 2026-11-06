@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [1, 2, 255]
+//! | 0
+//! | 2
+// §12 rule 17: a list literal at a place of the type, through `FromArrayLiteral`
+let b: Bytes = [1, 2, 255]
+println(b)
+let e: Bytes = []
+println(e.length())
+fn take(x: Bytes): int = x.length()
+println(take([7, 8]))

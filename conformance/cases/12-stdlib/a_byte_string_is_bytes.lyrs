@@ -1,0 +1,28 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+//! | 65
+//! | 0
+//! | 255
+//! | 10
+//! | [65, 0, 255, 10]
+//! | [65, 0, 255, 10]
+//! | true
+//! | true
+//! |   [1, 2]|
+//! | 256
+// §12 rule 17: an element is an `int` from 0 to 255; it prints as a list of its numbers
+let b = b"A\x00\xff\n"
+println(b.length())
+println(b[0])
+println(b[1])
+println(b[2])
+println(b[3])
+println(b)
+println(f"{b:?}")
+println(b == Bytes.of([65, 0, 255, 10]))
+println(b != Bytes.of([65, 0, 255]))
+println(f"{Bytes.of([1, 2]):>8}|")
+let n = b[2] + 1
+println(n)

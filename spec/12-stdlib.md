@@ -236,6 +236,32 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
    m) / 8`; `<<` by `c`: `1 + (c / 32 + n + 1) / 8`; `*`: `1 + n * m / 8`; `/`, `%`: `1 + (n - m + 1) *
    m / 8`, `1 + m / 8` where `n` is below `m`; `toString`: `1 + n * n / 4`; `parse` of `b` bytes, with
    `w = b / 8 + 1`: `1 + w * w / 4`. `toInt`, `toFloat`, `bitLength` cost nothing of their own.
+17. **`Bytes`** (S7f5; [02 T1](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md), [09 Y7](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)). `class Bytes` is binary data, what `uint8[]` is in Lyric 5: a list
+   of bytes that grows and changes in place, named without an import. An element is an **`int` from 0
+   to 255**: `b[i]` reads one, `b[i] = v` sets one, and a value outside that range, set, pushed, filled
+   or given in a list, panics (`LYS-RT0002`). An index outside panics (`LYS-RT0003`). `^n` counts from
+   the end, as on a list. `b[a..e]`, in a range's every form, is a **new `Bytes`** (03 S). `b"…"`
+   ([§1 D3](01-lexical.md)) makes a new one each time it is evaluated. It is an `IndexSet<int>`,
+   `Iterable`, `Contains<int>`, `Add`, `TotalOrder`, `Hashable`, `Clone`, `Default`, `Display` and
+   `FromArrayLiteral<int>`. It compares by its elements, then its length, and prints as the list of its
+   numbers, `[65, 0]`. `Bytes.new()`, `Bytes.withCapacity(n)`, `Bytes.zeroed(n)`, `Bytes.of(xs)`,
+   `Bytes.from(it)`; `length`, `isEmpty`, `get`, `first`, `last`, `push`, `pop`, `pushAll`, `clear`,
+   `truncate`, `fill`, `reverse`, `reversed`, `indexOf`, `contains`, `startsWith`, `endsWith`, `iter`,
+   `toList`, of a list's meaning. What else a list can do goes through `toList()` and `Bytes.of`. What
+   the field of a `Bytes` or a `BigInt` holds is the VM's object: a script can read it and give it back,
+   but asking it for anything, its Debug form too, panics (`LYS-RT0007`).
+
+   `s.toBytes()` gives a string's bytes as a new `Bytes`. `string.fromUtf8(b)` gives the text the bytes
+   are and throws a **`Utf8Error`** with its `offset`, the first byte that is not well-formed, an
+   `Error` as Lyric 5's is. `string.fromUtf8Lossy(b)` replaces each maximal part that is not
+   well-formed by U+FFFD.
+
+   **What it costs.** A native of `Bytes` that walks `n` bytes costs `1 + n / 32` and takes it before
+   it works, as rule 16 says: `Bytes.zeroed`, `toBytes`, `Bytes.of`, `toList`, a slice of `n` bytes,
+   `pushAll` of `n` bytes, a comparison over the shorter's `n`, a hash, `fill`, a byte string's making.
+   `fromUtf8` is two such natives, the check and the text; `fromUtf8Lossy` one. `length`, an index, a
+   set and a push cost nothing of their own. The rest is written in Script and costs what its loops
+   and calls cost.
 
 ## Deviations (skeleton, written with later milestones)
 
@@ -251,8 +277,8 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
 - A builder has none of Lyric 5's `sized`, `putInt` and the other members f-strings write
   through: Script's f-strings concatenate. `Format.format` takes the spec as a `string`, Script
   having no `StringView`; a width or a precision of more than nine digits is no spec.
-- A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` come
-  with `Bytes` (S7f). A string's parts and lines are new strings, not views; `T.parse(s)`
+- A string's slice is a new string, never a view (03 Str); `toBytes()` and `string.fromUtf8` take and
+  give a `Bytes` (rule 17). A string's parts and lines are new strings, not views; `T.parse(s)`
   takes a string. A string's `contains` takes every pattern; `c in s` asks it for a character,
   but a string is no `Contains<char>` to a constraint (STATUS P29).
 - A map keeps the order its keys came in ([03 Eq](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)) and has no hasher parameter `H`: one hasher,

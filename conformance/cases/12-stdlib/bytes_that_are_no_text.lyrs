@@ -1,0 +1,27 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | 0
+//! | 1
+//! | 2
+//! | 3
+//! | the bytes are no UTF-8 from byte 0 on
+// §12 rule 17: each way a text is not well-formed, `offset` its first byte
+fn at(b: Bytes) {
+    try {
+        println(string.fromUtf8(b))
+    } catch (e: Utf8Error) {
+        println(e.offset)
+    }
+}
+at(b"\x61\x62\xff")
+at(b"\xc0\x80")
+at(b"\x61\xed\xa0\x80")
+at(b"\x61\x62\xf4\x90\x80\x80")
+at(b"\x61\x62\x63\xe2\x82")
+try {
+    println(string.fromUtf8(b"\xff"))
+} catch (e: Error) {
+    println(e.message())
+}

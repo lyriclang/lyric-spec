@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [0, 7]
+//! | [97, 98]
+// §12 rule 17: a `Bytes` changes in place, and a byte string makes a new one each time it is evaluated
+fn f(): Bytes = b"ab"
+let x = f()
+x[0] = 0
+let y = x
+y[1] = 7
+println(x)
+println(f())

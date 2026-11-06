@@ -1,0 +1,7 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+// §12 rule 17: the type comes where any module names it, though the program itself does not.
+import tools.make { make }
+println(make().length())

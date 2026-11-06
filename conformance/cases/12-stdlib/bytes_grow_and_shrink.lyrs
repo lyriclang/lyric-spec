@@ -1,0 +1,54 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | [1, 255, 7, 8]
+//! | 8
+//! | 3
+//! | [1, 255, 7]
+//! | [1, 255]
+//! | [1, 255, 1, 255]
+//! | 1
+//! | 255
+//! | 255
+//! | null
+//! | null
+//! | []
+//! | null
+//! | null
+//! | null
+//! | [0, 0, 0]
+//! | []
+//! | []
+//! | [9, 9]
+// §12 rule 17: what a list does, with bytes
+let b = Bytes.new()
+println(b.isEmpty())
+b.push(1)
+b.push(255)
+b.pushAll(b"\x07\x08")
+println(b)
+println(b.pop())
+println(b.length())
+b.truncate(9)
+println(b)
+b.truncate(2)
+println(b)
+b.pushAll(b)
+println(b)
+println(b.first())
+println(b.last())
+println(b.get(1))
+println(b.get(4))
+println(b.get(-1))
+b.clear()
+println(b)
+println(b.pop())
+println(b.first())
+println(b.last())
+println(Bytes.zeroed(3))
+println(Bytes.withCapacity(9))
+println(Bytes.default())
+let z = Bytes.zeroed(2)
+z.fill(9)
+println(z)
