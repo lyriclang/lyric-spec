@@ -608,3 +608,24 @@ a mirror served on the machine): a conformance case fetches nothing.
   {"tarball", "shasum", "size"}}}`), the archives lie under `<page>/<version>/`, its community
   mirrors are listed in `community-mirrors.txt` beside the index, one address a line, and serve
   an archive as `<mirror>/<file>`.
+
+## 14. `fix --from-4` *(informative)*
+
+`lyric fix --from-4 [<file.lyr>]` migrates a Lyric 4 program: the `lyric.json` of the working
+directory (`-C <dir>`), or the file named. Nothing here is a promise about the result, which may
+not compile; `lyric check` says what is left. The rules it applies are no part of this
+specification, and the notes it gives stand in [Appendix A](appendix-a-diagnostics.md) under
+`LYR-MIG`.
+
+- **What it reads**: the program, with the front end of Lyric 4.6. A program 4.6 refuses is not
+  changed (`LYR-MIG0001`, exit 1).
+- **What it writes**, in place: each changed source file, as replacements of what a rule changes, so
+  comments and layout stay; `lyric.toml` for `lyric.json`, which goes. It moves no file: where the
+  sources lie outside `src/`, a note says so.
+- **`--dry-run`** prints the changes as a unified diff and writes nothing. `--json` does not go with
+  `--from-4`.
+- **The report**, `fix-from-4.txt` beside the manifest or the file, lists each note with its rule, place,
+  reason and proposal: `proposal[…]` for a change made for a person to confirm, `by hand[…]` for one left
+  to a person.
+- **Exit codes**: 0 when it has migrated, whatever the notes say; 1 as above; 2 for a wrong use.
+
