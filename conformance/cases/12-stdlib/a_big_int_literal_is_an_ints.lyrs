@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-PAR0007
+//! since: 1.0.0
+// §12 rule 16: `FromIntLiteral` takes an `int`, so a literal past its range is no literal; `parse` reads
+// such a number.
+import std.math { BigInt }
+let x: BigInt = 123456789012345678901234567890

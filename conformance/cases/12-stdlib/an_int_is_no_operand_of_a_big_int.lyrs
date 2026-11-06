@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0003
+//! since: 1.0.0
+// §12 rule 16: `BigInt` is an `Add` of itself, and an operand is no place with a target type (03 Lit), so
+// the literal stays an `int`.
+import std.math { BigInt }
+let x: BigInt = 1
+println(x + 1)

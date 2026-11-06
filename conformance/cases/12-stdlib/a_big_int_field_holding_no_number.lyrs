@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 16
+import std.math { BigInt }
+let f = BigInt { v = "x" }
+println(f + BigInt.one)

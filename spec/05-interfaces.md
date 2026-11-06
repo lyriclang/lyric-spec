@@ -88,7 +88,8 @@ S7, `Debug` and `Display` (S7e3).
    A type parameter satisfies what its constraints and their parents are, also where it is
    handed to another generic. A type's constant, `static let zero: P = P { x = 0 }` with its type
    and its value (`LYS-SEM0010` otherwise), is set before the script's own statements (Lyric 5 04
-   §1 rule 2) and read as `P.zero`; an interface asks one of its conformers without a value
+   §1 rule 2) and read as `P.zero`; its value reads the names of the module that declares it, not of the
+   program that imports it; an interface asks one of its conformers without a value
    (`LYS-SEM0127`), `static let zero: Self`, read through a type parameter, `T.zero`. A member of
    an interface that names `Self` may have type parameters of its own (S7c4c1), bound by its
    call's arguments; a constant of a generic type comes later.

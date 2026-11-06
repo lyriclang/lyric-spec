@@ -214,6 +214,28 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
    choosing the target. A constraint `T :: [Into<X>]` holds for every type `X` is a `From` of, and a
    value of `Into<X>` is made from such a type. No type is a `From` of itself unless it writes that,
    and `?Cm` is another target than `Cm`. `as` converts numbers only.
+16. **`BigInt`** (S7f4; Lyric 5 has none, [02 T1](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)). `std.math` holds `struct BigInt`, a
+   whole number of any size up to 2^31 bits. It is a `Signed`, `TotalOrder`, `Hashable`, `Clone`,
+   `Default`, `From<int>`, `FromIntLiteral`, `Shl` and `Shr`, not an `Integer`, which is a fixed width.
+   `BigInt.zero` and `BigInt.one`; `+`, `-`, `*`, `/`, `%`, unary `-`, of two `BigInt`s: `/` truncates
+   and `%` takes the dividend's sign, as an `int`'s do, and a zero divisor panics (`LYS-RT0001`).
+   `x << n` and `x >> n` take an `int`, `>>` rounding toward negative infinity; a negative count, and a
+   result past 2^31 bits from a shift or a product, panic (`LYS-RT0002`). `BigInt.parse(s)` and
+   `BigInt.parse(s, radix)` read what `int.parse` reads and throw its `ParseError`, `Empty` or
+   `Invalid`, never `Overflow`. `x.toString()`, `x.toString(radix)`, lowercase; a radix outside 2 to 36
+   panics. `x.toInt()` is the `int` where it fits, else `null`; `x.toFloat()` the nearest float, a tie
+   to the even one, past the range an infinity. `x.pow(e)`, a negative exponent panicking; `x.gcd(y)`,
+   never negative; `x.divRem(y)`; `x.bitLength()`, the bits of the magnitude, `0` for zero. A literal in
+   a place of the type is an `int`'s, so a longer one is `LYS-PAR0007` and comes from `parse`; an
+   operand is no place with a target type ([03 Lit](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)), so `x + 1` is `LYS-SEM0003`.
+
+   **What it costs** ([01 S5c](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)). A native knows its cost from its operands and takes it
+   from the budget **before** it works; where the budget does not cover it, the instance is suspended
+   at that call and nothing is computed. With `n` and `m` the operands' words of 32 bits, one unit
+   being what a backward jump or a call costs: `+`, `-`, a comparison, `-x`, a hash, `>>`: `1 + max(n,
+   m) / 8`; `<<` by `c`: `1 + (c / 32 + n + 1) / 8`; `*`: `1 + n * m / 8`; `/`, `%`: `1 + (n - m + 1) *
+   m / 8`, `1 + m / 8` where `n` is below `m`; `toString`: `1 + n * n / 4`; `parse` of `b` bytes, with
+   `w = b / 8 + 1`: `1 + w * w / 4`. `toInt`, `toFloat`, `bitLength` cost nothing of their own.
 
 ## Deviations (skeleton, written with later milestones)
 

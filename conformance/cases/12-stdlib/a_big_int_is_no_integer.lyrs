@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0028
+//! since: 1.0.0
+// §12 rule 16: `Integer` is a fixed width, with `min` and `max`: `std.math`'s `gcd` is an `int`'s, a
+// `BigInt` has its own.
+import std.math { BigInt, gcd }
+let x: BigInt = 4
+println(gcd(x, x))
