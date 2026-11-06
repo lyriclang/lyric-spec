@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 7
+//! | 8
+//! | 10
+//! since: 5.0.0
+// 01 §3 rule 1: `_` binds nothing, so a function, a method and a closure may each repeat it.
+import std.io { println };
+
+class C {
+    pub fn m(_: int, _: int): int {
+        return 8;
+    }
+}
+
+fn g(_: int, a: int, _: string, _: bool): int {
+    return a;
+}
+
+fn apply(f: fn(int, int) -> int): int {
+    return f(1, 2);
+}
+
+fn main(): void {
+    let c = C { };
+    println(f"{g(1, 7, "x", true)}");
+    println(f"{c.m(3, 4)}");
+    println(f"{apply((_: int, _: int) => 10)}");
+}
