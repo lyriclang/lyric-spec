@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout-gone
+//! stderr:
+//! | true
+//! | broken pipe (written to the standard output)
+// §12 rule 20: a write larger than the buffer flushes on its way, and throws what the flush says.
+import std.io { stdout }
+try {
+    stdout().write(Bytes.zeroed(1000000))
+    eprintln("no failure")
+} catch (e: IoError) {
+    eprintln(e.kind == IoErrorKind.BrokenPipe)
+    eprintln(e.message())
+}

@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! merge-streams
+//! exit: 1
+//! stdout:
+//! | out
+//! | error: gone
+//! |     at <script> (line 14)
+// §12 rule 20.
+class Gone :: Error {
+    fn message(): string = "gone"
+}
+print("out\n")
+throw Gone { }

@@ -1,0 +1,16 @@
+//! run
+//! since: 1.0.0
+//! stdout-gone
+//! stderr:
+//! | true
+//! | broken pipe (written to the standard output)
+// §12 rule 20: a `Writer` of `stdout()` throws what the system says.
+import std.io { stdout }
+try {
+    stdout().writeString("x\n")
+    stdout().flush()
+    eprintln("no failure")
+} catch (e: IoError) {
+    eprintln(e.kind == IoErrorKind.BrokenPipe)
+    eprintln(e.message())
+}

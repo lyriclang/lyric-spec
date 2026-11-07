@@ -169,10 +169,11 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
 
 18. **A native that waits** ([07 N6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); Lyric-Script 11 Co) runs on a task of the host while the
     script's task waits, and the other tasks run meanwhile — a task that only gives way does not
-    hold it up. `readLine()` of the prelude is the first: the next line of standard input without
-    its line end, `null` at its end; an error reading the input ends it as well, until `std.io`
-    brings `IoError` (S7). A read is a wait (rule 11): a cancel ends it, and a line its reader
-    brings after the cancel is dropped.
+    hold it up. It is charged before it starts: one the budget does not cover does not start. Its
+    result lands when the script's task runs again. `readLine()` of the prelude is the first: the next
+    line of standard input without its line end, `null` at its end; a failure of the read throws
+    `IoError` ([12](12-stdlib.md) rule 20). A read is a wait (rule 11): a cancel ends it, and what its
+    reader brings after the cancel is dropped.
 
 ## Written (S7, the core collections)
 
@@ -184,7 +185,7 @@ semaphores (S6d1), `select` (S6d2), time (S6d3), a native that waits (S6e).
 
 ## Not yet written
 
-- Signals as a channel (Lyric 5 §12; the right `os`), and `IoError` for `readLine`: with the
+- Signals as a channel (Lyric 5 §12; the right `os`): with the
   std core (S7). A host's waits — `call`,
   `start`, `step` — and the instance's halt on its budget with its tasks: with the embedding (S8).
 

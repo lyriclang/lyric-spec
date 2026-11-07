@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | x
+//! stdout:
+//! | tick
+//! | 2
+// §10 rule 18: the script's task waits, the others run.
+import std.io { stdin }
+spawn { println("tick") }
+println(stdin().read(Bytes.zeroed(4)))

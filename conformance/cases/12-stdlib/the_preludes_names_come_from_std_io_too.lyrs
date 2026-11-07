@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | x
+//! stdout:
+//! | ab
+//! | x
+//! stderr:
+//! | c
+// §12 rule 20: code moved from Lyric 5 imports them; they name what every module sees.
+import std.io { print, println, eprintln, readLine }
+print("a")
+println("b")
+eprintln("c")
+println(readLine() ?? "none")

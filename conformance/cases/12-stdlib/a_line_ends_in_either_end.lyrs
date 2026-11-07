@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdin-hex: 61 0d 0a 62 0a 63
+//! stdout:
+//! | a
+//! | b
+//! | c
+//! | none
+// §12 rule 20: `\n`, `\r\n`, and a last line without an end.
+println(readLine() ?? "none")
+println(readLine() ?? "none")
+println(readLine() ?? "none")
+println(readLine() ?? "none")

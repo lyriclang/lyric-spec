@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | alpha
+//! | beta
+//! stdout:
+//! | alpha
+//! | 3
+//! | bet
+//! | a
+//! | 0
+//! | 0
+// §12 rule 20: a read takes what a line's read left first; 0 at once for empty bytes, 0 at the end.
+import std.io { stdin }
+println(readLine() ?? "none")
+let into = Bytes.zeroed(3)
+let n = stdin().read(into)
+println(n)
+println(string.fromUtf8(into))
+println(readLine() ?? "none")
+println(stdin().read(Bytes.new()))
+println(stdin().read(into))

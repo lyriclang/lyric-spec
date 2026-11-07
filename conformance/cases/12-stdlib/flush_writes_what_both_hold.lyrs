@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! merge-streams
+//! stdout:
+//! | err1
+//! | out1
+//! | err2
+//! | out2
+// §12 rule 20: through one pipe the error's lines come as written, the output's at a flush or the end.
+import std.io { flush }
+print("out1\n")
+eprintln("err1")
+flush()
+eprintln("err2")
+print("out2\n")

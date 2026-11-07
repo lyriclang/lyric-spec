@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | alpha
+//! | beta
+//! | gamma
+//! stdout:
+//! | alpha
+//! | > beta
+//! | > gamma
+//! | none
+// §12 rule 20: readLine and lines take turns on the one buffer.
+import std.io { stdin }
+let s = stdin()
+println(s.readLine() ?? "none")
+for (l in stdin().lines()) {
+    println("> " + l)
+}
+println(s.readLine() ?? "none")

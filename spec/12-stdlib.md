@@ -317,6 +317,31 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     are no UTF-8 throw `InvalidData`, a `Utf8Error` as the cause whose offset counts from the reader's start;
     a line that throws is consumed. A byte order mark is text unless `skipBom` drops it from the front.
     **`TextWriter.new(w)`**: `write(s)`, `writeLine(s)` that and a `\n` on every system; it holds nothing back.
+20. **The console** (Lyric 5 12 §The console; S7g2): the program's standard input, output and error, of no
+    right. `print`, `println`, `eprintln` and `readLine` are the prelude's, and `import std.io { … }` names what
+    every module sees; **`eprint`**, **`flush`**, **`stdin`**, **`stdout`** and **`stderr`** are `std.io`'s.
+    `eprint(v)` and `eprintln(v)` write `v`'s text on the standard error as `print` and `println` on the output.
+
+    Each stream is buffered as Lyric 5's: the output a line at a time where it is a terminal, a block at a time
+    otherwise, the error always a line at a time. **`flush()`** writes what both hold, the output's first, and
+    drops a failure. What they hold is written at every end of the program: its end, a panic's report, an error
+    that leaves it, the output before the report. Output through one pipe shows the modes: the error's lines
+    come as they are written, the output's block at the end or at a flush.
+
+    **`readLine()`** is the next line of the standard input without its end, a `\n` or a `\r\n`, `null` at the end
+    of the input. It throws `IoError` where the read fails, or `InvalidData` for bytes that are no UTF-8, the
+    offset in its detail, no cause; the line is consumed. **`stdin()`** is a `Reader` over the one buffer of the
+    input, with `readLine()`, `lines()`, an iterator of the same, and `read(into)`, which takes what a line's
+    read left first; 0 at the end, and at once for empty bytes. All three wait (§10 rule 18), so a cancel ends
+    them: they throw `[IoError, Cancelled]`, where Lyric 5's console is not cancelled. `read` is charged by the
+    bytes of `into`, as a native of `Bytes` is.
+
+    **`stdout()`** and **`stderr()`** are `Writer`s over the buffers `print` and `eprint` write into, so what the two
+    write keeps its order. `write` takes all it is handed, `flush()` throws what the system says, a pipe nobody
+    reads being `BrokenPipe`; the console is not `Closeable`. `write` is charged by its bytes. A write to the
+    console does not wait: a full pipe holds up the instance, for `print` and for these alike. A standard output
+    nobody reads ends a printing program as Lyric 5's does, the error's lines written first; a `Writer` of
+    `stdout()` throws instead.
 
 ## Deviations (skeleton, written with later milestones)
 
