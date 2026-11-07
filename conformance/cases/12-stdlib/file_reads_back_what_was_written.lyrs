@@ -1,0 +1,52 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 24 true
+//! | file
+//! | 7 19 5
+//! | 1
+//! | 3
+//! | sought
+//! | one two
+//! | x
+//! since: 1.0.0
+import std.fs { File, OpenOptions }
+import std.io { SeekFrom }
+
+// §12 rule 22: a file written and read back, its position moved from each end; an append writes at the end, a create cuts
+let out = File.create("a.txt")
+out.writeString("hello, file\nsecond line\n")
+out.close()
+let back = File.open("a.txt")
+let text = back.readToString()
+println(f"{text.length()} {text.startsWith("hello, file")}")
+let at = back.seek(SeekFrom.Start(7))
+let four = Bytes.zeroed(4)
+back.readExact(four)
+println(string.fromUtf8(four))
+let end = back.seek(SeekFrom.End(-5))
+println(f"{at} {end} {back.readToString().length()}")
+println(back.seek(SeekFrom.Start(1)))
+println(back.seek(SeekFrom.Current(2)))
+try {
+    back.seek(SeekFrom.Start(-1))
+} catch (e: IoError) {
+    println(e.detail)
+}
+back.close()
+let log = File.create("b.txt")
+log.writeString("one ")
+log.close()
+let more = File.openWith("b.txt", OpenOptions { append = true })
+more.writeString("two")
+more.close()
+let both = File.open("b.txt")
+println(both.readToString())
+both.close()
+let cut = File.create("b.txt")
+cut.writeString("x")
+cut.close()
+let last = File.open("b.txt")
+println(last.readToString())
+last.close()

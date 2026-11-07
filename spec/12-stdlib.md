@@ -360,6 +360,32 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     target): ?string`** is the path that names `target` from `base`, `.` for the same place, `null` where none exists:
     one rooted and the other not, two volumes, a base that climbs above where the target is. **`components(p)`** lists
     the root with its volume, then the elements, without the empty ones and `.`, keeping `..`; nothing is normalized.
+22. **Files** (Lyric 5 12 §Files; S7g4): `std.fs`, of the right `file`. **`File.open(path)`** opens to read,
+    **`File.create(path)`** to write, made where it is not there, cut to nothing where it is,
+    **`File.openWith(path, options)`** as an **`OpenOptions`** says: `read`, `write`, `append` (writes at the end),
+    `create`, `truncate`. Options that read and write nothing, cut without writing from the start, or create without
+    writing are `InvalidInput`, before the system is asked.
+
+    A file is a `Reader`, a `Writer` and a `Seek` at its position, and `Closeable`. `read` and `write` may take part of
+    the `Bytes`, as rule 19 allows. What a file cannot do is an `IoError` with its path and what was done, `opened to
+    read`, `opened to write`, `read`, `written`, `sought`, `closed`: `not found: data.txt (opened to read)`; other
+    failures are `Other { code }`, the system's number. Whether a directory opens as a file and fails at the read, or
+    fails to open, is the system's. After `close()` every call throws `Closed`, a second `close()` does nothing; a `File`
+    built by a script holds no file and panics (`LYS-RT0007`).
+
+    A file's call waits as rule 20 says, charged before it starts, by the path's bytes, by the bytes of what it reads
+    or writes, or as one; the other tasks go on. It ends in a bounded time and no cancel ends it: in a cancelled task
+    it runs to its end, and the next wait throws `Cancelled`. So a `File` declares `IoError` alone; its `readToEnd`,
+    `readToString`, `writeAll` and `writeString` are its own for that, as are the conveniences.
+
+    **`fs.readText(path)`** is the file's UTF-8, bytes that are none `InvalidData` with the path and the decoder's error
+    as the cause, a byte order mark text; **`fs.readBytes(path)`**, **`fs.writeText(path, text)`** and
+    **`fs.writeBytes(path, bytes)`** make or cut the file as `File.create` does, **`fs.appendText(path, text)`** writes at
+    its end and makes it where it is not there. Each closes its file on every way out; what the close throws counts
+    where nothing went wrong before. **`fs.lines(path)`** gives the lines as `TextReader.readLine` gives them, through a
+    **`FileLinesIter`** that is `Closeable`: it closes the file at its end and at its first error, a loop that leaves it
+    early closes it, and so does `close()`. After its end or an error it gives no more; after `close()` a call throws
+    `Closed`, and what it had read ahead is not given.
 
 ## Deviations (skeleton, written with later milestones)
 

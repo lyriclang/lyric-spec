@@ -1,0 +1,72 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | cancelled after reading 'kept'
+//! | cancelled after reading 100000
+//! | cancelled after reading 'abcde'
+//! since: 1.0.0
+import std.fs { File, writeText }
+
+// §12 rule 22: a file's call is no wait: cancelled before it runs, the task reads the file to its end, and its next wait throws `Cancelled`
+class Reached {
+    var text: string = ""
+}
+
+writeText("a.txt", "kept")
+let reached = Reached { }
+let task = spawn((): string => {
+    let f = File.open("a.txt")
+    reached.text = f.readToString()
+    f.close()
+    yieldNow()
+    return reached.text
+})
+task.cancel()
+try {
+    println(f"returned {task.await()}")
+} catch (e: Cancelled) {
+    println(f"cancelled after reading '{reached.text}'")
+}
+// and cancelled while it reads: the call ends as it would, and what it read is there
+let long = "z" * 100000
+writeText("b.txt", long)
+let got = Reached { }
+let during = spawn((): string => {
+    let f = File.open("b.txt")
+    let text = f.readToString()
+    got.text = text
+    f.close()
+    yieldNow()
+    return text
+})
+yieldNow()
+during.cancel()
+try {
+    println(f"returned {during.await().length()}")
+} catch (e: Cancelled) {
+    println(f"cancelled after reading {got.text.length()}")
+}
+// and cancelled with one call under way: that call is not made a second time, its answer stays
+writeText("c.txt", "abcdefghij")
+let opened = Reached { }
+let under = Reached { }
+let way = spawn((): string => {
+    let f = File.open("c.txt")
+    opened.text = "yes"
+    let into = Bytes.zeroed(5)
+    f.read(into)
+    under.text = string.fromUtf8(into)
+    f.close()
+    yieldNow()
+    return under.text
+})
+while (opened.text == "") {
+    yieldNow()
+}
+way.cancel()
+try {
+    println(f"returned {way.await()}")
+} catch (e: Cancelled) {
+    println(f"cancelled after reading '{under.text}'")
+}

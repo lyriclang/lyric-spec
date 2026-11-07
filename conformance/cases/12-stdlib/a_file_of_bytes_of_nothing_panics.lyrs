@@ -1,0 +1,10 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! panic: LYS-RT0007
+//! since: 1.0.0
+import std.fs { File }
+
+// §12 rule 22: bytes a script built itself hold no bytes, and the VM sees that
+let f = File.create("a.txt")
+println(f.write(Bytes { v = "x" }))

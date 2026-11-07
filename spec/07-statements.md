@@ -84,6 +84,10 @@
    xs.iter().enumerate())`, under a label too; a pattern that can fail is refused
    (`LYS-SEM0098`), as after `let` ([09](09-patterns.md) rule 2).
 
+10. **A value block that does not come out** (Lyric 5 §3; S7g4): where the statements of a value block always
+    return, break or continue, it gives no value and is worth `never`, so it stands beside one that gives a value,
+    `let x = if (c) { return 1 } else { 2 }`, and may end a lambda, with a `using` or a `defer` in it too.
+
 ## Deviations (skeleton, written with later milestones)
 
 - A range is a value that never changes ([02 T7](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)), an `Iterable`, not an `Iterator` as Lyric 5's

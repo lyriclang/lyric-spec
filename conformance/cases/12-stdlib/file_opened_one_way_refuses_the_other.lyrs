@@ -1,0 +1,32 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | a.txt written
+//! | b.txt read
+//! | abc
+//! since: 1.0.0
+import std.fs { File, OpenOptions, writeText }
+
+// §12 rule 22: what the system refuses comes as an `IoError` with what was done
+fn failed(f: fn() -> void): string {
+    try {
+        f()
+        return "done"
+    } catch (e: IoError) {
+        return f"{e.path ?? "no path"} {e.detail}"
+    }
+}
+
+writeText("a.txt", "abc")
+let r = File.open("a.txt")
+println(failed(() => {
+    r.write(b"x")
+}))
+r.close()
+let w = File.create("b.txt")
+println(failed(() => {
+    w.read(Bytes.zeroed(1))
+}))
+w.close()
+println(File.openWith("a.txt", OpenOptions { read = true, write = true }).readToString())

@@ -1,0 +1,34 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 2
+//! | ab
+//! | 0
+//! | 2
+//! | cd
+//! | 1
+//! | 101
+//! | 0
+//! | 0
+//! | 2
+//! since: 1.0.0
+import std.fs { File, writeText }
+
+// §12 rule 22: a read takes what fits and answers how many, 0 at the end and for no room; a write of nothing writes nothing
+writeText("a.txt", "abcde")
+let f = File.open("a.txt")
+let two = Bytes.zeroed(2)
+println(f.read(two))
+println(string.fromUtf8(two))
+println(f.read(Bytes.new()))
+println(f.read(two))
+println(string.fromUtf8(two))
+println(f.read(two))
+println(two[0])
+println(f.read(two))
+f.close()
+let g = File.create("b.txt")
+println(g.write(Bytes.new()))
+println(g.write(b"xy"))
+g.close()

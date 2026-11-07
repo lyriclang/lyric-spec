@@ -1,0 +1,69 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | not found: none.txt (opened to read)
+//! | invalid input: x (opened neither to read nor to write)
+//! | invalid input: x (cut to nothing without being written from the start)
+//! | invalid input: x (cut to nothing without being written from the start)
+//! | invalid input: x (created without being written)
+//! | not found: none/x.txt (opened to write)
+//! | not found: none/x.txt (opened to write)
+//! | not found: none/x.txt (opened to write)
+//! | true
+//! | none.txt
+//! | opened to read
+//! | x
+//! | done
+//! | done
+//! since: 1.0.0
+import std.fs { File, OpenOptions }
+
+// §12 rule 22: an `IoError` says the kind, the path and what was done; options that make no sense are refused before the system is asked
+fn said(f: fn() -> void): string {
+    try {
+        f()
+        return "done"
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+println(said(() => {
+    using let f = File.open("none.txt")
+}))
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { })
+}))
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { read = true, truncate = true })
+}))
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { write = true, append = true, truncate = true })
+}))
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { read = true, create = true })
+}))
+println(said(() => {
+    using let f = File.openWith("none/x.txt", OpenOptions { write = true, create = true })
+}))
+println(said(() => {
+    using let f = File.openWith("none/x.txt", OpenOptions { append = true, create = true })
+}))
+println(said(() => {
+    using let f = File.create("none/x.txt")
+}))
+try {
+    File.open("none.txt")
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.NotFound)
+    println(e.path ?? "no path")
+    println(e.detail)
+}
+println(File.openWith("x", OpenOptions { write = true, create = true }).name)
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { write = true })
+}))
+println(said(() => {
+    using let f = File.openWith("x", OpenOptions { read = true })
+}))

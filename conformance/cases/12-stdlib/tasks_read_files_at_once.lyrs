@@ -1,0 +1,25 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! |  1000 2000 3000 4000
+//! since: 1.0.0
+import std.fs { File, writeText }
+
+// §12 rule 22: four tasks read four files at once
+fn sizeOf(name: string): int {
+    let f = File.open(name)
+    let n = f.readToEnd().length()
+    f.close()
+    return n
+}
+
+for (k in 0..4) {
+    writeText(f"t{k}.txt", "z" * (1000 * (k + 1)))
+}
+let tasks = [spawn(() => sizeOf("t0.txt")), spawn(() => sizeOf("t1.txt")), spawn(() => sizeOf("t2.txt")), spawn(() => sizeOf("t3.txt"))]
+var line = ""
+for (t in tasks) {
+    line = f"{line} {t.await()}"
+}
+println(line)

@@ -57,6 +57,8 @@ def parse_header(path):
             spec["gone"] = True
         elif body == "stdin-refuses":
             spec["refuses"] = True
+        elif body == "in-temp-dir":
+            spec["temp"] = True
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
         elif body in ("stdout:", "stderr:", "stdin:"):
@@ -185,9 +187,16 @@ def prepare_package(package, work):
 CASE_TIMEOUT = 60
 
 
-def run_case(path, spec, exe, package=None, env=None):
+def run_case(path, spec, exe, package=None, env=None, cwd=None):
     def fail(reason):
         return (False, reason)
+
+    # `in-temp-dir`: the check and the run in a new folder, gone after: the files a case makes (S7g4)
+    if spec.get("temp"):
+        with tempfile.TemporaryDirectory() as work:
+            return run_case(pathlib.Path(path).resolve(), dict(spec, temp=False),
+                            pathlib.Path(exe).resolve(), package, env, work)
+    cwd = package if package is not None else cwd
 
     # a package case is built from its folder, naming no file, as a user builds a package
     # `env:` lines add to the environment the case runs in
@@ -219,12 +228,12 @@ def run_case(path, spec, exe, package=None, env=None):
             # `stdin-refuses`: an input open for writing only, so that every read of it fails (S7g2)
             if spec.get("refuses") and verb == "run":
                 with open(os.devnull, "wb") as refusing:
-                    done = subprocess.run(args, stdout=sink, stderr=subprocess.PIPE, cwd=package,
+                    done = subprocess.run(args, stdout=sink, stderr=subprocess.PIPE, cwd=cwd,
                                           env=env, timeout=CASE_TIMEOUT, stdin=refusing)
             else:
                 done = subprocess.run(args, stdout=sink,
                                       stderr=subprocess.STDOUT if merged else subprocess.PIPE,
-                                      cwd=package, env=env, timeout=CASE_TIMEOUT, input=given)
+                                      cwd=cwd, env=env, timeout=CASE_TIMEOUT, input=given)
             if sink != subprocess.PIPE:
                 os.close(sink)
             return subprocess.CompletedProcess(args, done.returncode, text_of(done.stdout),
