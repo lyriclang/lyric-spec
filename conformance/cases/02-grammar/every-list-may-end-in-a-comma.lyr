@@ -1,0 +1,50 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 6 1 2 3 4
+//! | 7 8 9
+// A list may end in a comma wherever it stands between brackets, parentheses, braces or angle
+// brackets (02 §1 rule 5): the type parameters and their bounds, the type arguments, a function
+// type's parameters, a variant's payload, an associated type's bound, beside the lists that
+// always took one.
+
+import std.io { println, };
+
+interface Sized {
+    type Unit :: [Equatable, Hashable,];
+    fn size(): int;
+}
+
+struct Holder<T :: [Equatable,], U = int,> :: [Sized,] {
+    value: T,
+    extra: U,
+    type Unit = int;
+    fn size(): int { return 1; }
+}
+
+enum Pair<A, B,> {
+    Both(A, B,),
+    Neither,
+}
+
+fn apply(f: fn(int, int,) -> int, x: int,): int {
+    return f(x, x,);
+}
+
+fn second<A, B,>(p: Pair<A, B,>, fallback: B,): B {
+    return match (p) {
+        .Both(_, b,) => b,
+        .Neither => fallback,
+    };
+}
+
+fn main(): void {
+    let box = Holder<int, int,> { value = 2, extra = 3, };
+    let (a, b,) = (box.value, box.extra,);
+    let sum = (x: int, y: int,) => x + y;
+    let rest = [a, b, 4,];
+    println(f"{apply(sum, 3,)} {box.size()} {a} {b} {rest[2]}");
+    let p: Pair<int, int,> = .Both(7, 8,);
+    let first = match (p) { .Both(x, _,) => x, .Neither => 0, };
+    println(f"{first} {second(p, 0,)} {second<int, int,>(Pair<int, int,>.Neither, 9,)}");
+}

@@ -21,7 +21,7 @@ design documents carry the reasoning and what was rejected.
 | Path | Content | Milestone |
 |---|---|---|
 | `spec/01-lexical.md` | tokens and literals | M2/M3 |
-| `spec/02-grammar.md` | the canonical EBNF | M2–M9b |
+| `spec/02-grammar.md` | the canonical EBNF | M2–M9b, M17 |
 | `spec/03-types.md` | types and values | M3 |
 | `spec/04-modules.md` | modules and packages | M7 |
 | `spec/05-interfaces.md` | interfaces and abstraction | M4 |
@@ -39,6 +39,7 @@ design documents carry the reasoning and what was rejected.
 | `spec/appendix-a-diagnostics.md` | the catalogue — generated | M12 |
 | `conformance/` | the suite: one `.lyr` — or one package — per case, expectations in a `//!` header | — |
 | `tools/run_conformance.py` | the reference runner | — |
+| `tools/grammar.py` | the EBNF of chapter 02 against every program the suite expects to compile | — |
 
 ## Versioning
 
