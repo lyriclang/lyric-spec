@@ -22,6 +22,7 @@ from Lyric 5 gets a failing and a passing case.
 //! stdin-hex: 61 ff 0a        the run's standard input as bytes, for what no text can say
 //! merge-streams              the run's two streams through one pipe, read as `stdout:`
 //! stdout-gone                the run's output a pipe nobody reads; how it ends is not asked
+//! stdin-refuses              the run's input open for writing only: every read of it fails
 //! stdin:                    the run's standard input, each line ended by a line end; empty
 //! | a line                  without it
 //! check                    check only; expect acceptance in silence

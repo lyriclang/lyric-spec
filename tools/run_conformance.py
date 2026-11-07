@@ -55,6 +55,8 @@ def parse_header(path):
             spec["merged"] = True
         elif body == "stdout-gone":
             spec["gone"] = True
+        elif body == "stdin-refuses":
+            spec["refuses"] = True
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
         elif body in ("stdout:", "stderr:", "stdin:"):
@@ -214,9 +216,15 @@ def run_case(path, spec, exe, package=None, env=None):
             if spec.get("gone") and verb == "run":
                 reader, sink = os.pipe()
                 os.close(reader)
-            done = subprocess.run(args, stdout=sink,
-                                  stderr=subprocess.STDOUT if merged else subprocess.PIPE,
-                                  cwd=package, env=env, timeout=CASE_TIMEOUT, input=given)
+            # `stdin-refuses`: an input open for writing only, so that every read of it fails (S7g2)
+            if spec.get("refuses") and verb == "run":
+                with open(os.devnull, "wb") as refusing:
+                    done = subprocess.run(args, stdout=sink, stderr=subprocess.PIPE, cwd=package,
+                                          env=env, timeout=CASE_TIMEOUT, stdin=refusing)
+            else:
+                done = subprocess.run(args, stdout=sink,
+                                      stderr=subprocess.STDOUT if merged else subprocess.PIPE,
+                                      cwd=package, env=env, timeout=CASE_TIMEOUT, input=given)
             if sink != subprocess.PIPE:
                 os.close(sink)
             return subprocess.CompletedProcess(args, done.returncode, text_of(done.stdout),
