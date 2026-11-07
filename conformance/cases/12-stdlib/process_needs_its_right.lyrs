@@ -1,0 +1,9 @@
+//! run
+//! exit: 2
+//! stderr-has: LYS-CAP0001
+//! since: 1.0.0
+
+// §12 rule 27: of the right `process`
+import std.process { Command }
+
+println(Command { program = "x" }.program)

@@ -210,6 +210,8 @@ def run_case(path, spec, exe, package=None, env=None, cwd=None):
             return run_case(pathlib.Path(path).resolve(), dict(spec, temp=False),
                             pathlib.Path(exe).resolve(), package, env, work)
     cwd = package if package is not None else cwd
+    # the binary under test, for a case that starts a script as its child (S7h3)
+    env = dict(env or os.environ, LYRIC_SCRIPT_UNDER_TEST=str(exe))
 
     # a package case is built from its folder, naming no file, as a user builds a package
     # `env:` lines add to the environment the case runs in

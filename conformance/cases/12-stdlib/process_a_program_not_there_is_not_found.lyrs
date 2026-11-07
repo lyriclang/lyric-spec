@@ -1,0 +1,16 @@
+//! run
+//! option: --allow=process
+//! stdout:
+//! | true lyric-case-no-such-program
+//! since: 1.0.0
+
+// §12 rule 27: not there is `NotFound` with the program as the path. §17 rule 1: `std.process` imports `std.os`,
+// and asks for `process` alone
+import std.process { Command }
+
+try {
+    let c = Command { program = "lyric-case-no-such-program" }.spawn()
+    println(f"started {c.wait()}")
+} catch (e: IoError) {
+    println(f"{e.kind == IoErrorKind.NotFound} {e.path ?? "none"}")
+}

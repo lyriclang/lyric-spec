@@ -1,0 +1,19 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | out | err
+//! | exit code 3 3 false
+//! since: 1.0.0
+
+// §12 rule 27: `output()` takes both streams to their ends and waits; the status says the code
+import std.fs { writeText }
+import std.os
+import std.process { Command, Stdio }
+
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+writeText("child.lyrs", "println(\"out\")\neprintln(\"err\")\nexit(3)\n")
+let done = Command { program = me, args = ["run", "-A", "child.lyrs"] }.output()
+println(f"{string.fromUtf8(done.stdout).trimEnd()} | {string.fromUtf8(done.stderr).trimEnd()}")
+println(f"{done.status} {done.status.code() ?? -1} {done.status.success()}")

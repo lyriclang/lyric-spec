@@ -439,7 +439,24 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     **`os.tempDir()`**, absolute; **`os.hostname()`**, **`os.cpuCount()`**, one at least, **`os.pid()`**. A
     text the system holds that is no UTF-8 is taken with U+FFFD for its bad bytes. `cwd`, `setCwd` and
     `hostname` are calls of the system as a file's (rule 22); `envs` and `setEnv` take from the budget by their
-    bytes.
+    bytes. **`os.Signal`** names a signal abstractly as Lyric 5's does (`Interrupt`, `Terminate`, `Hangup`, `Quit`,
+    `User1`, `User2`, `WindowChange`, `Other(n)`).
+27. **`std.process`** (Lyric 5 12 §Processes; S7h3), of the right `process`: **`Command { program, args, cwd, env,
+    stdin, stdout, stderr }`**, the streams `Stdio.Inherit` by default, `Piped` or `Null`. **`spawn()`** starts the
+    child as a **`Child`**: a program not there is `NotFound`, one that may not run `PermissionDenied`, the program
+    as the path; a variable's name that is empty or holds `=`, or a NUL in the program, an argument, a variable or
+    the directory, is `InvalidInput` — Lyric 5 does not look at the directory. Its piped streams are
+    `stdin: ?PipeWriter`, `stdout` and `stderr: ?PipeReader`, a `Writer` and `Reader`s that are `Closeable`; a
+    second close does nothing, a call after the close is `Closed`. What the console holds is written before the
+    child starts, so that a child that inherits a stream writes after it. **`wait()`** closes a piped input, then
+    waits for the end: an **`ExitStatus`** with `success()`, `code(): ?int` and `signal(): ?Signal`, its text
+    `exit code 3` or `signal 9`. **`kill()`** ends the child, SIGKILL on POSIX, on Windows with code 1;
+    **`signal(s)`** sends it `s`, `Unsupported` on Windows; neither touches a child that has ended.
+    **`output()`** starts it with no input and the other two piped, takes both to their ends at once and waits: an
+    **`Output { status, stdout, stderr }`**, the two as `Bytes`; **`status()`** starts it with the parent's
+    streams and waits. Each call runs on a task of the host as a file's (rule 22), but a wait and a pipe's read or
+    write end at a cancel, as Lyric 5's do: a read a cancel ended may still take what comes next, which is then
+    lost; a reader goes on reading from such a pipe at that risk.
 
 ## Deviations (skeleton, written with later milestones)
 

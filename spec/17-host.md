@@ -19,7 +19,8 @@ allocation budget, ownership and reload come with S8 — until then the design d
    (`LYS-CAP0001`), exit 2. `check` asks for none. A script holds no rights of its own: not in
    its frontmatter, not in a manifest. The standard library's table: `std.fs` asks for `file`;
    `std.net` and `std.http` for `net`; `std.process` for `process`; `std.os`, `std.time` and
-   `std.random.system` for `os`; every other module of it for none, `std.random` among them
+   `std.random.system` for `os`; every other module of it for none, `std.random` among them; a module of it
+   that imports another asks for nothing by that import (S7h3: `std.process` imports `std.os`)
    ([§12 rule 18](12-stdlib.md)) — a module below a row counts as the row (`std.fs.glob` asks for
    `file`).
 

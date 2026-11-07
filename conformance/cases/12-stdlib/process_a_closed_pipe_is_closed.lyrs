@@ -1,0 +1,26 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | true
+//! since: 1.0.0
+
+// §12 rule 27: a read from a closed pipe is `Closed`; a second close does nothing
+import std.fs { writeText }
+import std.os
+import std.process { Command, Stdio }
+
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+writeText("child.lyrs", "println(1)\n")
+let child = Command { program = me, args = ["run", "-A", "child.lyrs"], stdout = Stdio.Piped }.spawn()
+let out = child.stdout ?? unreachable("piped")
+out.close()
+out.close()
+try {
+    out.read(Bytes.zeroed(4))
+    println("read")
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.Closed)
+}
+child.wait()
