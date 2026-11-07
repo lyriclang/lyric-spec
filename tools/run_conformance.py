@@ -59,9 +59,10 @@ def parse_header(path):
             spec["refuses"] = True
         elif body == "in-temp-dir":
             spec["temp"] = True
-        elif body.startswith("symlink:"):
-            name, _, target = body[8:].strip().partition(" -> ")
-            spec.setdefault("links", []).append((name, target))
+        elif body.startswith("symlink:") or body.startswith("symlink-dir:"):
+            kind, _, rest = body.partition(":")
+            name, _, target = rest.strip().partition(" -> ")
+            spec.setdefault("links", []).append((name, target, kind == "symlink-dir"))
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
         elif body in ("stdout:", "stderr:", "stdin:"):
@@ -198,9 +199,9 @@ def run_case(path, spec, exe, package=None, env=None, cwd=None):
     if spec.get("temp"):
         with tempfile.TemporaryDirectory() as work:
             # `symlink:` lines, in that folder (S7g5); a system that lets no one make one passes the case
-            for name, target in spec.get("links", []):
+            for name, target, is_dir in spec.get("links", []):
                 try:
-                    os.symlink(target, pathlib.Path(work) / name)
+                    os.symlink(target, pathlib.Path(work) / name, target_is_directory=is_dir)
                 except OSError as e:
                     print(f"NOTE no link here, {pathlib.Path(path).name} not run: {e}")
                     return (True, "")

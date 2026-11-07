@@ -409,6 +409,18 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     by itself. These calls take from the budget as a file's do, by the bytes of their paths, before they
     start; what is put together here takes for each call it makes. A `ReadDirIter` a script built itself
     panics with `LYS-RT0007`.
+24. **`fs.glob(pattern)`** ([12 Um](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md); S7g6)
+    answers the paths a pattern names as a `string[]`, each once, in the byte order of their text; Lyric 5 has
+    no such function. Each part between separators is matched against the names of a directory: `*` any run of
+    characters, `?` one, `[abc]`, `[a-z]`, `[!abc]` one of those or none of them, anything else itself, case
+    counted on every system. `**` as a whole part is any number of directories, or as the last part all that
+    is under them, not the place itself. A trailing separator asks for directories alone, a link to one among them. A name that begins
+    with `.` is matched only by a part that begins with `.`, and `**` does not go into it. `**` does not
+    follow a link; the other parts do. A part without any of these is a name: what it names is asked of the
+    system, through links, not looked for in the directory; `.` is dropped and `..` joined as `path.join` does,
+    by the text. What is not there, and a file where a directory
+    would be, is no match; any other failure is its `IoError`. A `[` that is not closed and a `**` beside
+    anything else in its part are `InvalidInput`.
 
 ## Deviations (skeleton, written with later milestones)
 

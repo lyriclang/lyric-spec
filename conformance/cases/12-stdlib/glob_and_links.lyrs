@@ -1,0 +1,40 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! symlink-dir: to-real -> real
+//! symlink: nowhere -> no-such-thing
+//! stdout:
+//! | * => [nowhere real to-real]
+//! | to-real/* => [to-real/in]
+//! | */in => [real/in to-real/in]
+//! | **/in => [real/in]
+//! | ** => [nowhere real real/in to-real]
+//! | to-real => [to-real]
+//! | nowhere => []
+//! | */ => [real to-real]
+//! | **/ => [real to-real]
+//! since: 1.0.0
+
+// §12 rule 24: `**` does not follow a link, the other parts do; a link is a name in its directory, one that leads nowhere is not there when named
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll("real")
+writeText("real/in", "")
+show("*")
+show("to-real/*")
+show("*/in")
+show("**/in")
+show("**")
+show("to-real")
+show("nowhere")
+show("*/")
+show("**/")

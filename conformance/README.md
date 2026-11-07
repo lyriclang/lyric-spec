@@ -25,6 +25,7 @@ from Lyric 5 gets a failing and a passing case.
 //! stdin-refuses              the run's input open for writing only: every read of it fails
 //! in-temp-dir                the check and the run in a new folder, gone after: the files a case makes
 //! symlink: link -> target    with in-temp-dir, a link made there first; where the system lets no one
+//! symlink-dir: link -> target  the same, a link to a directory the case makes; Windows tells the two apart
 //!                            make one the case is not run
 //! stdin:                    the run's standard input, each line ended by a line end; empty
 //! | a line                  without it

@@ -1,0 +1,51 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | * => [plain show]
+//! | ?dot => []
+//! | [.]dot => []
+//! | .* => [.dot .hide]
+//! | .dot => [.dot]
+//! | .hide/* => [.hide/in .hide/y]
+//! | .h*/y => [.hide/y]
+//! | ** => [plain show show/z]
+//! | **/q => []
+//! | **/.z => [show/.z]
+//! | show/.inner/* => [show/.inner/q]
+//! | show/* => [show/z]
+//! since: 1.0.0
+
+// §12 rule 24: a name that begins with `.` is matched only by a part that begins with `.`, and `**` does not go into it
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll(".hide/in")
+createDirAll("show/.inner")
+writeText(".dot", "")
+writeText("plain", "")
+writeText(".hide/in/x", "")
+writeText(".hide/y", "")
+writeText("show/.z", "")
+writeText("show/z", "")
+writeText("show/.inner/q", "")
+show("*")
+show("?dot")
+show("[.]dot")
+show(".*")
+show(".dot")
+show(".hide/*")
+show(".h*/y")
+show("**")
+show("**/q")
+show("**/.z")
+show("show/.inner/*")
+show("show/*")

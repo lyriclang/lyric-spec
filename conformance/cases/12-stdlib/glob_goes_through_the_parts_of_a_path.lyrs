@@ -1,0 +1,53 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | a/x/* => [a/x/1.txt]
+//! | */x/* => [a/x/1.txt b/x/3.txt]
+//! | a/*/*.txt => [a/x/1.txt a/y/2.txt]
+//! | */*/*.txt => [a/x/1.txt a/y/2.txt b/x/3.txt]
+//! | */x => [a/x b/x]
+//! | none/* => []
+//! | */none => []
+//! | b/f/* => []
+//! | b/f/x => []
+//! | a/./x/* => [a/x/1.txt]
+//! | a/x/../y/* => [a/y/2.txt]
+//! | ./a/x/1.txt => [a/x/1.txt]
+//! | . => [.]
+//! |  => []
+//! since: 1.0.0
+
+// §12 rule 24: a part after a part: names and wild parts in any order, what is not there no match, a file where a directory would be no match
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll("a/x")
+createDirAll("a/y")
+createDirAll("b/x")
+writeText("a/x/1.txt", "")
+writeText("a/y/2.txt", "")
+writeText("b/x/3.txt", "")
+writeText("b/f", "")
+show("a/x/*")
+show("*/x/*")
+show("a/*/*.txt")
+show("*/*/*.txt")
+show("*/x")
+show("none/*")
+show("*/none")
+show("b/f/*")
+show("b/f/x")
+show("a/./x/*")
+show("a/x/../y/*")
+show("./a/x/1.txt")
+show(".")
+show("")

@@ -1,0 +1,57 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | *.txt => [D.txt a.txt ab.txt b.txt é.txt]
+//! | ?.txt => [D.txt a.txt b.txt é.txt]
+//! | [ab].txt => [a.txt b.txt]
+//! | [a-b].txt => [a.txt b.txt]
+//! | [!a].txt => [D.txt b.txt é.txt]
+//! | []x]x => []x]
+//! | [!]x]x => []
+//! | [-y]y => [-y]
+//! | [a-]y => [-y]
+//! | a* => [a.txt ab.txt]
+//! | *b* => [ab.txt b.txt sub]
+//! | a*t => [a.txt ab.txt]
+//! | ab*b.txt => []
+//! | *.*.* => []
+//! | c.md => [c.md]
+//! | no => []
+//! | *x* => [D.txt ]x a.txt ab.txt b.txt é.txt]
+//! since: 1.0.0
+
+// §12 rule 24: `*`, `?`, a class, and a name for itself; none of them goes past a separator
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+for (f in ["a.txt", "b.txt", "c.md", "ab.txt", "z", "é.txt", "]x", "-y", "D.txt"]) {
+    writeText(f, "")
+}
+createDirAll("sub")
+writeText("sub/deep.txt", "")
+show("*.txt")
+show("?.txt")
+show("[ab].txt")
+show("[a-b].txt")
+show("[!a].txt")
+show("[]x]x")
+show("[!]x]x")
+show("[-y]y")
+show("[a-]y")
+show("a*")
+show("*b*")
+show("a*t")
+show("ab*b.txt")
+show("*.*.*")
+show("c.md")
+show("no")
+show("*x*")

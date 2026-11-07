@@ -2,7 +2,7 @@
 //! option: --allow=file
 //! in-temp-dir
 //! symlink: to-file -> file
-//! symlink: to-target -> target
+//! symlink-dir: to-target -> target
 //! symlink: nowhere -> no-such-thing
 //! symlink: itself -> itself
 //! stdout:
