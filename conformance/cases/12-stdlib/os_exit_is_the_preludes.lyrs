@@ -1,0 +1,19 @@
+//! run
+//! option: --allow=os
+//! exit: 3
+//! stdout:
+//! | before exit 1
+//! since: 1.0.0
+
+// §12 rule 26, rule 25: the console written, no `defer`
+import std.os
+
+fn go(): void {
+    defer {
+        println("a defer ran")
+    }
+    print("before exit ")
+    println(1)
+    os.exit(3)
+}
+go()

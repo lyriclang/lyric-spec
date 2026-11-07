@@ -1,0 +1,20 @@
+//! run
+//! option: --allow=os
+//! args: x -y
+//! stdout:
+//! | 3 os_args_name_the_script_first
+//! | x -y
+//! | 2
+//! | 3
+//! since: 1.0.0
+
+// §12 rule 26: the script's name, then `args`; a new list each call
+import std.os
+import std.path { stem }
+
+let a = os.args()
+println(f"{a.length()} {stem(a[0])}")
+println(f"{a[1]} {a[2]}")
+println(args.length())
+a.push("mine")
+println(os.args().length())

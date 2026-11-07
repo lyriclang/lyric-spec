@@ -426,6 +426,20 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     instance its own. **`exit(code): never`** ends the run from any task or coroutine with that code: what
     the console holds is written, and no `defer`, no `using` and no other task runs; a native that some
     task waits for is not waited for. An instance's host sees it as an outcome.
+26. **`std.os`** (Lyric 5 12 §The system; S7h2), of the right `os`: **`os.args()`** is the script's name as the
+    command line gave it, then `args`, a new list each call. **`os.env(name)`**, `null` where it is not set;
+    **`os.envs()`**, a snapshot as a list of `(name, value)` pairs in the byte order of the names — Lyric 5 answers a
+    `Map` in an order it leaves open; a map here would cost every program that imports `std.os` the collections
+    at its start —;
+    **`os.setEnv(name, value)`** for the process and those it starts: a name that is empty or holds `=` or a NUL,
+    or a value that holds a NUL, panics. **`os.cwd()`**, absolute, and **`os.setCwd(path)`** say what they
+    cannot do as an `IoError` with the path. **`os.exit`** is the prelude's. **`os.platform()`** (`Linux`,
+    `MacOS`, `Windows`, `Other`) and **`os.arch()`** (`X86_64`, `Aarch64`, `Other`) have the target triples' words for
+    text. **`os.homeDir()`** is `HOME`, on Windows `USERPROFILE`, or `null` where it is not set or empty;
+    **`os.tempDir()`**, absolute; **`os.hostname()`**, **`os.cpuCount()`**, one at least, **`os.pid()`**. A
+    text the system holds that is no UTF-8 is taken with U+FFFD for its bad bytes. `cwd`, `setCwd` and
+    `hostname` are calls of the system as a file's (rule 22); `envs` and `setEnv` take from the budget by their
+    bytes.
 
 ## Deviations (skeleton, written with later milestones)
 

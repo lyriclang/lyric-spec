@@ -1,0 +1,12 @@
+//! check
+//! since: 1.0.0
+
+// §12 rule 26: what a function may say of them
+import std.os
+
+fn where(): string throws IoError = os.cwd()
+fn go(p: string): void throws IoError = os.setCwd(p)
+fn name(): string throws IoError = os.hostname()
+println(where())
+go(".")
+println(name())

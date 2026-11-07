@@ -1,0 +1,9 @@
+//! run
+//! option: --allow=os
+//! panic: LYS-RT0008
+//! since: 1.0.0
+
+// §12 rule 26: the program's mistake
+import std.os
+
+os.setEnv("A", "x\0y")

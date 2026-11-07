@@ -1,0 +1,17 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | true
+//! | none
+//! since: 1.0.0
+
+// §12 rule 26: `HOME`, on Windows `USERPROFILE`; empty is none
+import std.os
+
+os.setEnv("HOME", "/for/home")
+os.setEnv("USERPROFILE", "/for/profile")
+let want = if (os.platform() == os.Platform.Windows) "/for/profile" else "/for/home"
+println(os.homeDir() == want)
+os.setEnv("HOME", "")
+os.setEnv("USERPROFILE", "")
+println(os.homeDir() ?? "none")
