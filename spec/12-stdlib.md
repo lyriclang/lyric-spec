@@ -342,6 +342,24 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     console does not wait: a full pipe holds up the instance, for `print` and for these alike. A standard output
     nobody reads ends a printing program as Lyric 5's does, the error's lines written first; a `Writer` of
     `stdout()` throws instead.
+21. **Paths** (Lyric 5 12 §Paths; S7g3): `std.path`, of no right: a path is a string, there is no `Path` type, and
+    these take one apart and put one together lexically, as Go's `path/filepath` does; none asks the file system.
+    **`separator`** is `\` on Windows and `/` elsewhere. On Windows both separate, a path may start with a volume, a
+    drive `C:` or a share `\\server\share`, two names compare without regard to the case of ASCII letters, and what
+    these build they build with `\`.
+
+    **`normalize(p)`** is Go's `Clean`: separators run together, `.` dropped, a `..` takes the element before it, is
+    dropped above the root and kept in a relative path, no separator at the end but the root's, and `.` for nothing.
+    **`join(parts...)`** joins the parts that are not empty by the separator and normalizes, empty for no such part;
+    on Windows a drive alone joins without one, `C:a`. **`fileName(p)`** is the last element, `.` for nothing, the
+    separator for one of separators alone; **`parent(p)`** the rest, normalized; **`extension(p)`** the last element's
+    extension with its dot, from its last dot, of `.bashrc` all of it; **`stem(p)`** the last element without it;
+    **`withExtension(p, ext)`** the path with another, a dot added to `ext` where it has none, dropped for an empty one.
+
+    **`isAbsolute(p)`**: it starts with the root, on Windows a drive with the root, or a share. **`relative(base,
+    target): ?string`** is the path that names `target` from `base`, `.` for the same place, `null` where none exists:
+    one rooted and the other not, two volumes, a base that climbs above where the target is. **`components(p)`** lists
+    the root with its volume, then the elements, without the empty ones and `.`, keeping `..`; nothing is normalized.
 
 ## Deviations (skeleton, written with later milestones)
 

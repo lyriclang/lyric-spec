@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | a.md
+//! | a.md
+//! | a.md
+//! | a
+//! | a.tar.zip
+//! | a.b/c.d
+//! | .x
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: a dot added where there is none, the extension dropped for an empty one
+println(path.withExtension("a.txt", "md"))
+println(path.withExtension("a.txt", ".md"))
+println(path.withExtension("a", "md"))
+println(path.withExtension("a.txt", ""))
+println(path.withExtension("a.tar.gz", "zip"))
+println(path.withExtension("a.b/c", "d"))
+println(path.withExtension(".bashrc", "x"))

@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | none
+//! | none
+//! | none
+//! | none
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: one rooted and the other not, a base above where the target is
+println(path.relative("/a", "a") ?? "none")
+println(path.relative("a", "/a") ?? "none")
+println(path.relative("..", "a") ?? "none")
+println(path.relative("../..", "../a") ?? "none")

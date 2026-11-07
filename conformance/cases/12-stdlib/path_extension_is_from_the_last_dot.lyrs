@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | []
+//! | [.txt]
+//! | [.gz]
+//! | [.bashrc]
+//! | [.bashrc]
+//! | []
+//! | [.d]
+//! | [.]
+//! | []
+//! | [.]
+//! | [.]
+//! | []
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: with its dot, of the last element alone; `.bashrc` is all extension
+for (p in ["a", "a.txt", "a.tar.gz", ".bashrc", "a/.bashrc", "a.b/c", "a.b/c.d", "a.", "", ".", "..", "a/"]) {
+    println("[" + path.extension(p) + "]")
+}

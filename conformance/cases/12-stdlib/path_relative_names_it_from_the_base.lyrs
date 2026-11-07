@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | .
+//! | b
+//! | ..
+//! | ../c
+//! | ../../d/e
+//! | a
+//! | ..
+//! | b
+//! | ../../c
+//! | .
+//! | a
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the path from `base` to `target`; `.` for the same place
+fn show(p: string): string = p.replace("\\", "/")
+
+fn rel(b: string, t: string): string = show(path.relative(b, t) ?? "none")
+
+println(rel("a", "a"))
+println(rel("a", "a/b"))
+println(rel("a/b", "a"))
+println(rel("a/b", "a/c"))
+println(rel("a/b/c", "a/d/e"))
+println(rel(".", "a"))
+println(rel("a", "."))
+println(rel("/a", "/a/b"))
+println(rel("/a/b", "/c"))
+println(rel("a/./b", "a/b/../b"))
+println(rel("..", "../a"))
