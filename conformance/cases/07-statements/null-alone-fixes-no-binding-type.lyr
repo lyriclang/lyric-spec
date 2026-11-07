@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0010
+//! since: 5.0.0
+// 07 §4 rule 3: 'null' fixes no type on its own — 'let name: ?string = null;' is the form.
+fn main(): void {
+    let name = null;
+    let _ = name;
+}

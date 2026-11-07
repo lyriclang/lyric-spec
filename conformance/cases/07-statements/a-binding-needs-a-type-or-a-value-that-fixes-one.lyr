@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0010
+//! since: 5.0.0
+// 07 §4 rule 3: a binding with neither a type nor a value has no type to take.
+fn main(): void {
+    var count;
+    count = 1;
+    let _ = count;
+}

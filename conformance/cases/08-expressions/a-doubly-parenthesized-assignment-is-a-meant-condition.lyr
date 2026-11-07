@@ -1,0 +1,18 @@
+//! check
+//! clean: assignment-in-condition
+//! since: 5.0.0
+// 08 §3 rule 4: a second pair of parentheses says the assignment in the condition is meant.
+fn check(): bool {
+    return true;
+}
+
+fn main(): void {
+    var done = false;
+    if ((done = check())) {
+        done = false;
+    }
+    while ((done = check())) {
+        break;
+    }
+    let _ = done;
+}

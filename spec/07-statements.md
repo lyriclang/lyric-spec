@@ -1,13 +1,14 @@
 # Statements
 
 > **Partly written.** §1 to §5 were written with milestones **M5** to **M8a** of the Lyric 5 plan
-> and the catch-up block N (2026-10-07), spec-first: each rule lands here with its conformance case
+> and the catch-up block N (2026-10-07), §6 and the rules on bindings' types and on a missing
+> return type with **M17**, spec-first: each rule lands here with its conformance case
 > before or with its implementation. Source of the decisions:
 > [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md).
 
 ## Scope
 
-Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for throwing iterators), labels, `break`/`continue`/`return`.
+Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for throwing iterators), labels, `break`/`continue`/`return`, `defer`.
 
 ## 1. `loop` and the jumps
 
@@ -58,6 +59,9 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    expression — and, when it names the loop's label, in a loop nested in it, a `loop` worth
    `never` included. Only a lambda's body is out of reach (rule 4). A statement no path reaches
    is warned about (`LYR-SEM0073`); the statement behind a loop a jump leaves is reached.
+7. A function written **without a return type**, `fn tick() { … }`, returns nothing, as one
+   written `: void` does — the type is never inferred from the body (03 T8): its end and
+   `return;` leave it, and `return v;` in it is refused (`LYR-SEM0001`).
 
 ## 2. `for`
 
@@ -155,6 +159,11 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    likewise. A block further in may bind the name again; its binding hides the outer one until
    that block ends. **`_`** binds nothing ([09 §1](09-patterns.md) rule 1): `let _ = e;` keeps a
    value nobody reads, as often in a block as it is written.
+3. A binding takes its **type** from what it writes, `var n: int;`, or from its initializer,
+   `let n = 1;` (03 T8). One with neither, `var x;`, and one whose initializer fixes no type on
+   its own — `null`, `[]` — are refused (`LYR-SEM0010`): `let y: ?string = null;` is the form.
+   A binding with a type and no value is assigned before it is read ([§1](#1-loop-and-the-jumps)
+   rule 5).
 
 ## 5. `if`, `while` and `do`
 
@@ -167,3 +176,16 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    round, so its block runs at least once, and a `;` ends it. A `continue` in a `do` goes to the
    test ([§1](#1-loop-and-the-jumps)).
 
+## 6. `defer`
+
+1. **`defer` B** — a block, or an expression and its `;` — registers B in the scope it stands
+   in, when the statement is reached; one not reached registers nothing. B runs when the scope is
+   **left, on every way out**: its end, a `return`, a `break` or `continue` that leaves it, and an
+   error ([06 §5](06-errors.md#5-the-error-path)) — not a panic
+   ([06 §9](06-errors.md#9-panics-and-never)).
+2. A scope's `defer`s run **last registered first**, in one list with its `using`s
+   ([06 §7](06-errors.md#7-closing-using)), and an inner scope's before an outer one's.
+3. A loop's block is a scope **per round**: a `defer` in it runs at the end of each round, before
+   the next begins, and on the `break` or `continue` that ends the round.
+4. A `return`'s value is **evaluated before** the `defer`s run, as a value block's tail is
+   ([§3](#3-value-blocks) rule 4): `defer d(); return f();` calls `f`, then `d`.
