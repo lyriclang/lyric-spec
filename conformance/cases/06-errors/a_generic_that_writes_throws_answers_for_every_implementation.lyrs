@@ -1,0 +1,26 @@
+//! check
+//! error: LYS-SEM0034
+//! since: 1.0.0
+
+// §6 rule 5: a written `throws` on a generic holds for each type it may be called with
+struct E1 :: Error {
+    fn message(): string = "e1"
+}
+struct E2 :: Error {
+    fn message(): string = "e2"
+}
+interface Src {
+    fn read(): int
+}
+struct B :: Src {
+    fn read(): int throws E1 {
+        throw E1 { }
+    }
+}
+struct C :: Src {
+    fn read(): int throws E2 {
+        throw E2 { }
+    }
+}
+
+fn go<T :: [Src]>(t: T): int throws E1 = t.read()

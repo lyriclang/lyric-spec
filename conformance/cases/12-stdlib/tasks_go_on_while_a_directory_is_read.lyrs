@@ -1,0 +1,50 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | a
+//! | 1
+//! | cancelled, made
+//! since: 1.0.0
+
+// §12 rule 23: a directory's call runs on a task of the host: the other tasks go on, and a cancelled task finishes it
+import std.fs { createDir, readDir, writeText }
+import std.path { join }
+
+class Reached {
+    var text: string = ""
+}
+
+createDir("d")
+writeText(join("d", "a"), "")
+let ch = Channel<string>.new(1)
+let t = spawn((): int => {
+    var n = 0
+    for (e in readDir("d")) {
+        n += 1
+        ch.send(e.name)
+    }
+    return n
+})
+println(ch.recv() ?? "none")
+println(t.await())
+
+// cancelled with one under way: the call is not made a second time
+let opened = Reached { }
+let under = Reached { }
+let way = spawn((): string => {
+    opened.text = "yes"
+    createDir("made-once")
+    under.text = "made"
+    yieldNow()
+    return "returned"
+})
+while (opened.text == "") {
+    yieldNow()
+}
+way.cancel()
+try {
+    println(way.await())
+} catch (e: Cancelled) {
+    println(f"cancelled, {under.text}")
+}

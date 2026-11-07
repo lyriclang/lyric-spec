@@ -1,0 +1,63 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | made; again: already exists: dir-a (made)
+//! | a.txt:file:true:false
+//! | b.txt:file:true:false
+//! | sub:dir:true:false
+//! | not empty: system error
+//! | gone: false
+//! | not found: dir-a (removed)
+//! | not found: dir-a (removed)
+//! since: 1.0.0
+
+// §12 rule 23: a directory made, read and removed; one that is not empty stays, with the system's code
+import std.fs { createDir, exists, readDir, remove, removeDir, writeText }
+import std.path { join }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+let d = "dir-a"
+createDir(d)
+let again = said(() => {
+    createDir(d)
+    return "made twice"
+})
+println(f"made; again: {again}")
+writeText(join(d, "a.txt"), "a")
+writeText(join(d, "b.txt"), "b")
+createDir(join(d, "sub"))
+let seen: string[] = []
+for (e in readDir(d)) {
+    let what = if (e.isFile) "file" else if (e.isDir) "dir" else "other"
+    seen.push(f"{e.name}:{what}:{e.path == join(d, e.name)}:{e.isSymlink}")
+}
+seen.sortByKey((s) => s)
+for (s in seen) {
+    println(s)
+}
+let stays = said(() => {
+    removeDir(d)
+    return "removed"
+})
+println(f"not empty: {if (stays.startsWith("system error")) "system error" else stays}")
+remove(join(d, "a.txt"))
+remove(join(d, "b.txt"))
+removeDir(join(d, "sub"))
+removeDir(d)
+println(f"gone: {exists(d)}")
+println(said(() => {
+    removeDir(d)
+    return "removed"
+}))
+println(said(() => {
+    remove(d)
+    return "removed"
+}))

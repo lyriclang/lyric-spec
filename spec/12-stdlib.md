@@ -386,6 +386,29 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     **`FileLinesIter`** that is `Closeable`: it closes the file at its end and at its first error, a loop that leaves it
     early closes it, and so does `close()`. After its end or an error it gives no more; after `close()` a call throws
     `Closed`, and what it had read ahead is not given.
+23. **Directories** (Lyric 5 12 §Directories; S7g5): `std.fs` further, of the same right; each call of the
+    system's as a file's (rule 22): the other tasks go on, a cancel does not end it, and it declares
+    `IoError` alone. **`fs.metadata(path)`** says what a path names, through links: `size`, `isFile` and
+    `isDir` — neither for what is neither —, `readonly`, and `isSymlink`, whether the path itself is a link; a
+    link that leads nowhere is not found. `modified` comes with `std.time`. **`fs.exists(path)`** is
+    whether `metadata` answers. **`fs.createDir`**, **`fs.remove`**, **`fs.removeDir`** and
+    **`fs.rename(from, to)`** say what they cannot do with the path and `made`, `removed`, `renamed to <to>`;
+    a directory that is not empty is `Other` with the system's code. **`fs.readDir(path)`** gives
+    `DirEntry`s, `name`, `path` — the directory's joined with the name —, `isFile`, `isDir`, `isSymlink` of the
+    entry itself, and `metadata()` that follows it; its iterator lets the directory go at its end, at an
+    error, at a `for` that leaves early and at `close()`, after which it throws `Closed`. **`fs.canonicalize`**
+    is the path as the system names it, and must be there; **`fs.absolute`** asks nothing more of the file
+    system than the working directory. **`fs.createDirAll`** makes every directory above that is not there;
+    something else there is `NotDirectory`. **`fs.removeAll`** removes all that is in it: a link is removed,
+    never followed into, nothing there is nothing to do, and it removes what it can and throws the first
+    error. **`fs.copy(from, to)`** answers the bytes copied; from a directory `IsDirectory`, onto the same file by
+    `canonicalize` `InvalidInput`, before anything is written. **`fs.walk(path)`** gives what is under the path:
+    depth first, a directory before what is in it, each directory's entries in the byte order of their names,
+    links not followed, nothing held open; an error ends it. **`fs.tempDir()`** and **`fs.tempFile()`** make
+    a new place under the system's directory for temporary files and answer its path; neither is removed
+    by itself. These calls take from the budget as a file's do, by the bytes of their paths, before they
+    start; what is put together here takes for each call it makes. A `ReadDirIter` a script built itself
+    panics with `LYS-RT0007`.
 
 ## Deviations (skeleton, written with later milestones)
 

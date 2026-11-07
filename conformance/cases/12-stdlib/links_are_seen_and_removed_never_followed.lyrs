@@ -1,0 +1,72 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! symlink: to-file -> file
+//! symlink: to-target -> target
+//! symlink: nowhere -> no-such-thing
+//! symlink: itself -> itself
+//! stdout:
+//! | true false false 3 true
+//! | true true 3
+//! | true true
+//! | false
+//! | false
+//! | not found: nowhere (looked at)
+//! | 1
+//! | false kept
+//! | made where the link was
+//! | made where the loop was
+//! | false abc
+//! since: 1.0.0
+
+// §12 rule 23: an entry says it is a link, metadata follows it and says so; removeAll removes a link and what it leads to stays; one that leads nowhere is not found, and removeAll removes it
+import std.fs { createDir, exists, metadata, readDir, readText, removeAll, rename, walk, writeText }
+import std.path { join }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+createDir("target")
+writeText(join("target", "kept"), "kept")
+writeText("file", "abc")
+for (e in readDir(".")) {
+    if (e.name == "to-file") {
+        println(f"{e.isSymlink} {e.isFile} {e.isDir} {e.metadata().size} {e.metadata().isFile}")
+    }
+}
+let m = metadata("to-file")
+println(f"{m.isSymlink} {m.isFile} {m.size}")
+let d = metadata("to-target")
+println(f"{d.isSymlink} {d.isDir}")
+println(metadata("target").isSymlink)
+println(exists("nowhere"))
+println(said(() => f"{metadata("nowhere").size}"))
+var through = 0
+for (e in walk(".")) {
+    if (e.path.endsWith("kept")) {
+        through += 1
+    }
+}
+println(through)
+removeAll("to-target")
+println(f"{exists("to-target")} {readText(join("target", "kept"))}")
+removeAll("nowhere")
+println(said(() => {
+    createDir("nowhere")
+    return "made where the link was"
+}))
+removeAll("itself")
+println(said(() => {
+    createDir("itself")
+    return "made where the loop was"
+}))
+// a link in a tree is removed with it, what it leads to stays
+createDir("tree")
+rename("to-file", join("tree", "link"))
+removeAll("tree")
+println(f"{exists("tree")} {readText("file")}")

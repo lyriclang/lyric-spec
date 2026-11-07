@@ -1,0 +1,56 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | after a break: closed: d (read)
+//! | 3, then none
+//! | closed twice, then closed: d (read)
+//! | not found: none (opened to read)
+//! since: 1.0.0
+
+// §12 rule 23: the entries' iterator lets its directory go at a loop's break, at its end, and at close(); after close() a call throws Closed, after the end it gives no more
+import std.fs { ReadDirIter, createDir, readDir, writeText }
+import std.path { join }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+fn nameOf(it: ReadDirIter): string throws IoError {
+    if (let e = it.next()) {
+        return e.name
+    }
+    return "none"
+}
+
+createDir("d")
+for (k in 0..3) {
+    writeText(join("d", f"{k}.txt"), "")
+}
+let early = readDir("d")
+for (e in early) {
+    break
+}
+println(f"after a break: {said(() => nameOf(early))}")
+let whole = readDir("d")
+var n = 0
+loop {
+    if (whole.next() == null) {
+        break
+    }
+    n += 1
+}
+println(f"{n}, then {said(() => nameOf(whole))}")
+whole.close()
+let manual = readDir("d")
+manual.close()
+manual.close()
+println(f"closed twice, then {said(() => nameOf(manual))}")
+println(said(() => {
+    readDir("none")
+    return "read"
+}))

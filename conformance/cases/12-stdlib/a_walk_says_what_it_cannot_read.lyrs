@@ -1,0 +1,45 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | not found: none (opened to read)
+//! | f
+//! | true
+//! | true
+//! | sub
+//! | true
+//! | true
+//! since: 1.0.0
+
+// §12 rule 23: a walk that cannot read its path throws at once, and its end gives no more
+import std.fs { createDir, removeDir, walk, writeText }
+import std.path { join }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+println(said(() => {
+    walk("none")
+    return "walked"
+}))
+createDir("w")
+writeText(join("w", "f"), "")
+let it = walk("w")
+println(it.next()?.name ?? "none")
+println(it.next() == null)
+println(it.next() == null)
+// a directory gone before the walk enters it: the error ends the walk
+createDir("u")
+createDir(join("u", "sub"))
+writeText(join("u", "z"), "")
+let broken = walk("u")
+let sub = broken.next()
+println(sub?.name ?? "none")
+removeDir(join("u", "sub"))
+println(said(() => broken.next()?.name ?? "none").startsWith("not found"))
+println(broken.next() == null)

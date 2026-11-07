@@ -1,0 +1,48 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 100000 100000
+//! | 5 small
+//! | invalid input, small
+//! | is a directory, made: false
+//! | not found
+//! since: 1.0.0
+
+// §12 rule 23: copy gives the bytes and their count; over a file it cuts; onto itself and from a directory it is refused before anything is written
+import std.fs { copy, exists, readBytes, readText, removeAll, tempDir, writeBytes, writeText }
+import std.path { join, separator }
+
+fn kind(f: fn() -> void): string {
+    try {
+        f()
+        return "copied"
+    } catch (e: IoError) {
+        let m = e.message()
+        if (let at = ":".nextIn(m, 0)) {
+            return m[0..at]
+        }
+        return m
+    }
+}
+
+let t = tempDir()
+writeBytes(join(t, "big.bin"), Bytes.zeroed(100000))
+let n = copy(join(t, "big.bin"), join(t, "copy.bin"))
+println(f"{n} {readBytes(join(t, "copy.bin")).length()}")
+writeText(join(t, "small.txt"), "small")
+let m = copy(join(t, "small.txt"), join(t, "copy.bin"))
+println(f"{m} {readText(join(t, "copy.bin"))}")
+let s = separator
+let itself = kind(() => {
+    copy(join(t, "small.txt"), f"{t}{s}.{s}small.txt")
+})
+println(f"{itself}, {readText(join(t, "small.txt"))}")
+let dir = kind(() => {
+    copy(t, join(t, "d"))
+})
+println(f"{dir}, made: {exists(join(t, "d"))}")
+println(kind(() => {
+    copy(join(t, "none"), join(t, "e"))
+}))
+removeAll(t)

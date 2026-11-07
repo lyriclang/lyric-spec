@@ -1,0 +1,11 @@
+//! run
+//! option: --allow=file
+//! exit: 101
+//! stderr-has: LYS-RT0007
+//! since: 1.0.0
+
+// §12 rule 23: a `ReadDirIter` a script built holds no directory
+import std.fs { ReadDirIter }
+
+let it = ReadDirIter { handle = "x", dir = "d" }
+it.next()

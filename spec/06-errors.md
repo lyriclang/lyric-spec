@@ -54,7 +54,10 @@ written `throws` held against them, the mark `try`, the expression forms `try?`,
    is closed by a fixpoint. A call through a function value may throw anything, an `Error`:
    a function type carries no set ([02 K2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/02-leitbild.md)).
    A call through an interface member throws what the member writes in its `throws` (rule 6),
-   or else what its implementations in the script throw. A clause's `throw e` of its binding
+   or else what its implementations in the script throw; a member of a type parameter's
+   constraint, on a value of that parameter, what the call's type implements it to throw, so
+   `s.startsWith("a")` throws what `string`'s `Pattern` does: nothing. Where a clause of the
+   generic itself asks, it is what any implementation throws. A clause's `throw e` of its binding
    throws what reached the clause — the clause's type, for the clause without a type what the
    body throws past the clauses above it (the precise rethrow). A generic's set is in its
    call's terms: `fail<T :: [Error]>(e: T) throws T` called with an `A` throws `A`.

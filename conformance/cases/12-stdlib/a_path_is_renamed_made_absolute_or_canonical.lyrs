@@ -1,0 +1,40 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | renamed: false new
+//! | not found: gone.txt (renamed to x.txt)
+//! | canonical: true true
+//! | not found: not-there (resolved)
+//! | absolute: true true true
+//! since: 1.0.0
+
+// §12 rule 23: a rename replaces a file; canonicalize resolves `..` and needs the path to be there; absolute asks nothing of the file system
+import std.fs { absolute, canonicalize, createDir, exists, readText, rename, writeText }
+import std.path { isAbsolute, join, separator }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+writeText("from.txt", "new")
+writeText("to.txt", "old")
+rename("from.txt", "to.txt")
+println(f"renamed: {exists("from.txt")} {readText("to.txt")}")
+println(said(() => {
+    rename("gone.txt", "x.txt")
+    return "renamed"
+}))
+let here = canonicalize(".")
+createDir("c")
+let s = separator
+let c = canonicalize(f"c{s}..{s}c")
+println(f"canonical: {isAbsolute(here)} {c == join(here, "c")}")
+println(said(() => canonicalize("not-there")))
+let cwd = absolute(".")
+let a = absolute(f"x{s}..{s}not-there")
+println(f"absolute: {isAbsolute(cwd)} {a == join(cwd, "not-there")} {!exists(a)}")

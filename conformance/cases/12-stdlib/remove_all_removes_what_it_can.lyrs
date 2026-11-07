@@ -1,0 +1,22 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | false
+//! | false
+//! since: 1.0.0
+
+// §12 rule 23: removeAll takes a file as well as a directory, and what is in it to any depth
+import std.fs { createDirAll, exists, removeAll, writeText }
+import std.path { join }
+
+writeText("one", "")
+removeAll("one")
+println(exists("one"))
+createDirAll(join("top", "a", "b"))
+createDirAll(join("top", "c"))
+writeText(join("top", "a", "b", "f"), "")
+writeText(join("top", "a", "g"), "")
+writeText(join("top", "h"), "")
+removeAll("top")
+println(exists("top"))
