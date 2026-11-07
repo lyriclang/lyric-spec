@@ -208,7 +208,7 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    which are static (the sweep after M10, X4); `conformances<T>()` and `hasConformance<T, I>()`;
    `typeName<T>()`; `isStruct`, `isClass`, `isEnum`, `isInterface<T>()`. A `Type` holds its name
    and its `kind`, a `TypeKind`: `Primitive` (the scalars, `string`), `Struct`, `Class`, `Enum`,
-   `Interface`, `Opaque`, `Optional`, `Array`, `InlineArray`, `Slice` (a view), `Tuple`,
+   `Interface`, `Optional`, `Array`, `InlineArray`, `Slice` (a view), `Tuple`,
    `Function`, `Parameter` (a type parameter), `Other` (W9).
    Each answer is a constant of the type at the instance it is asked at — in a generic function or a
    default, of each instance (R3). Nothing is reflected at run time (R6): a program reads a type
