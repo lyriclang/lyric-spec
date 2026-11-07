@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | bdac acbd ["a", "ccc", "bb", "dd"] true
+//! since: 1.0.0
+// §3 rule 16 (Lyric 5 12 Arrays): `sort()` of a TotalOrder element, `sortBy(cmp)` and
+// `sortByKey(key)` keep equal elements in their order.
+struct P :: [TotalOrder] {
+    k: int,
+    tag: string,
+}
+let ps = [P { k = 2, tag = "a" }, P { k = 1, tag = "b" }, P { k = 2, tag = "c" }, P { k = 1, tag = "d" }]
+ps.sort()
+let qs = [P { k = 2, tag = "a" }, P { k = 1, tag = "b" }, P { k = 2, tag = "c" }, P { k = 1, tag = "d" }]
+qs.sortBy((a, b) => b.k.totalCompare(a.k))
+let ws = ["ccc", "a", "bb", "dd"]
+ws.sortByKey((w) => if (w == "a") 0 else 1)
+var big: int[] = []
+var seed = 7
+for (i in 0..300) {
+    seed = (seed * 1103515245 + 12345) % 2147483648
+    big.push(seed % 50)
+}
+let copy = big[..]
+copy.sortBy((a, b) => a.totalCompare(b))
+big.sort()
+println(f"{ps.iter().map((p) => p.tag).join("")} {qs.iter().map((p) => p.tag).join("")} {ws} {big == copy}")

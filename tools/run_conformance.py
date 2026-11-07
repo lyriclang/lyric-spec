@@ -49,6 +49,16 @@ def parse_header(path):
             spec["mode"] = "check"
         elif body.startswith("exit:"):
             spec["exit"] = int(body[5:].strip())
+        elif body.startswith("stdin-hex:"):
+            spec["stdin_hex"] = body[10:].strip()
+        elif body == "merge-streams":
+            spec["merged"] = True
+        elif body == "stdout-gone":
+            spec["gone"] = True
+        elif body == "stdin-refuses":
+            spec["refuses"] = True
+        elif body == "in-temp-dir":
+            spec["temp"] = True
         elif body.startswith("panic:"):
             spec["panic"] = body[6:].strip()
         elif body in ("stdout:", "stderr:", "stdin:"):
@@ -177,9 +187,16 @@ def prepare_package(package, work):
 CASE_TIMEOUT = 60
 
 
-def run_case(path, spec, exe, package=None, env=None):
+def run_case(path, spec, exe, package=None, env=None, cwd=None):
     def fail(reason):
         return (False, reason)
+
+    # `in-temp-dir`: the check and the run in a new folder, gone after: the files a case makes (S7g4)
+    if spec.get("temp"):
+        with tempfile.TemporaryDirectory() as work:
+            return run_case(pathlib.Path(path).resolve(), dict(spec, temp=False),
+                            pathlib.Path(exe).resolve(), package, env, work)
+    cwd = package if package is not None else cwd
 
     # a package case is built from its folder, naming no file, as a user builds a package
     # `env:` lines add to the environment the case runs in
@@ -188,19 +205,46 @@ def run_case(path, spec, exe, package=None, env=None):
 
     # `stdin:` lines are the run's standard input, each ended by a line end (S6e); without them
     # the input is empty
-    given = "".join(line + "\n" for line in spec.get("stdin") or [])
+    given = "".join(line + "\n" for line in spec.get("stdin") or []).encode("utf-8")
+    # `stdin-hex:` is an input no text can say, bytes that are no UTF-8 (S7g2)
+    if spec.get("stdin_hex"):
+        given = bytes.fromhex(spec["stdin_hex"])
+
+    def text_of(raw):
+        return (raw or b"").decode("utf-8", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
 
     def command(verb):
         args = [str(exe), verb, *spec["options"]] + ([] if package is not None else [str(path)])
         try:
-            return subprocess.run(args, capture_output=True, text=True, cwd=package, env=env,
-                                  timeout=CASE_TIMEOUT, input=given)
+            # UTF-8 both ways: a text mode without it decodes with the locale's code page on
+            # Windows, which turned a non-ASCII line of the output into another (S7e1).
+            # `merge-streams`: the run's two streams through one pipe, to see their order (S7g2)
+            merged = spec.get("merged") and verb == "run"
+            # `stdout-gone`: a pipe nobody reads (S7g2)
+            sink = subprocess.PIPE
+            if spec.get("gone") and verb == "run":
+                reader, sink = os.pipe()
+                os.close(reader)
+            # `stdin-refuses`: an input open for writing only, so that every read of it fails (S7g2)
+            if spec.get("refuses") and verb == "run":
+                with open(os.devnull, "wb") as refusing:
+                    done = subprocess.run(args, stdout=sink, stderr=subprocess.PIPE, cwd=cwd,
+                                          env=env, timeout=CASE_TIMEOUT, stdin=refusing)
+            else:
+                done = subprocess.run(args, stdout=sink,
+                                      stderr=subprocess.STDOUT if merged else subprocess.PIPE,
+                                      cwd=cwd, env=env, timeout=CASE_TIMEOUT, input=given)
+            if sink != subprocess.PIPE:
+                os.close(sink)
+            return subprocess.CompletedProcess(args, done.returncode, text_of(done.stdout),
+                                               text_of(done.stderr))
         except subprocess.TimeoutExpired:
             return None
 
     # `update`: the package's git dependencies read anew before the build
     if spec.get("update") and package is not None:
-        updated = subprocess.run([str(exe), "update"], capture_output=True, text=True, cwd=package, env=env)
+        updated = subprocess.run([str(exe), "update"], capture_output=True, text=True,
+                                 encoding="utf-8", errors="replace", cwd=package, env=env)
         if updated.returncode != 0:
             return fail(f"update exited {updated.returncode}:\n{updated.stderr}")
 
@@ -220,6 +264,10 @@ def run_case(path, spec, exe, package=None, env=None):
         for code in spec["errors"] + spec["warnings"]:
             if code not in diagnostics:
                 return fail(f"expected {code}, diagnostics were:\n{diagnostics}")
+        # `stderr-has:` of a rejection reads the diagnostics (ignored before S7a)
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     if checked.returncode != 0:
@@ -230,13 +278,17 @@ def run_case(path, spec, exe, package=None, env=None):
     if spec["mode"] == "check":
         if not spec["warnings"] and diagnostics.strip():
             return fail(f"expected silence, got:\n{diagnostics}")
+        for text in spec.get("stderr_has", []):
+            if text not in diagnostics:
+                return fail(f"expected '{text}' among the diagnostics:\n{diagnostics}")
         return (True, "")
 
     executed = command("run")
     if executed is None:
         return fail(f"run timed out after {CASE_TIMEOUT} s")
     expected_exit = 101 if spec["panic"] else spec["exit"]
-    if executed.returncode != expected_exit:
+    # how a program ends whose output nobody reads is the system's (12 rule 20)
+    if executed.returncode != expected_exit and not spec.get("gone"):
         return fail(f"exit {executed.returncode}, expected {expected_exit};"
                     f" stderr:\n{executed.stderr}")
     for text in spec.get("stderr_has", []):

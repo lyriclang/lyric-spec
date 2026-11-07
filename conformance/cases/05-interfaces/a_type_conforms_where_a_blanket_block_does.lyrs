@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-SEM0133
+//! warning: LYS-SEM0168
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 8): one conformance per type and interface — a type that is an
+// `Iterator` gets `Iterable` from the prelude's blanket block, and may not conform to it itself.
+class Both :: [Iterator, Iterable] {
+    type Item = int
+    type Iter = Both
+    fn next(): ?int = null
+    fn iter(): Both = this
+}

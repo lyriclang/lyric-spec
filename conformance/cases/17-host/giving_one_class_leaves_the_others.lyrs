@@ -1,0 +1,11 @@
+//! run
+//! option: --allow=os
+//! exit: 2
+//! stderr-has: error[LYS-CAP0001]: the right 'file' was not given: import std.fs
+//! since: 1.0.0
+// §17 rule 1: the table's rows; giving one class leaves the others missing.
+import std.fs { exists }
+import std.os { env }
+
+println(exists("."))
+println(env("HOME") ?? "")

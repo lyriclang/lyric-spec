@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | a�b
+//! | �z
+//! | �
+//! | ��
+//! | ok
+// §12 rule 17: each maximal part not well-formed one U+FFFD, the Unicode Standard's practice
+println(string.fromUtf8Lossy(b"\x61\xff\x62"))
+println(string.fromUtf8Lossy(b"\xe2\x82\x7a"))
+println(string.fromUtf8Lossy(b"\xf0\x9f\x98"))
+println(string.fromUtf8Lossy(b"\xc0\x80"))
+println(string.fromUtf8Lossy(b"\x6f\x6b"))

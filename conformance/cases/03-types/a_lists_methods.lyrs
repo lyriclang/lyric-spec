@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | false true
+//! | 3 -1 5 9
+//! | [1, 5, 3, 8, 9, 7]
+//! | 5 [1, 3, 8, 9, 7]
+//! | 2 [1, 3, 7]
+//! | [7, 3, 1]
+//! | [1, 3, 7] [7, 3, 1]
+//! | [1, 3, 7, 1, 3, 7]
+//! | [1, 3] [0, 0, 0] []
+//! since: 1.0.0
+// §3 rule 16: the list's methods, after Lyric 5's `List` and slices.
+let xs = [5, 3, 8, 9]
+let none: int[] = []
+println(f"{xs.isEmpty()} {none.isEmpty()}")
+println(f"{xs.get(1) ?? -1} {xs.get(4) ?? -1} {xs.first() ?? -1} {xs.last() ?? -1}")
+xs.insert(0, 1)
+xs.insert(5, 7)
+println(xs)
+let removed = xs.removeAt(1)
+println(f"{removed} {xs}")
+let gone = xs.removeWhere { it > 7 }
+println(f"{gone} {xs}")
+xs.swap(0, 2)
+println(xs)
+xs.reverse()
+println(f"{xs} {xs.reversed()}")
+xs.pushAll(xs)
+println(xs)
+xs.truncate(2)
+xs.truncate(9)
+let zeros = [4, 5, 6]
+zeros.fill(0)
+let cleared = [1, 2]
+cleared.clear()
+println(f"{xs} {zeros} {cleared}")

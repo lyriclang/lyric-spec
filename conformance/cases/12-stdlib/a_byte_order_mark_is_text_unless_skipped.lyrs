@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 4
+//! | a
+//! | ab
+//! | null
+//! | the bytes are no UTF-8 from byte 4 on
+// §12 rule 19: dropped from the front on request, and counted.
+import std.io { ByteReader, TextReader }
+let mark = b"\xEF\xBB\xBFa\xFF"
+let kept = TextReader.new(ByteReader.new(b"\xEF\xBB\xBFa"))
+println((kept.readToEnd()).length())
+let dropped = TextReader.new(ByteReader.new(b"\xEF\xBB\xBFa"), skipBom: true)
+println(dropped.readToEnd())
+println(TextReader.new(ByteReader.new(b"ab"), skipBom: true).readToEnd())
+println(TextReader.new(ByteReader.new(b"\xEF\xBB\xBF"), skipBom: true).readLine())
+try {
+    println(TextReader.new(ByteReader.new(mark), skipBom: true).readToEnd())
+} catch (e: IoError) {
+    println(e.cause()?.message() ?? "none")
+}

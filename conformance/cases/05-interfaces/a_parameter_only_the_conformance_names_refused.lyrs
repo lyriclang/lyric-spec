@@ -1,0 +1,19 @@
+//! check
+//! error: LYS-SEM0012
+//! stderr-has: 'S' has no method 'cast'
+//! since: 1.0.0
+// §5 rule 23: the block's target has its constraint, here `Display`, which `S` does not meet.
+interface Cast<T> {
+    fn cast(): T
+}
+interface Make<T> {
+    static fn make(v: T): Self
+}
+extend<T :: [Display], U :: [Make<T>]> T :: [Cast<U>] {
+    fn cast(): U = U.make(this)
+}
+struct S { }
+struct D :: [Make<S>] {
+    static fn make(v: S): D = D { }
+}
+let d: D = S { }.cast()

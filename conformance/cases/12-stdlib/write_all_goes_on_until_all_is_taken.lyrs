@@ -1,0 +1,40 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | [97, 98, 49, 50, 51, 52, 53]
+//! | 9
+//! | true
+//! | system error 0 (the writer took none of 3 bytes)
+//! | 1
+// §12 rule 19: a writer may take fewer; one that takes nothing is an error, not asked forever.
+import std.io { Writer }
+class Part :: [Writer] {
+    got: Bytes = Bytes.new()
+    var at: int = 2
+    var flushes: int = 0
+    fn write(from: Bytes): int {
+        let n = if (from.length() < this.at) from.length() else this.at
+        this.got.pushAll(from[0..n])
+        return n
+    }
+    fn flush() {
+        this.flushes += 1
+    }
+}
+let w = Part { }
+println(w.write(b"abcde"))
+w.writeAll(b"12345")
+println(w.got)
+w.writeString("é")
+println(w.got.length())
+let none = Part { at = 0 }
+try {
+    none.writeAll(b"abc")
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.Other { code = 0 })
+    println(e.message())
+}
+none.writeAll(b"")
+none.flush()
+println(none.flushes)

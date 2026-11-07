@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | none
+// §12 rule 20: a clause that names the two.
+fn f(): ?string throws [IoError, Cancelled] {
+    return readLine()
+}
+println(f() ?? "none")

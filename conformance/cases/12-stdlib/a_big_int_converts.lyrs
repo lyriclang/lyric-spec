@@ -1,0 +1,54 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | -9223372036854775808
+//! | 9223372036854775807
+//! | null
+//! | null
+//! | -9223372036854775808
+//! | 9223372036854775807
+//! | 9223372036854775808
+//! | -9223372036854775809
+//! | 0.0
+//! | 1e+30
+//! | -1e+30
+//! | 9.44473296573929e+21
+//! | 9.444732965739293e+21
+//! | 9.903520314283047e+27
+//! | inf
+//! | -inf
+//! | inf
+//! | 1.7976931348623157e+308
+//! | 7
+//! | 5
+//! | 5
+// §12 rule 16: from an `int` through `From` and the literal protocol, to an `int` where it fits; to the
+// nearest float, a tie to the even one even where the bit deciding it lies far below; past a float's
+// range an infinity.
+import std.math { BigInt }
+let lo = BigInt.from(int.min)
+let hi = BigInt.from(int.max)
+println(lo)
+println(hi)
+println((hi + BigInt.one).toInt())
+println((lo - BigInt.one).toInt())
+println(lo.toInt())
+println(hi.toInt())
+println(hi + BigInt.one)
+println(lo - BigInt.one)
+println(BigInt.zero.toFloat())
+println(BigInt.parse("1000000000000000000000000000000").toFloat())
+println(BigInt.parse("-1000000000000000000000000000000").toFloat())
+println(BigInt.parse("9444732965739291475968").toFloat())
+println(BigInt.parse("9444732965739291475969").toFloat())
+println(BigInt.parse("9903520314283045497727877120").toFloat())
+println((BigInt.one << 1024).toFloat())
+println((-(BigInt.one << 1024)).toFloat())
+println(((BigInt.one << 1024) - (BigInt.one << 970)).toFloat())
+println(((BigInt.one << 1024) - (BigInt.one << 971)).toFloat())
+let c: BigInt = 7.into()
+println(c)
+let d: BigInt = 5
+println(d)
+fn id(v: BigInt): BigInt = v
+println(id(5))

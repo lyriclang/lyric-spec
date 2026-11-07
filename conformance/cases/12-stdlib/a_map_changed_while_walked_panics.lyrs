@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0016
+//! stdout:
+//! | a
+//! since: 1.0.0
+// §12 rule 5 (Lyric 5 12 §Collections): a key put in or taken out while the map is walked makes
+// the next pull panic.
+let m = ["a": 1, "b": 2]
+for ((k, v) in m) {
+    println(k)
+    m["c"] = 3
+}

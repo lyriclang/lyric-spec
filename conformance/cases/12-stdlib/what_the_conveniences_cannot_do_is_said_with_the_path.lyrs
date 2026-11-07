@@ -1,0 +1,55 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | invalid data: bad.txt (the bytes are no UTF-8)
+//! | true
+//! | a, then invalid data: bad.txt (the bytes are no UTF-8), then none
+//! | not found: none.txt (opened to read)
+//! | not found: none.txt (opened to read)
+//! | not found: none/x.txt (opened to write)
+//! | not found: none/x.txt (opened to write)
+//! | not found: none/x.txt (opened to write)
+//! since: 1.0.0
+import std.fs
+
+// §12 rule 22: what the conveniences cannot do is an `IoError` with the path, the decoder's `InvalidData` too; the lines give no more after their first error
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+fs.writeBytes("bad.txt", b"a\n\xff\n")
+println(said(() => fs.readText("bad.txt")))
+try {
+    fs.readText("bad.txt")
+} catch (e: IoError) {
+    if (let cause = e.inner) {
+        println(cause is Utf8Error)
+    }
+}
+let it = fs.lines("bad.txt")
+let a = it.next() ?? ""
+let error = said(() => it.next() ?? "none")
+println(f"{a}, then {error}, then {said(() => it.next() ?? "none")}")
+it.close()
+println(said(() => f"{fs.readBytes("none.txt").length()}"))
+println(said(() => {
+    using let ls = fs.lines("none.txt")
+    return "opened"
+}))
+println(said(() => {
+    fs.appendText("none/x.txt", "x")
+    return "appended"
+}))
+println(said(() => {
+    fs.writeText("none/x.txt", "x")
+    return "written"
+}))
+println(said(() => {
+    fs.writeBytes("none/x.txt", b"x")
+    return "written"
+}))

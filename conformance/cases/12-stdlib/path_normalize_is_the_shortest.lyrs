@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | .
+//! | .
+//! | ..
+//! | a
+//! | a
+//! | a/b
+//! | a/b
+//! | a
+//! | a
+//! | b
+//! | .
+//! | .
+//! | ..
+//! | ../a
+//! | ../../a
+//! | /
+//! | /a
+//! | /
+//! | /
+//! | /a
+//! | a/c
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: separators run together, `.` dropped, `..` takes the element before it
+fn show(p: string): string = p.replace("\\", "/")
+
+for (p in ["", ".", "..", "a", "a/", "a//b", "a/./b", "./a", "a/.", "a/../b", "a/..", "a/b/../..", "a/b/../../..", "../a", "../../a", "/", "//a//", "/a/..", "/..", "/../a", "a/b/./../c/"]) {
+    println(show(path.normalize(p)))
+}

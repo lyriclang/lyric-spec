@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-PAR0033
+//! since: 1.0.0
+// §9 rule 5: two `..` could not place the elements between them.
+let xs = [1]
+match (xs) {
+    [a, .., b, ..] => println(a + b),
+    _ => println(0),
+}

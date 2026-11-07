@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0050
+//! stderr-has: no arm takes [_, _, ..]
+//! since: 1.0.0
+// §9 rule 5: `[]` and `[a]` leave every list of two elements and more out.
+fn f(xs: int[]): int = match (xs) {
+    [] => 0,
+    [a] => a,
+}
+println(f([1]))

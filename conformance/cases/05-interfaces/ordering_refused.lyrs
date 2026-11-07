@@ -1,0 +1,16 @@
+//! check
+//! error: LYS-SEM0020
+//! error: LYS-SEM0003
+//! error: LYS-SEM0126
+//! since: 1.0.0
+// §5 rule 16: a synthesized order asks each part to be one; `<` asks `Ordered`, over a type
+// parameter too; `Ordered` is a constraint only.
+struct F :: Ordered {
+    on: bool,
+}
+struct G {
+    n: int,
+}
+let g = G { n = 1 } < G { n = 2 }
+fn less<T>(a: T, b: T): bool = a < b
+let o: Ordered = 1

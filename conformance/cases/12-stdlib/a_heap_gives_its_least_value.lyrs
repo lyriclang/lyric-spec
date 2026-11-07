@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | 1 5
+//! | [0, 1, 2, 3, 4, 5] true null
+//! | "a" ["b", "c"]
+//! | -1.0 0.0 [2.5]
+//! | 2 1
+//! since: 1.0.0
+// §12 rule 7 (Lyric 5 12 §Collections): a heap of a TotalOrder value gives its least value
+// first — `peek()`, `pop()`, `null` where it is empty; a list literal and `collect()` build one;
+// its Debug form is its values as it holds them; a clone is a heap of its own.
+let h: Heap<int> = [5, 1, 4, 2, 3]
+println(f"{h.peek()} {h.length()}")
+h.push(0)
+var out: int[] = []
+while (let x = h.pop()) {
+    out.push(x)
+}
+println(f"{out} {h.isEmpty()} {h.pop()}")
+let hs: Heap<string> = ["b", "c", "a"].iter().collect()
+println(f"{hs.pop()} {hs}")
+let hf = Heap<float>.of([2.5, -1.0, 0.0])
+println(f"{hf.pop()} {hf.pop()} {hf}")
+let c = Heap<int>.of([2, 1])
+let k = c.clone()
+k.pop()
+println(f"{c.length()} {k.length()}")

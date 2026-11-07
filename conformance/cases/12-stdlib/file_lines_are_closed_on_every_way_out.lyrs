@@ -1,0 +1,45 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | [a][b][][c]
+//! | a, then closed: a.txt (read)
+//! | 4, then none
+//! | a, then closed: a.txt (read)
+//! since: 1.0.0
+import std.fs
+
+// §12 rule 22: a file's lines without their ends; a loop that leaves early closes the file, and what was read ahead is not given; at its end it gives no more; `close()` by hand
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+fs.writeText("a.txt", "a\nb\r\n\nc")
+var shown = ""
+for (line in fs.lines("a.txt")) {
+    shown = f"{shown}[{line}]"
+}
+println(shown)
+let early = fs.lines("a.txt")
+var first = ""
+for (line in early) {
+    first = line
+    break
+}
+println(f"{first}, then {said(() => early.next() ?? "none")}")
+let whole = fs.lines("a.txt")
+var n = 0
+while (whole.next() != null) {
+    n += 1
+}
+println(f"{n}, then {said(() => whole.next() ?? "none")}")
+whole.close()
+let manual = fs.lines("a.txt")
+let a = manual.next() ?? ""
+manual.close()
+manual.close()
+println(f"{a}, then {said(() => manual.next() ?? "none")}")

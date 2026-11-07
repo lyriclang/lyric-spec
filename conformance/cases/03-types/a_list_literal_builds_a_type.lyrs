@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | Bag { total = 6 }
+//! | 9
+//! | Bag { total = 0 }
+//! | Names { all = ["x", "y"] }
+//! since: 1.0.0
+// §3 rule 14: a list literal where the place's type is a `FromArrayLiteral<T>` builds it — at a
+// binding, an argument, empty, through a type parameter.
+struct Bag :: FromArrayLiteral<int> {
+    total: int
+    static fn fromArrayLiteral(items: int[]): Bag {
+        var t = 0
+        for (x in items) {
+            t += x
+        }
+        return Bag { total = t }
+    }
+}
+let b: Bag = [1, 2, 3]
+println(b)
+fn sum(b: Bag): int = b.total
+println(sum([4, 5]))
+let e: Bag = []
+println(e)
+struct Names :: FromArrayLiteral<string> {
+    all: string[]
+    static fn fromArrayLiteral(items: string[]): Names = Names { all = items }
+}
+fn make<B :: [FromArrayLiteral<string>]>(): B = ["x", "y"]
+println(make<Names>())

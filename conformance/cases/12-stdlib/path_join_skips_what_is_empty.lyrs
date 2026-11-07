@@ -1,0 +1,28 @@
+//! run
+//! stdout:
+//! | true
+//! | true
+//! | a/b
+//! | a/b
+//! | a
+//! | a/b
+//! | b
+//! | /a
+//! | ..
+//! | a/b/c/d
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the parts that are not empty, normalized; nothing for none
+fn show(p: string): string = p.replace("\\", "/")
+
+println(path.join() == "")
+println(path.join("", "") == "")
+println(show(path.join("a", "b")))
+println(show(path.join("a", "", "b")))
+println(show(path.join("", "a")))
+println(show(path.join("a/", "/b/")))
+println(show(path.join("a", "..", "b")))
+println(show(path.join("/", "a")))
+println(show(path.join("a", "..", "..")))
+println(show(path.join("a", "b", "c", "d")))

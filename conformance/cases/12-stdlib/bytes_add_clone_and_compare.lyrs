@@ -1,0 +1,46 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [97, 98, 99]
+//! | [97, 98]
+//! | [97, 98, 99]
+//! | [0, 98, 99]
+//! | true
+//! | false
+//! | true
+//! | true
+//! | true
+//! | true
+//! | true
+//! | true
+//! | Ordering.Equal
+//! | Ordering.Greater
+//! | 3
+//! | 2
+//! | null
+// §12 rule 17: bytes compare by their elements, then their lengths; two equal values hash alike
+let a = b"ab"
+let c = a + b"c"
+println(c)
+println(a)
+let d = c.clone()
+d[0] = 0
+println(c)
+println(d)
+println(b"ab" == b"ab")
+println(b"ab" == b"ac")
+println(b"ab" < b"ac")
+println(b"ab" < b"abc")
+println(b"b" > b"abc")
+println(b"\xff" > b"\x00")
+println(b"" < b"\x00")
+println(b"ab" <= b"ab")
+println(b"ab".compare(b"ab"))
+println(b"ab".totalCompare(b"a"))
+let m: Map<Bytes, int> = [:]
+m.insert(b"k", 1)
+m.insert(b"l", 2)
+m.insert(b"k", 3)
+println(m.get(b"k"))
+println(m.length())
+println(m.get(b"none"))

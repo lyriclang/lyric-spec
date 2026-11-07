@@ -1,0 +1,13 @@
+//! check
+//! error: LYS-SEM0117
+//! error: LYS-SEM0060
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2 rules 3, 5): `_` stands among type arguments alone; one nothing fills is
+// refused.
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+let p: Pair<_, int> = Pair { first = 1, second = 2 }
+fn none<T>(): ?T = null
+let n = none<_>()

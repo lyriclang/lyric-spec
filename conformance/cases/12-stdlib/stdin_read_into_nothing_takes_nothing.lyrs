@@ -1,0 +1,12 @@
+//! run
+//! stdin:
+//! | ab
+//! stdout:
+//! | 0
+//! | ab
+//! since: 1.0.0
+import std.io { stdin }
+
+// §12 rule 20: no room, no bytes, and it is not the end of the input
+println(stdin().read(Bytes.new()))
+println(readLine() ?? "none")

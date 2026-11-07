@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | Range { start = 1, end = 4 } 1 4 true
+//! | true false true false true
+//! | true true
+//! since: 1.0.0
+// §7 rule 8 (Lyric 5 12 Iteration): `a..b` and `a..=b` are values of the prelude's `Range<T>` and
+// `RangeInclusive<T>`, `T` the type the position names, else the first bound's; a range of an
+// ordered type contains its values.
+let r = 1..4
+println(f"{r} {r.start} {r.end} {r == 1..4}")
+println(f"{3 in r} {4 in r} {4 in 1..=4} {0 in 1..=4} {2.5 in 1.0..3.0}")
+let f: Range<float> = 0..3
+let s = r with { end = 9 }
+println(f"{1.5 in f} {8 in s}")

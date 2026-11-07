@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 18: a range that ends before it begins is empty
+import std.random { Random }
+println(Random.seeded(1).nextInRange(3..1))

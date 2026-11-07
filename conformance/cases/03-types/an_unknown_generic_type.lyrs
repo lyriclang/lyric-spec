@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0011
+//! since: 1.0.0
+// §3 rule 12: a name that is no type says so, given type arguments or not.
+let m: Missing<int, int> = 1

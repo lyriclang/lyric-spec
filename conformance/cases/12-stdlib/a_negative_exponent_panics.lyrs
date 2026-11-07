@@ -1,0 +1,8 @@
+//! run
+//! panic: LYS-RT0007
+//! stderr-has: pow: a negative exponent -1
+//! since: 1.0.0
+// §12 rule 13: `pow` takes an exponent of none or more — Lyric 5's is a `uint`; Script, with one
+// integer type, refuses a negative one when it runs.
+let n = -1
+println(2.pow(n))

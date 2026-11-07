@@ -55,7 +55,8 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
 
 1. The parser refuses nesting deeper than its bound (`LYS-PAR0045`), at least **64** levels of
    expressions, blocks and prefix operators — Lyric 5's floor is 128 levels on a thread; a
-   script is compiled on a task's stack as well.
+   script is compiled on a task's stack as well. A link of an `else if` chain is such a level
+   (S7e1): past the bound a chain is refused, pointing to a `match`, whose arms nest not.
 2. A code means what Lyric 5's `LYR-PAR` code of the same number means; Lyric-Script's own
    codes start at 0900 (§16). `LYS-PAR0900` is a digit beyond its literal's
    base (`0b12`).

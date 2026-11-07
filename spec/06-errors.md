@@ -7,7 +7,7 @@ with the rules among them, the record of where an error was first thrown, the er
 the frames and the report of an error that leaves the script, the thrown sets inferred and a
 written `throws` held against them, the mark `try`, the expression forms `try?`, `try!` and
 `try … catch`, `defer` and `using` with the suppressed errors, panics and `never`.
-`e.suppressed()` comes with the arrays (S7), the lint `unmarked-throw` and the `let` half of
+`e.suppressed()` is written with the lists (S7b2b, rule 10); the lint `unmarked-throw` and the `let` half of
 `LYS-SEM0144` with the lints (S11); function values that throw are Script's own (02 K2).
 
 ## Written (S4)
@@ -96,7 +96,8 @@ written `throws` held against them, the mark `try`, the expression forms `try?`,
     throws on a normal exit ends that exit: its error leaves like any other, and the defers
     registered before it run all the same. One that throws while an error is in flight does not
     replace it: the first wins, the second goes with it as **suppressed** (rule 4), and the
-    remaining defers run. A defer runs where it was registered — under the `try`s around its
+    remaining defers run. At a clause's binding `e.suppressed()` gives them, an `Error[]` in the
+    order they were thrown, empty where there are none (Lyric 5 §4 rule 4). A defer runs where it was registered — under the `try`s around its
     scope, not those inside it. A `return`, or a `break` or `continue` to a loop outside it,
     does not stand in a defer's body (`LYS-SEM0904`).
 11. **`using let f = e`** (§7) binds `f` like a `let` and closes it — calls `f.close()` — when

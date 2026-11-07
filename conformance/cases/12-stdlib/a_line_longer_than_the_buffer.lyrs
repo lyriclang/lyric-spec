@@ -1,0 +1,17 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 20000
+//! | "next"
+//! | null
+// §12 rule 19: it grows past what one read holds.
+import std.io { ByteBuffer, ByteReader, TextReader }
+let b = ByteBuffer.new()
+let xs = Bytes.zeroed(20000)
+xs.fill(120)
+b.writeAll(xs)
+b.writeString("\r\nnext")
+let t = TextReader.new(ByteReader.new(b.toBytes()))
+println((t.readLine() ?? "").length())
+println(t.readLine())
+println(t.readLine())

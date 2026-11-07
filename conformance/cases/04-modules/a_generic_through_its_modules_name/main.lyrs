@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 7
+//! | 8
+//! | 9
+//! | 10 ok
+// §4 rule 6 (Lyric 5 §4 rule 1): a generic function through its module's name takes what it takes by
+// its bare name: its type arguments written, or the type the position expects.
+import tools.make
+import tools.make as m
+struct Seven :: [Default] {
+    v: int = 7,
+}
+let a: Seven = make.fresh()
+println(a.v)
+println(make.same<int>(8))
+println(m.same<int, string>(9))
+println(f"{m.first<_, string>(10, "z")} {m.first<string, int>("ok", 1)}")

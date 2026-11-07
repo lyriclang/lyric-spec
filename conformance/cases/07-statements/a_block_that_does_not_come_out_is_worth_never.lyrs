@@ -1,0 +1,94 @@
+//! run
+//! stdout:
+//! | a
+//! | c
+//! | closed
+//! | e
+//! | 1
+//! | 12
+//! | 1
+//! | 5
+//! since: 1.0.0
+
+// §7: a value block whose statements return, break or continue gives no value: it is worth `never`,
+// so it stands beside one that gives a value, and may end a lambda
+enum E {
+    A,
+    B,
+}
+
+class R :: Closeable {
+    fn close() {
+        println("closed")
+    }
+}
+
+fn said(f: fn() -> string): string = f()
+
+fn g(c: bool): int {
+    let x = if (c) {
+        return 1
+    } else {
+        2
+    }
+    return x + 10
+}
+
+fn h(): int {
+    var n = 0
+    while (n < 3) {
+        let y = if (n == 1) {
+            break
+        } else {
+            n
+        }
+        n = y + 1
+    }
+    return n
+}
+
+fn k(): int {
+    var n = 0
+    var t = 0
+    while (n < 3) {
+        n += 1
+        let y = match (n) {
+            2 => {
+                continue
+            }
+            _ => n
+        }
+        t += y
+    }
+    return t + 1
+}
+
+println(said(() => {
+    match (E.A) {
+        E.A => {
+            return "a"
+        }
+        E.B => {
+            return "b"
+        }
+    }
+}))
+println(said(() => {
+    if (1 < 2) {
+        return "c"
+    } else {
+        return "d"
+    }
+}))
+println(said(() => {
+    using let r = R { }
+    if (2 < 1) {
+        return "no"
+    } else {
+        return "e"
+    }
+}))
+println(g(true))
+println(g(false))
+println(h())
+println(k())

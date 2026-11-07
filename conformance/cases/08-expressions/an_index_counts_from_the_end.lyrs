@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 50 10
+//! | [10, 20, 30, 41, 55]
+//! | 2
+//! since: 1.0.0
+// §8 rule 3: `^n` is the length less `n`, read and written; the list evaluated once.
+class Count {
+    var n: int = 0
+}
+let calls = Count { }
+let xs = [10, 20, 30, 40, 50]
+fn list(): int[] {
+    calls.n += 1
+    return xs
+}
+println(f"{xs[^1]} {xs[^5]}")
+list()[^1] = 55
+list()[^2] += 1
+println(xs)
+println(calls.n)

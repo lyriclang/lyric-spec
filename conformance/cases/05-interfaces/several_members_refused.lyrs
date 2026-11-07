@@ -1,0 +1,55 @@
+//! check
+//! error: LYS-SEM0121
+//! error: LYS-SEM0085
+//! error: LYS-SEM0086
+//! error: LYS-SEM0122
+//! error: LYS-SEM0089
+//! error: LYS-SEM0087
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 §3 rules 1, 4–5, 08 §1.2): two members of one count; two answering one
+// instance; a call the arguments' types do not decide; an unqualified call of a name each block
+// gives apart; a read without a call where nothing says which member; a count no member takes.
+struct Q {
+    fn f(): int = 1
+    fn f(): int = 2
+}
+interface From<T> {
+    static fn from(v: T): Self
+}
+struct Twice :: [From<int>] {
+    static fn from(v: int): Twice = Twice { }
+    static fn from(n: int): Twice = Twice { }
+}
+struct Label :: [From<float>, From<?int>] {
+    static fn from(v: float): Label = Label { }
+    static fn from(v: ?int): Label = Label { }
+}
+let undecided = Label.from(3)
+let none = Label.from("x")
+interface Greeter {
+    fn greet(): string
+}
+interface Polite {
+    fn greet(): string
+}
+class C { }
+extend C :: [Greeter] {
+    fn greet(): string = "hi"
+}
+extend C :: [Polite] {
+    fn greet(): string = "good day"
+}
+let unqualified = C { }.greet()
+interface Show<T> {
+    fn show(x: T): string
+}
+class Fmt :: [Show<int>, Show<string>] {
+    fn show(x: int): string = f"int {x}"
+    fn show(x: string): string = f"str {x}"
+}
+let which = Fmt { }.show
+class P {
+    fn get(): int = 1
+    fn get(scale: int): int = 2 * scale
+}
+let many = P { }.get(1, 2)

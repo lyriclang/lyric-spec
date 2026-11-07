@@ -1,0 +1,29 @@
+//! check
+//! since: 1.0.0
+import std.fs
+import std.fs { File, OpenOptions }
+import std.io { SeekFrom }
+
+// §12 rule 22: a file's calls and the conveniences are not cancelled, so a clause that says `IoError` covers them
+fn all(p: string): int throws IoError {
+    let f = File.openWith(p, OpenOptions { read = true, write = true })
+    f.write(Bytes.new())
+    f.writeAll(Bytes.new())
+    f.writeString("")
+    f.read(Bytes.new())
+    f.seek(SeekFrom.Start(0))
+    f.readToEnd()
+    f.readToString()
+    f.close()
+    File.open(p).close()
+    File.create(p).close()
+    fs.writeText(p, "hello")
+    fs.writeBytes(p, b"x")
+    fs.appendText(p, "x")
+    fs.readBytes(p)
+    for (l in fs.lines(p)) {
+        println(l)
+    }
+    fs.lines(p).close()
+    return fs.readText(p).length()
+}

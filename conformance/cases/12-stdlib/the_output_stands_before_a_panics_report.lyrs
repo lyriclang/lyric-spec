@@ -1,0 +1,11 @@
+//! run
+//! since: 1.0.0
+//! merge-streams
+//! exit: 101
+//! stdout:
+//! | out
+//! | panic [LYS-RT0008]: late
+//! |     at <script> (line 11)
+// §12 rule 20.
+print("out\n")
+panic("late")

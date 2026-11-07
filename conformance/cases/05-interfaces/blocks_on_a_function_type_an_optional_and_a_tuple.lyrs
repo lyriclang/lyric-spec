@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | 0 5
+//! | (a, 1) 7
+//! | point 1,2 point 3,4
+//! | point 1,2! point 3,4! none! none!
+//! since: 1.0.0
+// §5 rule 3 (Lyric 5 §13 rule 6): a block on a function type, an optional or a tuple at fixed types
+// adds members and conformances to that shape — `this` its value, `this(x)` a function's call —,
+// an interface's defaults among them, through a constraint too.
+extend ?int {
+    fn orZero(): int = this ?? 0
+}
+let none: ?int = null
+let some: ?int = 5
+println(f"{none.orZero()} {some.orZero()}")
+extend (int, string) {
+    fn swapped(): (string, int) = (this.1, this.0)
+}
+extend fn(int) -> int {
+    fn twice(x: int): int = this(this(x))
+}
+let inc = (x: int) => x + 1
+println(f"{(1, "a").swapped()} {inc.twice(5)}")
+interface Named {
+    fn name(): string
+    fn shout(): string = this.name() + "!"
+}
+extend (int, int) :: Named {
+    fn name(): string = f"point {this.0},{this.1}"
+}
+extend ?int :: Named {
+    fn name(): string = if (this == null) "none" else "some"
+}
+fn nameOf<T :: [Named]>(x: T): string = x.name()
+fn shoutOf<T :: [Named]>(x: T): string = x.shout()
+println(f"{(1, 2).name()} {nameOf((3, 4))}")
+println(f"{(1, 2).shout()} {shoutOf((3, 4))} {none.shout()} {shoutOf(none)}")

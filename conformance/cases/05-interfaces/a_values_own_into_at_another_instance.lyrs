@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+//! | own
+// §5 rule 23 (Lyric 5 §13 rule 9): a copy at a scalar calls its receiver's member directly, and the
+// type's own `into` of the same name answers another instance: the constraint's goes through the block.
+extend int :: [Into<string>] {
+    fn into(): string = "own"
+}
+struct Cm :: [From<int>] {
+    v: int,
+    static fn from(m: int): Cm = Cm { v = m * 100 }
+}
+fn conv<T :: [Into<Cm>]>(x: T): Cm = x.into()
+println(conv(2).v)
+let s: string = 2.into()
+println(s)

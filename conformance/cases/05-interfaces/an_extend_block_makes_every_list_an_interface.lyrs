@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 2 items
+//! | 4 items
+//! | 1 items
+//! since: 1.0.0
+// §5 rule 12: `extend<T> T[] :: [I]` — every list is an `I`, as a value of it, through a
+// constraint, on the list.
+interface Show {
+    fn show(): string
+}
+extend<T> T[] :: Show {
+    fn show(): string = f"{this.length()} items"
+}
+let s: Show = ["p", "q"]
+println(s.show())
+fn describe<S :: [Show]>(x: S): string = x.show()
+println(describe([1, 2, 3, 4]))
+println([7].show())

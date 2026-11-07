@@ -1,0 +1,27 @@
+//! check
+//! error: LYS-SEM0026
+//! error: LYS-SEM0001
+//! since: 1.0.0
+// §3 rule 12: a parameter without a default is written; an extend block's take none; `T ::
+// [Combine]` is `T :: [Combine<T>]`, whose member takes a `T`.
+struct Two<X, Y> {
+    a: X,
+    b: Y,
+}
+let t: Two<int> = Two { a = 1, b = 2 }
+struct Box<T> {
+    v: T,
+}
+extend<T = int> Box<T> {
+    fn get(): T = this.v
+}
+interface Pick<A, B = A> {
+    fn pick(a: A): B
+}
+struct P :: Pick {
+    fn pick(a: int): int = a
+}
+interface Combine<With = Self> {
+    fn combine(o: With): string
+}
+fn bad<T :: [Combine]>(a: T): string = a.combine(1)

@@ -1,0 +1,14 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | x
+//! stdout:
+//! | a
+//! | x
+//! stderr:
+//! | b
+// §12 rule 20: `import std.io { println as say }`, as any import.
+import std.io { println as say, eprintln as warn, readLine as line }
+say("a")
+warn("b")
+say(line() ?? "none")

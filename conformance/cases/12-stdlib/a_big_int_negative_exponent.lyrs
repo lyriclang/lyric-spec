@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 16
+import std.math { BigInt }
+println(BigInt.one.pow(-1))

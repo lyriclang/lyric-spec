@@ -1,0 +1,40 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | closed: a.txt (read)
+//! | closed: a.txt (written)
+//! | closed: a.txt (sought)
+//! | closed: a.txt (read)
+//! | closed twice
+//! since: 1.0.0
+import std.fs { File }
+import std.io { SeekFrom }
+
+// §12 rule 22: after `close()` every call throws `Closed`; a second `close()` does nothing
+fn said(f: fn() -> void): string {
+    try {
+        f()
+        return "done"
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+let f = File.create("a.txt")
+f.close()
+let one = Bytes.zeroed(1)
+println(said(() => {
+    f.read(one)
+}))
+println(said(() => {
+    f.write(one)
+}))
+println(said(() => {
+    f.seek(SeekFrom.Start(0))
+}))
+println(said(() => {
+    f.read(Bytes.new())
+}))
+f.close()
+println("closed twice")

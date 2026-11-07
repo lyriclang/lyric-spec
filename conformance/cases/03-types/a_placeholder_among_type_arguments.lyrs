@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | (1, x) (1.0, y) [1, 2] 5
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2 rules 4–5, §9.4): `_` among the type arguments of a call, a method and a
+// function's value stands for one the inference fills — from the arguments, the position.
+fn pair<A, B>(a: A, b: B): (A, B) = (a, b)
+let p = pair<_, string>(1, "x")
+let p2 = pair<float, _>(1, "y")
+let xs: int[] = [1, 2].iter().collect<_>()
+fn id<T>(x: T): T = x
+let f: fn(int) -> int = id<_>
+println(f"{p} {p2} {xs} {f(5)}")

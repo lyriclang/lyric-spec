@@ -1,0 +1,18 @@
+//! check
+//! error: LYS-SEM0124
+//! error: LYS-SEM0134
+//! since: 1.0.0
+// §5 rule 3: a block over a shape names each of its parameters once, in their order, as a generic
+// type's block does (§5 rule 12) — `fn(T) -> T` is no such shape; where a value's parts do not
+// meet the block's constraints, it has not the block's members.
+extend<T> fn(T) -> T {
+    fn twice(x: T): T = this(this(x))
+}
+interface Named {
+    fn name(): string
+}
+extend<T :: [Named]> ?T {
+    fn label(): string = "n"
+}
+let x: ?int = 1
+println(x.label())

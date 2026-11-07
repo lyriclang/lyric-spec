@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | V { x = -1.0 }
+//! | Bits { n = -6 }
+//! since: 1.0.0
+// §5 rule 17: `-a` through `Neg`, `~a` through `BitNot`.
+struct V :: Neg {
+    x: float,
+    fn neg(): V = V { x = -this.x }
+}
+struct Bits :: BitNot {
+    n: int,
+    fn bitNot(): Bits = Bits { n = ~this.n }
+}
+println(-V { x = 1.0 })
+println(~Bits { n = 5 })

@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | 5 14 60 null
+//! | 3 5 4 null null
+//! | true true true true
+//! | 4 1 null
+//! | 31415 [3, 1, 4, 1, 5] [3, 1, 4, 1, 5]
+//! since: 1.0.0
+// §12 rule 4 (Lyric 5 12 Iteration): the terminators that walk an iterator to an answer, stopping
+// at the value that decides.
+let xs = [3, 1, 4, 1, 5]
+println(f"{xs.iter().count()} {xs.iter().fold(0, (a, x) => a + x)} {xs.iter().reduce((a, b) => a * b)} {[0].iter().skip(1).reduce((a, b) => a)}")
+println(f"{xs.iter().first()} {xs.iter().last()} {xs.iter().nth(2)} {xs.iter().nth(9)} {xs.iter().nth(-1)}")
+println(f"{xs.iter().any((x) => x > 4)} {xs.iter().all((x) => x > 0)} {xs.iter().none((x) => x > 9)} {[0].iter().skip(1).all((x) => false)}")
+println(f"{xs.iter().find((x) => x > 3)} {xs.iter().position((x) => x == 1)} {xs.iter().position((x) => x == 9)}")
+var seen = ""
+xs.iter().forEach((x) => { seen += f"{x}" })
+println(f"{seen} {xs.iter().toArray()} {xs.iter().toList()}")

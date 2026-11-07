@@ -1,0 +1,17 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0012
+//! stderr-has: 'bool' has no method 'foo'
+//! stderr-has: 'char' has no method 'foo'
+//! stderr-has: '(int, int)' has no method 'foo'
+//! stderr-has: '?int' has no method 'foo'
+//! stderr-has: 'fn(int) -> int' has no method 'foo'
+// §5 rule 13 (Lyric 5 §3): a value has the members its type and its blocks give it — a scalar's,
+// a tuple's, an optional's, a function value's too; a call of another is refused.
+let o: ?int = 1
+let f = (x: int) => x
+true.foo()
+'c'.foo()
+(1, 2).foo()
+o.foo()
+f.foo()

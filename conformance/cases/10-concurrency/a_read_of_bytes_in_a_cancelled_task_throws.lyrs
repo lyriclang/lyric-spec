@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | read cancelled
+// §10 rules 11, 18; §12 rule 20: a read is a wait.
+import std.io { stdin }
+let t = spawn {
+    try {
+        stdin().read(Bytes.zeroed(4))
+    } catch (e: Cancelled) {
+        println("read cancelled")
+    }
+}
+t.cancel()
+t.await()

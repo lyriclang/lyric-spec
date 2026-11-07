@@ -1,0 +1,101 @@
+//! run
+//! stdout:
+//! | done
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: Windows has `\` and `/`, volumes, names without the case of ASCII letters; another system has
+// `/` alone, and what looks like a volume is a name
+fn same(what: string, got: string, want: string) {
+    if (got != want) {
+        println(what + ": " + got + ", wanted " + want)
+    }
+}
+
+fn parts(p: string): string {
+    var out = ""
+    for (e in path.components(p)) {
+        out = out + "[" + e + "]"
+    }
+    return out
+}
+
+fn yes(what: string, got: bool, want: bool) {
+    if (got != want) {
+        println(what + " is not as wanted")
+    }
+}
+
+fn rel(b: string, t: string): string = path.relative(b, t) ?? "none"
+
+if (path.separator == "/") {
+    same("a backslash", path.normalize("a\\b"), "a\\b")
+    same("no drive", path.normalize("C:\\a\\..\\b"), "C:\\a\\..\\b")
+    same("a drive's name", path.fileName("C:\\a"), "C:\\a")
+    same("no share", path.normalize("\\\\s\\h"), "\\\\s\\h")
+    same("the root", path.normalize("//a"), "/a")
+    same("a case", rel("a", "A"), "../A")
+    yes("/a", path.isAbsolute("/a"), true)
+    yes("a", path.isAbsolute("a"), false)
+    yes("C:\\", path.isAbsolute("C:\\"), false)
+    same("join", path.join("C:", "a"), "C:/a")
+} else {
+    same("both separate", path.normalize("a/b\\c"), "a\\b\\c")
+    same("a drive alone", path.normalize("C:"), "C:.")
+    same("a drive's root", path.normalize("C:/"), "C:\\")
+    same("a drive and a name", path.normalize("C:a\\.\\b"), "C:a\\b")
+    same("above a drive's root", path.normalize("C:\\a\\..\\.."), "C:\\")
+    same("above a drive", path.normalize("C:.."), "C:..")
+    same("a share alone", path.normalize("\\\\s\\h"), "\\\\s\\h")
+    same("a share's slashes", path.normalize("//s/h/a"), "\\\\s\\h\\a")
+    same("above a share", path.normalize("\\\\s\\h\\a\\..\\.."), "\\\\s\\h\\")
+    same("no host", path.normalize("\\\\\\a\\b"), "\\a\\b")
+    same("no share for a dot", path.normalize("\\\\.\\a\\b"), "\\a\\b")
+    same("no host before a share", path.normalize("\\\\s\\\\b"), "\\s\\b")
+    same("no share after a host", path.normalize("\\\\s\\"), "\\s")
+    same("only separators", path.normalize("//"), "\\")
+    same("a drive's letter", path.parent("1:a"), ".")
+    same("a drive's one letter", path.parent("ab:c"), ".")
+    same("join a drive", path.join("C:", "a"), "C:a")
+    same("join a drive twice", path.join("C:", "a", "b"), "C:a\\b")
+    same("join a drive's root", path.join("C:\\", "a"), "C:\\a")
+    same("join a share", path.join("\\\\s\\h", "a"), "\\\\s\\h\\a")
+    same("file of a drive", path.fileName("C:"), "\\")
+    same("file under a drive", path.fileName("C:a"), "a")
+    same("file under a root", path.fileName("C:\\a"), "a")
+    same("file of a share", path.fileName("\\\\s\\h"), "\\")
+    same("file under a share", path.fileName("\\\\s\\h\\a"), "a")
+    same("parent under a drive", path.parent("C:a"), "C:.")
+    same("parent under a root", path.parent("C:\\a"), "C:\\")
+    same("parent of a share", path.parent("\\\\s\\h"), "\\\\s\\h")
+    same("parent under a share", path.parent("\\\\s\\h\\a"), "\\\\s\\h\\")
+    same("parent with both", path.parent("a/b\\c"), "a\\b")
+    same("extension with both", path.extension("a.b\\c"), "")
+    same("stem under a drive", path.stem("C:a.txt"), "a")
+    same("parts of a drive", parts("C:"), "[C:]")
+    same("parts under a drive", parts("C:a"), "[C:][a]")
+    same("parts under a root", parts("C:\\a"), "[C:\\][a]")
+    same("parts of a share", parts("//s/h/a"), "[\\\\s\\h\\][a]")
+    same("parts of a share alone", parts("\\\\s\\h"), "[\\\\s\\h]")
+    same("parts with both", parts("a/b\\c"), "[a][b][c]")
+    yes("\\a", path.isAbsolute("\\a"), false)
+    yes("/a", path.isAbsolute("/a"), false)
+    yes("C:", path.isAbsolute("C:"), false)
+    yes("C:a", path.isAbsolute("C:a"), false)
+    yes("C:\\", path.isAbsolute("C:\\"), true)
+    yes("C:/a", path.isAbsolute("C:/a"), true)
+    yes("a share", path.isAbsolute("\\\\s\\h"), true)
+    yes("a share's slashes", path.isAbsolute("//s/h/a"), true)
+    yes("no share", path.isAbsolute("\\\\s"), false)
+    same("a case", rel("a", "A"), ".")
+    same("a case below", rel("A/b", "a/B/c"), "c")
+    same("a drive's case", rel("c:\\a", "C:\\a\\b"), "b")
+    same("two drives", rel("C:\\a", "D:\\a"), "none")
+    same("a drive and none", rel("C:\\a", "\\a"), "none")
+    same("a root and a drive's", rel("C:a", "C:\\a"), "none")
+    same("two shares", rel("\\\\s\\h\\a", "\\\\t\\h\\a"), "none")
+    same("a share's case", rel("\\\\s\\h\\a", "\\\\S\\H\\A\\b"), "b")
+    same("in a share", rel("\\\\s\\h", "\\\\s\\h\\a"), "a")
+    same("an accent", rel("é", "É"), "..\\É")
+}
+println("done")

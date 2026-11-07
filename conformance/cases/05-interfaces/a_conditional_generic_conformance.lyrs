@@ -1,0 +1,19 @@
+//! check
+//! error: LYS-SEM0028
+//! since: 1.0.0
+// §5 rule 12: a generic block's conformance to an instance of a generic interface holds where its
+// condition does — `Box<int>` is no `Holds<int>` where `int` is no `Show`.
+interface Show {
+    fn show(): string
+}
+interface Holds<T> {
+    fn held(): T
+}
+struct Box<T> {
+    v: T,
+}
+extend<T :: [Show]> Box<T> :: Holds<T> {
+    fn held(): T = this.v
+}
+fn take<H :: [Holds<int>]>(h: H): int = h.held()
+let n = take(Box { v = 3 })

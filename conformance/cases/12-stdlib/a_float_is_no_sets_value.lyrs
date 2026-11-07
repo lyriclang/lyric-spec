@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0028
+//! stderr-has: float is no Hashable
+//! since: 1.0.0
+// §12 rule 6: a set's value is a Hashable; a float is none, nor is a set (§5 rule 20).
+let s: Set<float> = Set.new()
+let a: Set<Set<int>> = Set.new()

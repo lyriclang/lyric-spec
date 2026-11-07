@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0007
+//! since: 1.0.0
+// §12 rule 17: Bytes and a list count from the end, a type of one's own does not
+struct P :: Index<int> {
+    type Output = int
+    fn index(i: int): int = i
+}
+println(P { }[^1])

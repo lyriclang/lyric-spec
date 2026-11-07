@@ -1,0 +1,35 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 13 true
+//! | 4 255
+//! | x
+//! | one two
+//! | made
+//! | 4
+//! | true
+//! | 20000
+//! since: 1.0.0
+import std.fs
+
+// §12 rule 22: a file read and written whole, as text and as bytes; a write cuts what was there; an append writes at the end, and makes the file where it is not there
+fs.writeText("a.txt", "héllo, file\n")
+let text = fs.readText("a.txt")
+println(f"{text.length()} {text.startsWith("héllo")}")
+fs.writeBytes("b.bin", b"\x00\xff\n\r")
+let back = fs.readBytes("b.bin")
+println(f"{back.length()} {back[1]}")
+fs.writeText("a.txt", "x")
+println(fs.readText("a.txt"))
+fs.writeText("log.txt", "one")
+fs.appendText("log.txt", " two")
+fs.appendText("made.txt", "made")
+println(fs.readText("log.txt"))
+println(fs.readText("made.txt"))
+fs.writeText("bom.txt", "\u{FEFF}a")
+println(fs.readText("bom.txt").length())
+let big = "z" * 20000
+fs.writeText("big.txt", big)
+println(fs.readText("big.txt") == big)
+println(fs.readBytes("big.txt").length())

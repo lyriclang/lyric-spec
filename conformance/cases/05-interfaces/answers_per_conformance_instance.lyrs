@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 4.0 6.0 4.0 4.0
+//! | 3.5 1.5 3.0 8 3.5 7
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 §8 rule 3, §12 rule 2; 03 Mix): each conformance instance answers for
+// itself — `Mul<float>`'s block its `Out` beside the type's own `Mul` —, a constraint reads the
+// instance it names; `int` and `float` conform to each other's arithmetic, the result a `float`.
+struct V :: [Mul] {
+    x: float,
+    fn mul(rhs: V): V = V { x = this.x * rhs.x }
+}
+extend V :: [Mul<float>] {
+    type Out = float
+    fn mul(rhs: float): float = this.x * rhs
+}
+let v = V { x = 2.0 }
+let a: V = v * v
+let b: float = v * 3.0
+fn scale<T :: [Mul<float>]>(t: T): T.Out = t * 2.0
+fn square<T :: [Mul<Out = T>]>(t: T): T = t * t
+println(f"{a.x} {b} {scale(v)} {square(v).x}")
+fn half<T :: [Add<float, Out = float>]>(t: T): float = t + 0.5
+fn twice<T :: [Mul<int>]>(t: T): T.Out = t * 2
+println(f"{half(3)} {half(1.0)} {twice(1.5)} {twice(4)} {3.add(0.5)} {3.add(4)}")

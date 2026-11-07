@@ -1,0 +1,40 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | a
+//! | é
+//! | €
+//! | 😀
+//! | "é"
+//! | ü
+//! | 0
+//! | "ab"
+//! | "cd"
+//! | null
+// §12 rule 19: a codepoint split between two reads waits for its rest.
+import std.io { Reader, TextReader }
+class OneByOne :: [Reader] {
+    b: Bytes
+    var at: int = 0
+    var reads: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        if (into.isEmpty() || this.at == this.b.length()) {
+            return 0
+        }
+        into[0] = this.b[this.at]
+        this.at += 1
+        return 1
+    }
+}
+for (c in TextReader.new(OneByOne { b = "aé€😀".toBytes() }).chars()) {
+    println(c)
+}
+let t = TextReader.new(OneByOne { b = "é\nü".toBytes() })
+println(t.readLine())
+println(t.readToEnd())
+println(t.readToEnd().length())
+let split = TextReader.new(OneByOne { b = b"ab\ncd" })
+println(split.readLine())
+println(split.readLine())
+println(split.readLine())

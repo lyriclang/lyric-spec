@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdin-hex: 61 ff 0a 6f 6b 0a
+//! stdout:
+//! | true
+//! | invalid data (the bytes are no UTF-8 from byte 1 on)
+//! | none
+//! | ok
+//! | none
+// §12 rule 20: `InvalidData`, the offset in its detail, no cause; the line is consumed.
+try {
+    println(readLine() ?? "none")
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.InvalidData)
+    println(e.message())
+    println(e.cause()?.message() ?? "none")
+}
+println(readLine() ?? "none")
+println(readLine() ?? "none")

@@ -12,6 +12,42 @@
    (`LYS-SEM0003`) — an f-string does.
 2. **`as`** converts between `int`, `float` and `char` alone (`LYS-SEM0006`).
 
+## Written (S7, the core collections)
+
+3. **Indexing a list** ([03 Index](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)). `xs[i]` is the element at the `int`
+   index `i`, counted from 0; `xs[i] = v` writes it, and `xs[i] op= v` reads and writes it with
+   the list and the index evaluated once. An index below 0, or at the length or above, is a
+   panic, `LYS-RT0003` (Lyric 5's), the list unchanged. `xs[a..b]` and `xs[a..=b]` are a
+   **slice**: a new list of those elements ([03 S](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md)), a panic (`LYS-RT0003`) where the range is not
+   within `0..=length()` or ends before it begins. In the brackets `^n` counts from the end —
+   the length less `n`, `^1` the last element, `^0` past it — at an index, at a write and at an
+   end of a range, the list evaluated once (Lyric 5 03 T14); a range may leave out its ends:
+   `xs[a..]` is `xs[a..^0]`, `xs[..b]` is `xs[0..b]`, `xs[..]` the whole list. `^` counts from the
+   end in a list's brackets only — and as a bound of a string's range ([12](12-stdlib.md) rule
+   8). Indexing a map is by its key (rule 5 there), a string by its bytes (rule 8 there).
+4. **Indexing a type of one's own** (03 Index; Lyric 5 `Index<K>`, `IndexSet<K>`; S7c2). The
+   prelude declares `interface Index<K> { type Output; fn index(k: K): Self.Output }` and
+   `interface IndexSet<K> :: Index<K> { fn setIndex(k: K, v: Self.Output) }`. `x[k]` is
+   `x.index(k)` where `x`'s type is an `Index` — on the type, through a constraint, through an
+   interface value —, else `LYS-SEM0007`; `x[k] = v` is `x.setIndex(k, v)` where it is an
+   `IndexSet`, else `LYS-SEM0019`; `x[k] op= v` reads and writes with `x` and `k` evaluated once.
+   `^` counts from the end of a list alone (`LYS-SEM0007`).
+
+5. **`++` and `--`** (Lyric 5 §6, §3 rules 2–3; S7c5c3) step a number's place — a `var`, a field,
+   an element of a list or of an `IndexSet` —: `x++` and `x--` are worth the old value, `++x` and
+   `--x` the new; what leads to the place is evaluated once; a place that cannot be written is
+   refused (`LYS-SEM0019`), one that holds no number too (`LYS-SEM0003`).
+
+## Written (S7e4a, variadic parameters)
+
+6. **Variadic parameters** (Lyric 5 §8 §1.1 rule 1; S7e4a). `xs: T...` takes the remaining
+   positional arguments as a `T[]`, the empty array where there are none; it stands last and has
+   no default (`LYS-SEM0024`), takes no name in a call (`LYS-SEM0119`), and a local function's
+   parameter is none (`LYS-PAR0060`). Each remaining argument is one element, an array too where
+   `T` takes it. `xs...` spreads an array over the parameter — one spread, at it, alone in the rest
+   (`LYS-SEM0166`), the array itself, no copy. A function value of a variadic function is a
+   `fn(T[]) -> R`, called with the array.
+
 ## Deviations (skeleton, written with later milestones)
 
 - Mixed `int`/`float` arithmetic widens to `float`; `int / int` stays integer division; `as` only between `int`, `float` and `char`; no prefix `&`, no `comptime` ([03 Mix](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/03-werte-und-typen.md), [09](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)).

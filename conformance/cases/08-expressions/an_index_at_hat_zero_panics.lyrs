@@ -1,0 +1,8 @@
+//! run
+//! panic: LYS-RT0003
+//! stderr:
+//! | panic [LYS-RT0003]: index 1 out of bounds for length 1
+//! since: 1.0.0
+// §8 rule 3: `^0` is past the last element.
+let xs = [1]
+println(xs[^0])

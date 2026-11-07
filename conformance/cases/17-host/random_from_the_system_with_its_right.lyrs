@@ -1,0 +1,30 @@
+//! run
+//! option: -A
+//! since: 1.0.0
+//! stdout:
+//! | false
+//! | true
+//! | true
+//! | [1, 2, 3]
+//! | true
+// §12 rule 18: two generators from the system are two streams, the free forms draw from the program's
+// own. A false `false` is one in 2^64, a list of thirty in the order it came one in 30!.
+import std.random.system
+import std.random.system { fresh }
+println(fresh().nextInt() == fresh().nextInt())
+let n = system.nextInRange(3..4)
+println(n == 3)
+let f = system.nextFloat()
+println(f >= 0.0 && f < 1.0)
+let xs = [3, 1, 2]
+system.shuffle(xs)
+println(xs.iter().sorted())
+let long: int[] = []
+var i = 0
+while (i < 30) {
+    long.push(i)
+    i += 1
+}
+let kept = long.clone()
+system.shuffle(long)
+println(long != kept)

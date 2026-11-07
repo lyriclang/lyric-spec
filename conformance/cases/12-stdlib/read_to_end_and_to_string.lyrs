@@ -1,0 +1,27 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [97, 98, 99]
+//! | 20000
+//! | äö
+//! | 0
+// §12 rule 19: everything to the end, past the size of a chunk too.
+import std.io { Reader, ByteReader }
+class OneByOne :: [Reader] {
+    b: Bytes
+    var at: int = 0
+    var reads: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        if (into.isEmpty() || this.at == this.b.length()) {
+            return 0
+        }
+        into[0] = this.b[this.at]
+        this.at += 1
+        return 1
+    }
+}
+println(OneByOne { b = b"abc" }.readToEnd())
+println(ByteReader.new(Bytes.zeroed(20000)).readToEnd().length())
+println(ByteReader.new("äö".toBytes()).readToString())
+println(ByteReader.new(b"").readToEnd().length())

@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | " } ' :|
+//! | ['{', '\n', ':']
+// §1 (Lyric 5 §1, the f-string): a hole holds an expression, its character literals whole — a
+// `"` in one opens no string, a `}` closes no hole, a `:` begins no format spec.
+println(f"{'"'} {'}'} {'\''} {':'}|")
+println(f"{['{', '\n', ':']}")

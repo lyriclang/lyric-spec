@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! merge-streams
+//! stdout:
+//! | yo
+//! | z
+// §12 rule 20: the error holds a line until its end, `stderr().flush()` writes what it holds.
+import std.io { stderr, stdout }
+stderr().writeString("y")
+stderr().flush()
+print("o\n")
+stdout().flush()
+eprintln("z")

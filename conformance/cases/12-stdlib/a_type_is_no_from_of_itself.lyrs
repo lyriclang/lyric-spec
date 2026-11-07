@@ -1,0 +1,14 @@
+//! check
+//! error: LYS-SEM0028
+//! stderr-has: B is no From<B>
+//! since: 1.0.0
+// §12 rule 15 (Lyric 5 05 §13 rule 9): no conversion is given that no type wrote.
+struct A {
+    v: int
+}
+struct B :: [From<A>] {
+    v: int,
+    static fn from(a: A): B = B { v = a.v }
+}
+let b: B = B.from(A { v = 2 })
+let same: B = b.into()

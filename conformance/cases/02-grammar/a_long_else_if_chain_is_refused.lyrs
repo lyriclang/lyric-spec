@@ -1,0 +1,149 @@
+//! check
+//! error: LYS-PAR0045
+//! stderr-has: links of 'else if' nest too deep
+//! since: 1.0.0
+// §2 rule 1: a link of an `else if` chain nests as a block does — past the bound the chain is
+// refused, with the form that takes any number of cases, where four hundred of them overflowed
+// the compiler (S7e1).
+let n = 7
+if (n == 0) {
+    println(0)
+} else if (n == 1) {
+    println(1)
+} else if (n == 2) {
+    println(2)
+} else if (n == 3) {
+    println(3)
+} else if (n == 4) {
+    println(4)
+} else if (n == 5) {
+    println(5)
+} else if (n == 6) {
+    println(6)
+} else if (n == 7) {
+    println(7)
+} else if (n == 8) {
+    println(8)
+} else if (n == 9) {
+    println(9)
+} else if (n == 10) {
+    println(10)
+} else if (n == 11) {
+    println(11)
+} else if (n == 12) {
+    println(12)
+} else if (n == 13) {
+    println(13)
+} else if (n == 14) {
+    println(14)
+} else if (n == 15) {
+    println(15)
+} else if (n == 16) {
+    println(16)
+} else if (n == 17) {
+    println(17)
+} else if (n == 18) {
+    println(18)
+} else if (n == 19) {
+    println(19)
+} else if (n == 20) {
+    println(20)
+} else if (n == 21) {
+    println(21)
+} else if (n == 22) {
+    println(22)
+} else if (n == 23) {
+    println(23)
+} else if (n == 24) {
+    println(24)
+} else if (n == 25) {
+    println(25)
+} else if (n == 26) {
+    println(26)
+} else if (n == 27) {
+    println(27)
+} else if (n == 28) {
+    println(28)
+} else if (n == 29) {
+    println(29)
+} else if (n == 30) {
+    println(30)
+} else if (n == 31) {
+    println(31)
+} else if (n == 32) {
+    println(32)
+} else if (n == 33) {
+    println(33)
+} else if (n == 34) {
+    println(34)
+} else if (n == 35) {
+    println(35)
+} else if (n == 36) {
+    println(36)
+} else if (n == 37) {
+    println(37)
+} else if (n == 38) {
+    println(38)
+} else if (n == 39) {
+    println(39)
+} else if (n == 40) {
+    println(40)
+} else if (n == 41) {
+    println(41)
+} else if (n == 42) {
+    println(42)
+} else if (n == 43) {
+    println(43)
+} else if (n == 44) {
+    println(44)
+} else if (n == 45) {
+    println(45)
+} else if (n == 46) {
+    println(46)
+} else if (n == 47) {
+    println(47)
+} else if (n == 48) {
+    println(48)
+} else if (n == 49) {
+    println(49)
+} else if (n == 50) {
+    println(50)
+} else if (n == 51) {
+    println(51)
+} else if (n == 52) {
+    println(52)
+} else if (n == 53) {
+    println(53)
+} else if (n == 54) {
+    println(54)
+} else if (n == 55) {
+    println(55)
+} else if (n == 56) {
+    println(56)
+} else if (n == 57) {
+    println(57)
+} else if (n == 58) {
+    println(58)
+} else if (n == 59) {
+    println(59)
+} else if (n == 60) {
+    println(60)
+} else if (n == 61) {
+    println(61)
+} else if (n == 62) {
+    println(62)
+} else if (n == 63) {
+    println(63)
+} else if (n == 64) {
+    println(64)
+} else if (n == 65) {
+    println(65)
+} else if (n == 66) {
+    println(66)
+} else if (n == 67) {
+    println(67)
+} else if (n == 68) {
+    println(68)
+} else if (n == 69) {
+    println(69)
+}

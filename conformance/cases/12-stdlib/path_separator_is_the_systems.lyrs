@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | true
+//! | true
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the separator, and what it joins with
+println(path.separator == "/" || path.separator == "\\")
+println(path.join("a", "b") == "a" + path.separator + "b")

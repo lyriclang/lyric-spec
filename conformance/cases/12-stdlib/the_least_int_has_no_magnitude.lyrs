@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0002
+//! since: 1.0.0
+// §12 rule 14 (Lyric 5 12 §Numbers): `abs` of `int.min` overflows, as `-` does.
+import std.math
+println(math.abs(int.min))

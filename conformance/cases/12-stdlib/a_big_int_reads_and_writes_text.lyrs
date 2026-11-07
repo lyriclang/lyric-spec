@@ -1,0 +1,60 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000011000000111001
+//! | 322653455556104044451560330542565126
+//! | -10000000000000000000003039
+//! | 3ewfdnca0n6ld1ggvozd
+//! | 1000000
+//! | -255
+//! | 7
+//! | -1295
+//! | 1267650600228229401496703217721
+//! | Empty
+//! | Invalid
+//! | Invalid
+//! | Invalid
+//! | Invalid
+//! | Invalid
+//! | Invalid
+//! | Invalid
+//! | [    7]
+//! | [7    ]
+//! | 7
+// §12 rule 16: a text in a base from 2 to 36; `parse` takes what `int.parse` takes, and throws its
+// `ParseError`; a `BigInt` pads as a `Display` does, and prints in its Debug form as a number.
+import std.math { BigInt }
+let big = (BigInt.one << 100) + BigInt.from(12345)
+println(big.toString(2))
+println(big.toString(7))
+println((-big).toString(16))
+println(big.toString(36))
+println(BigInt.parse("1_000_000"))
+println(BigInt.parse("-FF", 16))
+println(BigInt.parse("+7"))
+println(BigInt.parse("-zz", 36))
+println(BigInt.parse(big.toString(36), 36))
+fn kindOnly(s: string) {
+    try {
+        BigInt.parse(s)
+        println("parsed")
+    } catch (e: ParseError) {
+        println(match (e.kind) {
+            .Empty => "Empty",
+            .Invalid => "Invalid",
+            .Overflow => "Overflow",
+        })
+    }
+}
+kindOnly("")
+kindOnly("-")
+kindOnly("+")
+kindOnly("_1")
+kindOnly("1_")
+kindOnly("1__0")
+kindOnly("12a")
+kindOnly(" 1")
+let seven: BigInt = 7
+println(f"[{seven:>5}]")
+println(f"[{seven:<5}]")
+println(f"{seven:?}")

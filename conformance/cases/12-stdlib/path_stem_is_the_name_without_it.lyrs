@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | [a]
+//! | [a]
+//! | [a.tar]
+//! | []
+//! | [a]
+//! | [c]
+//! | [a]
+//! | [a]
+//! | []
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the last element without its extension
+for (p in ["a", "a.txt", "a.tar.gz", ".bashrc", "b/a.txt", "a.b/c", "a/", "a.txt/", ""]) {
+    println("[" + path.stem(p) + "]")
+}

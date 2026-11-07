@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 1 10 7 7 1.5 1.5
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 08 §1.2): a type's members and its blocks' share a name at different counts,
+// statics alike, in a generic block too.
+class P {
+    var n: int = 0
+    fn get(): int = 1
+    fn get(scale: int): int = 2 * scale
+    static fn of(): P = P { }
+    static fn of(n: int): P = P { n = n }
+}
+extend P {
+    fn get(a: int, b: int): int = a + b
+}
+struct Box<T> {
+    v: T,
+}
+extend<T> Box<T> {
+    fn get(): T = this.v
+    fn get(fallback: T): T = this.v
+}
+let b = Box { v = 1.5 }
+println(f"{P.of().get()} {P.of(3).get(5)} {P.of(7).n} {P.of().get(3, 4)} {b.get()} {b.get(2.0)}")

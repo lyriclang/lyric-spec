@@ -1,0 +1,18 @@
+//! run
+//! stdout:
+//! | <3> <(1, null)> <null>
+//! | [Maybe.Some(2)]
+//! since: 1.0.0
+// §3 rule 12: a hole of an f-string over a type parameter writes its argument's text in each copy —
+// an optional's and a tuple's too.
+fn show<T>(x: T): string = f"<{x}>"
+let o: ?int = 3
+let p: (int, ?string) = (1, null)
+let n: ?string = null
+println(f"{show(o)} {show(p)} {show(n)}")
+enum Maybe {
+    Some(int),
+    No,
+}
+fn listed<T>(x: T): string = f"{[x]}"
+println(listed(Maybe.Some(2)))

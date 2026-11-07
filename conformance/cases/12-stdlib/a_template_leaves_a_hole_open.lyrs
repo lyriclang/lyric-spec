@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr-has: '{0' leaves the hole at character 0 open
+//! since: 1.0.0
+// §12 rule 12 (Lyric 5 12 §2 rule 5): what the compiler refuses in an f-string panics in a
+// template read at run time — a hole left open.
+import std.fmt
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+println(fmt.format("{0", 1))

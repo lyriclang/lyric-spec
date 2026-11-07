@@ -1,0 +1,1 @@
+fn env(name: string): string = "the program's own"

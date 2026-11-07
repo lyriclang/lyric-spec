@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0007
+//! since: 1.0.0
+// §8 rule 4: `[k]` after a value whose type is no `Index`.
+struct P {
+    a: int,
+}
+let p = P { a = 1 }
+println(p[0])

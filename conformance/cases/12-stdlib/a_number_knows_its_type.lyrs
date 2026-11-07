@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 9223372036854775807 -9223372036854775808 64 true 0 1
+//! | true false true
+//! | 2.220446049250313e-16 inf 5e-324
+//! | true true true true false
+//! | 4607182418800017408 1.0
+// §12 rule 13 (Lyric 5 12 §Numbers): what a number is stands at its type — `int` an `Integer`
+// with its range and width, `float` a `Float` with its constants, NaN and the infinities, its
+// bits; both `Num`s with `zero`, `one` and `isZero`; a constant read at the scalar's name.
+let z = 0.0
+let f = 1.5
+let one = 1.0
+println(f"{int.max} {int.min} {int.bitWidth} {int.isSigned} {int.zero} {int.one}")
+println(f"{0.isZero()} {3.isZero()} {z.isZero()}")
+println(f"{float.epsilon} {float.infinity} {float.leastPositive}")
+println(f"{float.nan.isNan()} {float.infinity.isInfinite()} {f.isFinite()} {(-float.infinity).isInfinite()} {float.nan.isFinite()}")
+println(f"{one.toBits()} {float.fromBits(4607182418800017408)}")

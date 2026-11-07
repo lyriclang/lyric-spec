@@ -1,0 +1,13 @@
+//! check
+//! error: LYS-SEM0028
+//! error: LYS-SEM0019
+//! stderr-has: P is no TotalOrder
+//! since: 1.0.0
+// §12 rule 7: a heap's value is a TotalOrder — a struct is none unless it says so; a deque is
+// read by index, never written (Lyric 5's `Index<int>` alone).
+struct P {
+    x: int,
+}
+let h: Heap<P> = Heap.new()
+let d: Deque<int> = [1]
+d[0] = 5

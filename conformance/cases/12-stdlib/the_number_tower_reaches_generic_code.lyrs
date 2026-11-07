@@ -1,0 +1,19 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6 0.75 -3 -2.5 64 true false
+// §12 rule 13 (Lyric 5 12 §Numbers): through `T :: [Num]` a number adds in its type and has its
+// `zero`; `Signed` negates, `Integer` has its width, `Float` tells NaN.
+fn total<T :: [Num]>(xs: T[]): T {
+    var t = T.zero
+    for (x in xs) {
+        t = t + x
+    }
+    return t
+}
+fn neg<T :: [Signed]>(x: T): T = -x
+fn width<T :: [Integer]>(): int = T.bitWidth
+fn unknown<T :: [Float]>(x: T): bool = x.isNan()
+let n = float.nan
+let one = 1.0
+println(f"{total([1, 2, 3])} {total([0.5, 0.25])} {neg(3)} {neg(2.5)} {width<int>()} {unknown(n)} {unknown(one)}")

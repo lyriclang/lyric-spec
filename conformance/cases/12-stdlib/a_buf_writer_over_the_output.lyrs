@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | b
+//! | a
+//! | c
+// §12 rules 19, 20: a `ConsoleWriter` is any `Writer`.
+import std.io { BufWriter, stdout }
+let w = BufWriter.new(stdout())
+w.writeString("a\n")
+println("b")
+w.close()
+println("c")

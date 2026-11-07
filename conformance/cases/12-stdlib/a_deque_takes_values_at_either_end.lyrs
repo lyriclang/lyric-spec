@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | [0, 1, 2, 3, 4] 5 0 4 0 4
+//! | 0 4 [1, 2, 3]
+//! | ["f19", "f17", "f15", "f13", "f11", "f9", "f7", "f5", "f3", "f1", "b0", "b2", "b4", "b6", "b8", "b10", "b12", "b14", "b16", "b18"]
+//! | 20 f19 b18 "f19" "b18" 18
+//! | 6 true false [1, 2, 3]
+//! | [5, 6] null []
+//! | [null, 1, null] 3 null 1 null
+//! since: 1.0.0
+// §12 rule 7 (Lyric 5 12 §Collections): a deque takes and gives values at either end, `d[i]`
+// counted from the front; it grows as it fills, from either end, its values kept in order; walked
+// front to back; equal where its values are, in order; a list literal and `collect()` build one.
+let d: Deque<int> = [1, 2, 3]
+d.pushFront(0)
+d.pushBack(4)
+println(f"{d} {d.length()} {d[0]} {d[4]} {d.peekFront()} {d.peekBack()}")
+println(f"{d.popFront()} {d.popBack()} {d}")
+var e = Deque<string>.new()
+var i = 0
+while (i < 20) {
+    if (i % 2 == 0) {
+        e.pushBack(f"b{i}")
+    } else {
+        e.pushFront(f"f{i}")
+    }
+    i += 1
+}
+println(e)
+println(f"{e.length()} {e[0]} {e[19]} {e.popFront()} {e.popBack()} {e.length()}")
+var sum = 0
+for (x in d) {
+    sum += x
+}
+let same: Deque<int> = [1, 2, 3]
+let other: Deque<int> = [3, 2, 1]
+println(f"{sum} {d == same} {d == other} {d.clone()}")
+let f: Deque<int> = [5, 6].iter().collect()
+println(f"{f} {Deque<int>.new().popFront()} {Deque<int>.withCapacity(4)}")
+let o: Deque<?int> = [null, 1]
+o.pushBack(null)
+println(f"{o} {o.length()} {o[0]} {o[1]} {o.peekBack()}")

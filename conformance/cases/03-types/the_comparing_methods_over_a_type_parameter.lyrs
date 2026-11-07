@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | true true true
+//! | [1, 2, 3, 1]
+//! | 1 true [2, 3, 1]
+//! | true false true
+//! since: 1.0.0
+// §3 rule 16, §5 rule 8: the comparing methods of a list over `T :: [Equatable]`, `in`, a
+// generic struct and an optional of `T` compared.
+struct P {
+    x: int,
+}
+fn has<T :: [Equatable]>(xs: T[], x: T): bool = xs.contains(x)
+fn inIt<T :: [Equatable]>(xs: T[], x: T): bool = x in xs
+println(f"{has([P { x = 1 }], P { x = 1 })} {inIt(["a"], "a")} {4 !in [1, 2, 3]}")
+let ys = [1, 1, 2, 2, 3, 1]
+ys.dedup()
+println(ys)
+let k = ys.indexOf(2) ?? -1
+let gone = ys.remove(1)
+println(f"{k} {gone} {ys}")
+struct Box<T> {
+    v: T,
+}
+fn boxesSame<T :: [Equatable]>(a: Box<T>, b: Box<T>): bool = a == b
+fn opt<T :: [Equatable]>(a: ?T, b: ?T): bool = a == b
+println(f"{boxesSame(Box { v = 1 }, Box { v = 1 })} {opt(1, null)} {opt<int>(null, null)}")

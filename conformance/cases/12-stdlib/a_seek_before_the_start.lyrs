@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr-has: a seek to -1, before the start
+//! since: 1.0.0
+// §12 rule 19: a position before the start panics.
+import std.io { ByteReader, SeekFrom }
+ByteReader.new(b"a").seek(SeekFrom.End(-2))

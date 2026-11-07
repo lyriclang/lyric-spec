@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0002
+//! since: 1.0.0
+// §12 rule 2: only the standard library's modules reach the VM's natives.
+println(__os_env("HOME") ?? "")

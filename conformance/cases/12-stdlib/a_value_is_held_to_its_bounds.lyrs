@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3 1 2 c 1.0 nan
+//! | P { x = 3 } 3
+// §12 rule 13 (Lyric 5 12 §Numbers): `x.clamp(lo, hi)` is a default of `Ordered`: `lo` below it,
+// `hi` above it, the value itself between; a value unordered with the bounds comes back as it is.
+struct P :: Ordered {
+    x: int
+}
+fn held<T :: [Ordered]>(x: T, lo: T, hi: T): T = x.clamp(lo, hi)
+let n = float.nan
+let f = 2.5
+println(f"{5.clamp(1, 3)} {0.clamp(1, 3)} {2.clamp(1, 3)} {"b".clamp("c", "d")} {f.clamp(0.0, 1.0)} {n.clamp(0.0, 1.0)}")
+println(f"{P { x = 5 }.clamp(P { x = 1 }, P { x = 3 })} {held(5, 1, 3)}")

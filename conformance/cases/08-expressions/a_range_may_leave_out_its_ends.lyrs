@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | [20, 30, 40, 50]
+//! | [10, 20]
+//! | [10, 20, 30, 40, 50]
+//! | [20, 30, 40]
+//! | [40, 50]
+//! | [10, 20, 30]
+//! since: 1.0.0
+// §8 rule 3: `xs[a..]`, `xs[..b]`, `xs[..]`, and `^n` at a range's end.
+let xs = [10, 20, 30, 40, 50]
+println(xs[1..])
+println(xs[..2])
+println(xs[..])
+println(xs[1..^1])
+println(xs[^2..])
+println(xs[..=2])

@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 17: what the field of a `Bytes` holds is the VM's; a script can read it, not ask it anything.
+println(f"{b"a".v:?}")

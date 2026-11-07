@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-SEM0001
+//! since: 1.0.0
+// §5 rule 15: a `Source<int>` is no `Source<string>`.
+interface Source<T> {
+    fn take(): T
+}
+struct W :: Source<int> {
+    fn take(): int = 1
+}
+let s: Source<string> = W { }
+println(1)

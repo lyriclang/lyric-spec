@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 17: what the field of a `BigInt` holds is the VM's, too.
+import std.math { BigInt }
+println(f"{BigInt.one.v:?}")

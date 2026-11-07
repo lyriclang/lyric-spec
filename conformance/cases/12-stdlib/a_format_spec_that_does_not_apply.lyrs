@@ -1,0 +1,21 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0164
+//! stderr-has: '.2' does not apply to an integer
+//! stderr-has: '#x' does not apply to a float
+//! stderr-has: '+' does not apply to a string
+//! stderr-has: '05' does not apply to a char
+//! stderr-has: ',' does not apply to a bool
+//! stderr-has: '.2' does not apply to a Display type's text
+//! stderr-has: '+?' does not apply to a Debug text
+//! stderr-has: 'zz' is no format spec
+// §12 rule 11 (Lyric 5 12 §2 rule 2): a hole's spec is checked where it is written — one that is
+// no spec, or holds a part the value's type does not take, is refused.
+println(f"{1:.2}")
+println(f"{1.5:#x}")
+println(f"{"s":+}")
+println(f"{'c':05}")
+println(f"{true:,}")
+println(f"{[1]:.2}")
+println(f"{1:+?}")
+println(f"{1:zz}")

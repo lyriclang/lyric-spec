@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | null 8 null null null 0 null
+//! | 9223372036854775807 -9223372036854775808 -9223372036854775808 -15
+//! | -9223372036854775808 -9223372036854775808 0 1024 1
+//! | 63 64 3 64 8 64
+//! | 2 -9223372036854775808 -9223372036854775808 1
+// §12 rule 13 (Lyric 5 12 §Numbers): an integer's `checked…` give `null` where the result does
+// not fit — a zero divisor, `min / -1` —, `saturating…` hold at `min` or `max`, `wrapping…`
+// reduce as `+%` does; `pow` multiplies by squaring; the bits are counted and rotated at the
+// width.
+let half = int.max / 2
+println(f"{int.max.checkedAdd(1)} {5.checkedAdd(3)} {int.min.checkedSub(1)} {half.checkedMul(3)} {int.min.checkedDiv(-1)} {7.checkedRem(-1)} {7.checkedDiv(0)}")
+println(f"{int.max.saturatingAdd(1)} {int.min.saturatingSub(1)} {int.max.saturatingMul(-2)} {(-5).saturatingMul(3)}")
+println(f"{int.max.wrappingAdd(1)} {int.min.wrappingDiv(-1)} {7.wrappingRem(-1)} {2.pow(10)} {3.pow(0)}")
+println(f"{1.leadingZeros()} {0.leadingZeros()} {8.trailingZeros()} {0.trailingZeros()} {255.popCount()} {(-1).popCount()}")
+println(f"{1.rotateLeft(1)} {1.rotateRight(1)} {1.rotateLeft(-1)} {int.min.rotateLeft(1)}")

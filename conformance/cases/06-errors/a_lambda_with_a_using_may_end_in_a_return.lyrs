@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | closed
+//! | opened
+//! | deferred
+//! | left
+//! | closed
+//! | a branch
+//! since: 1.0.0
+
+// §6 rule 11: what a `using` or a `defer` closes stands around the rest of a lambda's block, and a `return`
+// in it ends the lambda as it ends a function
+class R :: Closeable {
+    fn close() {
+        println("closed")
+    }
+}
+
+fn said(f: fn() -> string): string = f()
+
+println(said(() => {
+    using let r = R { }
+    return "opened"
+}))
+println(said(() => {
+    defer {
+        println("deferred")
+    }
+    return "left"
+}))
+println(said(() => {
+    using let r = R { }
+    if (1 < 2) {
+        return "a branch"
+    } else {
+        return "another"
+    }
+}))

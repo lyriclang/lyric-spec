@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0003
+//! since: 1.0.0
+// §12 rule 19: its range within the source.
+b"ab".copyInto(Bytes.zeroed(9), 0, 0, 3)

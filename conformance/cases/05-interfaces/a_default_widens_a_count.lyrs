@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-SEM0121
+//! error: LYS-SEM0085
+//! since: 1.0.0
+// §5 rule 18 (Lyric 5 08 §1.2 rule 2): a default widens a count to a range — two members, two
+// functions whose ranges meet are one count twice.
+struct R {
+    fn f(a: int): int = 1
+    fn f(a: int, b: int = 0): int = 2
+}
+fn free(a: int): int = a
+fn free(a: int, b: int = 0): int = a + b

@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-SEM0060
+//! stderr-has: nothing here says what the empty map holds
+//! since: 1.0.0
+// §3 rule 8: `[:]` takes the map type its position names; where none does, it is written.
+let e = [:]

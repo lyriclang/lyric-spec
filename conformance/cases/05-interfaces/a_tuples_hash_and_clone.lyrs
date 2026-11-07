@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | 0 5 true
+//! since: 1.0.0
+// §5 rules 19–20: a tuple's `clone()` and `hash(h)` called on it — its reference parts cloned, its
+// elements written in order.
+class C :: [Clone] {
+    var n: int = 0
+}
+let t = (1, C { })
+let u = t.clone()
+u.1.n = 5
+let h = Hasher { }
+(1, "a").hash(h)
+let h2 = Hasher { }
+(1, "a").hash(h2)
+println(f"{t.1.n} {u.1.n} {h.finish() == h2.finish()}")

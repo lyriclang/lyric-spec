@@ -1,0 +1,27 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 2
+//! | 200
+//! | 2
+//! | 200
+// §5 rule 23 (Lyric 5 §13 rule 9): the block excludes a type's own conformance at the instances it
+// reaches alone: `Into<int>` stands while `int` is no `From<Meters>`. The call on a receiver reaches
+// the type's own member, a constraint and a value the instance they name.
+struct Meters :: [Into<int>] {
+    v: int,
+    fn into(): int = this.v
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+}
+let m = Meters { v = 2 }
+let x: int = m.into()
+println(x)
+fn conv<T :: [Into<Cm>]>(x: T): Cm = x.into()
+println(conv(m).v)
+fn toInt<T :: [Into<int>]>(x: T): int = x.into()
+println(toInt(m))
+let iv: Into<Cm> = m
+println(iv.into().v)

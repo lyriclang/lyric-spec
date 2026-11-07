@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0001
+//! since: 1.0.0
+// §12 rule 17: a string gives its bytes through `toBytes`
+let x: Bytes = "a"

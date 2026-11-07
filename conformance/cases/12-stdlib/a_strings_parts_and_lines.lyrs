@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | ["a", "b", "", "c"] ["a", "b,c"] []
+//! | ("k", "v=w") null
+//! | ["X", "X", "X"]
+//! | ["one", "two", "", "three"] []
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): `split(sep)` gives the parts in order, empty ones kept;
+// `splitN(sep, n)` at most `n`, the last the rest, none for 0; `splitOnce(sep)` the parts before
+// and after the first, or `null`; `matches(p)` the matches; `lines()` split at `\n`, a `\r`
+// before it taken off, no empty line after a last `\n` — new strings each.
+let a: string[] = "a,b,,c".split(",").toArray()
+let b: string[] = "a,b,c".splitN(",", 2).toArray()
+let c: string[] = "a,b".splitN(",", 0).toArray()
+println(f"{a} {b} {c}")
+println(f"{"k=v=w".splitOnce('=')} {"kv".splitOnce('=')}")
+println("aXbXXc".matches("X").toArray())
+let none: string[] = "".lines().toArray()
+println(f"{"one\r\ntwo\n\nthree\n".lines().toArray()} {none}")

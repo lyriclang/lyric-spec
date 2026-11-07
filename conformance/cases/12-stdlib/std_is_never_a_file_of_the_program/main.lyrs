@@ -1,0 +1,10 @@
+//! run
+//! option: -A
+//! stdout:
+//! | unset
+//! since: 1.0.0
+// §12 rule 2: a path that begins with `std` is never a file of the program — the file
+// std/os.lyrs beside the script is not the module std.os.
+import std.os { env }
+
+println(env("LYRIC_SCRIPT_NEVER_SET_9F2") ?? "unset")

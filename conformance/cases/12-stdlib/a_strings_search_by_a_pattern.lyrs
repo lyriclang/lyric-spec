@@ -1,0 +1,16 @@
+//! run
+//! stdout:
+//! | true false true true true
+//! | true true 1 4 null 0 6
+//! | 3 2 3
+//! | 3 null
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): a pattern is a string or a character; `contains`,
+// `startsWith`, `endsWith`; `find` and `rfind`, the byte of the first and the last match, `null`
+// where there is none, an empty pattern at 0 and at the length; `count`, none overlapping
+// another, an empty pattern between every two characters and at both ends; `c in s`.
+let s = "a,b,,c"
+println(f"{s.contains(",,")} {s.contains('x')} {'b' in s} {'z' !in s} {s.contains("")}")
+println(f"{s.startsWith("a,")} {s.endsWith('c')} {s.find(',')} {s.rfind(',')} {s.find("zz")} {s.find("")} {s.rfind("")}")
+println(f"{s.count(',')} {"aaaa".count("aa")} {"ab".count("")}")
+println(f"{"aéb".find('b')} {"aéb".find("x")}")
