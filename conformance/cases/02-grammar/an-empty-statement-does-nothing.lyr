@@ -1,0 +1,22 @@
+//! run
+//! since: 5.0.0
+//! stdout:
+//! | 3 3 4
+// A ';' alone is an empty statement (02 §4 rule 6): allowed wherever a statement stands, in a
+// value block as well, and it does nothing.
+
+import std.io { println };
+
+fn next(f: fn(int) -> int): int {
+    return f(3);
+}
+
+fn main(): void {
+    var x = 1;;
+    ;
+    x += 2;
+    if (x > 0) { ; }
+    let y = match (x) { _ => { ; x } };
+    let z = next { ; it + 1 };
+    println(f"{x} {y} {z}");
+}
