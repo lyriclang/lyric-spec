@@ -421,6 +421,11 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     by the text. What is not there, and a file where a directory
     would be, is no match; any other failure is its `IoError`. A `[` that is not closed and a `**` beside
     anything else in its part are `InvalidInput`.
+25. **`args` and `exit`** (02 K1a; S7h1), in the prelude, of no right. `args` is a `string[]`: what follows the
+    script's file on the command line ([14](14-cli.md) rule 4), without the script's name; a host gives an
+    instance its own. **`exit(code): never`** ends the run from any task or coroutine with that code: what
+    the console holds is written, and no `defer`, no `using` and no other task runs; a native that some
+    task waits for is not waited for. An instance's host sees it as an outcome.
 
 ## Deviations (skeleton, written with later milestones)
 

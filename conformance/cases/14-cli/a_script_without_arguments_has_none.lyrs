@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | 0
+//! | 1
+//! since: 1.0.0
+
+// §14 rule 4: without the script's name; `args` is a list of the script's own
+println(args.length())
+args.push("mine")
+println(args.length())

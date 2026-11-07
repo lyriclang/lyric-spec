@@ -1,0 +1,13 @@
+//! run
+//! option: --allow=file
+//! args: --allow=net
+//! stdout:
+//! | --allow=net
+//! | true
+//! since: 1.0.0
+
+// §14 rule 4: `--allow=file` went to the command, `--allow=net` to the script
+import std.fs { exists }
+
+println(args[0])
+println(exists("."))

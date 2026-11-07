@@ -1,0 +1,16 @@
+//! run
+//! args: a -b --json -- c
+//! stdout:
+//! | 5
+//! | a
+//! | -b
+//! | --json
+//! | --
+//! | c
+//! since: 1.0.0
+
+// §14 rule 4: all that follows the file goes to the script, what looks like an option too
+println(args.length())
+for (a in args) {
+    println(a)
+}

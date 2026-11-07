@@ -57,6 +57,8 @@ def parse_header(path):
             spec["gone"] = True
         elif body == "stdin-refuses":
             spec["refuses"] = True
+        elif body.startswith("args:"):
+            spec["args"] = body[5:].split()
         elif body == "in-temp-dir":
             spec["temp"] = True
         elif body.startswith("symlink:") or body.startswith("symlink-dir:"):
@@ -226,6 +228,10 @@ def run_case(path, spec, exe, package=None, env=None, cwd=None):
 
     def command(verb):
         args = [str(exe), verb, *spec["options"]] + ([] if package is not None else [str(path)])
+        # `args:` what the run is given after its file, or a check case's; a package's program
+        # names none, `--` says so
+        if verb == spec["mode"] and spec.get("args"):
+            args += (["--"] if package is not None else []) + spec["args"]
         try:
             # UTF-8 both ways: a text mode without it decodes with the locale's code page on
             # Windows, which turned a non-ASCII line of the output into another (S7e1).

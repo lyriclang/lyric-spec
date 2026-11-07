@@ -1,0 +1,11 @@
+//! run
+//! args: a --b
+//! stdout:
+//! | a
+//! | --b
+//! since: 1.0.0
+
+// §14 rule 4: a package's program names no file, `--` ends the options
+for (a in args) {
+    println(a)
+}

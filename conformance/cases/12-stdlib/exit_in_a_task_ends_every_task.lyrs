@@ -1,0 +1,24 @@
+//! run
+//! exit: 3
+//! stdout:
+//! | one
+//! since: 1.0.0
+
+// §12 rule 25: from any task, the others not waited for, `defer`s of no task run
+let ch = Channel<int>.new(0)
+spawn((): void => {
+    defer {
+        println("deferred in the waiting task")
+    }
+    println(ch.recv() ?? 0)
+})
+spawn((): void => {
+    sleep(Duration.ofSecs(3600))
+})
+spawn((): void => {
+    yieldNow()
+    println("one")
+    exit(3)
+})
+ch.recv()
+println("never")

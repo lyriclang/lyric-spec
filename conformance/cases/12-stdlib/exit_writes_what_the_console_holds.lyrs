@@ -1,0 +1,9 @@
+//! run
+//! exit: 0
+//! stdout:
+//! | held
+//! since: 1.0.0
+
+// §12 rule 25: `exit(0)` is an end like the end of the script, the console written
+println("held")
+exit(0)

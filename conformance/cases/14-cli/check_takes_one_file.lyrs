@@ -1,0 +1,8 @@
+//! check
+//! args: other.lyrs
+//! exit: 2
+//! error: LYS-CLI0002
+//! since: 1.0.0
+
+// §14 rule 1: `check` runs nothing, so nothing follows its file
+println(1)
