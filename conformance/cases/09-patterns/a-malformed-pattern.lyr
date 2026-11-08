@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0033
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0033 — a malformed pattern.
+fn main(): void {
+    let xs = [1, 2, 3];
+    let n = match (xs) {
+        [a, .., ..] => a,
+        _ => 0,
+    };
+}

@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0009
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0009 — an angle bracket of a type list is missing.
+fn first(xs: List<int): int {
+    return xs[0];
+}
+
+fn main(): void {
+}

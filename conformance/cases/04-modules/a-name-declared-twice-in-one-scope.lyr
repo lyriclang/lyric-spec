@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-RES0001
+//! since: 5.0.0
+// The catalogue's own example of LYR-RES0001 — a name declared twice in one scope.
+struct Point {
+    x: int
+}
+
+struct Point {
+    y: int
+}
+
+fn main(): void {
+}

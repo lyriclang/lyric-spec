@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0074
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0074 — a static extension called on a value.
+struct Point {
+    x: int,
+}
+
+extend Point {
+    static fn origin(): Point { return Point { x = 0 }; }
+}
+
+fn main(): void {
+    let p = Point { x = 1 };
+    let _ = p.origin();
+}

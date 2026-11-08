@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-PAR0047
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0047 — 'by' where nothing is delegated.
+interface Named {
+    fn name(): string;
+}
+
+enum Color :: [Named by red] {
+    Red;
+    fn name(): string { return "red"; }
+}
+
+fn main(): void {
+}

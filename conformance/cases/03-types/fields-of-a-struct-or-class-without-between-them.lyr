@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0029
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0029 — fields of a struct or class without ',' between them.
+struct Point {
+    x: int
+    y: int
+}
+
+fn main(): void {
+}

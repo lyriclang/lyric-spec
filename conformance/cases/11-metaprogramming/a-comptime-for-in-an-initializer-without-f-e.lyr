@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-PAR0062
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0062 — a 'comptime for' in an initializer without '[f] = e'.
+import std.meta { fields };
+
+struct Point { x: int, y: int }
+
+fn main(): void {
+    let p = Point { comptime for (f in fields<Point>()) x = 0 };
+    let _ = p.x;
+}

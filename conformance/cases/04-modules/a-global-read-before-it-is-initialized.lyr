@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0057
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0057 — a global read before it is initialized.
+import std.io { println };
+
+let total: int = base + 1;
+let base: int = 41;
+
+fn main(): void {
+    println(total);
+}

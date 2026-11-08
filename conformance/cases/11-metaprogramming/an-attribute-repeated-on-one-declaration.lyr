@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-SEM0068
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0068 — an attribute repeated on one declaration.
+import std.core { OnFunction };
+
+struct Label :: [OnFunction] {
+    text: string,
+}
+
+@Label { text = "a" }
+@Label { text = "b" }
+fn f(): void {
+}
+
+fn main(): void {
+    f();
+}

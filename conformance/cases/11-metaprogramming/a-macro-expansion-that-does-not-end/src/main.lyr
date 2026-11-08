@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-CT0007
+//! since: 5.0.0
+// The catalogue's own example of LYR-CT0007 — a macro expansion that does not end.
+import app.macros { again };
+
+fn main(): void {
+    assert(again!(1) == 1);
+}

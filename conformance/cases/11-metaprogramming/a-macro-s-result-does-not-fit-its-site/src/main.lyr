@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0188
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0188 — a macro's result does not fit its site.
+import app.macros { run };
+
+fn main(): void {
+    var n = 0;
+    let x = run! { n += 1; };
+    assert(n == 1);
+}

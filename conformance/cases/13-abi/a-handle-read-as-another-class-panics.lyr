@@ -1,0 +1,21 @@
+//! run
+//! panic: LYR-RT0023
+//! since: 5.0.0
+// 13 §3 rule 12: a GcHandle made again from C's pointer as a handle of another class panics
+// when it is read.
+import std.ffi { GcHandle };
+
+class A {
+    n: int,
+}
+
+class B {
+    s: string,
+}
+
+fn main(): void {
+    let h = GcHandle.pin(A { n = 1 });
+    unsafe {
+        let _ = GcHandle<B>.from(h.asPtr()).get();
+    }
+}

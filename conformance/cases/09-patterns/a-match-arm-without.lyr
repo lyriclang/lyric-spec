@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0034
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0034 — a match arm without '=>'.
+fn main(): void {
+    let n = 1;
+    let s = match (n) {
+        1 "one",
+        _ => "many",
+    };
+}

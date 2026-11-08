@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0007
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0007 — a numeric literal too large.
+fn main(): void {
+    let big = 18446744073709551616;
+}

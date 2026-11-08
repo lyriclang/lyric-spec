@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0190
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0190 — a macro site names no macro.
+fn main(): void {
+    assert(echo!(3) == 3);
+}

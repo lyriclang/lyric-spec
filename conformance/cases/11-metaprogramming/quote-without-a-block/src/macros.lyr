@@ -1,0 +1,5 @@
+import std.syntax { Expr };
+
+pub macro one(): Expr {
+    return quote;
+}

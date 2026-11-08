@@ -1,0 +1,7 @@
+//! check
+//! exit: 2
+//! error: LYR-PKG0009
+//! since: 5.0.0
+// The catalogue's own example of LYR-PKG0009 — a package asks for a newer toolchain.
+fn main(): void {
+}

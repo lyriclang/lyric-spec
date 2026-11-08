@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0005
+//! since: 5.0.0
+// The catalogue's own example of LYR-LEX0005 — a digit separator right after a base prefix.
+fn main(): void {
+    let x = 0x_FF;
+    let _ = x;
+}

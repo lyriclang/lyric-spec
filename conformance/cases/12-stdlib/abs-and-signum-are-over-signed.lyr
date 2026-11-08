@@ -2,7 +2,7 @@
 //! since: 5.0.0
 //! stdout:
 //! | 17 2.5 0.0 5 -1 0 1 1.0 -1.0 true 81
-// 12 "std.math": abs(x) and signum(x) over Signed - the signed integers and the floats; abs(-0.0)
+// 12 §Numbers, "std.math": abs(x) and signum(x) over Signed - the signed integers and the floats; abs(-0.0)
 // is 0.0, a NaN's signum is NaN; x.pow(n) is std.math's Pow, an integer's power by squaring.
 import std.io { println };
 import std.math { abs, signum };

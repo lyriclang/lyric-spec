@@ -1,0 +1,5 @@
+import std.syntax { Expr, parseExpr };
+
+pub macro again(n: Expr): Expr {
+    return parseExpr(f"again!({n.toSource()})");
+}

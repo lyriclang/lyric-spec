@@ -1,0 +1,22 @@
+//! check
+//! error: LYR-SEM0083
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0083 — an operator with two conformances that fit the operand.
+import std.core { Mul };
+
+struct V {
+    x: int,
+}
+
+extend V :: [Mul<int32>] {
+    fn mul(rhs: int32): V { return V { x = this.x * (rhs as int) }; }
+}
+
+extend V :: [Mul<int16>] {
+    fn mul(rhs: int16): V { return V { x = this.x * (rhs as int) }; }
+}
+
+fn main(): void {
+    let v = V { x = 2 } * 3;
+    let _ = v.x;
+}
