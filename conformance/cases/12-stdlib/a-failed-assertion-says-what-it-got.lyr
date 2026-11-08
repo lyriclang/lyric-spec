@@ -1,0 +1,13 @@
+//! run
+//! panic: LYR-RT0008
+//! stderr:
+//! | panic [LYR-RT0008]: xs.length() = 2, expected 3
+//! since: 5.0.0
+// 12 §Testing rule 1: an assertion that does not hold panics with what it got, the expression
+// it got it from, against what was expected.
+import std.test { assertEq };
+
+fn main(): void {
+    let xs = [1, 2];
+    assertEq(xs.length(), 3);
+}

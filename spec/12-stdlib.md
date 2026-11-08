@@ -1349,6 +1349,29 @@ C8): their slots can be written. A type's own hash is synthesized ([05 §14](05-
 An object hashes by its address where its class is `Identity` ([05 §14](05-interfaces.md) rule
 8): `hashIdentityInto(o, &h)` writes it as `writeInt` does.
 
+## Testing
+
+`std.test` ([design 10 B12 X1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8a, the review's S12a) holds the
+assertions a test fails by; `lyric test` runs a package's tests and `subtest` splits one
+([14 §3](14-cli.md)). An assertion is a call like any other: outside a test it panics all the
+same.
+
+1. **An assertion that does not hold panics** (`LYR-RT0008`) with what it got against what was
+   expected, each as `Debug` writes it, the actual value first, and the expression the call wrote
+   for it where that is not the value itself: `assertEq(xs.length(), 3)` of two elements says
+   `xs.length() = 2, expected 3`. A `message` the call gives follows; two values too long to
+   compare by eye get their first difference below — a text's first line that differs, else the
+   first character.
+2. **The assertions**: `assertEq(actual, expected)` and `assertNotEq` over a type that is
+   `Equatable` and `Debug`; `assertTrue(c)` and `assertFalse(c)`; `assertNull(v)`, and
+   `assertNotNull(v)`, which gives the value back; `assertClose(actual, expected, tolerance)`
+   for floating point, NaN on either side failing; `assertLess` and `assertGreater` over an
+   `Ordered` type; `assertContains(c, x)`, what `x in c` asks; `assertEmpty(c)`; and
+   `fail(message): never`.
+3. **`assertThrows(f)`** fails unless `f` throws, and gives what it threw, of the type `f` says
+   it throws. **`assertPanics(f)`** runs `f` in a task of its own and fails unless it panics; it
+   gives the `PanicInfo` the panic left — its `code`, `message` and `trace`.
+
 ## Benchmarks
 
 A function marked **`@Bench`** is a benchmark (design 10 X4; M8c S12b): `fn name(&b: Bench)`, in
