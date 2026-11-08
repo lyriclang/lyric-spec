@@ -102,18 +102,19 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0008` | `panic(message)`: the program's own message, as written |
    | `LYR-RT0009` | `as char` of a value that is no Unicode scalar value ([03 §1.4](03-types.md)) |
    | `LYR-RT0010` | `try!` on an error: `'try!' on an error: <message>` ([06 §6](06-errors.md#6-the-expression-forms)) |
-   | `LYR-RT0011` | `assert(condition, message)` with a false condition: `assertion failed: `, the condition as written, then the message where one is given ([06 §9](06-errors.md#9-panics-and-never)) |
+   | `LYR-RT0011` | `assert(condition, message)` with a false condition — the message a lambda, called then: `assertion failed: `, the condition as written, then the message where one is given ([06 §9](06-errors.md#9-panics-and-never)) |
    | `LYR-RT0012` | `unreachable(message)` reached: `unreachable`, then the message where one is given |
    | `LYR-RT0013` | `todo(message)` reached: `not implemented`, then the message where one is given |
    | `LYR-RT0014` | a close of a coroutine with C frames on its stack (§1.6 rule 6); a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7); random bytes ([12](12-stdlib.md)) |
    | `LYR-RT0016` | a collection of the library changed while it was walked: `List: changed while it was walked` — a list, a map, a set, a deque ([12](12-stdlib.md)) |
    | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
-   | `LYR-RT0018` | every task of a thread waits, none sleeps, and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
+   | `LYR-RT0018` | every task of a thread waits, none sleeps or waits for the system (a socket, a pipe, a signal's channel), and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
+   | `LYR-RT0020` | the runtime found its own invariant broken — a bug of the runtime or the compiler, never of the program ([appendix A](appendix-a-diagnostics.md)) |
    | `LYR-RT0021` | a C function returned, for an enum with `@Layout`, an integer no variant stands for: `C returned <n>, which is no variant of <enum> (it has <count>)` (§3 rule 5) |
-   | `LYR-RT0023` | a `GcHandle` read as a handle of another class than its object's, or of none (§3 rule 12) |
    | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run …` — but for a Callback's that returns nothing, which goes to its thread (§3 rules 9, 13); or an export before the runtime started: `C called an export before lyr_init started the runtime` (§4 rule 6) |
+   | `LYR-RT0023` | a `GcHandle` read as a handle of another class than its object's, or of none (§3 rule 12) |
 
 5. A host may set one **panic hook**. It is called once per process, after the report is
    written, on the panicking thread, with the code, the message and the frames as written. It
@@ -154,11 +155,11 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    on. A yield goes back to the coroutine's resumer — the thread's own stack, or the coroutine
    that resumed it — and nowhere else (asymmetric), and nothing interrupts a coroutine between a
    resume and its next yield (cooperative).
-2. A coroutine's stack is reserved at its first resume — 256 KiB in the release profile and
-   2 MiB in the others, whose unoptimized frames are some four times as large, unless its
-   creation says otherwise (the sweep after M10, W5) — and costs memory only as its pages are
-   reached. Running out of it is a stack overflow (`LYR-RT0006`, §1.4 item 7), as on a thread's
-   stack.
+2. A coroutine's stack is reserved at its first resume — 256 KiB in the release profile and 2 MiB in
+   the others, whose unoptimized frames are some four times as large, unless its creation says
+   otherwise (the sweep after M10, W5) — a size the runtime's interface takes (`lyr_coro_new`,
+   `lyr_task_start`), not one a program writes — and costs memory only as its pages are reached.
+   Running out of it is a stack overflow (`LYR-RT0006`, §1.4 item 7), as on a thread's stack.
 3. A coroutine runs on the thread that first resumed it, and only there.
 4. A coroutine is an object. While it is suspended, what its frames hold lives as long as the
    coroutine: one that nothing references any more is collected with its stack, and nothing on
