@@ -457,6 +457,14 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     streams and waits. Each call runs on a task of the host as a file's (rule 22), but a wait and a pipe's read or
     write end at a cancel, as Lyric 5's do: a read a cancel ended may still take what comes next, which is then
     lost; a reader goes on reading from such a pipe at that risk.
+28. **`os.signals(s…)`** (Lyric 5 10 §12; S7h4), of the right `os`, gives a **`Channel<Signal>`** the given
+    signals come in on instead of doing what the system does with them. Each comes to every channel that asked
+    for it; two that come before the first was received may arrive as one, and one that finds the channel's
+    sixteen places taken is lost for that channel. **Closing** the channel ends its subscription at once: a
+    signal no channel asks for any more is the system's again. The run's end ends every subscription it left
+    open; while one is open, a run whose tasks all wait waits for a signal. A signal comes in while the
+    script's tasks wait or switch: a task that computes on without either holds it back. `KILL`, `STOP` and the
+    faults never come, and on Windows only `Interrupt` and `Terminate` do.
 
 ## Deviations (skeleton, written with later milestones)
 

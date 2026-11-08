@@ -1,0 +1,88 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | ready
+//! | got User1 User1
+//! | a closed
+//! | b still User1
+//! | b closed
+//! | ended by User1
+//! since: 1.0.0
+
+// §12 rule 28: a signal comes to every channel that asked for it, a run whose tasks all wait waits for it, and
+// once no channel asks any more it is the system's again: the third ends the child. Windows sends none of
+// these: there `signal` is `Unsupported`, and the case says what POSIX shows.
+import std.fs { writeText }
+import std.io { TextReader }
+import std.os
+import std.process { Command, Stdio }
+
+let child = "import std.io { flush }\n" +
+    "import std.os { Signal, signals }\n" +
+    "fn name(s: ?Signal): string {\n" +
+    "    if (let x = s) {\n" +
+    "        return match (x) {\n" +
+    "            .User1 => \"User1\",\n" +
+    "            .User2 => \"User2\",\n" +
+    "            _ => \"other\",\n" +
+    "        }\n" +
+    "    }\n" +
+    "    return \"none\"\n" +
+    "}\n" +
+    "let a = signals(Signal.User1)\n" +
+    "let b = signals(Signal.User1, Signal.User2)\n" +
+    "println(\"ready\")\n" +
+    "flush()\n" +
+    "let first = name(a.recv())\n" +
+    "println(f\"got {first} {name(b.recv())}\")\n" +
+    "a.close()\n" +
+    "println(\"a closed\")\n" +
+    "flush()\n" +
+    "println(f\"b still {name(b.recv())}\")\n" +
+    "b.close()\n" +
+    "println(\"b closed\")\n" +
+    "flush()\n" +
+    "sleep(Duration.ofSecs(30))\n" +
+    "println(\"not ended\")\n"
+writeText("child.lyrs", child)
+
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+let c = Command { program = me, args = ["run", "-A", "child.lyrs"], stdout = Stdio.Piped }.spawn()
+let out = TextReader.new(c.stdout ?? unreachable("piped"))
+println(out.readLine() ?? "<end>")
+if (os.platform() == os.Platform.Windows) {
+    var unsupported = false
+    try {
+        c.signal(os.Signal.User1)
+    } catch (e: IoError) {
+        unsupported = e.kind == IoErrorKind.Unsupported
+    }
+    c.kill()
+    c.wait()
+    if (unsupported) {
+        println("got User1 User1")
+        println("a closed")
+        println("b still User1")
+        println("b closed")
+        println("ended by User1")
+    }
+} else {
+    c.signal(os.Signal.User1)
+    println(out.readLine() ?? "<end>")
+    println(out.readLine() ?? "<end>")
+    c.signal(os.Signal.User1)
+    println(out.readLine() ?? "<end>")
+    println(out.readLine() ?? "<end>")
+    c.signal(os.Signal.User1)
+    let st = c.wait()
+    var how = f"ended with {st}"
+    if (let s = st.signal()) {
+        how = match (s) {
+            .User1 => "ended by User1",
+            _ => how,
+        }
+    }
+    println(how)
+}

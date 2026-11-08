@@ -1,0 +1,18 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | subscribed
+//! | unsubscribed
+//! | left open, the end comes
+//! since: 1.0.0
+
+// §12 rule 28: `os.signals(s…)` gives a channel the signals come in on; closing it ends the subscription,
+// and one left open ends with the run, which waits for none (Lyric 5 10 §12 rules 2, 4). No signal comes here.
+import std.os { Signal, signals }
+
+let incoming: Channel<Signal> = signals(Signal.Interrupt, Signal.Terminate, Signal.Other(10))
+println("subscribed")
+incoming.close()
+println("unsubscribed")
+let _ = signals(Signal.Hangup)
+println("left open, the end comes")
