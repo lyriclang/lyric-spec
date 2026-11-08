@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0078
+//! since: 5.0.0
+// 03 §9.1 rule 1: each bound of a type parameter is written once.
+fn show<T :: [Display, Display]>(x: T): string {
+    return x.show();
+}
+
+fn main(): void {
+    let _ = show(1);
+}

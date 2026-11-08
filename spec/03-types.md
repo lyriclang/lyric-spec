@@ -730,7 +730,9 @@ Type parameters, their inference, and what an instance is
    may declare **type parameters**,
    `fn ident<T>(x: T): T`, `struct Pair<A, B> { … }`; a parameter may carry **constraints**,
    `<T :: [Show, Eq<T>]>`, the interfaces an argument must satisfy ([05](05-interfaces.md)) — one also
-   without the brackets, `<T :: Show>`, where a `,` after it begins the next parameter.
+   without the brackets, `<T :: Show>`, where a `,` after it begins the next parameter. Only an
+   interface bounds a parameter, and each bound is written once — `From<int>` and `From<string>`
+   are two (`LYR-SEM0078`, as in a conformance list).
    Inside the declaration a value of type `T` has the members its constraints give it and no
    others (T18): the body is checked once, at the declaration, not per instance.
 2. An **instance** names the arguments: `Pair<int, string>`, `ident<int>`. Two argument lists

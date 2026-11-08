@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | 2
+//! since: 5.0.0
+// 03 §9.1 rule 1: a bound repeats only at the same arguments — 'From<int>' and 'From<string>'
+// are two.
+import std.io { println };
+
+interface From<S> {
+    static fn from(s: S): Self;
+}
+
+struct Count :: [From<int>, From<string>] {
+    n: int,
+
+    static fn from(s: int): Count {
+        return Count { n = s };
+    }
+
+    static fn from(s: string): Count {
+        return Count { n = s.length() };
+    }
+}
+
+fn both<T :: [From<int>, From<string>]>(x: T): T {
+    return x;
+}
+
+fn main(): void {
+    let c = both(Count.from(2));
+    println(f"{c.n}");
+}
