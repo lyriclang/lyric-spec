@@ -33,7 +33,10 @@ from imports come with S5b–S5e — until then the design documents decide.
    without a word is seen beyond its file — Script's default; Lyric 5's is `internal` —, as one
    with `pub` or `internal` is; `private` keeps it to its file. A `private` function is named by
    its own module alone: an import of it and a call through its module are refused
-   (`LYS-RES0009`).
+   (`LYS-RES0009`). A module's binding, its outermost `let` or `var` (rule 3), takes the words as
+   a declaration does (Lyric 5 §3 rule 1, `pub let`): a `private` one is read and written by its
+   own module alone, a pattern's names each (S7i3a). A word before any other statement is refused
+   (`LYS-PAR0053`).
 6. **Imports** (Lyric 5 §4 rules 1–2). An import takes one of three forms: **selective**,
    `import a.b { f, T }`, binds the names it lists, an item **renamed** with `as` under its new
    name alone; **qualified**, `import a.b`, binds the module under its last segment, `b.f()`;

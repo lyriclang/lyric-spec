@@ -1,0 +1,14 @@
+private var count: int = 0
+
+private let (step, start) = (2, 10)
+
+let plain: int = 1
+
+pub let open: int = 2
+
+internal let inside: int = 3
+
+fn next(): int {
+    count += step
+    return start + count
+}

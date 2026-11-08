@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | out
+//! stderr:
+//! | INFO server started on 8080
+//! | WARN disk at 91%
+//! | ERROR lost the connection
+
+// §12 rule 35: a log line is its level and its message on stderr, Info and above at the start; Debug is below
+import std.log
+
+let port = 8080
+log.debug("not written")
+log.info(f"server started on {port}")
+println("out")
+log.warn("disk at 91%")
+log.error("lost the connection")

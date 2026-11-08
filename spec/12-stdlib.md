@@ -536,6 +536,12 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     record of one empty field is `""`, one of none an empty line. Records of one number of fields, at least one,
     `parse` reads back as `format` got them. **`CsvOptions { separator: char = ',', crlf: bool = true }`**;
     `crlf = false` writes LF. A quote, CR or LF as the separator panics (`LYS-RT0008`).
+35. **Log lines** (S7i3), in **`std.log`**, a module of no right, in Script; Lyric 5 has none in its standard
+    library. **`Level { Debug, Info, Warn, Error }`**, the least first, shown `DEBUG`, `INFO`, `WARN`, `ERROR`.
+    **`debug(message)`**, **`info`**, **`warn`** and **`error`** write the line `LEVEL message` (`INFO server
+    started`) where its level is at least the threshold: `Info` at the start, set with **`setLevel(level)`**,
+    asked with **`enabled(level): bool`**. A line goes to stderr, or, after **`setSink(to: fn(string) -> void)`**,
+    to `to`, without its line break. A line has no time stamp and no fields: a message carries them.
 
 ## Deviations (skeleton, written with later milestones)
 

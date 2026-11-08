@@ -26,7 +26,8 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
 1. A module is a sequence of **items**: declarations (`fn`, `struct`, `class`, `enum`,
    `type Name = T`) and statements, in any order; its statements are the script's code
    ([07 Top](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). A visibility word stands before a declaration
-   only (`LYS-PAR0053`).
+   or a module's binding, its outermost `let` or `var` ([04](04-modules.md) rule 5), only
+   (`LYS-PAR0053`).
 2. A function's body is a block, or **`= expression`** after the signature: `fn twice(x: int) =
    x * 2` (09 Ret).
 
