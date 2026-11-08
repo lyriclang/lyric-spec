@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0236
+//! since: 5.0.0
+// 07 §6 rule 5: a 'continue' in a 'defer' body may not go to a loop around the 'defer'.
+fn main(): void {
+    outer: for (i in 0..3) {
+        defer {
+            for (j in 0..2) {
+                if (i == j) {
+                    continue outer;
+                }
+            }
+        }
+    }
+}

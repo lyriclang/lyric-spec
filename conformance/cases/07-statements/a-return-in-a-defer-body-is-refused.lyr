@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0236
+//! since: 5.0.0
+// 07 §6 rule 5: a 'defer' body has nowhere to return to.
+fn count(): int {
+    defer {
+        return;
+    }
+    return 1;
+}
+
+fn main(): void {
+    let _ = count();
+}
