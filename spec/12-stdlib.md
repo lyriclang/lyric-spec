@@ -523,6 +523,19 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     Script has no attributes before `lyric-script test`, and writes `got` and the value, as Lyric 5 does where no
     call's text reaches it. `subtest`, `assertPanics` — a panic in Script ends the run (10 rule 2) — and the
     runners come with `lyric-script test`.
+34. **Comma-separated values** (RFC 4180; S7i2), in **`std.csv`**, a module of no right, in Script; Lyric 5 has
+    none in its standard library. **`parse(text, options = CsvOptions { }): string[][]`** gives the records of
+    `text`, each a list of its fields. A record ends at CRLF or LF, the last one's break is free, an empty line is
+    no record, and a byte order mark at the start is skipped. A field in `"` holds the separator, line breaks and
+    `""` for a quote; elsewhere a lone CR and the spaces around a field are its characters. A quote in a field
+    without them, a quote left open, text after a closing quote and a record of another number of fields than the
+    first throw **`CsvError { line, column, detail }`**, `"{detail} at {line}:{column}"` (`a quote in an
+    unquoted field at 1:3`): from 1, columns in characters, at the quote, the opening quote, the text, a record's
+    start. **`format(rows, options = CsvOptions { }): string`** writes a field in quotes where it holds the
+    separator, a quote, CR, LF or a byte order mark, doubles the quotes in it and ends every record with CRLF; a
+    record of one empty field is `""`, one of none an empty line. Records of one number of fields, at least one,
+    `parse` reads back as `format` got them. **`CsvOptions { separator: char = ',', crlf: bool = true }`**;
+    `crlf = false` writes LF. A quote, CR or LF as the separator panics (`LYS-RT0008`).
 
 ## Deviations (skeleton, written with later milestones)
 
