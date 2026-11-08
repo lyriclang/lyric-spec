@@ -1,0 +1,86 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 2026-03-29 03:30 GMT+02:00 true
+//! | 2026-03-29 01:30 GMT true
+//! | 2026-03-29 01:30 Z true
+//! | -0044-03-15 12:00 Z true 12026-01-01 true
+//! | 2026-01-01T00:00:00Z 2069-01-01T00:00:00Z 1970-01-01T00:00:00Z
+//! | 2026-03-29T00:00:00Z 1970-12-07T00:00:00Z 1970-01-01T00:05:00Z
+//! | 123 123456789 12 AM J F | 12 PM 12
+//! | 1970-01-01T03:30:00.123456789Z
+//! | the text is not a value of the type: there is no day 30 in 2026-02
+//! | true true true true true
+//! | the pattern's quote is not closed
+//! since: 1.0.0
+
+// §12 rule 32: what `format` writes, `parseWith` reads back — `GMT` and its offset, `Z` for none, a year's
+// sign, where Lyric 5 refuses all three (lyric#690) —; `yy` as 1970–2069, names without case, a fraction cut
+// to nine digits, the hour of 12 at midnight and noon, written and read; what does not fit is `Invalid`
+import std.time { Date, DateTime, Time, TimeError, Zone }
+
+fn back(p: string, dt: DateTime): string {
+    let text = dt.format(p)
+    try {
+        let again = DateTime.parseWith(p, text)
+        return f"{text} {again == dt}"
+    } catch (_: ParseError) {
+        return f"{text} refused"
+    }
+}
+
+fn refused(p: string, text: string): ParseError {
+    try {
+        let _ = DateTime.parseWith(p, text)
+    } catch (e: ParseError) {
+        return e
+    }
+    panic(f"'{text}' fits '{p}'")
+}
+
+let cet = Zone.fromPosix("CET", "CET-1CEST,M3.5.0,M10.5.0/3")
+let dt = DateTime.of(Date.of(2026, 3, 29), Time.of(3, 30, 0), cet)
+let utc = dt.withZone(Zone.utc)
+println(back("yyyy-MM-dd HH:mm ZZZZ", dt))
+println(back("yyyy-MM-dd HH:mm ZZZZ", utc))
+println(back("yyyy-MM-dd HH:mm ZZZZZ", utc))
+let old = DateTime.of(Date.of(-44, 3, 15), Time.of(12, 0, 0), Zone.utc)
+let far = DateTime.of(Date.of(12026, 1, 1), Time.of(0, 0, 0), Zone.utc)
+let before = back("yyyy-MM-dd HH:mm X", old)
+let after = back("yyyy-MM-dd", far)
+println(f"{before} {after}")
+let signed = DateTime.parseWith("yyyy", "+2026")
+let late = DateTime.parseWith("yy", "69")
+let early = DateTime.parseWith("yy", "70")
+println(f"{signed} {late} {early}")
+let named = DateTime.parseWith("EEEE d MMMM yyyy", "SUNDAY 29 march 2026")
+let short = DateTime.parseWith("EEE, MMM d", "mon, DEC 7")
+let midnight = DateTime.parseWith("h:mm a", "12:05 am")
+println(f"{named} {short} {midnight}")
+let small = DateTime.of(Date.of(2026, 1, 2), Time.of(0, 5, 0, 123456789), Zone.utc)
+let noon = DateTime.of(Date.of(2026, 1, 2), Time.of(12, 5, 0), Zone.utc)
+let fields = small.format("SSS SSSSSSSSSSS h a MMMMM EEEEE")
+let twelve = noon.format("h a hh")
+println(f"{fields} | {twelve}")
+println(DateTime.parseWith("HH:mm:ss.SSS", "03:30:00.123456789123"))
+println(refused("yyyy-MM-dd", "2026-02-30").message())
+let invalid = [
+    refused("h:mm a", "13:05 pm"),
+    refused("yyyy", "2026x"),
+    refused("Q", "x"),
+    refused("HH:mm X", "10:00 +2400"),
+    refused("MM/dd", "3/05"),
+]
+let kinds = StringBuilder.new()
+for (e in invalid) {
+    if (kinds.length() > 0) {
+        kinds.appendStr(" ")
+    }
+    kinds.appendStr(f"{e.kind == ParseErrorKind.Invalid}")
+}
+println(kinds.toString())
+try {
+    let _ = dt.format("'open")
+} catch (e: TimeError) {
+    println(e.message())
+}

@@ -487,7 +487,7 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     `Instant` — in UTC —, parsed as strictly as Lyric 5 parses it. `std.time` gives `Instant` its text,
     `Instant.parse` and `instant.toDateTime(zone)` by `extend`: they are there where a module of the program
     imports `std.time`. A date-time outside the years an `Instant` reaches panics with an overflow
-    (`LYS-RT0002`) on the way to one. The patterns follow (S7h6b).
+    (`LYS-RT0002`) on the way to one; its patterns are rule 32.
 31. **The zones of rules** (Lyric 5 12 §Time, the zones, rules 1–2; S7h6a), in `std.time`. A zone is UTC, a
     fixed offset, or a zone of rules: **`Zone.load(name)`** from the system's database (`TZDIR` or
     `/usr/share/zoneinfo`), **`Zone.fromTzif(name, bytes)`** of a `Bytes`, **`Zone.fromPosix(name, tz)`**,
@@ -502,6 +502,16 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     in force. A zone of rules answers for the moments an `Instant` reaches: a local time in one beyond them,
     or within a day of their ends, panics with an overflow (`LYS-RT0002`), where Lyric 5, whose rules count
     seconds, reads on. Loading a zone takes `std.time`'s right, `os`.
+32. **The patterns** (Lyric 5 12 §Time, the zones, rule 3; S7h6b), in `std.time`, in Script. **`dateTime.
+    format(pattern)`** writes the fields of UTS #35 as Lyric 5 writes them, English names, `'…'` as it is, `''`
+    a quote; a letter the pattern does not know or a quote not closed is the `TimeError` Lyric 5 throws, its
+    message Lyric 5's. **`DateTime.parseWith(pattern, text, zone = Zone.utc)`** reads them back as Lyric 5
+    does — the digits a number finds (a padded field at least its width), names without case, a fraction cut
+    to nine digits, `yy` as 1970–2069, 1970-01-01 00:00:00 for what the pattern does not name, a fixed zone
+    for an offset field, `zone` resolving the local time without one —; what does not fit is `ParseError {
+    kind = .Invalid }`, a date or time that does not exist with `Date.of`'s or `Time.of`'s message as its
+    detail. Where Lyric 5 does not read back what it writes (lyric#690), Script does: `ZZZZ` reads `GMT` and
+    an offset after it or none, `ZZZZZ` reads `Z`, and a year other than `yy` its sign, `-` or `+`.
 
 ## Deviations (skeleton, written with later milestones)
 
