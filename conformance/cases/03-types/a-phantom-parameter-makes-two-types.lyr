@@ -1,0 +1,24 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §9.1 rule 8: 'Id<User>' and 'Id<Order>' are two types though nothing in 'Id' names 'T'.
+struct User {
+    name: string,
+}
+
+struct Order {
+    total: int,
+}
+
+struct Id<T> {
+    raw: int,
+}
+
+fn user(id: Id<User>): int {
+    return id.raw;
+}
+
+fn main(): void {
+    let o = Id<Order> { raw = 9 };
+    let _ = user(o);
+}

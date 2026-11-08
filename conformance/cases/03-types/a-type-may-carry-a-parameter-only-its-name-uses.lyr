@@ -1,0 +1,30 @@
+//! check
+//! clean: unused-generic
+//! since: 5.0.0
+// 03 §9.1 rule 8: a type's parameter nothing in it names is a phantom — 'Id<User>' and
+// 'Id<Order>' are two types — and no warning.
+struct User {
+    name: string,
+}
+
+struct Order {
+    total: int,
+}
+
+struct Id<T> {
+    raw: int,
+}
+
+fn user(id: Id<User>): int {
+    return id.raw;
+}
+
+fn order(id: Id<Order>): int {
+    return id.raw;
+}
+
+fn main(): void {
+    let u = Id<User> { raw = 7 };
+    let o = Id<Order> { raw = 9 };
+    let _ = user(u) + order(o);
+}

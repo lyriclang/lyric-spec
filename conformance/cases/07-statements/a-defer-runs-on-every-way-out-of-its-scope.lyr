@@ -1,0 +1,46 @@
+//! run
+//! stdout:
+//! | body 0
+//! | inner 0
+//! | round 0
+//! | body 1
+//! | inner 1
+//! | round 1
+//! | body 2
+//! | inner 2
+//! | round 2
+//! | r
+//! | late
+//! | early
+//! | 1
+//! since: 5.0.0
+// 07 §6: a 'defer' runs when its scope is left, on every way out; a scope's run last registered
+// first; a loop's block is a scope per round, a 'continue' and a 'break' end it too; a return's
+// value is evaluated before them.
+import std.io { println };
+
+fn mark(s: string): int {
+    println(s);
+    return 1;
+}
+
+fn leave(): int {
+    defer println("early");
+    defer { println("late"); }
+    return mark("r");
+}
+
+fn main(): void {
+    for (i in 0..5) {
+        defer println(f"round {i}");
+        defer { println(f"inner {i}"); }
+        println(f"body {i}");
+        if (i == 1) {
+            continue;
+        }
+        if (i == 2) {
+            break;
+        }
+    }
+    println(f"{leave()}");
+}

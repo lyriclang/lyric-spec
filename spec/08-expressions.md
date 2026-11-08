@@ -118,6 +118,9 @@ left to right everywhere, the target before the value).
 3. **Its value** is the value stored, at the type of the place: `o = v` where `o` holds a `?T`
    or an interface is worth that `?T` or that interface. A compound assignment is worth the
    new value; `t++` the old one, `++t` the new.
+4. An assignment written as the **condition** of an `if`, a `while` or a `do … while` is warned
+   about (`LYR-SEM0202`): a `==` is what is usually meant. A **second pair of parentheses** says
+   the assignment is meant — `if ((done = check()))` — and nothing is warned.
 
 ## 4. Precedence
 

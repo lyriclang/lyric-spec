@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 07 §1 rule 7: a function without a return type returns nothing; the type is not taken from the
+// body, so 'return v;' in it is refused.
+fn count() {
+    return 3;
+}
+
+fn main(): void {
+    count();
+}

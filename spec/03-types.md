@@ -774,6 +774,10 @@ Type parameters, their inference, and what an instance is
    nothing: a binding that holds a `void` and a parameter written with it are warned about
    (`LYR-SEM0173`; the review's M6-5). In generic code there is no warning: the binding is a
    `T`. `==` and `!=` on a `void` are refused (`LYR-SEM0003`): there is nothing to compare.
+8. A **function's** type parameter that nothing in it names — no parameter, the result, the body
+   — is warned about (`LYR-SEM0200`): no call can infer it. A **type's** is not (T18): a type
+   may carry a parameter only its name uses, a **phantom** — `struct Id<T> { raw: int }` makes
+   `Id<User>` and `Id<Order>` two types.
 
 ### 9.2 Inference at a call
 
