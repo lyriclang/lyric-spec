@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-RES0001
+//! since: 5.0.0
+// 04 §4 rule 1a: an import is written once — the same name of the same module, imported again,
+// is refused as a qualified import written twice is.
+import std.io { println };
+import std.io { println };
+
+fn main(): void {
+    println("once");
+}
