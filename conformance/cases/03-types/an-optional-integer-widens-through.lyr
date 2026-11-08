@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 3 -1
+//! | 200
+//! since: 5.0.0
+// 03 §3.1 rule 3: a coercion reaches through the optional — '?int8' where '?int' is expected,
+// '?uint8' as a return where '?int16' is.
+import std.io { println };
+
+fn wide(n: ?int): int {
+    return n ?? -1;
+}
+
+fn back(b: ?uint8): ?int16 {
+    return b;
+}
+
+fn main(): void {
+    let n: ?int8 = 3i8;
+    let m: ?int8 = null;
+    println(f"{wide(n)} {wide(m)}");
+    println(f"{back(200u8) ?? 0i16}");
+}
