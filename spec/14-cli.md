@@ -226,7 +226,7 @@ the standard library's own tests through it, `StdTests`).
    the order of their paths. It is named `doc: <module>.<element> (<file>:<line>)` — the element
    the comment documents, a member as `Type.member`, the module alone for `//!` — and `-f` and the
    count take it as the others. Its fence says what it must do, as the Book's snippets
-   ([Book](https://lyric.oil1i.de/dev/book/)) do: `lyric` builds and runs, and prints what an
+   ([Book](https://lyriclang.de/dev/book/)) do: `lyric` builds and runs, and prints what an
    ` ```output ` block right below it says; `lyric,no_run` builds; `lyric,compile_fail=CODE` fails
    to build with that code and no other, and says what a ` ```diagnostic ` block right below it
    says. A block without `fn main` is made a program as the Book's are — its statements the body
