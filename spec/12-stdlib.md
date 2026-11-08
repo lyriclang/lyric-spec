@@ -512,6 +512,17 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     kind = .Invalid }`, a date or time that does not exist with `Date.of`'s or `Time.of`'s message as its
     detail. Where Lyric 5 does not read back what it writes (lyric#690), Script does: `ZZZZ` reads `GMT` and
     an offset after it or none, `ZZZZZ` reads `Z`, and a year other than `yy` its sign, `-` or `+`.
+33. **The assertions** (Lyric 5's `std.test`; S7i1), in **`std.test`**, a module of no right, in Script.
+    `assertEq`, `assertNotEq`, `assertTrue`, `assertFalse`, `assertNull`, `assertNotNull` (giving the value),
+    `assertClose` (NaN close to nothing), `assertLess`, `assertGreater`, `assertContains` (over `Contains<T>`),
+    `assertEmpty` (over `Iterable`), `assertThrows<E>(f)` (giving the error of type `E`; another goes on out of
+    it) and `fail(message): never`, each with a last `message = ""`. One that does not hold panics
+    (`LYS-RT0008`) with Lyric 5's message: `got 2, expected 3`, the values as `Debug` writes them, then `: ` and
+    the message; two values too long to compare by eye get their first difference below it, as Lyric 5 names it.
+    Lyric 5 writes the expression of the call before the value (`xs.length() = 2`, through `@callerExpr`);
+    Script has no attributes before `lyric-script test`, and writes `got` and the value, as Lyric 5 does where no
+    call's text reaches it. `subtest`, `assertPanics` — a panic in Script ends the run (10 rule 2) — and the
+    runners come with `lyric-script test`.
 
 ## Deviations (skeleton, written with later milestones)
 

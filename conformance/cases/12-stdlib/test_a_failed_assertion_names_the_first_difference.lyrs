@@ -1,0 +1,41 @@
+//! run
+//! panic: LYS-RT0008
+//! stdout:
+//! | got "a\nb\nc", expected "a\nx\nc"
+//! | line 2: "b", expected "x"
+//! | got "a\nb", expected "a"
+//! | line 2: "b", expected no line
+//! | got "the quick brown fox jumps over the lazy dog", expected "the quick brown fox jumps over the lazy cat"
+//! | first difference at character 42:
+//! |   …jumps over the lazy dog"
+//! |   …jumps over the lazy cat"
+//! |                        ^
+//! | got [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], expected [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13]
+//! | first difference at character 38:
+//! |   …, 7, 8, 9, 10, 11, 12]
+//! |   …, 7, 8, 9, 10, 11, 13]
+//! |                        ^
+//! | got "short", expected "shirt"
+//! since: 1.0.0
+
+// §12 rule 33: two values too long to compare by eye get their first difference below the message — a text's
+// first line that differs, else, past 40 characters together, the first character, the twenty before it and a
+// mark under it; short ones none
+import std.test { assertEq }
+
+fn said(body: fn() -> void): string {
+    let t = spawn { body() }
+    yieldNow()
+    return match (t.status()) {
+        .Panicked(p) => p.message,
+        _ => "held",
+    }
+}
+
+println(said(() => assertEq("a\nb\nc", "a\nx\nc")))
+println(said(() => assertEq("a\nb", "a")))
+println(said(() => assertEq("the quick brown fox jumps over the lazy dog", "the quick brown fox jumps over the lazy cat")))
+let twelve = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+let other = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13]
+println(said(() => assertEq(twelve, other)))
+println(said(() => assertEq("short", "shirt")))
