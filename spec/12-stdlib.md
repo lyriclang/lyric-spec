@@ -201,7 +201,8 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   the surrogates passed over, its first `'\0'` and its last `'\u{10FFFF}'`. A range walked
   changes: `start` and `end` are `var`.
 - A **`Coroutine<T>`** is an `Iterator` of `T` and `Closeable`, built in (design 10 B6 I7): its
-  `Error` is what it throws, `never` where nothing, and it conforms to nothing else. A loop over
+  `Error` is what it throws, `never` where nothing; it is an `Identity` (design 06 A7) and
+  conforms to nothing else. A loop over
   one pulls it and closes it on its way out ([07 §2](07-statements.md) rule 7): left early, its
   stack unwinds and its defers run.
 - The **adapters** are members of every iterator (design 10 B6 I3, I4), each giving a struct of
@@ -242,7 +243,7 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
 - A **function an adapter or a terminator takes may throw** (design 05 K4; 13 M8c P2): `map`,
   `filter`, `takeWhile`, `skipWhile` and `inspect` take a `fn(…) -> … throws E` and give an
   iterator whose `Error` is `Join<I.Error, E>`; `fold`, `reduce`, `any`, `all`, `none`, `find`,
-  `position` and `forEach` throw `Join<I.Error, E>`. `E` is what the function throws, bound at the
+  `firstWhere` and `forEach` throw `Join<I.Error, E>`. `E` is what the function throws, bound at the
   call, and `never` where it throws nothing — then nothing is joined and no `try` stands:
   `words.iter().map((s) => try int.parse(s))` is walked with `try`, `xs.iter().map((x) => x * 2)`
   without.
@@ -408,8 +409,8 @@ pieces, one after the other — `crc32(rest, crc32(first))`.
 ## Input and output
 
 The core of `std.io`, its buffers and its text ([design 10 O1–O3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md);
-M8b S2, S3 and S10a). The files, the console's streams and the network follow with M8b's later
-slices.
+M8b S2, S3 and S10a). The files, the console's streams and the network have sections of their
+own below.
 
 1. **`IoError`** is the one error that input and output throw (O3), a struct: `kind:
    IoErrorKind`, `path: ?string`, `detail: string` and `inner: ?Error` — the field O3 calls
@@ -556,7 +557,8 @@ forms over the running thread's own. Not for secrets — `randomBytes` of §Cryp
 ## Time
 
 `std.time` ([design 10 Q1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S5a, S5b): spans, the system's two clocks,
-the calendar and RFC 3339. The time zones' database and the format patterns follow with M10.
+the calendar and RFC 3339; the time zones' database and the format patterns are **The zones**
+below.
 
 1. **`Duration`** is a span in whole nanoseconds, negative or not: `ofNanos`, `ofMicros`,
    `ofMillis`, `ofSecs`, `ofMinutes`, `ofHours`; `nanos()`, `millis()` and `secs()` rounded toward
@@ -591,7 +593,7 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
    without trailing zeros. Both read back from their texts (`Parse`): `Time.parse("09:30:00.5")`
    takes up to nine digits of fraction and refuses an offset, which is a `DateTime`'s.
 6. **A zone** is a fixed offset from UTC: `Zone.utc`, `Zone.fixed(offset)` — whole minutes under
-   a day, else `TimeError`. *(Informative.)* The zones of a database come with M10.
+   a day, else `TimeError`. A zone of the database is in **The zones** below.
 7. **`DateTime`** is a date and a time of day at an offset: `DateTime.of(date, time, zone)`,
    `instant.toDateTime(zone)`, `toInstant()`, `date()`, `time()`, `offset()`. Two compare field by
    field — one moment at two offsets is two date-times, one instant.
@@ -667,8 +669,8 @@ the calendar and RFC 3339. The time zones' database and the format patterns foll
 ## Files
 
 `std.fs` ([design 10 O4, O5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md); M8b S6b, S6c): `File`, a handle on a file, and the
-conveniences that read or write a file whole or its lines one by one. The directories follow
-with S7.
+conveniences that read or write a file whole or its lines one by one. The directories are the
+next section's.
 
 1. **`File.open(path)`** opens to read, **`File.create(path)`** to write — made where it is not
    there, cut to nothing where it is —, **`File.openWith(path, options)`** as an `OpenOptions`
@@ -970,29 +972,6 @@ package's transport brings it), no HTTP/2, no cookies.
    line beyond 64 KiB), a body that ends early or a chunk that is none (`IoError`,
    `UnexpectedEof` or `InvalidData`). The errors of the connection are `IoError`, a cancel
    `Cancelled`. `http.get(text)` is a GET with the defaults and redirects followed.
-
-4. **The server** (M10 S8). `Server.bind(addr, options)` with `ServerOptions { keepAlive = true,
-   serverName = "lyric5" }`, `localAddr()`, `serve(handler)` — `handler: fn(Request) -> Response
-   throws Error` — and `shutdown()`. `serve` accepts until the listener is closed and takes a task
-   per connection; on it each request is read as the client writes one: the request line
-   (origin-form, absolute-form or `*`; HTTP/1.1 or 1.0), the headers (§3's limits), the body
-   framed by `Content-Length` or `Transfer-Encoding: chunked` and given to the handler as the
-   request's `body` (a `Reader`; `request.bytes()`, `text()`, `json<T>()` read it whole; a body
-   the handler leaves is read away before the next request). `Expect: 100-continue` is answered
-   with `100 Continue` before the handler runs. The handler's response goes out as `HTTP/1.1`
-   with `Server`, `Content-Length` where the body's length is known and in chunks else, nothing
-   for a HEAD, a 204, a 304 or a 1xx; `Response.of(status, bytes, contentType)`,
-   `Response.withText(text, status)`, `Response.withJson(value, status)`, `Response.stream(status,
-   reader, length)` and `Response.empty(status)` make one, its `headers` are the handler's to
-   set. A handler that throws answers `500` with the error's message as text. The connection
-   stays for the next request unless the request was HTTP/1.0 without `keep-alive`, a side said
-   `Connection: close`, `keepAlive` is off, or the server is shutting down; it is closed after
-   the peer's remaining bytes are read away (a close with bytes unread would reset it and lose the
-   answer). A request that is none — a request line or version that is none, no `Host` under
-   HTTP/1.1, a target that is no URI, a `Content-Length` that is no number, a transfer encoding
-   that is not chunked, a folded line — is answered `400 Bad Request` with the reason as text and
-   the connection closed. `shutdown()` closes the listener (`serve` returns), closes the
-   connections waiting for a request, and lets a request under way be answered first.
 
 4. **The server** (M10 S8). `Server.bind(addr, options)` with `ServerOptions { keepAlive = true,
    serverName = "lyric5" }`, `localAddr()`, `serve(handler)` — `handler: fn(Request) -> Response
