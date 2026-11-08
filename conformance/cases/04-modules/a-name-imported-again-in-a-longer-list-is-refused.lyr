@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-RES0001
+//! since: 5.0.0
+// 04 §4 rule 1a: a second import that lists a name already imported binds it twice, though it
+// brings another name beside it.
+import std.io { println };
+import std.io { println, print };
+
+fn main(): void {
+    println("a");
+    print("b\n");
+}

@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-RES0001
+//! since: 5.0.0
+// 04 §4 rule 1a: a name listed twice in one selective import is that import written twice.
+import std.io { println, println };
+
+fn main(): void {
+    println("once");
+}
