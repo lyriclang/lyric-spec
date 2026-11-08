@@ -107,7 +107,7 @@ The resolver's: what a name, an import or a module path refers to.
 
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
-| LYR-RES0001 | E | [04-modules](04-modules.md) | a name declared twice in one scope | Two declarations take the same name in one scope: a module, a type's members, an `extend` block, an import beside a declaration, or a parameter list. The second is reported; the first stays. |
+| LYR-RES0001 | E | [04-modules](04-modules.md) | a name declared twice in one scope | Two declarations take the same name in one scope: a module, a type's members, an `extend` block, an import beside a declaration, an import written twice, or a parameter list. The second is reported; the first stays. |
 | LYR-RES0002 | E | [04-modules](04-modules.md) | a type name that names no type | A type annotation names a type that is neither declared in the module, imported, a builtin, nor passed on by the prelude. |
 | LYR-RES0003 | E | [04-modules](04-modules.md) | an import of a module that does not exist | An `import` names a module that no file provides: no `src/<path>.lyr` in the package, no module of a dependency or of `std` by that path. |
 | LYR-RES0004 | E | [04-modules](04-modules.md) | an imported name the module does not declare | A selective import `import m { x };` asks for a name the module `m` neither declares nor passes on with `pub import`. |

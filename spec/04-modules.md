@@ -186,6 +186,10 @@ tests (`tests/Lyric5.Tests`, `ImportTests`).
    segment — `util.answer()`; **aliased**, `import app.util as u;`, under another name. A
    selective item may be **renamed**: `{ answer as reply }` binds `reply`, and `answer` is not
    bound (I2). There is no import of everything (I3).
+1a. The forms of one module **stand side by side** (I6): `import app.util;` beside
+   `import app.util { answer }` and `{ answer as reply }`. An import is **written once**: a name
+   bound again to what it already names — a selective name listed twice, in one list or in two
+   imports, a qualified or an aliased import repeated — is refused (`LYR-RES0001`).
 2. **`pub import`** passes on what it binds (I4): `pub import app.util { answer };` in `app.facade`
    makes `answer` a `pub` member of `app.facade` — imported from there, named as `facade.answer`,
    under the name it was renamed to; a module imported qualified or aliased is passed on as a

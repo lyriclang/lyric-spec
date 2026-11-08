@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | selective
+//! | qualified
+//! | renamed
+//! since: 5.0.0
+// 04 §4 rule 1a: several forms for one module stand side by side — the module qualified, a name
+// of it selectively, and the same name again under another name.
+import std.io;
+import std.io { println };
+import std.io { println as say };
+
+fn main(): void {
+    println("selective");
+    io.println("qualified");
+    say("renamed");
+}
