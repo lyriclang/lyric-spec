@@ -487,7 +487,21 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     `Instant` — in UTC —, parsed as strictly as Lyric 5 parses it. `std.time` gives `Instant` its text,
     `Instant.parse` and `instant.toDateTime(zone)` by `extend`: they are there where a module of the program
     imports `std.time`. A date-time outside the years an `Instant` reaches panics with an overflow
-    (`LYS-RT0002`) on the way to one. The zones of a database and the patterns follow (S7h6).
+    (`LYS-RT0002`) on the way to one. The patterns follow (S7h6b).
+31. **The zones of rules** (Lyric 5 12 §Time, the zones, rules 1–2; S7h6a), in `std.time`. A zone is UTC, a
+    fixed offset, or a zone of rules: **`Zone.load(name)`** from the system's database (`TZDIR` or
+    `/usr/share/zoneinfo`), **`Zone.fromTzif(name, bytes)`** of a `Bytes`, **`Zone.fromPosix(name, tz)`**,
+    **`Zone.local()`**, each reading what Lyric 5 reads and throwing the `TimeError` it throws — `NoZoneData`
+    where the system has no database, `NoSuchZone` for a name it lacks or that is none. The host reads the
+    data and keeps the rules, Lyric 5's own; Script asks them for the offset at a moment and resolves local
+    times itself. `isFixed()`, `offsetAt(instant)`, **`infoAt(instant)`** — a **`ZoneInfo { offset, isDst,
+    abbreviation }`** —, `offset()` of a zone of rules its offset now; two zones equal by name, offset and
+    kind. `instant.toDateTime(zone)` takes the offset in force at the moment; `DateTime.of(date, time, zone)`
+    resolves a local time as Lyric 5 does — once, that moment; twice, the earlier; in a gap, forward by it.
+    A `DateTime` keeps its zone: `zone()`, `zoneInfo()`, `withZone(zone)`, `plusDays(n)` at the offset then
+    in force. A zone of rules answers for the moments an `Instant` reaches: a local time in one beyond them,
+    or within a day of their ends, panics with an overflow (`LYS-RT0002`), where Lyric 5, whose rules count
+    seconds, reads on. Loading a zone takes `std.time`'s right, `os`.
 
 ## Deviations (skeleton, written with later milestones)
 

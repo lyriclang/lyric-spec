@@ -1,0 +1,58 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | Europe/Berlin false
+//! | 2026-03-29T01:59:59+01:00 2026-03-29T03:00:00+02:00
+//! | 2000-01-01T01:00:00+01:00 2030-07-01T02:00:00+02:00 CEST
+//! | 2h0m0s true CEST true 1h0m0s
+//! | true false
+//! | not TZif: the magic bytes are missing true
+//! | true
+//! since: 1.0.0
+
+// §12 rule 31: a zone from the bytes of a TZif file (Lyric 5 12 §Time, the zones, rule 1) — its transitions,
+// the first standard type before them, the footer's rule beyond; what is no TZif; the system's database,
+// where there is one, agrees, or says it has none
+import std.time { Instant, TimeError, TimeErrorKind, Zone, ZoneInfo }
+
+fn nibble(c: char): int = if (c >= 'a') (c as int) - 87 else (c as int) - 48
+
+fn hex(s: string): Bytes {
+    let b = Bytes.new()
+    var i = 0
+    while (i < s.length()) {
+        b.push(nibble(s[i]) * 16 + nibble(s[i + 1]))
+        i += 2
+    }
+    return b
+}
+
+fn at(zone: Zone, text: string): string = Instant.parse(text).toDateTime(zone).show()
+
+let bytes = hex("545a69663200000000000000000000000000000000000000000000000000000000000002000000020000000969c879906add5490010000000e10000000001c200104434554004345535400545a6966320000000000000000000000000000000000000000000000000000000000000200000002000000090000000069c87990000000006add5490010000000e10000000001c2001044345540043455354000a4345542d31434553542c4d332e352e302c4d31302e352e302f330a")
+let zone = Zone.fromTzif("Europe/Berlin", bytes)
+println(f"{zone.name()} {zone.isFixed()}")
+let before = at(zone, "2026-03-29T00:59:59Z")
+let after = at(zone, "2026-03-29T01:00:00Z")
+println(f"{before} {after}")
+let summer = Instant.parse("2030-07-01T00:00:00Z")
+let early = at(zone, "2000-01-01T00:00:00Z")
+println(f"{early} {summer.toDateTime(zone)} {summer.toDateTime(zone).zoneInfo().abbreviation}")
+let info = zone.infoAt(summer)
+let expected = ZoneInfo { offset = Duration.ofHours(2), isDst = true, abbreviation = "CEST" }
+let winter = Instant.parse("2030-01-01T00:00:00Z")
+println(f"{info.offset} {info.isDst} {info.abbreviation} {info == expected} {zone.offsetAt(winter)}")
+let again = Zone.fromTzif("Europe/Berlin", bytes)
+let renamed = Zone.fromTzif("Berlin", bytes)
+println(f"{again == zone} {renamed == zone}")
+try {
+    let _ = Zone.fromTzif("bad", Bytes.of([104, 101, 108, 108, 111]))
+} catch (e: TimeError) {
+    println(f"{e.message()} {e.kind == TimeErrorKind.Invalid}")
+}
+try {
+    let system = Zone.load("Europe/Berlin")
+    println(at(system, "2026-03-29T01:00:00Z") == at(zone, "2026-03-29T01:00:00Z"))
+} catch (e: TimeError) {
+    println(e.kind == TimeErrorKind.NoZoneData)
+}
