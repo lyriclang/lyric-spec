@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | negative
+//! | LYR-RT0008 boom
+//! since: 5.0.0
+// 12 §Testing rule 3: assertThrows gives what f threw, of its type; assertPanics gives what the
+// panic left.
+import std.io { println };
+import std.test { assertThrows, assertPanics };
+
+struct Refused :: [Error] {
+    why: string,
+
+    fn message(): string {
+        return this.why;
+    }
+}
+
+fn check(n: int): void throws Refused {
+    if (n < 0) {
+        throw Refused { why = "negative" };
+    }
+}
+
+fn main(): void {
+    let e = assertThrows(() => try check(-1));
+    println(e.why);
+    let p = assertPanics(() => { panic("boom"); });
+    println(f"{p.code} {p.message}");
+}

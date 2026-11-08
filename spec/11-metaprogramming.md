@@ -54,12 +54,13 @@ toolchain's own tests (`tests/Lyric5.Tests`, `TestCommandTests`).
 6. An attribute makes nothing reachable (01 B13): a function only an attribute marks is not
    built. A test is reached from the program `lyric test` writes.
 7. **The compiler instructions** — in the prelude — are the closed list of `std.core` the compiler
-   reads (09 A11, T2): `@Test` (rule 2), `@callerExpr` (rule 3), `@callerLine` and `@callerFile`
-   (rule 8), `@Deprecated` (rule 9), `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10),
-   `@MustUse` (rule 11), `@NonExhaustive` (rule 12), `@Allow` (rule 13), `@Shared` (rule 14),
-   `@SeesConformer` (rule 15), `@Layout` (rule 16), `@Export` (rule 17) and `@When` (§3). What
-   one says holds for every instance, so beside `@Test` they sit on a generic declaration too,
-   where data may not (`LYR-SEM0067`).
+    reads (09 A11, T2): `@Test` (rule 2) and `@Bench` ([12 §Benchmarks](12-stdlib.md#benchmarks)),
+    `@callerExpr` (rule 3), `@callerLine` and `@callerFile` (rule 8), `@Deprecated` (rule 9),
+    `@AlwaysInline`, `@NoInline` and `@Cold` (rule 10), `@MustUse` (rule 11), `@NonExhaustive` (rule
+    12), `@Allow`, `@Warn` and `@Deny` (rule 13), `@Shared` (rule 14), `@SeesConformer` (rule 15),
+    `@Layout` (rule 16), `@Export` (rule 17) and `@When` (§3). What one says holds for every
+    instance, so beside `@Test` they sit on a generic declaration too, where data may not
+    (`LYR-SEM0067`).
 8. **`@callerLine`** on an `int` parameter and **`@callerFile`** on a `string` one: where a call
    leaves the parameter out, it gets the line the call begins on, or the file the call stands in —
    the package's name, then the path within the package, with `/` on every system:
@@ -193,7 +194,9 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 
 **Conformance.** `conformance/cases/11-metaprogramming/`.
 
-1. **`std.meta`** answers questions about a type as constants (R1): `fields<T>()`, a
+1. **`std.meta`** answers questions about a type as constants (R1) — names `std.core` declares
+    and `std.meta` passes on (09 S10), so `import std.meta { fields }` and `std.core`'s name are
+    one: `fields<T>()`, a
    `FieldInfo { name, type, index, visibility, isVar, hasDefault }` per field of a struct or a
    class, in declaration order, `index` its place in the answer, `hasDefault` whether the
    declaration writes an initializer — the type's own default counts for nothing; a payload's
