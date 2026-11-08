@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0078
+//! since: 5.0.0
+// 03 §9.1 rule 1: a type parameter's bound is an interface; 'int' is none.
+fn keep<T :: [int]>(x: T): T {
+    return x;
+}
+
+fn main(): void {
+    let _ = keep(1);
+}

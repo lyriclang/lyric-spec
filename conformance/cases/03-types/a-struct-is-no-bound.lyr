@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-SEM0078
+//! since: 5.0.0
+// 03 §9.1 rule 1: a struct is no bound, with the brackets or without them.
+struct Plain {
+    n: int,
+}
+
+struct Holder<T :: Plain> {
+    value: T,
+}
+
+fn main(): void {
+    let _ = Holder<Plain> { value = Plain { n = 1 } };
+}
