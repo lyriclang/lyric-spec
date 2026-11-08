@@ -288,9 +288,14 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    `??int` is expected is a present `?int` that holds the value; a `?int` there is a present
    `??int` whatever it holds. `null` is the absence at the **outermost** level of the type
    expected.
-3. There is no implicit way down: a `?T` does not stand where a `T` is expected, nor a `??T`
+3. A coercion reaches **through** an optional: at a coercion site a `?T` stands where a `?U` is
+   expected when a `T` stands where a `U` is — `?Circle` where `?Shape` is, `?int8` where `?int`
+   is ([03 T3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+   A `null` stays `null`; a value is coerced as a value of its own and wrapped again. Wrapping
+   (rule 2) goes first: a `?int` where `??int` is expected is a present `??int`, whatever it holds.
+4. There is no implicit way down: a `?T` does not stand where a `T` is expected, nor a `??T`
    where a `?T` is. The ways down are a test (§3.2), `??` and `!` (§3.3).
-4. *(Informative.)* An optional of a class value or of a string occupies the one word of the
+5. *(Informative.)* An optional of a class value or of a string occupies the one word of the
    reference, null when there is no value. Any other optional holds its value and a flag.
 
 ### 3.2 Tests and narrowing

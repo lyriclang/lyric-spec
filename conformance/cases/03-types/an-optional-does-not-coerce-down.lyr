@@ -1,0 +1,25 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 03 §3.1 rule 4: the coercion through the optional keeps the optional — a '?Circle' does not
+// stand where a 'Shape' is expected.
+interface Shape {
+    fn area(): int;
+}
+
+struct Circle :: Shape {
+    r: int,
+
+    fn area(): int {
+        return this.r;
+    }
+}
+
+fn take(s: Shape): int {
+    return s.area();
+}
+
+fn main(): void {
+    let c: ?Circle = Circle { r = 2 };
+    let _ = take(c);
+}
