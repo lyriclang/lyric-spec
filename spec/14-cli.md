@@ -14,7 +14,7 @@ The one binary and its verbs, option grammar, the precedence ladder, exit codes,
 What the command line does for a single file (M2) and for a package (M7). The precedence ladder,
 the NDJSON stream and the other verbs follow with their milestones; the rules below stay.
 
-**Conformance.** Until the suite can drive the command line (M13), the toolchain's own tests
+**Conformance.** The suite runs programs, not the command line: the toolchain's own tests
 are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `DriverTests` and
 `BuildStatusTests`).
 

@@ -251,7 +251,7 @@ that call their native part or whose manifest a rule refuses; the toolchain's ow
    machine's; each is refused (`LYR-BLD0006`, exit 1), the message saying how to name it. A shared library of
    the system is linked by name (`libs`); one the program finds while it runs is `std.ffi`'s
    `Library` ([13 §5](13-abi.md)). *(Rule 8 replaces, the same day, a rule that refused every
-   shared library of a package — [07, E3′](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).)*
+   shared library of a package — [11, E3′](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).)*
 9. **`frameworks = ["Cocoa"]`** are macOS frameworks, linked as `-framework Cocoa`: a key of
    `[native.macos]` and of the macOS triples' tables only (`LYR-PKG0003` elsewhere).
 10. **`pkgConfig = ["sdl2"]`** names libraries of the system as `pkg-config` knows them: a build for
@@ -323,8 +323,6 @@ that call their native part or whose manifest a rule refuses; the toolchain's ow
     refused (`LYR-PKG0011`), as §3 rule 4 refuses a revision. **`lyric update`** reads the trees
     the lock holds anew — those it names, or every one —, a branch at its head and a moved tag at
     its commit; a tree's tag is not raised, as a tree has no version.
-16. A tree runs nothing: it is compiled, as the package's sources are, and no trust is asked for it
-    (§8 rule 6). What an archive does, its bytes say; the lock holds them.
 16. A tree runs nothing: it is compiled, as the package's sources are, and no trust is asked for it
     (§8 rule 6). What an archive does, its bytes say; the lock holds them.
 
