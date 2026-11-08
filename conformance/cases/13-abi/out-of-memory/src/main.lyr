@@ -1,0 +1,11 @@
+//! run
+//! panic: LYR-RT0005
+//! since: 5.0.0
+// The catalogue's own example of LYR-RT0005 — out of memory.
+fn make(n: int): int[] {
+    return [0] * n;
+}
+
+fn main(): void {
+    assert(make(2000000000000000000).length() > 0);
+}

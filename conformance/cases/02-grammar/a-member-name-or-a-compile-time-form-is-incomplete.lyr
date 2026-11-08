@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0003
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0003 — a member name or a compile-time form is incomplete.
+fn main(): void {
+    let s = "abc";
+    let n = s.;
+}

@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0088
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0088 — an overloaded interface member.
+interface Shape {
+    fn scale(f: int): Self;
+    fn scale(fx: int, fy: int): Self;
+}
+
+fn main(): void {
+}

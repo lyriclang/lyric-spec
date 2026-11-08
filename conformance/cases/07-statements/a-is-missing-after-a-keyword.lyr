@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0019
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0019 — a '(' is missing after a keyword.
+fn main(): void {
+    let c = true;
+    if c) {
+    }
+}

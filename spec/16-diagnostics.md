@@ -75,7 +75,7 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 ([11 G9, G10](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md))
 
 **Conformance.** Every rejecting case names its codes; the catalogue against the compiler in the toolchain's
-own tests (`tests/Lyric5.Tests`, `CatalogTests`).
+own tests (`tests/Lyric5.Tests`, `CatalogTests`); rule 5 by `tools/check_coverage.py`.
 
 1. A code is `LYR-`, an area — `LEX`, `PAR`, `RES`, `SEM`, `MAC`, `MIG`, `CT`, `CG`, `PKG`, `BLD`, `LNK`, `CLI`,
    `ICE`, `RT`, and `IR`, retired —, and four digits. `LNK` holds the link's findings
@@ -88,6 +88,13 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`).
    program that reports it and the program put right. A code is read as `LYR-SEM0001`, `SEM0001` or
    `sem0001`; one the catalogue does not hold is a usage error (exit 2, [14 §1.1](14-cli.md)).
 4. A message begins in lowercase and ends without a period; it names the program's own names in quotes.
+5. **The suite holds every code a program can meet, and every section of the rules.** Each code of
+   Appendix A that is not retired is named by a case — under `error:`, `warning:` or `panic:` — or
+   stands in the list of codes no program of the suite can raise, each with its reason: the command
+   line's, the build driver's, a bug of the compiler or the runtime, a fetch over the network, a
+   file a checkout cannot hold. Each section of chapters 03 to 13, 15 and 16 is cited by a case's
+   comment (`08 §5`, `12 §Time`) or listed with its reason. `tools/check_coverage.py` holds both
+   and holds the lists short: a code a case names is taken off.
 
 ## 4. The JSON form
 

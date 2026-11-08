@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0015
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0015 — a function type without '->'.
+fn apply(f: fn(int) int, v: int): int {
+    return f(v);
+}
+
+fn main(): void {
+}

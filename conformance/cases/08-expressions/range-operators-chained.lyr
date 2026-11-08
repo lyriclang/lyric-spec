@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0005
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0005 — range operators chained.
+fn main(): void {
+    let r = 1..5..9;
+}

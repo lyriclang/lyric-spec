@@ -1,0 +1,17 @@
+//! check
+//! error: LYR-SEM0079
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0079 — an interface member inherited twice or redeclared.
+interface Named {
+    fn name(): string;
+}
+
+interface Titled {
+    fn name(): string;
+}
+
+interface Labelled :: [Named, Titled] {
+}
+
+fn main(): void {
+}

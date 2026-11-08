@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0025
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0025 — something else than a declaration at module level.
+return 1;
+
+fn main(): void {
+}

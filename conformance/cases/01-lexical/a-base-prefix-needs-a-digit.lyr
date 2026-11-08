@@ -1,0 +1,5 @@
+//! check
+//! error: LYR-LEX0004
+//! since: 5.0.0
+// 01: a base prefix needs a digit of its base after it.
+fn main(): void { let x = 0x; }

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0046
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0046 — a label on something that is no loop.
+fn main(): void {
+    outer: let x = 1;
+}

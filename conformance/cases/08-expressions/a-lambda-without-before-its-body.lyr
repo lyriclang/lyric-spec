@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0012
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0012 — a lambda without '=>' before its body.
+fn main(): void {
+    let f = (x: int): int x => x;
+}

@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-CT0005
+//! since: 5.0.0
+// The catalogue's own example of LYR-CT0005 — a form that does not run at compile time yet.
+fn total(): int {
+    let s = sequence {
+        yield 1;
+        yield 2;
+    };
+    var sum = 0;
+    for (x in s) {
+        sum += x;
+    }
+    return sum;
+}
+
+fn main(): void {
+    let n = comptime total();
+    assert(n == 3);
+}

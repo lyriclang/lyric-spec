@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-SEM0058
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0058 — a destructuring that does not fit the value.
+fn main(): void {
+    let (a, b) = (1, 2, 3);
+    let _ = a + b;
+}

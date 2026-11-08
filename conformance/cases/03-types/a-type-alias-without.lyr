@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0028
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0028 — a type alias without '='.
+type Id int;
+
+fn main(): void {
+}

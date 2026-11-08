@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0044
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0044 — an extern symbol that is not a string.
+extern "C" fn labs(x: int): int = ;
+
+fn main(): void {
+}

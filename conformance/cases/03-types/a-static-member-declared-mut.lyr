@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0054
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0054 — a static member declared 'mut'.
+struct Counter {
+    n: int,
+    static mut fn reset(): void {}
+}
+
+fn main(): void {
+    Counter.reset();
+}

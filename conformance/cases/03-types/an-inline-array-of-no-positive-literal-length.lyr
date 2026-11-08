@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0043
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0043 — an inline array of no positive literal length.
+fn sum(xs: int[0]): int {
+    return 0;
+}
+
+fn main(): void {
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0010
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0010 — a tuple of fewer than two elements, or a label given twice.
+fn main(): void {
+    let t = (1,);
+}

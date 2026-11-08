@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-LEX0002
+//! since: 5.0.0
+// The catalogue's own example of LYR-LEX0002 — a block comment that is not closed.
+fn main(): void {
+}
+/* not closed

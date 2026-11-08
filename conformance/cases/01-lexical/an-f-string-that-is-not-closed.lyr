@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-LEX0011
+//! since: 5.0.0
+// The catalogue's own example of LYR-LEX0011 — an f-string that is not closed.
+fn main(): void {
+    let n = 1;
+    let s = f"n is {n}
+    ;
+    let _ = s;
+}

@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0053
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0053 — an attribute used as an expression.
+fn main(): void {
+    let _ = @Test;
+}

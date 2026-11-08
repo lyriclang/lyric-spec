@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0013
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0013 — a lambda parameter without a name.
+fn main(): void {
+    let f = (match: int) => 1;
+}

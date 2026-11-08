@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-LEX0009
+//! since: 5.0.0
+// The catalogue's own example of LYR-LEX0009 — a string literal that is not closed.
+fn main(): void {
+    let s = "open
+    ;
+    let _ = s;
+}

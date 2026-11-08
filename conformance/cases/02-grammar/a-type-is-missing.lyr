@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0011
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0011 — a type is missing.
+fn show(x: ): void {
+}
+
+fn main(): void {
+}

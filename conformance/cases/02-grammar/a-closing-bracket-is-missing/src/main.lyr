@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0004
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0004 — a ']' is missing.
+fn main(): void {
+    let xs = [1, 2, 3;
+}

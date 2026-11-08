@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-PAR0058
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0058 — '&' before a lambda parameter's pattern.
+fn main(): void {
+    let f = (&(a, b)) => a;
+}

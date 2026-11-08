@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0022
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0022 — a do block without 'while'.
+fn main(): void {
+    var i = 0;
+    do {
+        i += 1;
+    } (i < 3);
+}

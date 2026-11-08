@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-LEX0007
+//! since: 5.0.0
+// The catalogue's own example of LYR-LEX0007 — a malformed escape sequence.
+fn main(): void {
+    let s = "tab\q";
+    let _ = s;
+}
