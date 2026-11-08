@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | present
+//! | outer
+//! since: 5.0.0
+// 03 §3.1 rules 2 and 3: wrapping goes first — a '?int' that is null, where '??int' is expected,
+// is a present '??int'; only 'null' itself is the outer absence.
+import std.io { println };
+
+fn deep(n: ??int): string {
+    return match (n) {
+        null => "outer",
+        _ => "present",
+    };
+}
+
+fn main(): void {
+    let n: ?int = null;
+    println(deep(n));
+    println(deep(null));
+}

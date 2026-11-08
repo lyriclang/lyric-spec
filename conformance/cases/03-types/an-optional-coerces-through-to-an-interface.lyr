@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | 2 -1 5
+//! | 8
+//! since: 5.0.0
+// 03 §3.1 rule 3: a '?Circle' stands where a '?Shape' is expected — null stays null, a value is
+// coerced; an assignment is a coercion site as an argument is.
+import std.io { println };
+
+interface Shape {
+    fn area(): int;
+}
+
+struct Circle :: Shape {
+    r: int,
+
+    fn area(): int {
+        return this.r;
+    }
+}
+
+fn take(s: ?Shape): int {
+    return s?.area() ?? -1;
+}
+
+fn main(): void {
+    let c: ?Circle = Circle { r = 2 };
+    let none: ?Circle = null;
+    println(f"{take(c)} {take(none)} {take(Circle { r = 5 })}");
+    var kept: ?Shape = Circle { r = 7 };
+    let held: ?Circle = Circle { r = 8 };
+    kept = held;
+    println(f"{take(kept)}");
+}
