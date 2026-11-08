@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | held 4
+//! since: 5.0.0
+// 12 §Testing rule 2: an assertion that holds says nothing; assertNotNull gives the value back.
+// An assertion is a call like any other — outside a test too.
+import std.io { println };
+import std.test { assertEq, assertTrue, assertNotNull, assertClose, assertContains, assertLess };
+
+fn main(): void {
+    assertEq(1 + 1, 2);
+    assertTrue(3 > 2);
+    let v: ?int = 4;
+    let w = assertNotNull(v);
+    assertClose(0.1 + 0.2, 0.3, 0.000001);
+    assertContains("abc", 'b');
+    assertLess(1, 2);
+    println(f"held {w}");
+}
