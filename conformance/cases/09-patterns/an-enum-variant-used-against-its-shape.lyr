@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0031
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0031 — an enum variant used against its shape.
+enum Shape { Num(int), Rect { w: int, h: int } }
+
+fn main(): void {
+    let s = Shape.Rect(1, 2);
+    let _ = s;
+}

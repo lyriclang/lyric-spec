@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0009
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0009 — array elements of different types.
+fn main(): void {
+    let _ = [1, "two", 3];
+}

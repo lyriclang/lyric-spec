@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0062
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0062 — '?.' calling a field that holds a function.
+struct Handler {
+    run: fn() -> int,
+}
+
+fn main(): void {
+    let h: ?Handler = Handler { run = (): int => 1 };
+    let _ = h?.run();
+}

@@ -1,0 +1,6 @@
+//! check
+//! error: LYR-PAR0018
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0018 — a '}' is missing.
+fn main(): void {
+    let a = 1;

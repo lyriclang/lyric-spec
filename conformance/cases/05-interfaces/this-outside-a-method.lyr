@@ -1,0 +1,7 @@
+//! check
+//! error: LYR-SEM0008
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0008 — this outside a method.
+fn main(): void {
+    let _ = this;
+}

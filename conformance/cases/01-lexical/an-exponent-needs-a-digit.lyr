@@ -1,0 +1,5 @@
+//! check
+//! error: LYR-LEX0006
+//! since: 5.0.0
+// 01: an exponent needs a digit after its 'e' and sign.
+fn main(): void { let x = 1e; }

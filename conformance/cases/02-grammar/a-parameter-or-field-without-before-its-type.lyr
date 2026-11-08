@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-PAR0031
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0031 — a parameter or field without ':' before its type.
+fn twice(n int): int {
+    return n * 2;
+}
+
+fn main(): void {
+}

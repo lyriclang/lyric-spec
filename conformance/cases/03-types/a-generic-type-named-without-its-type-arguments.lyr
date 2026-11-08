@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0063
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0063 — a generic type named without its type arguments.
+struct Grid<T> {
+    cells: T[],
+    static let size: int = 4;
+}
+
+fn main(): void {
+    let _ = Grid.size;
+}

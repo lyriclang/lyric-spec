@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0051
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0051 — a function without a body.
+fn twice(n: int): int;
+
+fn main(): void {
+    let _ = twice(2);
+}

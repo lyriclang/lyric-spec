@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-PAR0035
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0035 — match arms without ',' between them.
+fn main(): void {
+    let n = 1;
+    let s = match (n) {
+        1 => "one"
+        _ => "many",
+    };
+}

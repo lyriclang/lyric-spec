@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0021
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0021 — a for loop without 'in'.
+fn main(): void {
+    let xs = [1, 2];
+    for (x xs) {
+    }
+}

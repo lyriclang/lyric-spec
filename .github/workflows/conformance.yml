@@ -21,5 +21,8 @@ jobs:
       - name: Every lint of the groups so far has a red and a green case
         run: python3 tools/check_lints.py
 
+      - name: Every code a program can meet has a case, and every section of the rules (16 §3)
+        run: python3 tools/check_coverage.py
+
       - name: Every program the suite expects to compile is a sentence of the grammar (02 §8)
         run: python3 tools/grammar.py

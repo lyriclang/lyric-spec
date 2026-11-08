@@ -1,0 +1,27 @@
+//! check
+//! error: LYR-SEM0092
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0092 — inference through a type that conforms twice.
+interface Source<T> {
+    fn get(): T;
+}
+
+struct Both {
+    n: int,
+}
+
+extend Both :: [Source<int>] {
+    fn get(): int { return this.n; }
+}
+
+extend Both :: [Source<string>] {
+    fn get(): string { return "n"; }
+}
+
+fn take<T>(s: Source<T>): T {
+    return s.get();
+}
+
+fn main(): void {
+    let _ = take(Both { n = 1 });
+}

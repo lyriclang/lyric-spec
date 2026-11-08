@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0064
+//! since: 5.0.0
+// The catalogue's own example of LYR-SEM0064 — a type alias that expands to itself.
+type Tree = (int, Tree[]);
+
+fn main(): void {
+    let t: Tree = (1, []);
+    let _ = t.0;
+}

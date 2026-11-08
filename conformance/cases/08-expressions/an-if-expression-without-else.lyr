@@ -1,0 +1,8 @@
+//! check
+//! error: LYR-PAR0036
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0036 — an if expression without 'else'.
+fn main(): void {
+    let ok = true;
+    let s = if (ok) "yes" "no";
+}

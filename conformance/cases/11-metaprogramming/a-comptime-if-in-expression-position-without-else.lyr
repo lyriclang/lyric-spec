@@ -1,0 +1,15 @@
+//! check
+//! error: LYR-PAR0061
+//! since: 5.0.0
+// The catalogue's own example of LYR-PAR0061 — a 'comptime if' in expression position without 'else'.
+import std.meta { fields };
+
+struct Point { x: int, y: int }
+
+fn main(): void {
+    var n = 0;
+    comptime for (f in fields<Point>()) {
+        n = n + comptime if (f.name == "x") 1 2;
+    }
+    let _ = n;
+}

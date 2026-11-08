@@ -176,8 +176,9 @@ def run_case(case, spec, lyric5, profile, workdir):
 
     if spec["errors"]:
         # a check case is refused by the front end (exit 1); a run case's build fails after it,
-        # at the C compiler or the link (exit 2)
-        refused = 2 if spec["mode"] == "run" else 1
+        # at the C compiler or the link (exit 2); a refusal of another exit says it with 'exit:'
+        # (a package that asks for a newer toolchain, 14 §1.3)
+        refused = spec["exit"] or (2 if spec["mode"] == "run" else 1)
         if compiled.returncode != refused:
             return fail(f"expected rejection (exit {refused}), got exit {compiled.returncode}:\n{diagnostics}")
         # Exactly the codes the header names: one mistake, the errors it names, and no cascade
