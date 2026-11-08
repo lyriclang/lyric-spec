@@ -1,0 +1,42 @@
+//! run
+//! panic: LYS-RT0008
+//! stdout:
+//! | 'verbose' is declared twice
+//! | '-v' is declared twice
+//! | 'help' is the command line's own
+//! | '-h' is the command line's own
+//! | the required 'b' comes after an optional argument
+//! | 'tool' has commands and so no arguments
+//! | 'tool' has arguments and so no commands
+//! | 'tool' declares no flag 'verbse'
+//! | 'name' is an option, not a flag
+//! since: 1.0.0
+
+// §12 rule 36: a declaration that would make a command line read two ways panics — a name or a short twice,
+// `help`, `version` or `-h`, a required argument after an optional one, arguments beside commands —, and so does
+// asking Args for a name not declared, or a flag for an option
+import std.cli { Cli }
+
+fn said(body: fn() -> void): string {
+    let t = spawn { body() }
+    yieldNow()
+    return match (t.status()) {
+        .Panicked(p) => p.message,
+        _ => "held",
+    }
+}
+
+println(said(() => { Cli.new("tool").flag("verbose").option("verbose") }))
+println(said(() => { Cli.new("tool").flag("verbose", 'v').flag("very", 'v') }))
+println(said(() => { Cli.new("tool").flag("help") }))
+println(said(() => { Cli.new("tool").flag("hold", 'h') }))
+println(said(() => { Cli.new("tool").positional("a", "", true).positional("b") }))
+println(said(() => {
+    let c = Cli.new("tool")
+    c.command("run")
+    c.positional("file")
+}))
+println(said(() => { Cli.new("tool").rest("files").command("run") }))
+let a = Cli.new("tool").flag("verbose").option("name").tryParse([])
+println(said(() => { a.flag("verbse") }))
+println(said(() => { a.flag("name") }))

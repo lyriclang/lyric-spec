@@ -1,0 +1,13 @@
+//! run
+//! args: -v --name=Ada extra
+//! stdout:
+//! | true Ada ["extra"]
+//! since: 1.0.0
+
+// §12 rule 36: parse reads the script's `args` and gives what fits
+import std.cli { Cli }
+
+let a = Cli.new("greet").flag("verbose", 'v').option("name").rest("words").parse(args)
+let name = a.option("name") ?? "?"
+let verbose = a.flag("verbose")
+println(f"{verbose} {name} {a.rest()}")

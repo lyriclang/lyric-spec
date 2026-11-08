@@ -542,6 +542,26 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     started`) where its level is at least the threshold: `Info` at the start, set with **`setLevel(level)`**,
     asked with **`enabled(level): bool`**. A line goes to stderr, or, after **`setSink(to: fn(string) -> void)`**,
     to `to`, without its line break. A line has no time stamp and no fields: a message carries them.
+36. **The command line** (S7i4), in **`std.cli`**, a module of no right, in Script; Lyric 5 has none in its
+    standard library. **`Cli.new(name, about = "")`** declares, a part at a time, each giving the `Cli` back:
+    **`flag(name, short = null, help = "")`**, **`option(name, short = null, help = "", default = null)`**,
+    **`positional(name, help = "", optional = false)`**, **`rest(name, help = "")`** and **`version(text)`**;
+    **`command(name, about = "")`** gives the command's own `Cli`, named after both. **`parse(args): Args`** reads
+    `args` (rule 25): a flag `--name` or `-s`, flags bundled `-vq`; an option `--name value`, `--name=value`,
+    `-s value` or `-svalue`, the last one given counting; arguments in their order, options among them, all of it
+    an argument after `--`, and `-` alone one; where commands are declared the first argument names one and its
+    `Cli` reads what follows. **`Args`** gives **`flag(name): bool`**, **`option(name): ?string`** (its default
+    where it is not given), **`positional(name): ?string`**, **`rest(): string[]`** and **`command(): ?(string,
+    Args)`**. `--help` or `-h` writes the help, made from the declarations — the about line, the usage, then the
+    arguments, the options with their defaults and the commands, each beside its help in one column — to stdout,
+    and `--version`, where a version is set, the version; either ends the run with 0. What does not fit — an
+    option not declared, an option without its value, a flag with one, an argument missing or one too many, a
+    command missing or not declared — is written to stderr as `error: ` and what it is, then the usage line, and
+    ends the run with 2. **`tryParse(args)`** throws instead a **`CliError { kind, detail, usage }`**, `kind`
+    **`CliErrorKind { Help, Version, Invalid }`**, `detail` the help, the version or what does not fit. A
+    declaration that would read two ways — a name or a short twice, `help`, `version`, `-h`, a required argument
+    after an optional one, arguments beside commands — panics (`LYS-RT0008`), as `Args` asked for a name not
+    declared, or for a flag that is an option, does.
 
 ## Deviations (skeleton, written with later milestones)
 

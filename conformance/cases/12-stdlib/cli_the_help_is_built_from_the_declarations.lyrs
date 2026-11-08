@@ -1,0 +1,63 @@
+//! run
+//! stdout:
+//! | Copies a file.
+//! |
+//! | usage: copy [options] <from> [to] [more...]
+//! |
+//! | arguments:
+//! |   <from>               the file to copy
+//! |   [to]                 where to copy it
+//! |   [more...]            more files
+//! |
+//! | options:
+//! |   -v, --verbose        say what is copied
+//! |   -q, --quiet
+//! |   -m, --mode <mode>    the mode of the copy (default: 0644)
+//! |       --owner <owner>  who owns the copy
+//! |   -h, --help           show this help
+//! |       --version        show the version
+//! | --
+//! | copy 1.0
+//! | --
+//! | usage: tool [options]
+//! |
+//! | options:
+//! |   -h, --help  show this help
+//! | --
+//! | true true
+//! since: 1.0.0
+
+// §12 rule 36: `--help` and `-h` give the help, made from what is declared: the about line, the usage, then the
+// arguments, the options with their defaults and the commands, each beside its help in one column; `--version`
+// gives the version where one is set; tryParse throws them as a CliError of kind Help or Version
+import std.cli { Cli, CliError, CliErrorKind }
+
+let copy = Cli.new("copy", "Copies a file.")
+    .flag("verbose", 'v', "say what is copied")
+    .flag("quiet", 'q')
+    .option("mode", 'm', "the mode of the copy", "0644")
+    .option("owner", null, "who owns the copy")
+    .positional("from", "the file to copy")
+    .positional("to", "where to copy it", true)
+    .rest("more", "more files")
+    .version("copy 1.0")
+
+fn said(cli: Cli, argv: string[]): ?CliError {
+    try {
+        cli.tryParse(argv)
+    } catch (e: CliError) {
+        return e
+    }
+    return null
+}
+
+let help = said(copy, ["a", "--help", "b"])
+println(help?.detail ?? "")
+println("--")
+println(said(copy, ["--version"])?.detail ?? "")
+println("--")
+println(said(Cli.new("tool"), ["-h"])?.detail ?? "")
+println("--")
+let h = said(copy, ["-vh"])
+let v = said(copy, ["--version"])
+println(f"{h?.kind == CliErrorKind.Help} {v?.kind == CliErrorKind.Version}")

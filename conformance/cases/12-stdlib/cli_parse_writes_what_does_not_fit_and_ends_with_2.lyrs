@@ -1,0 +1,14 @@
+//! run
+//! args: -x
+//! exit: 2
+//! stdout:
+//! stderr:
+//! | error: unknown option '-x'
+//! | usage: greet [options] [name]
+//! since: 1.0.0
+
+// §12 rule 36: parse writes `error: `, what does not fit and the usage line to stderr and ends the run with 2
+import std.cli { Cli }
+
+let a = Cli.new("greet", "Greets.").positional("name", "who to greet", true).parse(args)
+println("not reached")

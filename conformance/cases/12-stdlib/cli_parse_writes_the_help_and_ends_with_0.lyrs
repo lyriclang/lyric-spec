@@ -1,0 +1,19 @@
+//! run
+//! args: --help
+//! stdout:
+//! | Greets.
+//! |
+//! | usage: greet [options] [name]
+//! |
+//! | arguments:
+//! |   [name]      who to greet
+//! |
+//! | options:
+//! |   -h, --help  show this help
+//! since: 1.0.0
+
+// §12 rule 36: parse writes the help to stdout and ends the run with 0; nothing after it runs
+import std.cli { Cli }
+
+let a = Cli.new("greet", "Greets.").positional("name", "who to greet", true).parse(args)
+println("not reached")
