@@ -475,6 +475,19 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     `std.time` hands on: `std.fs` names it alone for **`Metadata.modified`**, the moment a path was last
     written, so that a program reading a file's metadata does not pay for the calendar. **`Monotonic`**
     reads the run's own clock, the one its timers keep: `now()`, `elapsed()`.
+30. **The calendar** (Lyric 5 12 §Time rules 5–8; S7h5b), in `std.time`. **`Date`**, **`Time`**,
+    **`Weekday`**, **`TimeError`** with its **`TimeErrorKind`**, **`Zone`** and **`DateTime`** are Lyric 5's:
+    the proleptic Gregorian calendar over every year an `int` holds, `Date.of` and `Time.of` throwing
+    `TimeError` for what is no date or no time of day (no second 60), `isLeapYear()`, `dayOfWeek()`,
+    `plusDays(n)`; dates and times compare, order and hash by their fields; their texts ISO 8601's and
+    RFC 3339's, read back by `parse`. A zone is `Zone.utc` or `Zone.fixed(offset)`, whole minutes under a
+    day, its name the offset's text; `name()`, `offset()`; two equal by name and offset. A `DateTime` is a
+    date and a time at a zone's offset: `DateTime.of(date, time, zone)`, `date()`, `time()`, `offset()`,
+    `toInstant()`; two equal by date, time and offset. **RFC 3339** is the text of a `DateTime` and of an
+    `Instant` — in UTC —, parsed as strictly as Lyric 5 parses it. `std.time` gives `Instant` its text,
+    `Instant.parse` and `instant.toDateTime(zone)` by `extend`: they are there where a module of the program
+    imports `std.time`. A date-time outside the years an `Instant` reaches panics with an overflow
+    (`LYS-RT0002`) on the way to one. The zones of a database and the patterns follow (S7h6).
 
 ## Deviations (skeleton, written with later milestones)
 

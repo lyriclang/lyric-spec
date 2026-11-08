@@ -1,0 +1,70 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 2026-11-08T10:15:30Z 2026-11-08T10:15:30.5Z 2026-11-08T10:15:30.123456789+01:00 2026-11-08T10:15:30Z 2026-11-08T10:15:30Z
+//! | Empty Invalid Invalid Invalid Invalid Invalid Invalid Invalid Invalid Invalid
+//! | 2026-11-08T09:15:30Z true true true
+//! | -1 -500 1969-12-31T23:59:59.5Z 0
+//! | the text is not a value of the type: a date-time is YYYY-MM-DDTHH:MM:SS with 'Z' or an offset (at byte 0)
+//! since: 1.0.0
+
+// §12 rule 30: RFC 3339 is the text of a date-time and of an instant (Lyric 5 12 §Time rule 8), strictly: a
+// `T` or `t`, `Z`, `z` or `±hh:mm`, a fraction of any length cut to nanoseconds; a moment before 1970 rounds
+// down; an instant's text reads back to it
+import std.time { Date, DateTime, Instant, Time, Zone }
+
+fn kind(e: ParseError): string = match (e.kind) {
+    .Empty => "Empty",
+    .Invalid => "Invalid",
+    .Overflow => "Overflow",
+}
+
+fn dt(s: string): string {
+    try {
+        return f"{DateTime.parse(s)}"
+    } catch (e: ParseError) {
+        return kind(e)
+    }
+}
+
+fn all(xs: string[]): string {
+    var line = ""
+    for (x in xs) {
+        line = if (line.isEmpty()) dt(x) else f"{line} {dt(x)}"
+    }
+    return line
+}
+
+println(all([
+    "2026-11-08T10:15:30Z",
+    "2026-11-08t10:15:30.500z",
+    "2026-11-08T10:15:30.123456789123+01:00",
+    "2026-11-08T10:15:30-00:00",
+    "2026-11-08T10:15:30.000Z",
+]))
+println(all([
+    "",
+    "2026-11-08 10:15:30Z",
+    "2026-11-08T10:15:30",
+    "2026-11-08T10:15:60Z",
+    "2026-02-29T00:00:00Z",
+    "2026-11-08T10:15:30+24:00",
+    "2026-11-08T10:15:30+0100",
+    "2026-11-08T10:15:30Zx",
+    "2026-11-08T10:15:30.Z",
+    "2026-11-08T10:15Z",
+]))
+let now = Instant.now()
+let parsed = DateTime.parse("2026-11-08T10:15:30+01:00")
+let built = DateTime.of(Date.of(2026, 11, 8), Time.of(10, 15, 30), Zone.fixed(Duration.ofHours(1)))
+let atPlusOne = Instant.parse("2026-11-08T10:15:30+01:00")
+let utcOffset = DateTime.parse("2026-11-08T10:15:30Z").offset()
+println(f"{atPlusOne} {Instant.parse(now.show()) == now} {parsed == built} {utcOffset == Duration.ofNanos(0)}")
+let early = Instant.parse("1969-12-31T23:59:59.5Z")
+let epoch = Instant.parse("1970-01-01T00:00:00Z")
+println(f"{early.epochSecs()} {early.epochMillis()} {early} {epoch.epochSecs()}")
+try {
+    let _ = DateTime.parse("2026-11-08T10:15:30")
+} catch (e: ParseError) {
+    println(e.message())
+}

@@ -1,0 +1,32 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 09:30:00 09:30:00.5 23:59:59.000000001 00:00:00.00012
+//! | 9 30 15 7
+//! | true true true
+//! | there is no time of day with hour 24, minute 0, second 0, nanosecond 0
+//! | there is no time of day with hour 23, minute 59, second 60, nanosecond 0
+//! | there is no time of day with hour 0, minute 0, second 0, nanosecond 1000000000
+//! | there is no time of day with hour -1, minute 0, second 0, nanosecond 0
+//! since: 1.0.0
+
+// §12 rule 30: a time of day (Lyric 5 12 §Time rule 5): hours, minutes, seconds — no second 60, which POSIX
+// time does not count — and nanoseconds; its text drops the fraction's trailing zeros; times in order
+import std.time { Time, TimeError }
+
+fn refused(h: int, m: int, s: int, n: int): string {
+    try {
+        return f"{Time.of(h, m, s, n)}"
+    } catch (e: TimeError) {
+        return e.message()
+    }
+}
+
+println(f"{Time.of(9, 30, 0)} {Time.of(9, 30, 0, 500000000)} {Time.of(23, 59, 59, 1)} {Time.of(0, 0, 0, 120000)}")
+let t = Time.of(9, 30, 15, 7)
+println(f"{t.hour()} {t.minute()} {t.second()} {t.nano()}")
+println(f"{Time.of(9, 30, 0) < Time.of(9, 30, 0, 1)} {Time.of(10, 0, 0) > Time.of(9, 59, 59, 999999999)} {Time.of(12, 0, 0) == Time.of(12, 0, 0, 0)}")
+println(refused(24, 0, 0, 0))
+println(refused(23, 59, 60, 0))
+println(refused(0, 0, 0, 1000000000))
+println(refused(-1, 0, 0, 0))

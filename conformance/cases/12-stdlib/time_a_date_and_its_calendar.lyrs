@@ -1,0 +1,49 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 1970-01-01 Thursday 2026-11-08 Sunday 1969-12-31 Wednesday 2000-01-01 Saturday
+//! | true false true false true
+//! | 2024-02-29 2024-03-01 2023-03-01 2001-01-01 -4713-11-25
+//! | +10000-01-01 -0001-12-31 0005-03-01 0000-02-29
+//! | true true true false
+//! | 2026 11 8
+//! | there is no day 29 in 2026-02
+//! | there is no month 13
+//! | there is no day 0 in 2026-01
+//! | true
+//! since: 1.0.0
+
+// §12 rule 30: the proleptic Gregorian calendar (Lyric 5 12 §Time rule 5): a date that exists or `TimeError`,
+// leap years, days of the week from Monday, `plusDays` across months, years and the epoch, ISO 8601's text
+// with the expanded years, dates in order
+import std.time { Date, TimeError, TimeErrorKind }
+
+fn day(y: int, m: int, d: int): Date = Date.of(y, m, d)
+
+fn refused(y: int, m: int, d: int): string {
+    try {
+        return f"{Date.of(y, m, d)}"
+    } catch (e: TimeError) {
+        return e.message()
+    }
+}
+
+let a = day(1970, 1, 1)
+let b = day(2026, 11, 8)
+let c = a.plusDays(-1)
+let y2k = day(2000, 1, 1)
+println(f"{a} {a.dayOfWeek()} {b} {b.dayOfWeek()} {c} {c.dayOfWeek()} {y2k} {y2k.dayOfWeek()}")
+println(f"{day(2000, 2, 29).isLeapYear()} {day(1900, 1, 1).isLeapYear()} {day(2024, 1, 1).isLeapYear()} {day(2100, 1, 1).isLeapYear()} {day(0, 1, 1).isLeapYear()}")
+let leap = day(2024, 2, 28)
+println(f"{leap.plusDays(1)} {leap.plusDays(2)} {day(2024, 3, 1).plusDays(-366)} {y2k.plusDays(366)} {day(-4713, 11, 24).plusDays(1)}")
+println(f"{day(10000, 1, 1)} {day(-1, 12, 31)} {day(5, 3, 1)} {day(0, 2, 29)}")
+println(f"{day(2026, 1, 31) < day(2026, 2, 1)} {day(2025, 12, 31) < day(2026, 1, 1)} {b == day(2025, 11, 8).plusDays(365)} {b == a}")
+println(f"{b.year()} {b.month()} {b.day()}")
+println(refused(2026, 2, 29))
+println(refused(2026, 13, 1))
+println(refused(2026, 1, 0))
+try {
+    let _ = Date.of(2023, 2, 29)
+} catch (e: TimeError) {
+    println(e.kind == TimeErrorKind.Invalid)
+}

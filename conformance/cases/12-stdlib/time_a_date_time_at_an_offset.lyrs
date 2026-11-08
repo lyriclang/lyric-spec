@@ -1,0 +1,45 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | UTC +01:30 -05:00 UTC 1h30m0s +23:59
+//! | true true false
+//! | an offset is whole minutes under a day; 1m30s is not
+//! | an offset is whole minutes under a day; 24h0m0s is not
+//! | an offset is whole minutes under a day; -24h0m0s is not
+//! | 2026-11-08T10:15:30.25+01:30
+//! | 2026-11-08 10:15:30.25 1h30m0s
+//! | 2026-11-08T08:45:30.25Z
+//! | 2026-11-08T03:45:30.25-05:00
+//! | false true true false
+//! | 2025-12-31T23:00:00Z 2025-12-31T18:00:00-05:00
+//! since: 1.0.0
+
+// §12 rule 30: a fixed zone, whole minutes under a day (Lyric 5 12 §Time rule 6), and a date-time at its
+// offset (rule 7): to the moment and back, the same moment at two offsets two date-times and one instant
+import std.time { Date, DateTime, Time, TimeError, Zone }
+
+fn refused(d: Duration): string {
+    try {
+        return Zone.fixed(d).name()
+    } catch (e: TimeError) {
+        return e.message()
+    }
+}
+
+let plus = Zone.fixed(Duration.ofMinutes(90))
+let minus = Zone.fixed(Duration.ofHours(-5))
+println(f"{Zone.utc.name()} {plus.name()} {minus.name()} {Zone.fixed(Duration.ofNanos(0)).name()} {plus.offset()} {refused(Duration.ofMinutes(1439))}")
+println(f"{Zone.fixed(Duration.ofHours(1)) == Zone.fixed(Duration.ofMinutes(60))} {Zone.utc == Zone.fixed(Duration.ofNanos(0))} {plus == minus}")
+println(refused(Duration.ofSecs(90)))
+println(refused(Duration.ofHours(24)))
+println(refused(Duration.ofHours(-24)))
+let here = DateTime.of(Date.of(2026, 11, 8), Time.of(10, 15, 30, 250000000), plus)
+println(here)
+println(f"{here.date()} {here.time()} {here.offset()}")
+let moment = here.toInstant()
+println(moment)
+let there = moment.toDateTime(minus)
+println(there)
+println(f"{there == here} {there.toInstant() == moment} {moment.toDateTime(plus) == here} {DateTime.of(here.date(), here.time(), minus) == here}")
+let newYear = DateTime.of(Date.of(2026, 1, 1), Time.of(0, 30, 0), plus).toInstant()
+println(f"{newYear} {newYear.toDateTime(minus)}")
