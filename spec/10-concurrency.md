@@ -157,16 +157,16 @@ scheduler runs another task meanwhile. The functions this section names are `std
     `Running`; `Done(value)`; `Failed(error)`, the error an `Error`; `Cancelled`, when it ended
     with `Cancelled`; or `Panicked(info)` (§5), `info` a `PanicInfo` with the panic's `code`,
     `message` and `trace`.
-12. **A wait nothing can end is a panic** (`LYR-RT0018`; the review's M6-12). Where every task of
-    a thread waits, none of them sleeps, and no other thread of the program lives that could
-    wake one, no wait of that thread can end any more: one of its waiting tasks panics in its
-    wait — `deadlock: every task waits, and nothing can wake one`, with the frames of the call
-    that waits. It is the **oldest task that waits for something other than a task's end** — a
-    channel, a lock: the wait that is the reason, not an `await` of it —, and where each waits
-    for another, the oldest. It is that task's panic (§5): what awaits the task panics again
-    with its frames, and `main`'s ends the program. While another thread lives nothing is
-    proven and nothing is said — two threads whose tasks wait for each other wait —; once it
-    has ended, it is.
+12. **A wait nothing can end is a panic** (`LYR-RT0018`; the review's M6-12). Where every task of a
+    thread waits, none of them sleeps, none waits for the system — on a socket, a pipe, a channel
+    `signals` gives (§12), which the system wakes —, and no other thread of the program lives that
+    could wake one, no wait of that thread can end any more: one of its waiting tasks panics in its
+    wait — `deadlock: every task waits, and nothing can wake one`, with the frames of the call that
+    waits. It is the **oldest task that waits for something other than a task's end** — a channel, a
+    lock: the wait that is the reason, not an `await` of it —, and where each waits for another, the
+    oldest. It is that task's panic (§5): what awaits the task panics again with its frames, and
+    `main`'s ends the program. While another thread lives nothing is proven and nothing is said —
+    two threads whose tasks wait for each other wait —; once it has ended, it is.
 
 ## 3. Cancellation
 
@@ -386,10 +386,10 @@ module cut, M8b S1). No Lyric code runs in a signal handler.
    no longer do what the system does with them — end the program, mostly — but arrive in the
    channel. Each comes to every channel that asked for it.
 3. A signal is no counter: two that come before the first went out may arrive as one, and one that
-   finds a channel's buffer full — sixteen — is lost for that channel.
-4. Closing the channel ends its subscription **at once** (the review's M6-28): a signal no
-   channel asks for any more is the system's again from the close on — not from the next one,
-   which was swallowed.
+   finds a channel's buffer full — sixteen — is lost for that channel (the review's M6-28).
+4. Closing the channel ends its subscription **at once** (K5: the scheduler swallows no signal): a
+   signal no channel asks for any more is the system's again from the close on — not from the next
+   one, which was swallowed.
 5. `KILL` and `STOP` never come — the system does not deliver them — and neither do the faults
    (`SEGV`, `BUS`, `FPE`, `ILL`, `ABRT`), which end the program with a crash report, nor `PIPE`,
    `CHLD` and `ALRM`, which the runtime keeps. A runtime that a host starts without signal

@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | came
+//! | connected
+//! since: 5.0.0
+// 10 §2 rule 12: a wait on the network can still end — the system wakes it — so no deadlock is
+// said while every task waits on a socket, though none sleeps and no other thread lives.
+import std.io { println };
+import std.net { IpAddr, SocketAddr, TcpListener, TcpStream };
+import std.task { spawn };
+
+fn main(): void throws Error {
+    let listener = try TcpListener.bind(SocketAddr { ip = IpAddr.V4(127, 0, 0, 1), port = 0 });
+    let at = try listener.localAddr();
+    let accepting = spawn(() => {
+        var came = try listener.accept();
+        println("came");
+        try came.close();
+    });
+    var stream = try TcpStream.connect(at);
+    try accepting.await();
+    println("connected");
+    try stream.close();
+    try listener.close();
+}
