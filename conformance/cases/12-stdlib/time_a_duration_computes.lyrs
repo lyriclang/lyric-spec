@@ -1,0 +1,26 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 90000000000 90000 90
+//! | -1 -1500 -1
+//! | 1.5
+//! | 3s 1s 4s 500ms
+//! | true false true false
+//! | true true
+//! | 0s true
+//! since: 1.0.0
+
+// §12 rule 29: a span's arithmetic, its counts rounded toward zero, its order and its default (Lyric 5 12
+// §Time rule 1): `std.time`'s, a module the program imports
+import std.time { Monotonic }
+
+let d = Duration.ofMinutes(1) + Duration.ofSecs(30)
+println(f"{d.nanos()} {d.millis()} {d.secs()}")
+let back = Duration.ofMicros(-1500)
+println(f"{back.millis()} {back.nanos() / 1000} {Duration.ofMillis(-1999).secs()}")
+println(Duration.ofMillis(1500).asSecsFloat())
+println(f"{Duration.ofSecs(1) * 3} {Duration.ofSecs(3) / 3} {Duration.ofSecs(5) - Duration.ofSecs(1)} {Duration.ofSecs(1) / 2}")
+println(f"{Duration.ofSecs(1) == Duration.ofMillis(1000)} {Duration.ofSecs(1) == Duration.ofMillis(999)} {Duration.ofSecs(1) > Duration.ofMillis(999)} {Duration.ofHours(1) < Duration.ofMinutes(60)}")
+let spans = [Duration.ofSecs(2), Duration.ofNanos(5), Duration.ofMillis(3)]
+println(f"{(spans.iter().sorted().first() ?? Duration.default()) == Duration.ofNanos(5)} {Duration.ofSecs(1).totalCompare(Duration.ofSecs(2)) == Ordering.Less}")
+println(f"{Duration.default()} {Monotonic.now().elapsed() >= Duration.default()}")

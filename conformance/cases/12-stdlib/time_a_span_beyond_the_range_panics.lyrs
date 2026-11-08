@@ -1,0 +1,10 @@
+//! run
+//! option: --allow=os
+//! panic: LYS-RT0002
+//! since: 1.0.0
+
+// §12 rule 29: arithmetic that leaves the range of `int` panics (Lyric 5 12 §Time rule 1)
+import std.time { Monotonic }
+
+let _ = Monotonic.now()
+println(Duration.ofHours(2562047) * 2)

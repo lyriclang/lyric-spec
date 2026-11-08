@@ -1,0 +1,22 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | true true
+//! | true true true
+//! | true true
+//! | true
+//! since: 1.0.0
+
+// §12 rule 29: `Instant` is a moment on the wall clock, `Monotonic` one on the run's clock that only moves on
+// (Lyric 5 12 §Time rule 4): their counts, a moment plus a span, how long after
+import std.time { Instant, Monotonic }
+
+let before = Monotonic.now()
+let at = Instant.now()
+// after 2026-01-01 and before 2100: the clock of the machine that runs the case
+println(f"{at.epochSecs() > 1767225600} {at.epochSecs() < 4102444800}")
+let later = at + Duration.ofMillis(1500)
+println(f"{later.since(at) == Duration.ofMillis(1500)} {at.since(later) == Duration.ofMillis(-1500)} {later > at}")
+println(f"{later.epochMillis() - at.epochMillis() == 1500} {(at + Duration.ofNanos(0)) == at}")
+sleep(Duration.ofMillis(20))
+println(before.elapsed() >= Duration.ofMillis(20))

@@ -465,6 +465,16 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     open; while one is open, a run whose tasks all wait waits for a signal. A signal comes in while the
     script's tasks wait or switch: a task that computes on without either holds it back. `KILL`, `STOP` and the
     faults never come, and on Windows only `Interrupt` and `Terminate` do.
+29. **`std.time`** (Lyric 5 12 §Time rules 1–4; S7h5), of the right `os`. **`Duration`** is the prelude's
+    (P17), so that a script waits without an import; `std.time` gives it the rest of Lyric 5's: `+` and `-`
+    with a `Duration`, `*` and `/` with an `int`, an overflow panicking (`LYS-RT0002`) and a division by zero
+    too, `asSecsFloat()`, the order, the hash, zero as its default, **Go's text** and **`Duration.parse`** of
+    Go's form, all as Lyric 5 says. They are there where a module of the program imports `std.time`.
+    **`Instant`**, a moment on the wall clock in nanoseconds since 1970 — `now()`, `epochSecs()`,
+    `epochMillis()` rounded down, `+` a `Duration`, `since`, the order —, lives in `std.time.instant`, which
+    `std.time` hands on: `std.fs` names it alone for **`Metadata.modified`**, the moment a path was last
+    written, so that a program reading a file's metadata does not pay for the calendar. **`Monotonic`**
+    reads the run's own clock, the one its timers keep: `now()`, `elapsed()`.
 
 ## Deviations (skeleton, written with later milestones)
 

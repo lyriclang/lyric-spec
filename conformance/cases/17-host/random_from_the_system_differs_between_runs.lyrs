@@ -1,0 +1,19 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | true
+//! since: 1.0.0
+
+// §12 rule 18: the free forms of `std.random.system` draw from a generator the system keys, so two runs draw
+// two streams — one in 10^18 alike
+import std.fs { writeText }
+import std.os
+import std.process { Command }
+
+writeText("draw.lyrs", "import std.random.system\nprintln(system.nextInRange(0..1000000000000000000))\n")
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+let a = Command { program = me, args = ["run", "-A", "draw.lyrs"] }.output()
+let b = Command { program = me, args = ["run", "-A", "draw.lyrs"] }.output()
+println(a.status.success() && b.status.success() && a.stdout.length() > 1 && a.stdout != b.stdout)

@@ -1,0 +1,50 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 1h30m0s 1h30m0s 500ms -300ms 0s 2s 1µs 1µs 1µs 1m1.5s
+//! | 1.000000001s 100ms
+//! | Empty Invalid Invalid Invalid Invalid Invalid Invalid
+//! | Overflow Overflow Overflow
+//! | -2562047h47m16.854775808s
+//! | true
+//! since: 1.0.0
+
+// §12 rule 29: `Duration.parse` reads Go's form (Lyric 5 12 §Time rule 3): a sign, numbers each with a unit,
+// fractions; what is empty, has no digits or no unit known, or lies beyond the range is refused; a span's text
+// reads back to it
+import std.time { Monotonic }
+
+fn read(s: string): string {
+    try {
+        return f"{Duration.parse(s)}"
+    } catch (e: ParseError) {
+        return match (e.kind) {
+            .Empty => "Empty",
+            .Invalid => "Invalid",
+            .Overflow => "Overflow",
+        }
+    }
+}
+
+fn all(xs: string[]): string {
+    var line = ""
+    for (x in xs) {
+        line = line + (if (line == "") "" else " ") + read(x)
+    }
+    return line
+}
+
+println(all(["1h30m", "1.5h", ".5s", "-300ms", "0", "+2s", "1us", "1µs", "1μs", "1m1.5s"]))
+println(all(["1s1ns", "0.1s"]))
+println(all(["", "1", "1x", ".", "-", "s", "1.s5"]))
+println(all(["9223372037s", "2562047h47m16.854775808s", "99999999999999999999ns"]))
+println(read("-2562047h47m16.854775808s"))
+var round = true
+for (n in [0, 1, 1500, 999999999, 1000000001, 90000000000, -3600000000000, 9223372036854775807]) {
+    let d = Duration.ofNanos(n)
+    if (Duration.parse(f"{d}") != d) {
+        round = false
+    }
+}
+println(round)
+let _ = Monotonic.now()

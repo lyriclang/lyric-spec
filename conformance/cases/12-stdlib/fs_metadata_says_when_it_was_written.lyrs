@@ -1,0 +1,23 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | true
+//! | true
+//! | true
+//! since: 1.0.0
+
+// §12 rule 29: `Metadata.modified` is the moment a file was last written, an `Instant` as `std.time` names it;
+// a file written now was written within a few seconds of now, an older one before
+import std.fs { metadata, writeText }
+import std.time { Instant }
+
+writeText("now.txt", "x")
+let m: Instant = metadata("now.txt").modified
+let now = Instant.now()
+println(m.since(now) < Duration.ofSecs(5) && now.since(m) < Duration.ofSecs(5))
+let d = metadata(".").modified
+println(d.epochSecs() > 0)
+sleep(Duration.ofMillis(1100))
+writeText("later.txt", "y")
+println(metadata("later.txt").modified > metadata("now.txt").modified)
