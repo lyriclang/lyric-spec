@@ -36,8 +36,10 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `Driver
    the option the environment's `LYRIC_PROFILE`, then `debug`; an unknown name is refused, from
    either; `asan` and `tsan` need clang —, `--target <triple>`
    (a Tier 1 triple; default: this machine), `--emit ir|c` (prints instead of building; `run`
-   refuses it), `-C <dir>` (the package is searched from `<dir>` instead of the current
-   directory, and a relative file is relative to it). `--offline` takes no value: nothing is
+   refuses it), `-C <dir>` (the command stands in `<dir>` as if it had been started there: the
+   package is searched from `<dir>` instead of the current directory, a relative file is relative
+   to it, and `run` starts the program in it — its working directory, where a relative path the
+   program opens is read). `--offline` takes no value: nothing is
    fetched, and a package read from git comes from the user's cache ([15 §2](15-project.md)).
    `--locked` takes none either: `build`, `run` and `test` take the lock as it is
    ([15 §3](15-project.md) rule 4).
