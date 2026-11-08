@@ -189,3 +189,8 @@ Bindings, blocks, `if`, `while`, `loop`, `for` over `Iterable` (with `try` for t
    the next begins, and on the `break` or `continue` that ends the round.
 4. A `return`'s value is **evaluated before** the `defer`s run, as a value block's tail is
    ([§3](#3-value-blocks) rule 4): `defer d(); return f();` calls `f`, then `d`.
+5. A `defer` body **does not jump out** of itself (08 S6): a `return` in it, and a `break` or
+   `continue` that goes to a loop around the `defer`, are refused (`LYR-SEM0236`) — the body runs
+   while its scope is being left, and a second way out would begin inside the first. A loop in the
+   body keeps its own jumps, and a lambda there its `return`. A `throw` leaves it as rule 1 of
+   [06 §5](06-errors.md#5-the-error-path) and rule 5 there say.
