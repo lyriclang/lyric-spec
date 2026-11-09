@@ -1,0 +1,17 @@
+//! check
+//! error: LYS-SEM0019
+//! error: LYS-RES0009
+//! stderr-has: 'lib.count' is not written through its module's name: import 'count' to write it
+//! stderr-has: 'lib.fixed' is a let: it is never written
+//! stderr-has: 'hidden' is private to the module 'lib'
+//! since: 1.0.0
+// §4 rule 5 (S7k3; Lyric 5 refuses it too, lyriclang/lyric#705): a module's binding is read
+// through the module's name and never written there — a `var` is written through its import; a
+// private one is not named there at all.
+import lib
+
+println(lib.count)
+lib.count = 5
+lib.count += 1
+lib.fixed = 3
+lib.hidden = 4
