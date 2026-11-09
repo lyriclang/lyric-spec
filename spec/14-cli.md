@@ -1,9 +1,6 @@
 # The command line
 
-> **Partly written.** §1 was written with milestone **M2** of the Lyric 5 plan, §2 with **M7**, §3
-> with **M8a**; the rest comes with **M8a–M13**, spec-first: each rule lands here with its
-> conformance case before or with its implementation. Source of the decisions:
-> [11 Tooling and interop W1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
+> Source of the decisions: [11 Tooling and interop W1](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
 
 ## Scope
 

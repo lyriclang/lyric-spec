@@ -1,10 +1,6 @@
 # Expressions
 
-> **Partly written.** §1 to §6 were written with milestones **M4** to **M8a** of the Lyric 5 plan
-> and the catch-up block N (2026-10-07); lambdas, trailing blocks and `with` follow, spec-first:
-> each rule lands here with its conformance case before or with its implementation. Source of the
-> decisions:
-> [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md), [04 Abstraction D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md).
+> Source of the decisions: [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md), [04 Abstraction D6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md).
 
 ## Scope
 

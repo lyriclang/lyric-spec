@@ -1,9 +1,6 @@
 # The standard library contract
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan; the rest comes with
-> **M8a–M10**, spec-first: each rule lands here with its conformance case before or with its
-> implementation. Source of the decisions:
-> [10 Standard library](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md).
+> Source of the decisions: [10 Standard library](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md).
 
 ## Scope
 

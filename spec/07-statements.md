@@ -1,10 +1,6 @@
 # Statements
 
-> **Partly written.** §1 to §5 were written with milestones **M5** to **M8a** of the Lyric 5 plan
-> and the catch-up block N (2026-10-07), §6 and the rules on bindings' types and on a missing
-> return type with **M17**, spec-first: each rule lands here with its conformance case
-> before or with its implementation. Source of the decisions:
-> [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md).
+> Source of the decisions: [08 Syntax](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md).
 
 ## Scope
 
