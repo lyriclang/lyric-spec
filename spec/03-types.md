@@ -1,9 +1,6 @@
 # Types and values
 
-> **Partly written.** §1 to §10 were written with milestones **M3** to **M8a** of the Lyric 5 plan
-> and the catch-up block N (2026-10-07); what later milestones add lands here spec-first: each rule
-> with its conformance case before or with its implementation. Source of the decisions:
-> [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
+> Source of the decisions: [02 Value model](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/02-wertmodell.md), [03 Type system](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
 ## Scope
 

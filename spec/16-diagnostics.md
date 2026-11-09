@@ -1,9 +1,6 @@
 # Diagnostics
 
-> **Partly written.** §1–§5 were written with milestone **M12a** of the Lyric 5 plan (slices S2–S5); the
-> rest follows, spec-first: each rule lands here with its conformance case before or with its
-> implementation. Source of the decisions:
-> [11 Tooling and interop W6/W7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
+> Source of the decisions: [11 Tooling and interop W6/W7](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md).
 
 ## Scope
 

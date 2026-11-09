@@ -1,9 +1,6 @@
 # Modules and packages
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan (slice S6), §2 to
-> §4 with **M7** (slices S1, S2a–S2c, S3a, S3b), §5 with the review of **M8a** (R3a); the rest follows with M7, spec-first: each rule
-> lands here with its conformance case before or with its implementation. Source of the decisions:
-> [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
+> Source of the decisions: [07 Modules](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/07-module.md).
 
 ## Scope
 
