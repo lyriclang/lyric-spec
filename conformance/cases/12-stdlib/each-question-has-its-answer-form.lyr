@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | parse: true
+//! | get: true
+//! | insert: true false
+//! | lookup: true
+//! since: 5.0.0
+// 12 §Answer forms and the panic rule: a parse has a reason and throws it; a lookup without one
+// answers null; a bool says what is so — here whether the value was new —, never whether it worked.
+import std.io { println };
+
+fn main(): void {
+    let parsed = Result.of { try int.parse("x") };
+    let invalid = match (parsed) {
+        .Ok(_) => false,
+        .Err(e) => e.kind == .Invalid,
+    };
+    println(f"parse: {invalid}");
+    let xs = List.of([1, 2, 3]);
+    println(f"get: {xs.get(5) == null}");
+    var seen = Set<int>.new();
+    let first = seen.insert(7);
+    let again = seen.insert(7);
+    println(f"insert: {first} {again}");
+    let ages = Map<string, int>.new();
+    println(f"lookup: {ages.get("ada") == null}");
+}

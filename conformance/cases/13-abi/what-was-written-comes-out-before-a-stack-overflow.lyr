@@ -3,7 +3,7 @@
 //! stdout:
 //! | before the overflow
 //! since: 5.0.0
-// 13 §1.4 item 7; 12 §The console, rule 2: an overflow in main is a panic like any other — what
+// 13 §1.4 item 6; 12 §The console, rule 2: an overflow in main is a panic like any other — what
 // the output holds is written before its report, also when the output is a pipe.
 import std.io { println };
 
