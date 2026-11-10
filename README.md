@@ -1,6 +1,7 @@
 # The Lyric Language Specification
 
-**Status: Lyric 5.0 — skeleton, written milestone by milestone.** The Lyric 4.x text (normative
+**Status: Lyric 5.0 — written in full; a change to it is spec-first, each rule with its
+conformance case.** The Lyric 4.x text (normative
 from 2.0 to 4.6) lives on the [`script`](https://github.com/lyriclang/lyric-spec/tree/script)
 branch, where it goes on as the specification of
 [Lyric-Script](https://github.com/lyriclang/lyric-script).

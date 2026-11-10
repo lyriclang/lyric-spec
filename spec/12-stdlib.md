@@ -1,9 +1,6 @@
 # The standard library contract
 
-> **Partly written.** §1 was written with milestone **M3** of the Lyric 5 plan; the rest comes with
-> **M8a–M10**, spec-first: each rule lands here with its conformance case before or with its
-> implementation. Source of the decisions:
-> [10 Standard library](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md).
+> Source of the decisions: [10 Standard library](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md).
 
 ## Scope
 
@@ -307,6 +304,50 @@ fill them.
   two digits; or the sign and `inf` or `nan`. The value is the float nearest the text: beyond
   the range an infinity, below it a zero, as IEEE 754 rounds — a float has no `Overflow`.
 - A **bool** is `true` or `false`.
+
+## Answer forms and the panic rule
+
+What a function of the library answers says what kind of question it is
+([10 B3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)). One operation has one form; the caller chooses what to make of it (`try?`,
+`try!`, `Result.of`, [06 §6](06-errors.md#6-the-expression-forms)), and no name carries the
+form (rule 6 of the naming law below).
+
+1. **`throws E`** answers an operation that can fail for a reason the caller may need: a file,
+   the network, a process, a decoding, a **parse**. `int.parse(s)` throws a `ParseError`
+   ([§Parsing](#parsing)); it does not answer `?int`.
+2. **`?T`** answers a lookup whose absence has no reason: `list.get(i)`, `map.get(k)`,
+   `xs.first()`, `std.os`'s `env(name)`, the end of an iterator.
+3. **`bool`** answers whether something is so — `exists`, `isEmpty`, `contains` — or tells what
+   happened as information: `Set.insert(v)` says whether `v` was new. It never says whether an
+   operation worked.
+4. **`Result<T, E>`** is no return type of the library: a caller builds one
+   ([§Results and conversions](#results-and-conversions)).
+5. **The panic rule.** A panic answers a precondition the program text states. An argument that
+   may come from data never panics — it answers `?T` or `bool`, or throws; an argument the
+   programmer writes — an index, a separator, a format, the bound of a range — may: `xs[i]`
+   outside `xs` panics (`LYR-RT0003`), `xs.get(i)` answers `null`. No parser, decoder or path of
+   input and output of the library panics on its input.
+
+## The naming law
+
+*(Informative.)* How the library names what it has ([10 B2](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/10-stdlib.md)); a library of a program that
+follows it reads like the standard one.
+
+| # | Rule | Example |
+|---|---|---|
+| 1 | Types in PascalCase, the built-in ones aside; functions, methods and fields in camelCase; modules short and lower case; a constant is a static member | `int.max`, `float.epsilon` |
+| 2 | A function is a verb; a predicate starts with `is`, `has`, `contains` or `can`; a field is a noun | `int.parse`, `isBlank` |
+| 3 | Constructors stand on the type: `new`, `empty()`, `withCapacity(n)`, `of(elements)`, `from(another form)`, `of` and a unit | `List.of([1, 2])`, `Duration.ofSecs(5)` |
+| 4 | `toX()` makes a copy, `asX()` sees the same data in O(1) | `toList()`, `asSlice()` |
+| 5 | A plural for a collection, the singular for an element | `keys()`, `first()` |
+| 6 | No answer form in a name: no `OrThrow`, `OrNull`, `tryX` | `try? fs.readText(p)` |
+| 7 | No type in a name: one function over `Num` | `abs(x)`, `sum()` |
+| 8 | No `get` prefix for reading; `get(k)` is a lookup; `length()` with parentheses everywhere | `xs.length()`, `m.get(k)` |
+| 9 | A mutation is named for what it does and gives `void` or what it removed; its copying twin takes a participle or `to` | `sort()` and `sorted()` |
+| 10 | No `bool` parameter that changes the operation: two functions or an enum | `trimStart()`, not `trim(true)` |
+| 11 | A suffix names the output, never the input | `n.toBytesLE()` |
+| 12 | An error type ends in `Error`, its reasons are an `…ErrorKind`; options are a struct with defaults | `IoError { kind, path, detail }` |
+| 13 | An assertion takes the actual value first, then the expected one | `assertEq(got, 4)` |
 
 ## Results and conversions
 

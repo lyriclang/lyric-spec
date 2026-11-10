@@ -1,12 +1,6 @@
 # Patterns
 
-> **Partly written.** §1 to §4 were written with milestone **M3** of the Lyric 5 plan (slices S4
-> to S6), the type patterns with **M4**, the type-set pattern with the catch-up block N (N2c), a
-> built-in type in both with **M8c** S15,
-> spec-first: each rule lands here with its conformance case before or with its implementation.
-> Source of the decisions:
-> [08 Syntax Y6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md),
-> [03 Type system T9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
+> Source of the decisions: [08 Syntax Y6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/08-syntax.md), [03 Type system T9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md).
 
 ## Scope
 

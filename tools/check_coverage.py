@@ -51,6 +51,7 @@ SECTIONS_HELD_ELSEWHERE = {
     "15-project §7": "a package's tests run by lyric test (TestCommandTests)",
     "16-diagnostics §4": "the JSON form is the command line's (JsonFormTests, EventWriterTests)",
     "16-diagnostics §6": "lyric fix rewrites files (FixTests)",
+    "12-stdlib §The naming law": "informative: how the library names things, no rule a program can break",
 }
 
 
