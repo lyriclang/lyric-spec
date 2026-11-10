@@ -3,7 +3,7 @@
 //! | the task: panicked LYR-RT0006
 //! | main goes on
 //! since: 5.0.0
-// 13 §1.4 item 7: a stack overflow is a panic also where one frame holds more than a few pages —
+// 13 §1.4 item 6: a stack overflow is a panic also where one frame holds more than a few pages —
 // here 32 KiB of an inline array, larger than what a stack keeps below its bound: the function
 // checks for its whole frame before it writes any of it.
 import std.io { println };

@@ -83,7 +83,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    limit ends with `    ... deeper frames not shown`.)*
 3. A panic on any thread ends the whole process, with one report. A panic on another thread
    meanwhile waits for that end and writes nothing. A second panic on the panicking thread
-   itself — while its report is written or the hook runs (item 5) — ends the process at once
+   itself — while its report is written — ends the process at once
    with the line `panic while panicking [CODE]: message`, still with 101.
 4. The runtime's panic codes:
 
@@ -105,7 +105,7 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0014` | a close of a coroutine with C frames on its stack (§1.6 rule 6); a coroutine resumed while it runs, after its body returned or on a thread other than its own; a yield or a park with no coroutine running; a yield of another type than the running coroutine yields ([10 §1.13](10-concurrency.md)), or in a task where no generator runs; a yield while the coroutine is being closed; a close of one that runs or is parked (§1.6) |
    | `LYR-RT0015` | the system refused the runtime what it needs to go on: a poller, or a wait on one (§1.7); random bytes ([12](12-stdlib.md)) |
    | `LYR-RT0016` | a collection of the library changed while it was walked: `List: changed while it was walked` — a list, a map, a set, a deque ([12](12-stdlib.md)) |
-   | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 6): at once, and never by going on |
+   | `LYR-RT0017` | control reached a place the implementation holds unreachable — behind a call that does not return, behind a `match` that covers every case. No program causes it: it is a defect of the implementation, reported instead of acted on. A build that optimizes may end as a crash there instead (item 5): at once, and never by going on |
    | `LYR-RT0018` | every task of a thread waits, none sleeps or waits for the system (a socket, a pipe, a signal's channel), and no other thread lives that could wake one: `deadlock: every task waits, and nothing can wake one`, raised in one of the waiting tasks ([10 §2](10-concurrency.md) rule 12) |
    | `LYR-RT0019` | `lock`, `read`, `write` or `run` on a lock a task panicked while it held: `lock poisoned by a panic: <code>: <message>`, the first panic named ([10 §10](10-concurrency.md) rule 6) |
    | `LYR-RT0020` | the runtime found its own invariant broken — a bug of the runtime or the compiler, never of the program ([appendix A](appendix-a-diagnostics.md)) |
@@ -113,14 +113,11 @@ The first element sits at offset 16, aligned to 16 bytes.
    | `LYR-RT0022` | C called a Lyric function through its pointer on a thread Lyric does not run: `C called a Lyric function on a thread Lyric does not run …` — but for a Callback's that returns nothing, which goes to its thread (§3 rules 9, 13); or an export before the runtime started: `C called an export before lyr_init started the runtime` (§4 rule 6) |
    | `LYR-RT0023` | a `GcHandle` read as a handle of another class than its object's, or of none (§3 rule 12) |
 
-5. A host may set one **panic hook**. It is called once per process, after the report is
-   written, on the panicking thread, with the code, the message and the frames as written. It
-   cannot prevent the end: when it returns, the process exits with 101.
-6. A **crash** is not a panic: an invalid memory access, an illegal instruction, a trap, an
+5. A **crash** is not a panic: an invalid memory access, an illegal instruction, a trap, an
    arithmetic fault or an abort. When the runtime installed its handlers (§1.5), it writes `crash: ` and a
    description, then the frames from the faulting one outward, in the form of item 2; then the
    process ends the way the operating system ends it for that fault — not with 101.
-7. A stack overflow is a panic (`LYR-RT0006`), not a crash. A compiled function finds it at its
+6. A stack overflow is a panic (`LYR-RT0006`), not a crash. A compiled function finds it at its
    entry, before it writes its frame: below the stack's end it keeps a reserve the panic runs in
    ([01 S3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/01-laufzeit.md)). In a
    coroutine the panic leaves it as any panic does (§1.6 rule 10) — a task that overflows ends
@@ -131,7 +128,7 @@ The first element sits at offset 16, aligned to 16 bytes.
 ### 1.5 Program start and end
 
 1. A standalone program starts the runtime with its defaults, which install the handlers of
-   §1.4 item 6. Its exit code is the value `main` returns, masked to `0..255`
+   §1.4 item 5. Its exit code is the value `main` returns, masked to `0..255`
    ([11 C5](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
 2. A host starts the runtime itself (`lyr_init`, §5 rule 1), once per process: a second start is
    refused and changes nothing. The host chooses the program's arguments, a heap limit (0: none), whether the
@@ -156,7 +153,7 @@ coroutine (`lyr/coro.h`); generators, tasks and channels are built on them
    the others, whose unoptimized frames are some four times as large, unless its creation says
    otherwise (the sweep after M10, W5) — a size the runtime's interface takes (`lyr_coro_new`,
    `lyr_task_start`), not one a program writes — and costs memory only as its pages are reached.
-   Running out of it is a stack overflow (`LYR-RT0006`, §1.4 item 7), as on a thread's stack.
+   Running out of it is a stack overflow (`LYR-RT0006`, §1.4 item 6), as on a thread's stack.
 3. A coroutine runs on the thread that first resumed it, and only there.
 4. A coroutine is an object. While it is suspended, what its frames hold lives as long as the
    coroutine: one that nothing references any more is collected with its stack, and nothing on
@@ -465,7 +462,7 @@ output of its own — `examples/embedded-host` —, in the toolchain's own tests
 
 1. **`lyr_init(config)`** starts the runtime, once per process, and answers `LYR_OK`; a second call
    answers `LYR_ERROR` and changes nothing. `config` — `NULL` for zeros — gives the program's
-   arguments, a heap limit, whether the runtime installs its fault handlers (§1.4 item 6), and the
+   arguments, a heap limit, whether the runtime installs its fault handlers (§1.4 item 5), and the
    writers its standard output and error go to instead of the process's (`stdout_write`,
    `stderr_write`, with `write_context`). **`lyr_shutdown()`** writes out what the program wrote and
    stops the runtime.
