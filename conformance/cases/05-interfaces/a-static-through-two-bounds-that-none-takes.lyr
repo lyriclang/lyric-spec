@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0086
+//! since: 5.0.0
+// 05 §3 rule 5: through two bounds of one generic interface, an argument neither instance takes
+// is refused.
+struct Label :: [From<int>, From<string>] {
+    text: string,
+    static fn from(v: int): Label { return Label { text = "#" }; }
+    static fn from(v: string): Label { return Label { text = v }; }
+}
+
+fn flagged<T :: [From<int>, From<string>]>(): T { return T.from(true); }
+
+fn main(): void {
+    let _ = flagged<Label>();
+}

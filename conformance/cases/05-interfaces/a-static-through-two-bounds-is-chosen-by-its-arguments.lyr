@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | abc #7
+//! since: 5.0.0
+// 05 §3 rule 5: through two bounds of one generic interface the arguments choose the instance,
+// as on the type — a text takes 'From<string>', a literal '7' the 'From<int>' one.
+import std.io { println };
+
+struct Label :: [From<int>, From<string>] {
+    text: string,
+    static fn from(v: int): Label { return Label { text = f"#{v}" }; }
+    static fn from(v: string): Label { return Label { text = v }; }
+}
+
+fn named<T :: [From<int>, From<string>]>(): T { return T.from("abc"); }
+fn numbered<T :: [From<int>, From<string>]>(): T { return T.from(7); }
+
+fn main(): void {
+    println(f"{named<Label>().text} {numbered<Label>().text}");
+}

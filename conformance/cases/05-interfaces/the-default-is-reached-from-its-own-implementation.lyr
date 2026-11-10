@@ -1,0 +1,38 @@
+//! run
+//! stdout:
+//! | hello! | hello? | hi, Ada | own
+//! since: 5.0.0
+// 05 §4 rule 1: in the type's own implementation of a member, 'I.m(this)' is the interface's
+// default — in the type's body and in a block alike, a struct's and a class's; everywhere else
+// 'I.m(x)' is the implementation of x's type.
+import std.io { println };
+
+interface Greeter {
+    fn greet(): string { return "hello"; }
+}
+
+struct Loud :: [Greeter] {
+    fn greet(): string { return Greeter.greet(this) + "!"; }
+}
+
+struct Asking {
+    n: int,
+}
+
+extend Asking :: [Greeter] {
+    fn greet(): string { return Greeter.greet(this) + "?"; }
+}
+
+class Named :: [Greeter] {
+    name: string,
+    fn greet(): string { return "hi, " + this.name; }
+}
+
+struct Own :: [Greeter] {
+    fn greet(): string { return "own"; }
+}
+
+fn main(): void {
+    let named = Named { name = "Ada" };
+    println(f"{Loud {}.greet()} | {Asking { n = 0 }.greet()} | {Greeter.greet(named)} | {Greeter.greet(Own {})}");
+}

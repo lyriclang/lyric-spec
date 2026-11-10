@@ -123,7 +123,9 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    one whose parameters are the arguments' own types — `Label.from(3)` is the `From<int>` one
    beside `From<float>`, a literal being its default type. None or several left is refused
    (`LYR-SEM0086`); the argument is written with `as`, `Label.from(3 as int16)`. Through a
-   constraint, `U :: [From<T>]`, the instance the constraint names chooses; through a value of
+   constraint, `U :: [From<T>]`, the instance the constraint names chooses; through two bounds of
+   one interface, `T :: [From<int>, From<string>]`, the arguments choose among them as on a type —
+   `T.from("abc")` is the `From<string>` one —, none or several left refused alike; through a value of
    an interface instance, its table does. There is no qualified form for a static member (§4
    rule 2).
 
@@ -135,6 +137,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    call cannot (§3.4), and it is checked as the member call it is: a `mut fn` writes `x`
    itself — no copy of a struct stands in for it —, so `x` is a place as the receiver of
    `x.m(…)` is (`LYR-SEM0019`).
+   In the type's own implementation of `m` for `I` — in its body or in a block —, `I.m(this, …)`
+   is the interface's **default** instead ([04 D3](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/04-abstraktion.md)): the implementation is the function the
+   call stands in, and an implementation that adds to the default reaches it so. Where `I`
+   declares `m` without a default, that call is refused (`LYR-SEM0237`).
 2. A **static** member is not called through its interface: `Make.make<Item>(s)` is refused
    (`LYR-SEM0231`) — the interface has no value to call it for, and a type argument written after
    it does not make it one. It is called on a type that conforms, `Item.make(s)`, or through a

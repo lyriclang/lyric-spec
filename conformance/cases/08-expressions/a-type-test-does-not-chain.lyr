@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-PAR0059
+//! since: 5.0.0
+// 08 §4.2: 'is' stands at the comparisons' level, which has no associativity — 'x is A is B'
+// would test the bool the first test gives, and is refused.
+fn main(): void {
+    let x: int = 3;
+    let both = x is int is bool;
+}

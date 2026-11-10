@@ -151,8 +151,8 @@ left to right everywhere, the target before the value).
    So `1 << 2 + 1` is `1 << 3`, `x as int * 2` casts before it multiplies, and `0..n + 1` ends at
    `n + 1`.
 2. A level **without associativity does not chain**: `a..b..c` is refused (`LYR-PAR0005`), and so
-   are `a < b < c` and `a == b == c` (`LYR-PAR0059`) — a chained comparison would compare a `bool`
-   with the third operand, a chained equality would take a `bool` for what was meant. Parentheses
+   are `a < b < c`, `x is A is B` and `a == b == c` (`LYR-PAR0059`) — a chained comparison would compare a `bool`
+   with the third operand, a chained type test would test the `bool`, a chained equality would take a `bool` for what was meant. Parentheses
    say which: `(a == b) == c`. *(Informative.)* The diagnostic names the form likely meant,
    `a < b && b < c`.
 3. `try` covers everything to its right in the expression it stands in: `try a + b` is
@@ -170,8 +170,9 @@ left to right everywhere, the target before the value).
 
 ## 6. `++` and `--`
 
-1. **`++` and `--`** add and take one on a place that holds a number — a `var`, a field, an
-   element: `x++`, `p.count--`, `++xs[i]`. A place that cannot be written is refused
+1. **`++` and `--`** add and take one on a place that holds an integer — a `var`, a field, an
+   element: `x++`, `p.count--`, `++xs[i]`. On a `float` they are refused (`LYR-SEM0003`): a
+   float has no neighbour one step away, and `x += 1.0` says what is meant (04 D6). A place that cannot be written is refused
    (`LYR-SEM0019`). The step is checked as `+` and `-` are: past the type's range it panics
    (`LYR-RT0002`, [03 §1](03-types.md)).
 2. `x++` and `x--` are worth the **old** value, `++x` and `--x` the **new** one (§3 rule 3); what
