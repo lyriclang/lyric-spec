@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0052
+//! since: 5.0.0
+// 05 §13 rule 9, 03 §9.4 rule 3: 'into' on a receiver has a parameter only a call binds, so it is no
+// value, also where the position names the type a call would take.
+struct Meters { }
+struct Centimeters { }
+extend Centimeters :: [From<Meters>] { static fn from(m: Meters): Centimeters { return Centimeters { }; } }
+
+fn main(): void {
+    let m = Meters { };
+    let g: fn() -> Centimeters = m.into;
+}

@@ -340,7 +340,8 @@ A value or nothing ([03 T4](https://github.com/lyriclang/lyric/blob/main/design/
    Chains **flatten**: the result is an optional of the member's type, and when the member's
    type is itself an optional, it is that type — `a?.b?.c` can be absent in one way only and
    is a `?C`, not a `??C`. `a?.f(args)` calls the method under the same rule and evaluates the
-   arguments only when `a` holds a value.
+   arguments only when `a` holds a value. `a?.f` without a call is the closure bound to that
+   value ([§8.4](#84-functions-and-methods-as-values)), so a `?fn(…)`.
 5. Nothing is assigned through `?.`: `a?.f = v` is refused (`LYR-SEM0019`). Narrow first.
 
 ### 3.4 Equality and hashing
@@ -667,7 +668,10 @@ Functions as values, and the lambdas that make them
 2. `obj.method` without a call is a closure **bound** to `obj` (F10): it holds the object — a
    class shared, a struct copied at the binding — and calls the method on it; its type is the
    method's without the receiver. It is called like any function value, and a call through it
-   on a struct's copy changes the copy.
+   on a struct's copy changes the copy. Every instance method is one, whatever reaches it — a
+   type's own, a block's, an interface's through its value or a type parameter, a generic type's
+   on an instance —, and a call through the value runs what a call on `obj` runs. A method that
+   only a call can bind is no value ([§9.4](#94-instantiated-functions-as-values) rule 3).
 3. `arrayOf(n, f)` of `std.core` builds an array of `n` elements, the element at `i` the value
    of `f(i)` — fresh elements each, where `[x] * n` copies one ([§5.1](#51-t)).
 
@@ -852,7 +856,11 @@ Type parameters, their inference, and what an instance is
    Where the position expects no function type, or one still holding an open parameter of
    its own, the argument is written.
 3. The bare name of a generic function is no value (`LYR-SEM0052`): a function value is
-   monomorphic.
+   monomorphic. Nor is a generic method named through its object or its type, `c.convert`,
+   `Counter.make`, nor a block's member with a parameter only a call binds
+   ([05 §13](05-interfaces.md) rule 9), `m.into` — also where the position names a function
+   type: nothing but a call binds them. A lambda that calls it is the value,
+   `() => m.into()`.
 4. The arguments of the value form follow [§9.1](#91-type-parameters-and-instances) rule 3 —
    their number, also for a function that is not generic (`plain<int>`), and their
    constraints.

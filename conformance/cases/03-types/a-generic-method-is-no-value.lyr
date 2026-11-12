@@ -1,0 +1,11 @@
+//! check
+//! error: LYR-SEM0052
+//! since: 5.0.0
+// 03 §9.4 rule 3: a function value is monomorphic, and a generic method named through its object
+// has nothing to bind its parameter.
+struct C { fn same<U>(u: U): U { return u; } }
+
+fn main(): void {
+    let c = C { };
+    let g = c.same;
+}

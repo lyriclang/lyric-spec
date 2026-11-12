@@ -1,0 +1,25 @@
+//! run
+//! stdout:
+//! | 4 true 8 4
+//! since: 5.0.0
+// 03 §3.3 rule 4: 'a?.m' without a call is the closure bound to the value there is, and null where
+// there is none.
+import std.io { println };
+
+interface Reads { fn put(n: int): int; }
+class Shared :: [Reads] { v: int, fn put(n: int): int { return this.v + n; } }
+struct Crate<T> { v: int, item: T, fn plus(n: int): int { return this.v + n; } }
+
+fn onParameter<T :: [Reads]>(o: ?T): ?(fn(int) -> int) { return o?.put; }
+
+fn main(): int {
+    let some: ?Shared = Shared { v = 3 };
+    let none: ?Shared = null;
+    let crate: ?Crate<string> = Crate<string> { v = 7, item = "x" };
+    let g = some?.put;
+    let h = none?.put;
+    let i = crate?.plus;
+    let j = onParameter(some);
+    println(f"{(g!)(1)} {h == null} {(i!)(1)} {(j!)(1)}");
+    return 0;
+}
