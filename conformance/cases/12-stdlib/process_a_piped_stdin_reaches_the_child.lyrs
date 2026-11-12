@@ -1,0 +1,24 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | child: piped data
+//! since: 1.0.0
+
+// §12 rule 27: what is written into a child's piped input reaches it; the close is the end of its input
+import std.fs { writeText }
+import std.os
+import std.process { Command, Stdio }
+
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+writeText("child.lyrs", "println(\"child: \" + (readLine() ?? \"none\"))\n")
+let child = Command { program = me, args = ["run", "-A", "child.lyrs"], stdin = Stdio.Piped, stdout = Stdio.Piped }.spawn()
+let into = child.stdin ?? unreachable("piped")
+into.writeString("piped data\n")
+into.close()
+let back = child.stdout ?? unreachable("piped")
+let text = back.readToString()
+back.close()
+child.wait()
+print(text)

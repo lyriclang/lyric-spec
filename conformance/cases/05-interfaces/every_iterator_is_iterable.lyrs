@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 3
+//! | 2
+//! | 2
+//! | 4
+//! | [1, 2, 3]
+//! since: 1.0.0
+// §5 rule 12, §7 rule 7: every iterator is an `Iterable` whose `iter()` is itself — a class, a
+// list's iterator, a coroutine —; a list stays one of its own.
+class Count :: Iterator {
+    type Item = int
+    var n: int = 0
+    fn next(): ?int {
+        this.n += 1
+        return if (this.n > 3) null else this.n
+    }
+}
+fn letters(): Coroutine<string> {
+    yield "a"
+    yield "b"
+}
+fn countAll<C :: [Iterable]>(c: C): int {
+    var s = 0
+    for (x in c) {
+        s += 1
+    }
+    return s
+}
+println(countAll(Count { }))
+println(countAll([7, 8].iter()))
+println(countAll(letters()))
+println(countAll([1, 2, 3, 4]))
+let it = Count { }
+let xs: int[] = it.iter().collect()
+println(xs)

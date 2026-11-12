@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 17: the VM asks what a field holds
+let b = Bytes { v = "x" }
+println(b.length())

@@ -1,0 +1,51 @@
+//! run
+//! stdout:
+//! | 5 boom
+//! | other
+//! | held
+//! since: 1.0.0
+
+// §12 rule 33: the assertions that hold do nothing; `assertNotNull` gives the value, `assertThrows` the error
+// of its type, and an error of another type goes on out of it
+import std.test {
+    assertClose,
+    assertContains,
+    assertEmpty,
+    assertEq,
+    assertFalse,
+    assertGreater,
+    assertLess,
+    assertNotEq,
+    assertNotNull,
+    assertNull,
+    assertThrows,
+    assertTrue,
+}
+
+class Boom :: Error {
+    fn message(): string = "boom"
+}
+
+assertEq(1 + 1, 2)
+assertEq("ab", "ab", "the same")
+assertNotEq("a", "b")
+assertTrue(1 < 2)
+assertFalse(2 < 1)
+let none: ?string = null
+assertNull(none)
+let some: ?int = 5
+let n = assertNotNull(some)
+assertClose(0.1 + 0.2, 0.3, 0.000000001)
+assertLess(1, 2)
+assertGreater("b", "a")
+assertContains([1, 2, 3], 2)
+let nothing: int[] = []
+assertEmpty(nothing)
+let e = assertThrows<Boom>(() => { throw Boom { } })
+println(f"{n} {e.message()}")
+try {
+    let _ = assertThrows<Boom>(() => { throw Exception("other") })
+} catch (x: Exception) {
+    println(x.message())
+}
+println("held")

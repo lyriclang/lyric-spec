@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | .
+//! | .
+//! | a
+//! | a
+//! | a/b
+//! | a/b
+//! | /
+//! | /a
+//! | /
+//! | a
+//! | ..
+//! | .
+//! | é
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: all but the last element, normalized; `.` where no directory comes before it
+fn show(p: string): string = p.replace("\\", "/")
+
+for (p in ["", "a", "a/", "a/b", "a/b/", "a/b/c", "/a", "/a/b", "/", "a//b", "../a", "a/../b", "é/ü"]) {
+    println(show(path.parent(p)))
+}

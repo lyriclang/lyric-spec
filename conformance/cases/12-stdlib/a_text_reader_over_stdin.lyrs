@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | one
+//! | two
+//! stdout:
+//! | one
+//! | two
+//! | none
+// §12 rules 19, 20: a `Stdin` is any `Reader`.
+import std.io { TextReader, stdin }
+let t = TextReader.new(stdin())
+println(t.readLine() ?? "none")
+println(t.readLine() ?? "none")
+println(t.readLine() ?? "none")

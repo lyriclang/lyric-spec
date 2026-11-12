@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | invalid data (the bytes are no UTF-8)
+//! | the bytes are no UTF-8 from byte 1 on
+// §12 rule 19: the error names the data, the decoder's error its cause.
+import std.io { ByteReader }
+try {
+    println(ByteReader.new(b"a\xFF").readToString())
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.InvalidData)
+    println(e.message())
+    println(e.cause()?.message() ?? "none")
+}

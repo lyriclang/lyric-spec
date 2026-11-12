@@ -1,0 +1,22 @@
+//! run
+//! panic: LYS-RT0008
+//! stdout:
+//! | a CSV separator cannot be '"'
+//! | a CSV separator cannot be '\n'
+//! since: 1.0.0
+
+// §12 rule 34: a quote or a line break as the separator would make a text that reads two ways; parse and format
+// panic on one
+import std.csv { parse, format, CsvOptions }
+
+fn said(body: fn() -> void): string {
+    let t = spawn { body() }
+    yieldNow()
+    return match (t.status()) {
+        .Panicked(p) => p.message,
+        _ => "held",
+    }
+}
+
+println(said(() => { parse("a", CsvOptions { separator = '"' }) }))
+println(said(() => { format([["a"]], CsvOptions { separator = '\n' }) }))

@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | abcd
+//! stdout:
+//! | 1
+//! | a
+// §10 rule 18, §12 rule 20: the result lands when the task runs again, into what the bytes are then.
+import std.io { stdin }
+let into = Bytes.zeroed(4)
+spawn {
+    into.truncate(1)
+}
+println(stdin().read(into))
+println(string.fromUtf8(into))

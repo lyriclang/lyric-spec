@@ -1,0 +1,27 @@
+//! run
+//! stdin-refuses
+//! stdout:
+//! | line failed
+//! | read failed
+//! | lines failed
+//! since: 1.0.0
+import std.io { stdin }
+
+// §12 rule 20: what the system refuses is an IoError, on each way in
+try {
+    println(readLine() ?? "none")
+} catch (e: IoError) {
+    println("line failed")
+}
+try {
+    println(stdin().read(Bytes.zeroed(3)))
+} catch (e: IoError) {
+    println("read failed")
+}
+try {
+    for (l in stdin().lines()) {
+        println(l)
+    }
+} catch (e: IoError) {
+    println("lines failed")
+}

@@ -1,0 +1,27 @@
+//! run
+//! stdout:
+//! | [101, 102]
+//! | ["x1", "x2"]
+//! since: 1.0.0
+// §5 rule 10: a default member of an interface that names `Self` has a type parameter of its own.
+interface Walk {
+    type Item
+    fn next(): ?Self.Item
+    fn collected<U>(f: fn(Self.Item) -> U): U[] {
+        let out: U[] = []
+        while (let x = this.next()) {
+            out.push(f(x))
+        }
+        return out
+    }
+}
+class Two :: Walk {
+    type Item = int
+    var n: int = 0
+    fn next(): ?int {
+        this.n += 1
+        return if (this.n > 2) null else this.n
+    }
+}
+println(Two { }.collected { it + 100 })
+println(Two { }.collected { f"x{it}" })

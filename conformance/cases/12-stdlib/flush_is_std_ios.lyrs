@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-SEM0002
+//! since: 1.0.0
+// §12 rule 20: not the prelude's.
+flush()

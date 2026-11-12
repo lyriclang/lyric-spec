@@ -1,0 +1,48 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 2
+//! | 3
+//! | 7
+//! | through
+//! | closed: d.txt (written)
+//! since: 1.0.0
+import std.fs { File, writeText }
+import std.io { BufReader, BufWriter, Reader, Seek, SeekFrom, TextReader, Writer, copy }
+
+// §12 rule 22: it goes where those are asked for, and a `using` closes it
+fn from(r: Reader): int = r.readToEnd().length()
+fn to(w: Writer) {
+    w.writeString("through")
+}
+fn at(s: Seek): int = s.seek(SeekFrom.Start(2))
+
+writeText("a.txt", "abcde")
+{
+    using let f = File.open("a.txt")
+    println(at(f))
+    println(from(f))
+}
+{
+    using let w = File.create("b.txt")
+    to(w)
+}
+{
+    using let i = File.open("b.txt")
+    using let o = File.create("c.txt")
+    println(copy(i, o))
+}
+{
+    using let f = File.open("c.txt")
+    println(TextReader.new(BufReader.new(f)).readToEnd())
+}
+let leaves = File.create("d.txt")
+{
+    using let held = leaves
+}
+try {
+    leaves.write(b"x")
+} catch (e: IoError) {
+    println(e.message())
+}

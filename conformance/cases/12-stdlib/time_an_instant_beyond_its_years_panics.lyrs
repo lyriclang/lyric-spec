@@ -1,0 +1,10 @@
+//! run
+//! option: --allow=os
+//! panic: LYS-RT0002
+//! since: 1.0.0
+
+// §12 rule 30: a date-time outside the years an `Instant` reaches, 1677 to 2262, is no moment: the overflow
+// panics (Lyric 5 12 §Time rule 8)
+import std.time { Instant }
+
+println(Instant.parse("2263-01-01T00:00:00Z"))

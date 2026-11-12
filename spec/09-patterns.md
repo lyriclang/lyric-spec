@@ -2,8 +2,8 @@
 
 **Base.** Lyric 5.0 [§9](https://github.com/lyriclang/lyric-spec/blob/38ea610e6fcfa76dc7222b442a30c3e44eb4a00e/spec/09-patterns.md) applies, with the deviations below.
 
-**Status.** Written for the forms S3 builds; array and type patterns with the milestones that
-build arrays (S7) and interfaces (S3f).
+**Status.** Written for the forms S3 builds, and list patterns (S7b3); type patterns with the
+interfaces (S3f).
 
 ## Written (S3)
 
@@ -15,7 +15,9 @@ build arrays (S7) and interfaces (S3f).
    form the variant does not have, `LYS-SEM0032` for alternatives binding different names,
    `LYS-SEM0097` for a name bound twice, `LYS-SEM0111` for a bare name that spells a variant.
 2. **Where a pattern stands.** In an arm of `match`, after `let`/`var` — `let P = e else { … }`,
-   its `else` leaving on every path, and without `else` only what cannot fail (`LYS-SEM0098`) —
+   its `else` leaving on every path, and without `else` only what matches every value of its
+   type — a field pattern over a struct of such too, `let P { x, y } = p` (S7d2) —
+   (`LYS-SEM0098`) —
    and in `if (let P = e)` and `while (let P = e)`, where a bare name keeps taking the value of
    an optional (Lyric 5 03 §3.2 rule 5); an `if let` whose pattern cannot fail is warned about
    (`LYS-SEM0104`).
@@ -26,6 +28,18 @@ build arrays (S7) and interfaces (S3f).
 4. **Arms** stand apart by `,` or a line end. A line that begins with `.` goes on the line before
    (01 NL rule 3), so a value arm before a `.Variant` arm on the next line ends with `,`
    (`LYS-PAR0035`); after a block arm none is needed.
+
+## Written (S7, the core collections)
+
+5. **List patterns** (Lyric 5 §9's array patterns): `[p, q]` matches a list of exactly those
+   elements, `[p, q, ..]` one of at least them, `..` at any place among the elements — `[first,
+   ..rest]`, `[a, .., z]` — and one at most (`LYS-PAR0033`). An element before the `..` stands at
+   its position from the front, one after it from the end. `..name` binds the elements between
+   as a new list ([09 Y6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)); `[..rest]` takes every list. The length is tested before
+   any element is read. Against a value that is no list, `LYS-SEM0029`; through an optional as
+   every pattern. For coverage a list column counts lengths: each length up to the first that
+   no pattern without `..` reaches and every pattern with `..` covers, that one standing for every
+   longer list — `[]` and `[_, ..]` cover all, `[]` and `[a]` leave `[_, _, ..]` out.
 
 ## Deviations
 

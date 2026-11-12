@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | out
+//! stderr:
+//! | a1truecp
+// §12 rule 20.
+import std.io { eprint }
+struct P :: Display {
+    fn show(): string = "p"
+}
+println("out")
+eprint("a")
+eprint(1)
+eprint(true)
+eprint('c')
+eprint(P { })
+eprint("\n")

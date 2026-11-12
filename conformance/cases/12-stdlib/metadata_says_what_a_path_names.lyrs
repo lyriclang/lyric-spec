@@ -1,0 +1,38 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | 5 true false false false
+//! | 70000
+//! | true false
+//! | 3
+//! | true false
+//! | not found: none (looked at)
+//! since: 1.0.0
+
+// §12 rule 23: what a file and a directory are, their size; an entry's metadata; exists
+import std.fs { createDir, exists, metadata, readDir, writeText }
+import std.path { join }
+
+fn said(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+writeText("m.txt", "hello")
+let m = metadata("m.txt")
+println(f"{m.size} {m.isFile} {m.isDir} {m.readonly} {m.isSymlink}")
+writeText("big", "x" * 70000)
+println(metadata("big").size)
+createDir("md")
+let d = metadata("md")
+println(f"{d.isDir} {d.isFile}")
+writeText(join("md", "f"), "abc")
+for (e in readDir("md")) {
+    println(e.metadata().size)
+}
+println(f"{exists("md")} {exists("none")}")
+println(said(() => f"{metadata("none").size}"))

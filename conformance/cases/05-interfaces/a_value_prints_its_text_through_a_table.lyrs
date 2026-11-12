@@ -1,0 +1,33 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | hi R1 G(s) named n q 7
+//! | <R2> <G(3)> <named n> <hi> <(1, a)>
+//! | ["hi", R { v = 1 }, G { v = "s" }, N { k = 1 }, 'q', 7]
+// §5 rules 9 and 21: an interface value, and a type parameter's value in a copy its arguments
+// share, print the text of what they hold — a string itself, a `Display`'s `show()`, a generic
+// type's and a blanket block's too; inside another value, its Debug form.
+interface Named {
+    fn name(): string
+}
+extend<T :: [Named]> T :: Display {
+    fn show(): string = "named " + this.name()
+}
+struct N :: Named {
+    k: int
+    fn name(): string = "n"
+}
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+class G<T> :: Display {
+    v: T
+    fn show(): string = f"G({this.v})"
+}
+fn angled<T>(x: T): string = f"<{x}>"
+
+let xs: Any[] = ["hi", R { v = 1 }, G { v = "s" }, N { k = 1 }, 'q', 7]
+println(f"{xs[0]} {xs[1]} {xs[2]} {xs[3]} {xs[4]} {xs[5]}")
+println(f"{angled(R { v = 2 })} {angled(G { v = 3 })} {angled(N { k = 2 })} {angled("hi")} {angled((1, "a"))}")
+println(xs)

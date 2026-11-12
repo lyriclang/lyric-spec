@@ -1,0 +1,37 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | invalid input: [ (a `[` that is not closed)
+//! | invalid input: a[b (a `[` that is not closed)
+//! | invalid input: [! (a `[` that is not closed)
+//! | invalid input: [] (a `[` that is not closed)
+//! | invalid input: [!] (a `[` that is not closed)
+//! | invalid input: x** (`**` beside something else)
+//! | invalid input: **x (`**` beside something else)
+//! | invalid input: a/***/b (`**` beside something else)
+//! | invalid input: none/[ (a `[` that is not closed)
+//! | invalid input: none/x** (`**` beside something else)
+//! | invalid input: [a]** (`**` beside something else)
+//! | 0
+//! | 0
+//! | 0
+//! since: 1.0.0
+
+// §12 rule 24: a `[` not closed and a `**` beside something else are `InvalidInput`, before anything is read
+import std.fs { glob }
+
+fn said(pattern: string): string {
+    try {
+        return f"{glob(pattern).length()}"
+    } catch (e: IoError) {
+        return e.message()
+    }
+}
+
+for (p in ["[", "a[b", "[!", "[]", "[!]", "x**", "**x", "a/***/b", "none/[", "none/x**", "[a]**"]) {
+    println(said(p))
+}
+println(said("[]]"))
+println(said("[**]"))
+println(said("*"))

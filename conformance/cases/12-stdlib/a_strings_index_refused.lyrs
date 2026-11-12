@@ -1,0 +1,11 @@
+//! check
+//! error: LYS-SEM0114
+//! error: LYS-SEM0019
+//! error: LYS-SEM0012
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings rule 3): `^n` is no index of a string, a bound of a range alone;
+// a string's characters are never written; a string has no fields.
+let s = "ab"
+println(s[^1])
+s[0] = 'x'
+println(s.foo)

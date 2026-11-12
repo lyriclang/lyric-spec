@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0002
+//! since: 1.0.0
+// §12 rule 17: an element holds 0 to 255
+let b = b"a"
+b.fill(256)

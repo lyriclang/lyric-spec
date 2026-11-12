@@ -1,0 +1,12 @@
+//! run
+//! option: --allow=file,os
+//! stdout:
+//! | true
+//! | unset
+//! since: 1.0.0
+// §17 rule 1: `--allow` gives classes of rights, between commas.
+import std.fs { exists }
+import std.os { env }
+
+println(exists("."))
+println(env("LYRIC_SCRIPT_NEVER_SET_9F2") ?? "unset")

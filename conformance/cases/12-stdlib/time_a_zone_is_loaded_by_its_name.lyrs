@@ -1,0 +1,88 @@
+//! run
+//! option: --allow=os,file
+//! in-temp-dir
+//! stdout:
+//! | Test/Berlin false 2030-07-01T02:00:00+02:00 true
+//! | NoSuchZone the zone database has no 'Test/None'
+//! | NoSuchZone '' is no zone name
+//! | NoSuchZone NoSuchZone NoSuchZone
+//! | UTC true true true
+//! | Invalid not TZif: the magic bytes are missing
+//! | NoZoneData no zone database at empty: Zone.load needs the system's or TZDIR
+//! | CET-1CEST,M3.5.0,M10.5.0/3 false 2030-07-01T02:00:00+02:00
+//! | Test/Berlin 2030-07-01T02:00:00+02:00
+//! | Invalid no POSIX TZ string: a number was expected
+//! since: 1.0.0
+
+// §12 rule 31: `Zone.load` reads the name's TZif file below `TZDIR` (Lyric 5 12 §Time, the zones, rule 1): a
+// name the database lacks, one that is no name, the three names of UTC, a file that is no TZif, a folder that
+// is no database; `Zone.local()` from `TZ`, a POSIX string or `:` and a name; a POSIX string that is none
+import std.fs { createDirAll, writeBytes }
+import std.os
+import std.time { Instant, TimeError, TimeErrorKind, Zone }
+
+fn nibble(c: char): int = if (c >= 'a') (c as int) - 87 else (c as int) - 48
+
+fn hex(s: string): Bytes {
+    let b = Bytes.new()
+    var i = 0
+    while (i < s.length()) {
+        b.push(nibble(s[i]) * 16 + nibble(s[i + 1]))
+        i += 2
+    }
+    return b
+}
+
+fn kind(k: TimeErrorKind): string = match (k) {
+    .Invalid => "Invalid",
+    .NoZoneData => "NoZoneData",
+    .NoSuchZone => "NoSuchZone",
+}
+
+fn refused(load: fn() -> Zone): string {
+    try {
+        return load().name()
+    } catch (e: TimeError) {
+        return f"{kind(e.kind)} {e.message()}"
+    }
+}
+
+fn kindOf(name: string): string {
+    try {
+        return Zone.load(name).name()
+    } catch (e: TimeError) {
+        return kind(e.kind)
+    }
+}
+
+let bytes = hex("545a69663200000000000000000000000000000000000000000000000000000000000002000000020000000969c879906add5490010000000e10000000001c200104434554004345535400545a6966320000000000000000000000000000000000000000000000000000000000000200000002000000090000000069c87990000000006add5490010000000e10000000001c2001044345540043455354000a4345542d31434553542c4d332e352e302c4d31302e352e302f330a")
+createDirAll("zones/Test")
+writeBytes("zones/Test/Berlin", bytes)
+writeBytes("zones/Test/Bad", Bytes.of([104, 101, 108, 108, 111]))
+writeBytes("zones/UTC", bytes)
+os.setEnv("TZDIR", "zones")
+let summer = Instant.parse("2030-07-01T00:00:00Z")
+let berlin = Zone.load("Test/Berlin")
+let fromBytes = Zone.fromTzif("Test/Berlin", bytes)
+println(f"{berlin.name()} {berlin.isFixed()} {summer.toDateTime(berlin)} {berlin == fromBytes}")
+println(refused(() => Zone.load("Test/None")))
+println(refused(() => Zone.load("")))
+let absolute = kindOf("/etc/localtime")
+let upward = kindOf("Test/../UTC")
+let hidden = kindOf(".hidden")
+println(f"{absolute} {upward} {hidden}")
+let utc = Zone.load("UTC")
+let etc = Zone.load("Etc/UTC")
+let z = Zone.load("Z")
+println(f"{utc.name()} {utc.isFixed()} {etc == Zone.utc} {z == Zone.utc}")
+println(refused(() => Zone.load("Test/Bad")))
+os.setEnv("TZDIR", "empty")
+println(refused(() => Zone.load("Test/Berlin")))
+os.setEnv("TZDIR", "zones")
+os.setEnv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3")
+let ruled = Zone.local()
+println(f"{ruled.name()} {ruled.isFixed()} {summer.toDateTime(ruled)}")
+os.setEnv("TZ", ":Test/Berlin")
+let named = Zone.local()
+println(f"{named.name()} {summer.toDateTime(named)}")
+println(refused(() => Zone.fromPosix("broken", "CET-1CEST;M3.5.0")))

@@ -1,0 +1,55 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+//! | 9
+//! | 9
+//! | 2
+//! | 8
+//! | true
+//! | false
+//! | true
+//! | 201
+//! | 1
+//! | 2
+// §12 rule 15, §5 rule 23: a value of `Into<X>` is made from each type the block reaches at `X`, a
+// scalar, a struct and a list among them, and `is` answers it; the table holds the block's member at
+// that target. A generic target comes where it is asked.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>, From<int>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+    static fn from(n: int): Cm = Cm { v = n }
+}
+struct Wrap<T> :: [From<T>] {
+    v: T,
+    static fn from(x: T): Wrap<T> = Wrap<T> { v = x }
+}
+struct Label :: [From<int[]>] {
+    v: int,
+    static fn from(p: int[]): Label = Label { v = p[0] }
+}
+let m = Meters { v = 2 }
+let iv: Into<Cm> = m
+println(iv.into().v)
+let iw: Into<Cm> = 9
+println(iw.into().v)
+let ib: Into<Wrap<int>> = 9
+println(ib.into().v)
+let im: Into<Wrap<Meters>> = m
+println(im.into().v.v)
+let il: Into<Label> = [8]
+println(il.into().v)
+let a: Any = m
+println(a is Into<Cm>)
+println(a is Into<int>)
+let n: Any = 3
+println(n is Into<Cm>)
+fn viaValue(x: Into<Cm>): int = x.into().v
+println(viaValue(m) + viaValue(1))
+let all: Into<Wrap<string>>[] = ["x"]
+println(all[0].into().v.length())
+let f: fn(string) -> Wrap<string> = (s) => s.into()
+println(f("to").v.length())

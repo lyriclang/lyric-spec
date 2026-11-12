@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ["a\"b", "c\\d", "e\nf\rg\th\0"]
+//! | ['\'', '"', '\\', '\n']
+//! | "\u{1}\u{7f}\u{a0}\u{200d}\u{2028}\u{e000} é😀"
+//! | P { s = "it's \"x\"", c = '\'' }
+//! | it's "x"
+// §5 rule 9 (Lyric 5 12 §Strings): a string and a `char` in a Debug form print escaped as they
+// would be written — the quote that delimits them, `\`, the line ends, the tab, `\0`; a character
+// that does not print as itself (a control or format character, a separator but the space, a
+// private one) as its scalar value in hex. Printed alone, a string is itself.
+struct P {
+    s: string
+    c: char
+}
+println(["a\"b", "c\\d", "e\nf\rg\th\0"])
+println(['\'', '"', '\\', '\n'])
+println("\u{1}\u{7f}\u{a0}\u{200d}\u{2028}\u{e000} é😀".debug())
+let p = P { s = "it's \"x\"", c = '\'' }
+println(p)
+println(p.s)

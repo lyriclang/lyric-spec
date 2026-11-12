@@ -1,0 +1,50 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 200
+//! | 200
+//! | 7
+//! | 200
+//! | 5
+//! | 3
+//! | 2
+//! | 4
+//! | 2
+//! | 200
+// §12 rule 15 (Lyric 5 12 §Conversions, 05 §13 rule 9): a type writes `From`, `Into` follows; the
+// position's type or the instance a constraint asks chooses the target, a generic one too. The text
+// is what Lyric 5 prints.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>, From<int>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v * 100 }
+    static fn from(n: int): Cm = Cm { v = n }
+}
+struct Wrap<T> :: [From<T>] {
+    v: T,
+    static fn from(x: T): Wrap<T> = Wrap<T> { v = x }
+}
+fn conv<T :: [Into<Cm>]>(x: T): Cm = x.into()
+fn gen<A, B :: [From<A>]>(a: A): B {
+    let b: B = a.into()
+    return b
+}
+fn wrap<T :: [Into<Wrap<T>>]>(x: T): Wrap<T> = x.into()
+let m = Meters { v = 2 }
+let c: Cm = m.into()
+println(c.v)
+println(Cm.from(m).v)
+let d: Cm = 7.into()
+println(d.v)
+println(conv(m).v)
+println(conv(5).v)
+let b: Wrap<int> = 3.into()
+println(b.v)
+let e: Wrap<Meters> = m.into()
+println(e.v.v)
+println(wrap(4).v)
+println(wrap(m).v.v)
+let g: Cm = gen<Meters, Cm>(m)
+println(g.v)

@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | P { x = 1 }, P { x = 2 }
+//! | a, b
+//! | 1, null
+//! | 3-1
+//! since: 1.0.0
+// §12 rule 4: `join(sep)` writes each value as `{x}` does — a string itself, a struct in its Debug
+// form —, `sep` between each two.
+struct P {
+    x: int,
+}
+let comma = ", "
+let dash = "-"
+println([P { x = 1 }, P { x = 2 }].iter().join(comma))
+println(["a", "b"].iter().join(comma))
+let o: (?int)[] = [1, null]
+println(o.iter().join(comma))
+println([3, 1].iter().join(dash))

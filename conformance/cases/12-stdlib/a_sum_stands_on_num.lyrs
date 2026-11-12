@@ -1,0 +1,23 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | V5 V6 V0 V1
+//! | 6
+// §12 rules 4 and 13 (Lyric 5 std.iter): `sum()` and `product()` take the items of any `Num`, a
+// type of the program's too — its `zero` and its `one` where there is no item.
+struct V :: Num {
+    n: int = 0
+    static let zero: V = V { n = 0 }
+    static let one: V = V { n = 1 }
+    static fn parse(s: string): V = V { n = s.length() }
+    fn add(o: V): V = V { n = this.n + o.n }
+    fn sub(o: V): V = V { n = this.n - o.n }
+    fn mul(o: V): V = V { n = this.n * o.n }
+    fn div(o: V): V = V { n = this.n / o.n }
+    fn rem(o: V): V = V { n = this.n % o.n }
+    fn show(): string = f"V{this.n}"
+}
+let vs = [V { n = 2 }, V { n = 3 }]
+let none: V[] = []
+println(f"{vs.iter().sum()} {vs.iter().product()} {none.iter().sum()} {none.iter().product()}")
+println([1, 2].iter().map((x: int) => x * 2).sum())

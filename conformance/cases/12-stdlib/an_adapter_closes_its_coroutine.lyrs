@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 10
+//! | cleaned
+//! | after
+//! | (1, 7)
+//! | done
+//! since: 1.0.0
+// §12 rule 3 (Lyric 5 12 Iteration): an adapter over a Closeable iterator passes close() on — a
+// loop that leaves early closes the coroutine behind `gen().map(f)`; `zip` closes where both are
+// Closeable.
+fn gen(): Coroutine<int> {
+    defer {
+        println("cleaned")
+    }
+    yield 1
+    yield 2
+    yield 3
+}
+for (x in gen().map((v) => v * 10)) {
+    println(x)
+    if (x == 10) {
+        break
+    }
+}
+println("after")
+for (p in gen().zip([7, 8, 9])) {
+    println(p)
+    break
+}
+println("done")

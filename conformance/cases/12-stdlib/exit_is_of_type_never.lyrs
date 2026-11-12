@@ -1,0 +1,10 @@
+//! run
+//! exit: 5
+//! stdout:
+//! | 1
+//! since: 1.0.0
+
+// §12 rule 25: `never`, so it stands where a value is wanted
+fn pick(n: int): int = if (n > 0) n else exit(5)
+println(pick(1))
+println(pick(0))

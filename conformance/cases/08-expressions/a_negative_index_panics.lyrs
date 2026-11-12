@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0003
+//! since: 1.0.0
+// §8 rule 3: an index below 0 is a panic; a write too, the list unchanged.
+let xs = [1, 2]
+xs[-1] = 5
+println(xs)

@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 4 (Lyric 5 12 Iteration): `chunks(n)` and `windows(n)` with `n` below 1 panic.
+let n = 0
+let s: int[][] = [1, 2].iter().chunks(n)
+println(s)

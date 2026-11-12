@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | "two" "three" null 3
+//! | "one" null "three" 2
+//! | "deux" 3
+//! | {K { id = 1 }: "one", K { id = 3 }: "three", K { id = 2 }: "deux"}
+//! since: 1.0.0
+// §12 rule 5: keys of one hash stand apart by their `equals` — a key's own `hash` (§5 rule 20)
+// may give every key the same.
+class K :: [Hashable, Equatable] {
+    id: int,
+    fn hash(h: Hasher) {
+        h.writeInt(0)
+    }
+    fn equals(o: K): bool = this.id == o.id
+}
+let m: Map<K, string> = Map.new()
+m[K { id = 1 }] = "one"
+m[K { id = 2 }] = "two"
+m[K { id = 3 }] = "three"
+println(f"{m[K { id = 2 }]} {m[K { id = 3 }]} {m[K { id = 4 }]} {m.length()}")
+m.remove(K { id = 2 })
+println(f"{m[K { id = 1 }]} {m[K { id = 2 }]} {m[K { id = 3 }]} {m.length()}")
+m[K { id = 2 }] = "deux"
+println(f"{m[K { id = 2 }]} {m.length()}")
+println(m)

@@ -1,0 +1,11 @@
+//! run
+//! option: --allow=os
+//! panic: LYS-RT0002
+//! since: 1.0.0
+
+// §12 rule 31: a zone of rules answers for the moments an `Instant` reaches; a local time beyond them panics
+// with an overflow (`LYS-RT0002`), where Lyric 5, whose rules count seconds, reads on
+import std.time { Date, DateTime, Time, Zone }
+
+let cet = Zone.fromPosix("CET", "CET-1CEST,M3.5.0,M10.5.0/3")
+println(DateTime.of(Date.of(2263, 7, 1), Time.of(12, 0, 0), cet))

@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | 20
+//! | q
+//! | null
+//! since: 1.0.0
+// §5 rule 12: `extend<T> T[] { … }` adds members to every list, `this` the list.
+extend<T> T[] {
+    fn second(): ?T = this.get(1)
+}
+println([10, 20].second() ?? -1)
+println(["p", "q"].second() ?? "-")
+let one: int[] = [1]
+println(one.second())

@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0003
+//! since: 1.0.0
+// §12 rule 19: the target has no place before its start.
+b"ab".copyInto(Bytes.zeroed(3), -1, 0, 1)

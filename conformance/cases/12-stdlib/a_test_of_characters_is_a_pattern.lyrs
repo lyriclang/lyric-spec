@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | true false ab3 1
+//! | ["a", "b", "c"]
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): a test of characters, `fn(char) -> bool`, is a pattern as a
+// string and a character are — the prelude's block on the function type.
+let digit = (c: char) => c.isDigit()
+println(f"{"a1b2".contains(digit)} {"abc".contains(digit)} {"12ab3".trimStartMatches(digit)} {"a1b".find(digit)}")
+println("a,b;c".split((c: char) => c == ',' || c == ';').toArray())

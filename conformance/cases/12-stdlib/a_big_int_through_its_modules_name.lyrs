@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3.141592653589793
+//! | 1024
+// §12 rule 16: `std.math` imported whole: its constants read its own names.
+import std.math
+println(math.pi)
+println(math.BigInt.from(2).pow(10))

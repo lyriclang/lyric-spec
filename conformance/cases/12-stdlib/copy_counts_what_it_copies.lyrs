@@ -1,0 +1,44 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | [97, 98, 99]
+//! | 20000
+//! | 20000
+//! | 0
+// §12 rule 19: all of a reader into a writer, past a chunk too.
+import std.io { Reader, Writer, ByteReader, ByteBuffer, copy }
+class OneByOne :: [Reader] {
+    b: Bytes
+    var at: int = 0
+    var reads: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        if (into.isEmpty() || this.at == this.b.length()) {
+            return 0
+        }
+        into[0] = this.b[this.at]
+        this.at += 1
+        return 1
+    }
+}
+class Part :: [Writer] {
+    got: Bytes = Bytes.new()
+    var at: int = 2
+    var flushes: int = 0
+    fn write(from: Bytes): int {
+        let n = if (from.length() < this.at) from.length() else this.at
+        this.got.pushAll(from[0..n])
+        return n
+    }
+    fn flush() {
+        this.flushes += 1
+    }
+}
+let w = Part { }
+println(copy(OneByOne { b = b"abc" }, w))
+println(w.got)
+let big = ByteBuffer.new()
+println(copy(ByteReader.new(Bytes.zeroed(20000)), big))
+println(big.length())
+println(copy(ByteReader.new(b""), big))

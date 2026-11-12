@@ -1,0 +1,35 @@
+//! check
+//! error: LYS-SEM0034
+//! since: 1.0.0
+
+// §6 rule 5: a clause of the generic itself cannot wait for its calls: what passes it is what any
+// implementation throws
+struct E1 :: Error {
+    fn message(): string = "e1"
+}
+struct E2 :: Error {
+    fn message(): string = "e2"
+}
+interface Src {
+    fn read(): int
+}
+struct B :: Src {
+    fn read(): int throws E1 {
+        throw E1 { }
+    }
+}
+struct C :: Src {
+    fn read(): int throws E2 {
+        throw E2 { }
+    }
+}
+
+fn go<T :: [Src]>(t: T): int {
+    try {
+        return t.read()
+    } catch (e: E1) {
+        return 0
+    }
+}
+
+fn wrong(): int throws E1 = go(B { })

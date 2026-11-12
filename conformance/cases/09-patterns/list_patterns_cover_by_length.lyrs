@@ -1,0 +1,10 @@
+//! run
+//! stdout:
+//! | 0 1
+//! since: 1.0.0
+// §9 rule 5: `[]` and `[_, ..]` cover every list.
+fn f(xs: int[]): int = match (xs) {
+    [] => 0,
+    [_, ..] => 1,
+}
+println(f"{f([])} {f([4, 5])}")

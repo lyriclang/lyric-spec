@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | [1, 2, 3]
+//! | true false
+//! | 3
+//! | [1]
+//! | ["x", "y"]
+//! | 5
+//! | [P { v = 1 }]
+//! since: 1.0.0
+// §3 rule 16: a list is an `Any`; `is` tells its type, its Debug form prints through the table.
+struct P {
+    v: int,
+}
+let a: Any = [1, 2, 3]
+println(a)
+println(f"{a is int[]} {a is string[]}")
+if (a is int[]) {
+    println(a.length())
+}
+let things: Any[] = [[1], ["x", "y"], 5]
+for (t in things) {
+    println(t)
+}
+let ps: Any = [P { v = 1 }]
+println(ps)

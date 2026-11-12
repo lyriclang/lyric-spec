@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0003
+//! since: 1.0.0
+// §12 rule 19: the target does not grow.
+b"ab".copyInto(Bytes.zeroed(3), 2, 0, 2)

@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | 1
+// §5 rule 23 (Lyric 5 §13 rule 9): a block with a parameter only its conformance names reaches a type
+// at the instances a call binds; a block that reaches it as it is gives the name. The text is what
+// Lyric 5 prints.
+interface Named {
+    fn name(): string
+}
+struct S :: [Named] {
+    fn name(): string = "s"
+}
+extend<T :: [Named]> T {
+    fn into(): int = 1
+}
+let x: int = S { }.into()
+println(x)
+let y = S { }.into()
+println(y)

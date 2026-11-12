@@ -1,0 +1,22 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | abc2
+//! | d
+//! | e
+//! stderr:
+//! | x
+//! | y
+//! | z
+// §12 rule 20: the writers go into the buffers print and eprint write into.
+import std.io { stderr, stdout }
+print("a")
+stdout().writeString("bc")
+println(b"bc".length())
+stdout().writeString("d\n")
+stdout().flush()
+println("e")
+eprintln("x")
+stderr().writeString("y\n")
+stderr().flush()
+stderr().write(b"z\n")

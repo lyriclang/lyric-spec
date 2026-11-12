@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | [1, 2, 3]
+//! | [1, 2, 1, 2, 1, 2]
+//! | []
+//! | ["a", "b"]
+//! since: 1.0.0
+// §3 rule 16: `xs + ys` and `xs * n` are new lists.
+let a = [1, 2]
+println(a + [3])
+println(a * 3)
+println(a * 0)
+println(["a"] + ["b"])

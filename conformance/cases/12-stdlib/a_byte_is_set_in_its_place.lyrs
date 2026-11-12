@@ -1,0 +1,21 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [97, 98, 33]
+//! | [98, 98, 33]
+//! | [98, 9, 33]
+//! | 1
+// §12 rule 17: `b[i] = v`, `^n` as an index, an operator with it
+let b = b"abc"
+b[^1] = 33
+println(b)
+b[0] += 1
+println(b)
+var calls = 0
+fn held(x: Bytes): Bytes {
+    calls += 1
+    return x
+}
+held(b)[^2] = 9
+println(b)
+println(calls)

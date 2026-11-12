@@ -1,0 +1,42 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | [97, 98]
+//! | true
+//! | unexpected end of input (1 of 2 bytes)
+//! | 0
+//! | unexpected end of input (0 of 2 bytes)
+// §12 rule 19: as often as it takes; the end before that is an error with what came.
+import std.io { Reader }
+class OneByOne :: [Reader] {
+    b: Bytes
+    var at: int = 0
+    var reads: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        if (into.isEmpty() || this.at == this.b.length()) {
+            return 0
+        }
+        into[0] = this.b[this.at]
+        this.at += 1
+        return 1
+    }
+}
+let r = OneByOne { b = b"abc" }
+let two = Bytes.zeroed(2)
+r.readExact(two)
+println(two)
+try {
+    r.readExact(two)
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.UnexpectedEof)
+    println(e.message())
+}
+let empty = OneByOne { b = b"" }
+empty.readExact(Bytes.new())
+println(empty.reads)
+try {
+    empty.readExact(two)
+} catch (e: IoError) {
+    println(e.message())
+}

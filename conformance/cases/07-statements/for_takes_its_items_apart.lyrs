@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | 1 a
+//! | 3 c
+//! | 0: 2
+//! | 1: 4
+//! | x=1 y=2
+//! | 3
+//! since: 1.0.0
+// §7 rule 9 (Lyric 5 §2 rule 2): a pattern that cannot fail takes each item apart, `for ((k, v)
+// in m)`; `continue` and `break` work as in every loop.
+let pairs = [(1, "a"), (2, "b"), (3, "c")]
+for ((n, s) in pairs) {
+    if (n == 2) {
+        continue
+    }
+    println(f"{n} {s}")
+}
+for ((i, (a, b)) in [(1, 1), (2, 2)].iter().enumerate()) {
+    println(f"{i}: {a + b}")
+}
+struct P {
+    x: int,
+    y: int,
+}
+for (P { x, y } in [P { x = 1, y = 2 }]) {
+    println(f"x={x} y={y}")
+}
+var last = 0
+outer: for ((k, v) in ["a": 1, "b": 2, "c": 3, "d": 4]) {
+    if (k == "d") {
+        break outer
+    }
+    last = v
+}
+println(last)

@@ -1,0 +1,20 @@
+//! run
+//! stdout:
+//! | abcde 'z' 'y'
+//! | 2 57344
+//! since: 1.0.0
+// §7 rule 8: a range of characters walks the scalar values, the surrogates passed over; a `for`
+// over bounds of `char` walks it as a value.
+var cs = ""
+for (c in 'a'..='e') {
+    cs += f"{c}"
+}
+let back = ('x'..'{').iter()
+println(f"{cs} {back.nextBack()} {back.nextBack()}")
+var n = 0
+var last = 0
+for (c in (55295 as char)..=(57344 as char)) {
+    n += 1
+    last = c as int
+}
+println(f"{n} {last}")

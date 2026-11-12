@@ -1,0 +1,10 @@
+//! run
+//! option: --allow=process
+//! panic: LYS-RT0007
+//! since: 1.0.0
+
+// §12 rule 27: a pipe a script built itself holds no child: the program's mistake
+import std.process { PipeReader }
+
+let p = PipeReader { handle = 1, which = 1 }
+p.read(Bytes.zeroed(4))

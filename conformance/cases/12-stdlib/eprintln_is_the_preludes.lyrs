@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | out
+//! stderr:
+//! | a
+//! |
+//! | 1.5
+// §12 rule 20: on the error, as `println` on the output; none takes a second value.
+println("out")
+eprintln("a")
+eprintln()
+eprintln(1.5)

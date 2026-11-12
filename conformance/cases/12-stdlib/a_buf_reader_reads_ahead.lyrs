@@ -1,0 +1,69 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+//! | 8192
+//! | 1
+//! | 1
+//! | 0
+//! | 1
+//! | 8190
+//! | 1
+//! | 9000
+//! | 9000
+//! | 2
+//! | 0
+//! | 0
+//! | 1
+//! | [120]
+//! | [121, 122]
+//! | 0
+// §12 rule 19: a buffer at a time; a read as large as the buffer, while it is empty, goes through.
+import std.io { Reader, BufReader, ByteReader }
+class OneByOne :: [Reader] {
+    b: Bytes
+    var at: int = 0
+    var reads: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        if (into.isEmpty() || this.at == this.b.length()) {
+            return 0
+        }
+        into[0] = this.b[this.at]
+        this.at += 1
+        return 1
+    }
+}
+class Counting :: [Reader] {
+    inner: ByteReader
+    var reads: int = 0
+    var asked: int = 0
+    fn read(into: Bytes): int {
+        this.reads += 1
+        this.asked = into.length()
+        return this.inner.read(into)
+    }
+}
+let c = Counting { inner = ByteReader.new(Bytes.zeroed(20000)) }
+let r = BufReader.new(c)
+let one = Bytes.zeroed(1)
+println(r.read(one))
+println(c.asked)
+println(r.read(one))
+println(c.reads)
+println(r.read(Bytes.new()))
+println(c.reads)
+let large = Bytes.zeroed(9000)
+println(r.read(large))
+println(c.reads)
+println(r.read(large))
+println(c.asked)
+println(c.reads)
+let fresh = Counting { inner = ByteReader.new(b"x") }
+println(BufReader.new(fresh).read(Bytes.new()))
+println(fresh.reads)
+let d = BufReader.new(OneByOne { b = b"xyz" })
+println(d.read(one))
+println(one)
+println(d.readToEnd())
+println(d.read(one))

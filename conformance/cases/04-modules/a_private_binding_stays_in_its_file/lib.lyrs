@@ -1,0 +1,8 @@
+private var count: int = 0
+
+private let (low, high) = (1, 9)
+
+fn next(): int {
+    count += 1
+    return count
+}

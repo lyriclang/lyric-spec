@@ -1,0 +1,76 @@
+//! run
+//! stdout:
+//! | true
+//! | 2
+//! | 7
+//! | 8
+//! | 9
+//! | 3
+//! | one
+//! since: 1.0.0
+
+// §6 rule 5: a member of a type parameter's constraint throws what the call's type implements it to throw
+struct E1 :: Error {
+    fn message(): string = "e1"
+}
+struct E2 :: Error {
+    fn message(): string = "e2"
+}
+interface Src {
+    fn read(): int
+}
+struct A :: Src {
+    fn read(): int = 7
+}
+struct B :: Src {
+    fn read(): int throws E1 {
+        throw E1 { }
+    }
+}
+struct C :: Src {
+    fn read(): int throws E2 {
+        throw E2 { }
+    }
+}
+struct W<T :: [Src]> :: Src {
+    inner: T
+    fn read(): int = this.inner.read() + 1
+}
+
+fn go<T :: [Src]>(t: T): int = t.read()
+fn twice<T :: [Src]>(t: T): int = go(t) + go(t)
+
+// strings: the patterns of a string throw nothing, whichever else the script defines
+fn starts(s: string): bool throws E1 = s.startsWith("a")
+fn parts(s: string): int throws E1 {
+    var n = 0
+    for (p in s.split("/")) {
+        n += 1
+    }
+    return n
+}
+// a type with nothing to throw, through a generic and through one that calls it
+fn quiet(): int throws E1 = go(A { })
+fn quieter(): int throws E1 = twice(A { }) - 6
+// a type with one error: its alone
+fn one(): int throws E1 {
+    return go(B { })
+}
+// a class of its own over a type parameter
+fn wrapped(): int throws E1 = W { inner = A { } }.read()
+
+println(starts("abc"))
+println(parts("a/b"))
+println(quiet())
+println(quieter())
+try {
+    println(wrapped() + 1)
+} catch (e: E1) {
+    println("no")
+}
+println("a/b/c".split("/").count())
+try {
+    println(one())
+} catch (e: E1) {
+    println("one")
+}

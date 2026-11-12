@@ -1,0 +1,14 @@
+//! check
+//! error: LYS-SEM0019
+//! error: LYS-SEM0003
+//! error: LYS-SEM0059
+//! since: 1.0.0
+// §8 rule 5, §5 rule 8: a step of what is no var, of no number; `in` over what has no
+// `Contains`, over a list whose elements do not compare.
+let fixed = 1
+fixed++
+var s = "a"
+s++
+let a = 3 in 5
+fn one(): int = 1
+let b = one in [one]

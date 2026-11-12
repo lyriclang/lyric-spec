@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+//! error: LYS-SEM0012
+//! stderr-has: 'int' has no member 'nothere'
+// §12 rule 13: a scalar's name reaches the constants its blocks declare, `int.max`; another name
+// is refused.
+println(int.nothere)

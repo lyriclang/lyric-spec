@@ -1,0 +1,11 @@
+//! run
+//! panic: LYS-RT0007
+//! stdout:
+//! | []
+//! stderr:
+//! | panic [LYS-RT0007]: repeat count -2 is negative
+//! since: 1.0.0
+// §12 rule 8, §3 rule 16 (Lyric 5 03 §5.1): a list's and a string's repetition by a negative count
+// is a precondition's panic.
+println([1] * 0)
+println("ab" * -2)

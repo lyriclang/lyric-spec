@@ -19,6 +19,15 @@ from Lyric 5 gets a failing and a passing case.
 //! stderr:                  the error stream begins with these lines (the frames may follow):
 //! | error: first
 //! |   caused by: second
+//! stdin-hex: 61 ff 0a        the run's standard input as bytes, for what no text can say
+//! merge-streams              the run's two streams through one pipe, read as `stdout:`
+//! stdout-gone                the run's output a pipe nobody reads; how it ends is not asked
+//! stdin-refuses              the run's input open for writing only: every read of it fails
+//! in-temp-dir                the check and the run in a new folder, gone after: the files a case makes
+//! args: a b c                 what the run gets after its file, between spaces
+//! symlink: link -> target    with in-temp-dir, a link made there first; where the system lets no one
+//! symlink-dir: link -> target  the same, a link to a directory the case makes; Windows tells the two apart
+//!                            make one the case is not run
 //! stdin:                    the run's standard input, each line ended by a line end; empty
 //! | a line                  without it
 //! check                    check only; expect acceptance in silence
@@ -61,7 +70,8 @@ The differences from Lyric 5's format:
   with a `main.lyrs` — that holds `repos/` is built the same way, `{repos}` written in its
   scripts' frontmatter too.
 - `env: NAME=value` adds to the environment the case runs in (repeatable); `stderr-has:` a text
-  the error stream holds somewhere (repeatable), where the report names paths of the run.
+  the error stream holds somewhere (repeatable), where the report names paths of the run — of
+  the run, or of `check` where the case is rejected or only checked.
 - `option: --offline` passes an option to `check` and `run` (repeatable); `update` runs
   `lyric-script update` in a package case before it is checked. A case's `lyric-script.lock` may
   name the repositories' commits: they are fixed by the fixed author and times.

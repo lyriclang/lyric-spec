@@ -1,0 +1,48 @@
+//! run
+//! stdout:
+//! | unknown option '--nope' / usage: copy [options] <from> [to]
+//! | unknown option '-x' / usage: copy [options] <from> [to]
+//! | option '--mode' needs a value / usage: copy [options] <from> [to]
+//! | option '-m' needs a value / usage: copy [options] <from> [to]
+//! | flag '--verbose' takes no value / usage: copy [options] <from> [to]
+//! | missing <from> / usage: copy [options] <from> [to]
+//! | unexpected argument 'c' / usage: copy [options] <from> [to]
+//! | unknown option '--version' / usage: copy [options] <from> [to]
+//! | true
+//! since: 1.0.0
+
+// §12 rule 36: tryParse throws a CliError of kind Invalid for what does not fit — an option not declared, an
+// option without its value, a flag with one, an argument missing or one too many —, its usage line beside it;
+// `--version` is no option where no version is set
+import std.cli { Cli, CliError, CliErrorKind }
+
+let cli = Cli.new("copy")
+    .flag("verbose", 'v')
+    .option("mode", 'm')
+    .positional("from")
+    .positional("to", "", true)
+
+fn tried(argv: string[]) {
+    try {
+        cli.tryParse(argv)
+        println("read")
+    } catch (e: CliError) {
+        println(f"{e.message()} / {e.usage}")
+    }
+}
+
+tried(["--nope", "a"])
+tried(["a", "-vx"])
+tried(["a", "--mode"])
+tried(["a", "-m"])
+tried(["--verbose=yes", "a"])
+tried(["-v"])
+tried(["a", "b", "c"])
+tried(["--version"])
+var kind = CliErrorKind.Help
+try {
+    cli.tryParse(["-x"])
+} catch (e: CliError) {
+    kind = e.kind
+}
+println(kind == CliErrorKind.Invalid)

@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | {3, 2, 4, 9} {2} {3, 4} {3, 4, 9}
+//! | false true true true false
+//! | {3, 2, 4}
+//! since: 1.0.0
+// §12 rule 6 (Lyric 5 12 §Collections): a set's operations are methods that make a new set —
+// the values in this set's order first — or answer a question; the empty set is a subset of
+// every set; the sets combined stay as they were.
+let s = Set<int>.of([3, 2, 4])
+let t = Set<int>.of([2, 9])
+println(f"{s.union(t)} {s.intersect(t)} {s.difference(t)} {s.symmetricDifference(t)}")
+let none: Set<int> = []
+println(f"{t.isSubset(s)} {none.isSubset(t)} {s.isSuperset(Set<int>.of([3, 4]))} {s.isDisjoint(Set<int>.of([7]))} {s.isDisjoint(t)}")
+println(s)

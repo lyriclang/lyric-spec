@@ -1,0 +1,24 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 0s 1ns 999ns 1µs 1.5µs 500ms 999.999999ms
+//! | 1s 1.5s 59s 1m0s 1m30s 1h0m0s 1h1m1.000000001s 25h0m0s
+//! | -1.5s -300ms -1ns
+//! | 2562047h47m16.854775807s -2562047h47m16.854775808s
+//! since: 1.0.0
+
+// §12 rule 29: a span's text is Go's (Lyric 5 12 §Time rule 2): one unit under a second, hours, minutes and
+// seconds from the first that is not zero above, the fraction without its trailing zeros; the least span too
+import std.time { Monotonic }
+
+let small = [0, 1, 999, 1000, 1500, 500000000, 999999999]
+var line = ""
+for (n in small) {
+    line = line + (if (line == "") "" else " ") + f"{Duration.ofNanos(n)}"
+}
+println(line)
+println(f"{Duration.ofSecs(1)} {Duration.ofMillis(1500)} {Duration.ofSecs(59)} {Duration.ofSecs(60)} {Duration.ofSecs(90)} {Duration.ofHours(1)} {Duration.ofHours(1) + Duration.ofMinutes(1) + Duration.ofSecs(1) + Duration.ofNanos(1)} {Duration.ofHours(25)}")
+println(f"{Duration.ofMillis(-1500)} {Duration.ofMillis(-300)} {Duration.ofNanos(-1)}")
+let most = 9223372036854775807
+println(f"{Duration.ofNanos(most)} {Duration.ofNanos(-most - 1)}")
+let _ = Monotonic.now()

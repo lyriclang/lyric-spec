@@ -1,0 +1,25 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 7
+//! | [104, 195, 169, 240, 159, 152, 128]
+//! | hé😀
+//! | true
+//! | true
+//! | Hé😀
+//! | hé😀
+//! | []
+//! | 0
+// §12 rule 17: UTF-8 there and back
+let s = "hé😀"
+let b = s.toBytes()
+println(b.length())
+println(b)
+println(string.fromUtf8(b))
+println(string.fromUtf8(b) == s)
+println(string.fromUtf8Lossy(b) == s)
+b[0] = 72
+println(string.fromUtf8(b))
+println(s)
+println("".toBytes())
+println(string.fromUtf8(b"").length())

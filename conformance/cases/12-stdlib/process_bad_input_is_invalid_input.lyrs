@@ -1,0 +1,23 @@
+//! run
+//! option: --allow=process
+//! stdout:
+//! | invalid invalid invalid invalid invalid
+//! since: 1.0.0
+
+// §12 rule 27: a variable's name empty or with `=`, a NUL in an argument, a variable or the directory; nothing starts
+import std.process { Command }
+
+fn tried(c: Command): string {
+    try {
+        c.spawn()
+        return "started"
+    } catch (e: IoError) {
+        return if (e.kind == IoErrorKind.InvalidInput) "invalid" else f"{e}"
+    }
+}
+let a = tried(Command { program = "x", env = [("", "v")] })
+let b = tried(Command { program = "x", env = [("A=B", "v")] })
+let c = tried(Command { program = "x", args = ["a\0b"] })
+let d = tried(Command { program = "x", env = [("A", "v\0")] })
+let e = tried(Command { program = "x", cwd = "a\0b" })
+println(f"{a} {b} {c} {d} {e}")

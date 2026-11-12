@@ -1,0 +1,69 @@
+//! run
+//! panic: LYS-RT0008
+//! stdout:
+//! | got 2, expected 3
+//! | got "ab", expected "ac": the letters
+//! | got 2, expected anything else
+//! | got false, expected true
+//! | got true, expected false: never
+//! | got 4, expected null
+//! | got null, expected a value
+//! | got 0.30000000000000004, expected 0.4 within 0.01
+//! | got 3, expected less than 2
+//! | got 2, expected greater than 3
+//! | got [1, 2], expected to contain 3
+//! | got [1], expected nothing
+//! | threw nothing, expected an error
+//! | not here
+//! | held
+//! since: 1.0.0
+
+// §12 rule 33: a failed assertion panics (`LYS-RT0008`) with what it got against what was expected, each as
+// `Debug` writes it, the actual value first, then the test's message; each runs in a task of its own here, and
+// the first to fail ends the run
+import std.test {
+    assertClose,
+    assertContains,
+    assertEmpty,
+    assertEq,
+    assertFalse,
+    assertGreater,
+    assertLess,
+    assertNotEq,
+    assertNotNull,
+    assertNull,
+    assertThrows,
+    assertTrue,
+    fail,
+}
+
+class Boom :: Error {
+    fn message(): string = "boom"
+}
+
+fn said(body: fn() -> void): string {
+    let t = spawn { body() }
+    yieldNow()
+    return match (t.status()) {
+        .Panicked(p) => p.message,
+        _ => "held",
+    }
+}
+
+let some: ?int = 4
+let none: ?int = null
+println(said(() => assertEq(1 + 1, 3)))
+println(said(() => assertEq("ab", "ac", "the letters")))
+println(said(() => assertNotEq(2, 2)))
+println(said(() => assertTrue(false)))
+println(said(() => assertFalse(true, "never")))
+println(said(() => assertNull(some)))
+println(said(() => { let _ = assertNotNull(none) }))
+println(said(() => assertClose(0.1 + 0.2, 0.4, 0.01)))
+println(said(() => assertLess(3, 2)))
+println(said(() => assertGreater(2, 3)))
+println(said(() => assertContains([1, 2], 3)))
+println(said(() => assertEmpty([1])))
+println(said(() => { let _ = assertThrows<Boom>(() => { }) }))
+println(said(() => fail("not here")))
+println(said(() => assertEq(1, 1)))

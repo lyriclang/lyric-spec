@@ -1,0 +1,40 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | ["DEBUG one", "INFO two", "WARN three", "ERROR four"]
+//! | ["WARN six", "ERROR seven"]
+//! | false true true
+//! | ["ERROR nine"]
+//! | INFO Level.Info
+//! stderr:
+//! | INFO back on stderr
+
+// §12 rule 35: setLevel moves the threshold, enabled asks it, setSink takes the lines without their break, and
+// a sink set anew takes them from then on
+import std.log { Level, debug, info, warn, error, setLevel, setSink, enabled }
+
+let lines: string[] = []
+setSink((line) => lines.push(line))
+setLevel(Level.Debug)
+debug("one")
+info("two")
+warn("three")
+error("four")
+println(lines)
+lines.clear()
+setLevel(Level.Warn)
+debug("five")
+info("five")
+warn("six")
+error("seven")
+println(lines)
+println(f"{enabled(Level.Info)} {enabled(Level.Warn)} {enabled(Level.Error)}")
+lines.clear()
+setLevel(Level.Error)
+warn("eight")
+error("nine")
+println(lines)
+println(f"{Level.Info} {Level.Info.debug()}")
+setLevel(Level.Info)
+setSink((line) => eprintln(line))
+info("back on stderr")

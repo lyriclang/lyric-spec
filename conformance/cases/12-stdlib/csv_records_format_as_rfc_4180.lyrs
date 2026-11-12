@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | "name,city\r\nAda,\"London, UK\"\r\n"
+//! | "\"say \"\"hi\"\"\",\"two\nlines\",\"a\rb\", c \r\n"
+//! | "\"\"\r\n,\r\n\r\n"
+//! | "a;b,c\n\"x;y\";z\n"
+//! | ""
+//! | true
+//! since: 1.0.0
+
+// §12 rule 34: format quotes a field holding the separator, a quote, CR or LF, doubles its quotes and ends every
+// record with CRLF, LF with crlf = false; a record of one empty field is "", one of none an empty line; records
+// of one width parse reads back, a byte order mark at the start of the first too
+import std.csv { parse, format, CsvOptions }
+
+println(format([["name", "city"], ["Ada", "London, UK"]]).debug())
+println(format([["say \"hi\"", "two\nlines", "a\rb", " c "]]).debug())
+println(format([[""], ["", ""], []]).debug())
+println(format([["a", "b,c"], ["x;y", "z"]], CsvOptions { separator = ';', crlf = false }).debug())
+let none: string[][] = []
+println(format(none).debug())
+let rows = [["\u{FEFF}id", "note"], ["1", ""], ["2", "\"quoted\", with\r\nbreaks"], ["", "x"]]
+println(parse(format(rows)) == rows)

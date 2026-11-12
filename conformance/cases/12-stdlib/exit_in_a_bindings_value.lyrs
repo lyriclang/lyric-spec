@@ -1,0 +1,10 @@
+//! run
+//! exit: 6
+//! since: 1.0.0
+
+// §12 rule 25: while the bindings get their values, too
+fn none(): int {
+    exit(6)
+}
+let x: int = none()
+println(x)

@@ -1,0 +1,12 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr-has: '{} {}' names value 1, and 1 are given
+//! since: 1.0.0
+// §12 rule 12 (Lyric 5 12 §2 rule 5): what the compiler refuses in an f-string panics in a
+// template read at run time — a value named that is not given.
+import std.fmt
+struct R :: Display {
+    v: int
+    fn show(): string = f"R{this.v}"
+}
+println(fmt.format("{} {}", 1))

@@ -1,0 +1,44 @@
+//! check
+//! option: --allow=file
+//! since: 1.0.0
+
+// §12 rule 23: none of these calls is a wait a cancel ends: a function that makes them declares `IoError` alone
+import std.fs {
+    absolute,
+    canonicalize,
+    copy,
+    createDir,
+    createDirAll,
+    exists,
+    metadata,
+    readDir,
+    remove,
+    removeAll,
+    removeDir,
+    rename,
+    tempDir,
+    tempFile,
+    walk,
+}
+
+fn all(p: string): void throws IoError {
+    exists(p)
+    metadata(p)
+    createDir(p)
+    createDirAll(p)
+    remove(p)
+    removeDir(p)
+    removeAll(p)
+    rename(p, p)
+    copy(p, p)
+    canonicalize(p)
+    absolute(p)
+    tempDir()
+    tempFile()
+    for (e in readDir(p)) {
+        e.metadata()
+    }
+    for (e in walk(p)) {
+        println(e.name)
+    }
+}

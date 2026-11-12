@@ -1,0 +1,42 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 6 4.0 24
+//! | V { x = 6 } V { x = 6 }
+//! | 10 V { x = 4 }
+// §5 rule 22 (Lyric 5 §8 rule 7): an interface's parent list is a constraint on `Self` and may
+// fix a parent's associated type to it — through `T :: [Ring]`, `a + b` is a `T`; a type that
+// lists `Ring` takes `Add<Self>` and `Mul<Self>` along, its members from the same list; in the
+// interface's own defaults `Self` is one too.
+interface Ring :: [Add<Out = Self>, Mul<Out = Self>] {
+    static let zero: Self
+    static let one: Self
+    fn twice(): Self = this + this
+}
+// `zero` and `one` are the prelude's (S7f1b), and answer here
+extend int :: Ring { }
+extend float :: Ring { }
+struct V :: Ring {
+    x: int
+    static let zero: V = V { x = 0 }
+    static let one: V = V { x = 1 }
+    fn add(o: V): V = V { x = this.x + o.x }
+    fn mul(o: V): V = V { x = this.x * o.x }
+}
+fn total<T :: [Ring]>(xs: T[]): T {
+    var t = T.zero
+    for (x in xs) {
+        t = t + x
+    }
+    return t
+}
+fn product<T :: [Ring]>(xs: T[]): T {
+    var t = T.one
+    for (x in xs) {
+        t = t * x
+    }
+    return t
+}
+println(f"{total([1, 2, 3])} {total([1.5, 2.5])} {product([2, 3, 4])}")
+println(f"{total([V { x = 1 }, V { x = 5 }])} {product([V { x = 2 }, V { x = 3 }])}")
+println(f"{5.twice()} {V { x = 2 }.twice()}")

@@ -1,0 +1,15 @@
+//! check
+//! error: LYS-SEM0121
+//! since: 1.0.0
+// §5 rule 18: one name and count on one instance is one member, in a block or beside the template's;
+// no second message follows at the call.
+struct Cell<T> {
+    v: T,
+    fn f(): int = 1
+}
+extend Cell<int> {
+    fn f(): int = 2
+    fn g(): int = 1
+    fn g(): int = 2
+}
+println(Cell<int> { v = 1 }.f())

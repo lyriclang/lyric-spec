@@ -1,0 +1,41 @@
+//! run
+//! stdout:
+//! | hi owl
+//! | hi cat
+//! | hi five
+//! | hi owl
+//! | hi five
+//! | hi owl
+//! | 4 0
+//! since: 1.0.0
+// §5 rule 12 (Lyric 5 §13 rule 7): a blanket block's members on every type its constraints admit
+// — a class, a struct, a built-in type, a type parameter, an interface value —, a fixation
+// binding a parameter the target does not name.
+interface Named {
+    fn name(): string
+}
+extend<T :: [Named]> T {
+    fn greeting(): string = f"hi {this.name()}"
+}
+class Owl :: Named {
+    fn name(): string = "owl"
+}
+struct Cat :: Named {
+    fn name(): string = "cat"
+}
+extend int :: Named {
+    fn name(): string = "five"
+}
+fn greet<T :: [Named]>(x: T): string = x.greeting()
+println(Owl { }.greeting())
+println(Cat { }.greeting())
+println(5.greeting())
+println(greet(Owl { }))
+println(greet(7))
+let n: Named = Owl { }
+println(n.greeting())
+extend<I :: [Iterator<Item = T>], T> I {
+    fn firstOr(d: T): T = this.next() ?? d
+}
+let empty: int[] = []
+println(f"{[4].iter().firstOr(0)} {empty.iter().firstOr(0)}")

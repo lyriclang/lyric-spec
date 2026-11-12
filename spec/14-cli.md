@@ -9,10 +9,10 @@
 1. **`lyric-script run FILE`** compiles and runs a script; `lyric-script FILE.lyrs` is the same
    ([12 CLI](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)). **`lyric-script check FILE`** compiles it and runs nothing. Both take
    `--json` ([§16](16-diagnostics.md) rule 3); an option a command does not know is refused
-   (`LYS-CLI0004`), and so is a second file (`LYS-CLI0002`).
+   (`LYS-CLI0004`), and `check` refuses a second file (`LYS-CLI0002`).
 2. **Exit codes**: 0 when the script ran to its end or checked cleanly; 1 when it does not
    compile; 2 for a fault of the command line — an unknown command, option or file; 101 when
-   the script panicked, its panic reported with the script's frames.
+   the script panicked, its panic reported with the script's frames; `exit(n)`'s `n`.
 3. **The bytecode cache** ([11 Fmt](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md), [12 Cache](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/12-stdlib-und-werkzeuge.md)): `run` keeps a
    script's bytecode under the key `sha256(source, toolchain version, bytecode format)` and runs
    a later run of the same source from it; a program of modules is keyed by every file it reads,
@@ -22,6 +22,10 @@
    A file of another toolchain, another source, or one that does not read back is no cache, and
    the script is compiled anew; a script whose compilation warns is not kept, so its warnings
    are said at every run. **`lyric-script clean`** empties it.
+4. **A script's arguments** (S7h1): `run`'s options come before the file, and all that follows the file is
+   the script's, what looks like an option too: `lyric-script run -A tool.lyrs --json a` gives the script
+   `--json` and `a`. `lyric-script FILE.lyrs …` is the same, so no option stands after it. `--` before the
+   file ends the options where no file follows, for a package's program: `lyric-script run -- a b`.
 
 ## Deviations (skeleton, written with later milestones)
 

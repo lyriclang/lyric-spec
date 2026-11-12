@@ -1,0 +1,73 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 170141182460469231731687303715884105670
+//! | 170141184460469231731687303715884105784
+//! | -170141183460469231731687303725582153184246746208706176311805394026439
+//! | -170141183
+//! | 460469231731687303706186058296
+//! | -170141183460469231731687303715884105727
+//! | 6277101735386680763835789423207666416065461956316615409664
+//! | 4611686018427387903
+//! | -27105054313
+//! | -8000000000000000000000000000456
+//! | 3 1
+//! | -3 -1
+//! | -3 1
+//! | 3 -1
+//! | 4294967293 39614081266355540837921718287
+//! | 4611686018427387903 32281802128991715329
+//! | 4294967294 4294967294
+//! | -1
+//! | -1
+//! | 0
+//! | 0
+//! | 18446744073709551616
+//! | 1
+//! | 95367431640625
+//! | -1546132562196033993109383389296863818106322566003
+//! | 1
+//! | 1
+//! | 0
+//! | 127
+//! | 65
+// §12 rule 16: a whole number of any size. `/` truncates and `%` takes the dividend's sign, as an
+// `int`'s do; a shift of a negative number rounds toward negative infinity.
+import std.math { BigInt }
+let a = BigInt.parse("170141183460469231731687303715884105727")
+let b = BigInt.parse("-1000000000000000000000000000057")
+println(a + b)
+println(a - b)
+println(a * b)
+println(a / b)
+println(a % b)
+println(-a)
+println(a << 65)
+println(a >> 65)
+println(b >> 65)
+println(b << 3)
+fn both(x: BigInt, y: BigInt) {
+    let (q, r) = x.divRem(y)
+    println(f"{q} {r}")
+}
+both(7, 2)
+both(-7, 2)
+both(7, -2)
+both(-7, -2)
+both(BigInt.parse("7fffffff800000010000000000000000", 16), BigInt.parse("800000008000000200000005", 16))
+both(BigInt.parse("80000000000000000000000000000000", 16), BigInt.parse("20000000000000001", 16))
+both(BigInt.parse("fffffffe00000000", 16), BigInt.parse("ffffffff", 16))
+let minusOne: BigInt = -1
+println(minusOne >> 1)
+println(minusOne >> 1000)
+println(BigInt.one >> 1)
+println(BigInt.zero << 1000)
+println(BigInt.one << 64)
+println(a.gcd(BigInt.parse("2305843009213693951")))
+println(BigInt.parse("100000000000000000000").gcd(BigInt.parse("-332525673007965087890625")))
+println(BigInt.from(-3).pow(101))
+println(BigInt.from(-3).pow(0))
+println(BigInt.zero.pow(0))
+println(BigInt.zero.gcd(BigInt.zero))
+println(a.bitLength())
+println((BigInt.one << 64).bitLength())

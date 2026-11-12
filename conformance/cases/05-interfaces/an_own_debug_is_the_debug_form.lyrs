@@ -1,0 +1,50 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | Q#3
+//! | [Q#1, Q#2] Holder { q = Q#4 }
+//! | Box(1) [Box(a)]
+//! | [e-a, e-b2]
+//! | S { n = 5 }
+//! | own W { n = 6 }
+//! | Q#7
+// §5 rule 21: a type that lists `Debug` and writes `debug()` prints in that form wherever its
+// Debug form stands — alone, in a list, in a field, generic or an enum, through an interface
+// value; one that lists `Debug` without writing it has the synthesized form; a `debug()` of a
+// type that does not list `Debug` is a method of its own.
+struct Q :: Debug {
+    n: int
+    fn debug(): string = f"Q#{this.n}"
+}
+struct Holder {
+    q: Q
+}
+class Box<T> :: Debug {
+    v: T
+    fn debug(): string = f"Box({this.v})"
+}
+enum E :: Debug {
+    A,
+    B(int),
+    fn debug(): string = match (this) {
+        .A => "e-a",
+        .B(n) => f"e-b{n}",
+    }
+}
+struct S :: Debug {
+    n: int
+}
+struct W {
+    n: int
+    fn debug(): string = "own"
+}
+
+println(Q { n = 3 })
+println(f"{[Q { n = 1 }, Q { n = 2 }]} {Holder { q = Q { n = 4 } }}")
+println(f"{Box { v = 1 }} {[Box { v = "a" }]}")
+println([E.A, E.B(2)])
+println(S { n = 5 })
+let w = W { n = 6 }
+println(f"{w.debug()} {w}")
+let d: Debug = Q { n = 7 }
+println(d)

@@ -1,0 +1,34 @@
+//! run
+//! stdout:
+//! | 1
+//! | 23
+//! | 10
+//! | null
+//! since: 1.0.0
+// §10 rules 8 and 19: a coroutine is an `Iterator` — a value of it, walked by `for`, an argument
+// for a constraint — and a `Closeable` whose `close()` through the interface closes it.
+fn count(n: int): Coroutine<int> {
+    var i = 0
+    while (i < n) {
+        i += 1
+        yield i
+    }
+}
+let it: Iterator<Item = int> = count(3)
+println(it.next() ?? 0)
+for (x in it) {
+    print(x)
+}
+println()
+fn sum<I :: [Iterator<Item = int>]>(xs: I): int {
+    var t = 0
+    for (x in xs) {
+        t += x
+    }
+    return t
+}
+println(sum(count(4)))
+let co = count(2)
+let c: Closeable = co
+c.close()
+println(co.next())

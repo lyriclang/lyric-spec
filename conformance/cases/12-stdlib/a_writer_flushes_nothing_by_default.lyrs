@@ -1,0 +1,9 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 0
+// §12 rule 19: the default does nothing.
+import std.io { ByteBuffer }
+let b = ByteBuffer.new()
+b.flush()
+println(b.length())

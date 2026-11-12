@@ -1,0 +1,11 @@
+//! run
+//! panic: LYS-RT0003
+//! stdout:
+//! | 2
+//! stderr:
+//! | panic [LYS-RT0003]: index 2 out of bounds for length 2
+//! since: 1.0.0
+// §8 rule 3: an index at the length or above is a panic.
+let xs = [1, 2]
+println(xs[1])
+println(xs[2])

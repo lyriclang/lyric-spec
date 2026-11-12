@@ -1,0 +1,12 @@
+//! run
+//! option: --allow=os
+//! panic: LYS-RT0018
+//! since: 1.0.0
+
+// §12 rule 28: a subscription closed keeps no run waiting: every task waits for another, none for a signal
+import std.os { Signal, signals }
+
+let incoming = signals(Signal.Hangup)
+incoming.close()
+let silent = Channel<int>.new()
+silent.recv()

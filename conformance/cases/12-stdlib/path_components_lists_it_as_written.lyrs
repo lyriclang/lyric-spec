@@ -1,0 +1,31 @@
+//! run
+//! stdout:
+//! | 
+//! | 
+//! | [a]
+//! | [a][b]
+//! | [a][b]
+//! | [a][b]
+//! | [a][..][b]
+//! | [/]
+//! | [/][a][b]
+//! | [/][a]
+//! | [..]
+//! | [..][a]
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the root, then the elements, keeping `..`; nothing normalized
+fn show(p: string): string = p.replace("\\", "/")
+
+fn parts(p: string): string {
+    var out = ""
+    for (e in path.components(p)) {
+        out = out + "[" + show(e) + "]"
+    }
+    return out
+}
+
+for (p in ["", ".", "a", "a/b", "a//b/", "./a/./b", "a/../b", "/", "/a/b", "//a", "..", "../a"]) {
+    println(parts(p))
+}

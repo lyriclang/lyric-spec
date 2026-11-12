@@ -1,0 +1,14 @@
+//! run
+//! panic: LYS-RT0016
+//! stdout:
+//! | 1
+//! stderr:
+//! | panic [LYS-RT0016]: Set: changed while it was walked
+//! since: 1.0.0
+// §12 rule 6: a value put in or taken out while the set is walked makes the next pull panic, the
+// panic naming the set.
+let s: Set<int> = [1, 2, 3]
+for (x in s) {
+    println(x)
+    s.remove(3)
+}

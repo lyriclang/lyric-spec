@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdin:
+//! | one
+//! | two
+//! stdout:
+//! | one
+//! | two
+//! | 8
+// §12 rule 20: `copy` over the two console's.
+import std.io { copy, stdin, stdout }
+let n = copy(stdin(), stdout())
+println(n)

@@ -1,0 +1,17 @@
+//! run
+//! stdout:
+//! | P { a = 1 }
+//! | 6
+//! | 5
+//! since: 1.0.0
+// §3 rule 8: the script's code checked twice for `var x = null` prints a type's Debug form as
+// once — a function the first pass wrote is not taken for another one the second writes.
+struct P {
+    a: int,
+}
+var x = null
+println(P { a = 1 })
+let g = (k: int) => k * 2
+x = 5
+println(g(3))
+println(x)

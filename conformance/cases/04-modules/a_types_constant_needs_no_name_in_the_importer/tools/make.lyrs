@@ -1,0 +1,6 @@
+struct P {
+    v: int
+    static fn of(v: int): P = P { v = v }
+    static let one: P = P.of(1)
+}
+fn read(): int = P.one.v

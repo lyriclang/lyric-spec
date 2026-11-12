@@ -1,0 +1,9 @@
+//! run
+//! exit: 2
+//! stderr-has: LYS-CAP0001
+//! since: 1.0.0
+
+// §12 rule 29: of the right `os`, and so is the moment alone
+import std.time.instant { Instant }
+
+println(Instant.now().epochSecs() > 0)

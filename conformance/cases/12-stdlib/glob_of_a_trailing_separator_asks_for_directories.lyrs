@@ -1,0 +1,34 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | */ => [a c]
+//! | f/ => []
+//! | c/ => [c]
+//! | a/*/ => [a/b]
+//! | **/ => [a a/b c]
+//! | none/ => []
+//! since: 1.0.0
+
+// §12 rule 24: a trailing separator: directories alone, through any part
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll("a/b")
+createDirAll("c")
+writeText("f", "")
+writeText("a/g", "")
+show("*/")
+show("f/")
+show("c/")
+show("a/*/")
+show("**/")
+show("none/")

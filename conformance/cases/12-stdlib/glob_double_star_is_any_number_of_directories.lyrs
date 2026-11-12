@@ -1,0 +1,42 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | **/*.txt => [a/b/c/n.txt a/m.txt top.txt]
+//! | **/m.txt => [a/m.txt]
+//! | a/**/n.txt => [a/b/c/n.txt]
+//! | a/**/*.txt => [a/b/c/n.txt a/m.txt]
+//! | **/c => [a/b/c]
+//! | a/** => [a/b a/b/c a/b/c/n.txt a/m.txt]
+//! | d/** => [d/o.md]
+//! | **/**/o.md => [d/o.md]
+//! | ** => [a a/b a/b/c a/b/c/n.txt a/m.txt d d/o.md top.txt]
+//! since: 1.0.0
+
+// §12 rule 24: `**` before a part, between parts and as the last part, the place itself not among what is under it
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll("a/b/c")
+createDirAll("d")
+writeText("top.txt", "")
+writeText("a/m.txt", "")
+writeText("a/b/c/n.txt", "")
+writeText("d/o.md", "")
+show("**/*.txt")
+show("**/m.txt")
+show("a/**/n.txt")
+show("a/**/*.txt")
+show("**/c")
+show("a/**")
+show("d/**")
+show("**/**/o.md")
+show("**")

@@ -1,0 +1,4 @@
+pub struct Item {
+    pub s: string,
+}
+pub fn make(): Item = Item { s = "b" }

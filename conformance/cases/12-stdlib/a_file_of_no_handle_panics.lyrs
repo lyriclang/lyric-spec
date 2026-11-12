@@ -1,0 +1,10 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! panic: LYS-RT0007
+//! since: 1.0.0
+import std.fs { File }
+
+// §12 rule 22: a `File` a script built itself holds no file, and the VM sees that
+let f = File { handle = "x", name = "x" }
+println(f.read(Bytes.zeroed(1)))

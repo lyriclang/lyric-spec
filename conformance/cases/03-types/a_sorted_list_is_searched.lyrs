@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 3 null 0 4 3 0 5
+//! | 1, 3, 5, 7, 9
+//! since: 1.0.0
+// §3 rule 16 (Lyric 5 12 Arrays): `binarySearch(x)` in sorted elements, `partitionPoint(p)` the
+// first index `p` fails at, `join(sep)`.
+let sorted = [1, 3, 5, 7, 9]
+let comma = ", "
+println(f"{sorted.binarySearch(7)} {sorted.binarySearch(4)} {sorted.binarySearch(1)} {sorted.binarySearch(9)} {sorted.partitionPoint((x) => x < 6)} {sorted.partitionPoint((x) => false)} {sorted.partitionPoint((x) => true)}")
+println(sorted.join(comma))

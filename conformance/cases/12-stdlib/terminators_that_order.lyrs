@@ -1,0 +1,11 @@
+//! run
+//! stdout:
+//! | 2 27 12 12
+//! | 1 5 "a" 2.5 null
+//! since: 1.0.0
+// §12 rule 4: `minBy`, `maxBy` over a TotalOrder key, `min`, `max` of an Ordered value — the first
+// of equal ones, `null` without a value.
+println(f"{[13, 2, 27, 4].iter().minBy((x) => x % 10)} {[13, 2, 27, 4].iter().maxBy((x) => x % 10)} {[12, 2, 22].iter().minBy((x) => x % 10)} {[12, 2, 22].iter().maxBy((x) => x % 10)}")
+let xs = [3, 1, 4, 1, 5]
+let none: int[] = []
+println(f"{xs.iter().min()} {xs.iter().max()} {["b", "a", "c"].iter().min()} {[2.5, 1.5].iter().max()} {none.iter().min()}")

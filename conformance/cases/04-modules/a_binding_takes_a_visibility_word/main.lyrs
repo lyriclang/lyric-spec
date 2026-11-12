@@ -1,0 +1,13 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 12 14
+//! | 6
+// §4 rule 5 (02 V): a module's binding takes a visibility word as a declaration does: without one,
+// with `pub` or `internal` it is seen beyond its file; its own module reads and writes a private one.
+import lib { next, plain, open, inside }
+
+let a = next()
+let b = next()
+println(f"{a} {b}")
+println(plain + open + inside)

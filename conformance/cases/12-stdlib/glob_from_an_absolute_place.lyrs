@@ -1,0 +1,26 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | a/x.txt
+//! | y.txt
+//! | 2
+//! | 1
+//! | true
+//! since: 1.0.0
+
+// §12 rule 24: a pattern that begins at the root answers paths that do
+import std.fs { createDirAll, glob, removeAll, tempDir, writeText }
+import std.path { join, relative, separator }
+
+let t = tempDir()
+createDirAll(join(t, "a"))
+writeText(join(t, "a", "x.txt"), "")
+writeText(join(t, "y.txt"), "")
+for (p in glob(join(t, "**") + separator + "*.txt")) {
+    println((relative(t, p) ?? "?").replace("\\", "/"))
+}
+println(glob(join(t, "*")).length())
+println(glob(separator).length())
+println(glob(separator)[0] == separator)
+removeAll(t)

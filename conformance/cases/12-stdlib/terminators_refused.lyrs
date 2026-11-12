@@ -1,0 +1,10 @@
+//! check
+//! error: LYS-SEM0012
+//! error: LYS-SEM0014
+//! since: 1.0.0
+// §12 rule 4: a terminator of an element kind stands where the items are of it — `sum` of
+// numbers, `min` of ordered values.
+let a = ["a"].iter().sum()
+fn one(): int = 1
+let b = [one].iter().min()
+let c = [1].iter().average(2)

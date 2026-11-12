@@ -1,0 +1,18 @@
+//! run
+//! exit: 4
+//! stdout:
+//! | 1
+//! since: 1.0.0
+
+// §12 rule 25: from a coroutine too, its `defer` not run
+fn pairs(): Coroutine<int> = sequence((): void => {
+    defer {
+        println("deferred")
+    }
+    yield 1
+    exit(4)
+})
+for (x in pairs()) {
+    println(x)
+}
+println("never")

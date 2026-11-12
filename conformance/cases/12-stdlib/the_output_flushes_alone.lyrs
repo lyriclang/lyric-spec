@@ -1,0 +1,15 @@
+//! run
+//! since: 1.0.0
+//! merge-streams
+//! stdout:
+//! | err1
+//! | out1
+//! | err2
+//! | out2
+// §12 rule 20: a writer's flush writes its stream.
+import std.io { stdout }
+print("out1\n")
+eprintln("err1")
+stdout().flush()
+eprintln("err2")
+print("out2\n")

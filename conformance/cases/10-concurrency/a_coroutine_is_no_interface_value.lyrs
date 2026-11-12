@@ -1,8 +1,0 @@
-//! check
-//! error: LYS-SEM0001
-//! since: 1.0.0
-// §10, deviations: no interface value of a coroutine until it has a descriptor (S7).
-fn gen(): Coroutine<int> {
-    yield 1
-}
-let x: Closeable = gen()

@@ -1,0 +1,28 @@
+//! run
+//! option: -A
+//! in-temp-dir
+//! stdout:
+//! | timed out
+//! | killed true false
+//! since: 1.0.0
+
+// §12 rule 27: a wait for a child that runs on ends at a cancel; a kill ends the child, SIGKILL on POSIX, code 1
+// on Windows
+import std.fs { writeText }
+import std.os
+import std.process { Command, Stdio }
+
+// the binary under test, the runner names it: the child is a script
+let me = os.env("LYRIC_SCRIPT_UNDER_TEST") ?? "lyric-script"
+writeText("child.lyrs", "sleep(Duration.ofSecs(30))\n")
+let slow = Command { program = me, args = ["run", "-A", "child.lyrs"] }.spawn()
+try {
+    let st = withTimeout(Duration.ofMillis(300), () => slow.wait())
+    println(f"ended {st}")
+} catch (e: TimedOut) {
+    println("timed out")
+}
+slow.kill()
+let st = slow.wait()
+let killed = if (os.platform() == os.Platform.Windows) st.code() == 1 else f"{st}" == "signal 9"
+println(f"killed {killed} {st.success()}")

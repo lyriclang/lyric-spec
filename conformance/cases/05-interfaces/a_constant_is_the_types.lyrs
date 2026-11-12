@@ -17,9 +17,8 @@ struct P :: [Zero] {
     x: int
     static let zero: P = P { x = 0 }
 }
-extend int :: [Zero] {
-    static let zero: int = 0
-}
+// `int.zero` is the prelude's (S7f1b), and answers here
+extend int :: [Zero] { }
 class C :: [Zero, Identity] {
     var n: int = 7
     static let zero: C = C { }

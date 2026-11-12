@@ -1,0 +1,8 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr:
+//! | panic [LYS-RT0008]: split: a separator that matches the empty text
+//! since: 1.0.0
+// §12 rule 8 (Lyric 5 12 §Strings): a separator that matches the empty text would stand
+// everywhere: `split` panics.
+println("ab".split("").toArray())

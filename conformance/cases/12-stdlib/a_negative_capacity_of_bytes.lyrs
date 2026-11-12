@@ -1,0 +1,5 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 17: as a list's
+println(Bytes.withCapacity(-1))

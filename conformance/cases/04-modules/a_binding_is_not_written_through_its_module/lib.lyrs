@@ -1,0 +1,5 @@
+pub var count: int = 1
+
+pub let fixed: int = 2
+
+private var hidden: int = 3

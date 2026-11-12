@@ -1,0 +1,7 @@
+//! run
+//! panic: LYS-RT0008
+//! stderr:
+//! | panic [LYS-RT0008]: Map.withCapacity: a negative capacity -1
+//! since: 1.0.0
+// §12 rule 5 (Lyric 5 12 §Collections): a negative capacity panics, in Lyric 5's words.
+let m = Map<string, int>.withCapacity(-1)

@@ -1,0 +1,26 @@
+//! check
+//! error: LYS-SEM0003
+//! error: LYS-SEM0001
+//! since: 1.0.0
+// §5 rule 17: an operator without the conformance its operands ask; an assignment whose `Out`
+// is not the place's type; under `T :: [Add]` alone `a + b` is a `T.Out`.
+struct V :: [Add, Mul<float>] {
+    x: float,
+    fn add(rhs: V): V = V { x = this.x + rhs.x }
+    fn mul(rhs: float): V = V { x = this.x * rhs }
+}
+let a = V { x = 1.0 }
+let p = a * a
+let q = a + 1
+let r = -a
+struct W :: Mul<float> {
+    type Out = float
+    fn mul(rhs: float): float = rhs
+}
+var w = W { }
+w *= 2.0
+fn sum<T :: [Add]>(x: T, y: T): T {
+    var s = x
+    s = s + y
+    return s
+}

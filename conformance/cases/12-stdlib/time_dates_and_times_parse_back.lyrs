@@ -1,0 +1,60 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | 2026-11-08 0000-01-01 Empty Invalid Invalid Invalid Invalid Invalid Invalid Invalid
+//! | true true
+//! | 09:30:00.5 23:59:59.123456789 00:00:00 Empty Invalid Invalid Invalid Invalid Invalid Invalid Invalid
+//! | the text is not a value of the type: only a fraction may follow the seconds (at byte 8) 8
+//! | the text is not a value of the type: there is no time of day with hour 24, minute 0, second 0, nanosecond 0 (at byte 0)
+//! since: 1.0.0
+
+// §12 rule 30: a date and a time of day read back from their texts (Lyric 5 12 §Time rules 5 and 8): RFC
+// 3339's full-date and partial-time, a fraction of up to nine digits, no offset; what is empty, of another
+// shape or no date or time is refused
+import std.time { Date, Time }
+
+fn kind(e: ParseError): string = match (e.kind) {
+    .Empty => "Empty",
+    .Invalid => "Invalid",
+    .Overflow => "Overflow",
+}
+
+fn date(s: string): string {
+    try {
+        return f"{Date.parse(s)}"
+    } catch (e: ParseError) {
+        return kind(e)
+    }
+}
+
+fn time(s: string): string {
+    try {
+        return f"{Time.parse(s)}"
+    } catch (e: ParseError) {
+        return kind(e)
+    }
+}
+
+fn all(f: fn(string) -> string, xs: string[]): string {
+    var line = ""
+    for (x in xs) {
+        line = if (line.isEmpty()) f(x) else f"{line} {f(x)}"
+    }
+    return line
+}
+
+println(all(date, ["2026-11-08", "0000-01-01", "", "2026-2-01", "2026-02-30", "26-02-03xx", "2026/02/03", "+10000-01-01", "2026-11-08T", "2026-01-0:"]))
+let leap = Date.of(2024, 2, 29)
+let t = Time.of(7, 5, 3, 40)
+println(f"{Date.parse(leap.show()) == leap} {Time.parse(t.show()) == t}")
+println(all(time, ["09:30:00.5", "23:59:59.1234567891", "00:00:00.000", "", "09:30", "09:30:00Z", "09:30:00.", "24:00:00", "09:60:00", "09:30:00.5x", "09-30-00"]))
+try {
+    let _ = Time.parse("09:30:00Z")
+} catch (e: ParseError) {
+    println(f"{e.message()} {e.offset ?? -1}")
+}
+try {
+    let _ = Time.parse("24:00:00")
+} catch (e: ParseError) {
+    println(e.message())
+}

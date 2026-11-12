@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0007
+//! since: 1.0.0
+// §12 rule 18: what the field holds is the VM's
+import std.random { Random }
+println(f"{Random.seeded(1).g:?}")

@@ -1,0 +1,9 @@
+//! run
+//! exit: 2
+//! stderr-has: LYS-CAP0001
+//! since: 1.0.0
+
+// §12 rule 23: the module asks for the right `file`
+import std.fs { createDir }
+
+createDir("d")

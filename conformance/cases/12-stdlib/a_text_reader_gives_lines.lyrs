@@ -1,0 +1,31 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | "a"
+//! | "b"
+//! | 3
+//! | ""
+//! | "e"
+//! | null
+//! | null
+//! | "x"
+//! | null
+//! | 3
+// §12 rule 19: a `\n` or a `\r\n` ends one, a `\r` alone is text, a last line without an end is one.
+import std.io { ByteReader, TextReader }
+let t = TextReader.new(ByteReader.new("a\nb\r\nc\rd\n\ne".toBytes()))
+println(t.readLine())
+println(t.readLine())
+println((t.readLine() ?? "").length())
+println(t.readLine())
+println(t.readLine())
+println(t.readLine())
+println(t.readLine())
+let ended = TextReader.new(ByteReader.new(b"x\n"))
+println(ended.readLine())
+println(ended.readLine())
+var n = 0
+for (l in TextReader.new(ByteReader.new(b"1\n2\n3")).lines()) {
+    n += l.length()
+}
+println(n)

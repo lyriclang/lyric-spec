@@ -1,0 +1,35 @@
+//! run
+//! stdout:
+//! | a quote in an unquoted field at 1:3
+//! | a quote in an unquoted field at 1:2
+//! | an unclosed quote at 2:3
+//! | text after a closing quote at 1:4
+//! | 3 fields, expected 2 at 3:1
+//! | 1 field, expected 2 at 5:1
+//! | 2 1 3 fields, expected 2
+//! since: 1.0.0
+
+// §12 rule 34: a quote in a field without them, a quote left open, text after a closing quote and a record of
+// another width than the first throw CsvError — where, from 1, columns in characters after a byte order mark,
+// CRLF one break, a quoted line break counted as a line
+import std.csv { parse, CsvError }
+
+fn tried(text: string) {
+    try {
+        println(parse(text))
+    } catch (e: CsvError) {
+        println(e.message())
+    }
+}
+
+tried("ab\"c,d")
+tried("\u{FEFF}a\"b")
+tried("a,b\nc,\"open\n")
+tried("\"a\"b,c")
+tried("a,b\r\nc,d\r\ne,f,g\r\n")
+tried("\"x\ny\",z\nc,d\n\ne")
+try {
+    parse("a,b\n1,2,3")
+} catch (e: CsvError) {
+    println(f"{e.line} {e.column} {e.detail}")
+}

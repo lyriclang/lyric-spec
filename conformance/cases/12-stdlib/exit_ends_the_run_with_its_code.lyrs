@@ -1,0 +1,22 @@
+//! run
+//! exit: 7
+//! stdout:
+//! | before
+//! since: 1.0.0
+
+// §12 rule 25: no `defer`, no `using`, nothing after
+class C :: Closeable {
+    fn close(): void {
+        println("closed")
+    }
+}
+fn deep(): void {
+    defer {
+        println("deferred")
+    }
+    using let c = C { }
+    println("before")
+    exit(7)
+}
+deep()
+println("after")

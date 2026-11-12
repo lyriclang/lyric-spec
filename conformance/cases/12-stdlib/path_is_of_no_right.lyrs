@@ -1,0 +1,7 @@
+//! check
+//! since: 1.0.0
+import std.path { join, separator }
+
+// §12 rule 21: nothing here asks the file system, so the module asks for no right
+let p = join("a", "b")
+let s = separator

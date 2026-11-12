@@ -1,0 +1,42 @@
+//! run
+//! stdout:
+//! | v=false q=false mode=0644 from=a.txt to=- rest=[]
+//! | v=true q=true mode=0644 from=a to=b rest=[]
+//! | v=false q=false mode=0700 from=a to=- rest=[]
+//! | v=true q=false mode=0600 from=a to=- rest=[]
+//! | v=true q=false mode=0755 from=a to=b rest=["c", "d"]
+//! | v=false q=false mode=0644 from=-v to=--mode rest=[]
+//! | v=false q=false mode=0644 from=- to=- rest=[]
+//! since: 1.0.0
+
+// §12 rule 36: a flag is there or not, bundled `-vq`; an option takes `--name value`, `--name=value`, `-o value`
+// or `-ovalue`, its default where it is not given and the last value where it is given twice; arguments in their
+// order, an optional one null where it is not given, the rest after them; options may follow arguments, and
+// after `--` everything is an argument; `-` alone is an argument
+import std.cli { Cli }
+
+let cli = Cli.new("copy", "Copies a file.")
+    .flag("verbose", 'v', "say what is copied")
+    .flag("quiet", 'q')
+    .option("mode", 'm', "the mode of the copy", "0644")
+    .positional("from", "the file to copy")
+    .positional("to", "where to copy it", true)
+    .rest("more", "more files")
+
+fn show(argv: string[]) {
+    let a = cli.parse(argv)
+    let v = a.flag("verbose")
+    let q = a.flag("quiet")
+    let mode = a.option("mode") ?? "?"
+    let from = a.positional("from") ?? "?"
+    let to = a.positional("to") ?? "-"
+    println(f"v={v} q={q} mode={mode} from={from} to={to} rest={a.rest()}")
+}
+
+show(["a.txt"])
+show(["-vq", "a", "b"])
+show(["--mode", "0700", "a"])
+show(["a", "-v", "-m0600"])
+show(["--mode=0700", "-vm", "0755", "a", "b", "c", "d"])
+show(["--", "-v", "--mode"])
+show(["-"])

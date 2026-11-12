@@ -1,0 +1,14 @@
+//! run
+//! option: --allow=os
+//! stdout:
+//! | true
+//! | done
+//! since: 1.0.0
+
+// §12 rule 26: these calls wait as a file's do
+import std.os
+
+let t = spawn((): bool => !os.cwd().isEmpty())
+yieldNow()
+println(t.await())
+println("done")

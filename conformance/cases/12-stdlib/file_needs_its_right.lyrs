@@ -1,0 +1,8 @@
+//! run
+//! exit: 2
+//! stderr-has: LYS-CAP0001
+//! since: 1.0.0
+import std.fs { File }
+
+// §12 rule 22: the module asks for the right `file`
+let f = File.open("a.txt")

@@ -1,0 +1,28 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | true
+//! | true
+//! | true
+//! | false
+// §5 rule 1 (Lyric 5 §12 rule 5): a type's own `equals` is what `==` calls, so a struct whose field does
+// not compare compares through it, directly, under a type parameter, and in a list.
+interface I {
+    fn n(): int
+}
+struct A :: [I] {
+    v: int
+    fn n(): int = this.v
+}
+struct S :: [Equatable] {
+    f: I
+    k: int
+    fn equals(o: S): bool = this.k == o.k
+}
+fn alike<T :: [Equatable]>(a: T, b: T): bool = a == b
+let a = S { f = A { v = 1 }, k = 1 }
+let b = S { f = A { v = 2 }, k = 1 }
+println(a == b)
+println(alike(a, b))
+println([a] == [b])
+println(a == S { f = A { v = 1 }, k = 2 })

@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-RES0004
+//! error: LYS-RES0003
+//! stderr-has: declares no 'Nope'
+//! stderr-has: no module to name as a whole
+//! since: 1.0.0
+// §12 rule 5: an import of std.collections names what it declares, each by name.
+import std.collections { Nope }
+import std.collections

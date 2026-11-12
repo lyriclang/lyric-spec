@@ -1,0 +1,40 @@
+//! run
+//! stdout:
+//! | null 1
+//! | 10 null 3 true false true
+//! | {"a": 10, "c": 3} 2 false
+//! | 10 null 3
+//! | {"c": 3, "a": 1}
+//! | -1 26 26
+//! | true false {"c": 6, "a": 1, "z": 26}
+//! | 1 {"c": 6, "z": 26}
+//! | 0 true {}
+//! | 6 998001 9 {995: 990025, 996: 992016, 997: 994009, 998: 996004, 999: 998001, 3: 9}
+//! since: 1.0.0
+// §12 rule 5 (Lyric 5 12 §Collections): a map holds each key once, in the order the keys came;
+// `m[k]` is its value or `null`, `m[k] = v` puts it there, `m[k] = null` takes the key out; a key
+// put back comes last; many taken out leave the rest in their order.
+let m: Map<string, int> = Map.new()
+println(f"{m.insert("a", 1)} {m.insert("a", 10)}")
+m["b"] = 2
+m["c"] = 3
+println(f"{m["a"]} {m["z"]} {m.length()} {"b" in m} {"z" in m} {m.containsKey("c")}")
+m["b"] = null
+println(f"{m} {m.length()} {m.isEmpty()}")
+println(f"{m.remove("a")} {m.remove("a")} {m.get("c")}")
+m["a"] = 1
+println(m)
+println(f"{m.getOr("z", -1)} {m.getOrInsert("z", () => 26)} {m.getOrInsert("z", () => 0)}")
+println(f"{m.update("c", (v) => v * 2)} {m.update("q", (v) => v)} {m}")
+println(f"{m.retain((k, v) => v > 1)} {m}")
+m.clear()
+println(f"{m.length()} {m.isEmpty()} {m}")
+var big: Map<int, int> = Map.new()
+for (i in 0..1000) {
+    big[i] = i * i
+}
+for (i in 0..995) {
+    big.remove(i)
+}
+big[3] = 9
+println(f"{big.length()} {big[999]} {big[3]} {big}")

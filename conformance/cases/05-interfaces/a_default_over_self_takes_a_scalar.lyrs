@@ -1,0 +1,18 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1 3
+//! | true false
+//! | true false
+// §5 rule 10: a default generic over `Self` has its copy for the type — a scalar too, its receiver
+// and its parameters as they are, no box (until S7f1c the compiler made faulty bytecode here).
+interface Q :: Ordered {
+    fn firstOf(a: Self, b: Self): Self = a
+    fn secondOf(a: Self, b: Self): Self = b
+    fn below(a: Self, b: Self): bool = a < b
+    fn thisBelow(a: Self): bool = this < a
+}
+extend int :: Q { }
+println(f"{5.firstOf(1, 3)} {5.secondOf(1, 3)}")
+println(f"{5.below(1, 3)} {5.below(3, 1)}")
+println(f"{5.thisBelow(9)} {5.thisBelow(1)}")

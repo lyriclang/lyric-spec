@@ -1,0 +1,12 @@
+//! run
+//! stdout:
+//! | 14 60 2.8 4.0 3.0 1.5
+//! | 0 1 null 0.0 null
+//! since: 1.0.0
+// §12 rule 4: `sum`, `product` and `average` of `int` and of `float` values — zero, one and `null`
+// where there is none, the average a `float`.
+let xs = [3, 1, 4, 1, 5]
+println(f"{xs.iter().sum()} {xs.iter().product()} {xs.iter().average()} {[1.5, 2.5].iter().sum()} {[1.5, 2.0].iter().product()} {[1.0, 2.0].iter().average()}")
+let none: int[] = []
+let noFloats: float[] = []
+println(f"{none.iter().sum()} {none.iter().product()} {none.iter().average()} {noFloats.iter().sum()} {noFloats.iter().average()}")

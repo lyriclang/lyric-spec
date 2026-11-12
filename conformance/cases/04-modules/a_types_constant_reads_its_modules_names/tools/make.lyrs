@@ -1,0 +1,5 @@
+fn helper(): int = 1
+struct P {
+    v: int
+    static let one: P = P { v = helper() }
+}

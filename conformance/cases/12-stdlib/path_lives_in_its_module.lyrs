@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-SEM0002
+//! since: 1.0.0
+
+// §12 rule 21: nothing of `std.path` comes without its import
+let p = join("a", "b")

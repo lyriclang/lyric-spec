@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0003
+//! since: 1.0.0
+// §12 rule 17: an index in the bounds
+let b = b"a"
+b[1] = 0

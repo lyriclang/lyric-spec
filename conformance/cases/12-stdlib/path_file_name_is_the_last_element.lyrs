@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | .
+//! | .
+//! | ..
+//! | a
+//! | b
+//! | b
+//! | b
+//! | a
+//! | /
+//! | /
+//! | ..
+//! | ü.txt
+//! since: 1.0.0
+import std.path
+
+// §12 rule 21: the last element after the trailing separators; `.` for nothing, the root for the root
+fn show(p: string): string = p.replace("\\", "/")
+
+for (p in ["", ".", "..", "a", "a/b", "a/b/", "a/b//", "/a", "/", "//", "a/..", "é/ü.txt"]) {
+    println(show(path.fileName(p)))
+}

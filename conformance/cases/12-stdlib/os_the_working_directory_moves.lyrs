@@ -1,0 +1,28 @@
+//! run
+//! option: --allow=os,file
+//! in-temp-dir
+//! stdout:
+//! | true true true
+//! | kept
+//! | not found: case-sys-none (made the working directory)
+//! since: 1.0.0
+
+// §12 rule 26: absolute, moves into a directory and back, what is relative follows it; one that is not there is not found,
+// with its path
+import std.fs { createDir, readText, writeText }
+import std.os
+import std.path { isAbsolute, join }
+
+let start = os.cwd()
+createDir("case-sys-dir")
+os.setCwd("case-sys-dir")
+writeText("in-it", "kept")
+let moved = os.cwd()
+os.setCwd(start)
+println(f"{isAbsolute(start)} {moved.endsWith("case-sys-dir")} {os.cwd() == start}")
+println(readText(join("case-sys-dir", "in-it")))
+try {
+    os.setCwd("case-sys-none")
+} catch (e: IoError) {
+    println(e.message())
+}

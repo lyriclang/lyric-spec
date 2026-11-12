@@ -1,0 +1,33 @@
+//! run
+//! stdout:
+//! | {3, 1, 2} 3 true false true
+//! | true false true false {3, 2, 4}
+//! | true false true
+//! | {} true 0 {3, 2, 4}
+//! | {P { x = 1 }, P { x = 2 }} {"a": {1, 2, 3}} H { s = {5} }
+//! | {"b", "a"}
+//! since: 1.0.0
+// §12 rule 6 (Lyric 5 12 §Collections): a set holds each value once, in the order the values
+// came; a list literal builds one where a set is taken; `x in s`; `insert` says whether the value
+// was not there, `remove` whether it was; equal sets hold the same values in any order; values
+// collect into a set.
+let s: Set<int> = [3, 1, 3, 2]
+println(f"{s} {s.length()} {2 in s} {5 in s} {s.contains(1)}")
+println(f"{s.insert(4)} {s.insert(4)} {s.remove(1)} {s.remove(1)} {s}")
+println(f"{s == Set<int>.of([4, 2, 3])} {s == Set<int>.of([2, 3])} {s != Set<int>.new()}")
+let e: Set<string> = []
+let c = s.clone()
+c.clear()
+println(f"{e} {e.isEmpty()} {Set<bool>.withCapacity(4).length()} {s}")
+struct P {
+    x: int,
+}
+struct H {
+    s: Set<int>,
+}
+let ps: Set<P> = [P { x = 1 }, P { x = 1 }, P { x = 2 }]
+let m: Map<string, Set<int>> = ["a": [1, 2]]
+m["a"]!.insert(3)
+println(f"{ps} {m} {H { s = [5] }}")
+let c2: Set<string> = ["b", "a", "b"].iter().collect()
+println(c2)

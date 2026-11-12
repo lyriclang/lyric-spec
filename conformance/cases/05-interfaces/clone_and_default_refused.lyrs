@@ -1,0 +1,30 @@
+//! check
+//! error: LYS-SEM0020
+//! error: LYS-SEM0135
+//! error: LYS-SEM0012
+//! error: LYS-SEM0028
+//! since: 1.0.0
+// §5 rule 19: a reference field that does not clone, a field without a default; an enum's
+// Default; a generic type's clone where its argument does not clone; a constraint's.
+class NoClone {
+    var n: int = 0
+}
+class Bad :: [Clone] {
+    c: NoClone
+}
+class NoDefault {
+    n: int
+}
+struct BadDefault :: [Default] {
+    x: NoDefault,
+}
+enum E :: [Default] {
+    A,
+    B,
+}
+class Box<T> :: [Clone] {
+    var v: T
+}
+let b = Box { v = NoClone { } }.clone()
+fn need<T :: [Clone]>(x: T): T = x.clone()
+let c = need(NoClone { })

@@ -1,0 +1,5 @@
+//! check
+//! error: LYS-LEX0012
+//! since: 1.0.0
+// §12 rule 17: written by their number; Lyric 5 01 §4.5
+let x = b"ä"

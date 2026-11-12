@@ -1,0 +1,6 @@
+//! run
+//! panic: LYS-RT0008
+//! since: 1.0.0
+// §12 rule 18: `k` within the list
+import std.random { Random }
+println(Random.seeded(1).sample([1], -1))

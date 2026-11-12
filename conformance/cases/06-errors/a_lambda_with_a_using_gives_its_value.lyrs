@@ -1,0 +1,18 @@
+//! check
+//! error: LYS-SEM0017
+//! since: 1.0.0
+
+// §6 rule 11: a `using` does not end the lambda: what can reach the end without a value still cannot
+class R :: Closeable {
+    fn close() {
+    }
+}
+
+fn said(f: fn() -> string): string = f()
+
+println(said(() => {
+    using let r = R { }
+    if (1 < 2) {
+        return "a branch"
+    }
+}))

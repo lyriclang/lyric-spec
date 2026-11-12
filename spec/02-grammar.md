@@ -26,7 +26,8 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
 1. A module is a sequence of **items**: declarations (`fn`, `struct`, `class`, `enum`,
    `type Name = T`) and statements, in any order; its statements are the script's code
    ([07 Top](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). A visibility word stands before a declaration
-   only (`LYS-PAR0053`).
+   or a module's binding, its outermost `let` or `var` ([04](04-modules.md) rule 5), only
+   (`LYS-PAR0053`).
 2. A function's body is a block, or **`= expression`** after the signature: `fn twice(x: int) =
    x * 2` (09 Ret).
 
@@ -55,7 +56,8 @@ decisions: [09 NL, Ret, Cmp, Y2, Y7](https://github.com/lyriclang/lyric-script/b
 
 1. The parser refuses nesting deeper than its bound (`LYS-PAR0045`), at least **64** levels of
    expressions, blocks and prefix operators — Lyric 5's floor is 128 levels on a thread; a
-   script is compiled on a task's stack as well.
+   script is compiled on a task's stack as well. A link of an `else if` chain is such a level
+   (S7e1): past the bound a chain is refused, pointing to a `match`, whose arms nest not.
 2. A code means what Lyric 5's `LYR-PAR` code of the same number means; Lyric-Script's own
    codes start at 0900 (§16). `LYS-PAR0900` is a digit beyond its literal's
    base (`0b12`).

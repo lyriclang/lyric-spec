@@ -1,0 +1,13 @@
+//! check
+//! error: LYS-SEM0060
+//! stderr-has: 'U' of 'into'
+//! since: 1.0.0
+// §12 rule 15 (Lyric 5 05 §13 rule 9): nothing here says what the target is.
+struct Meters {
+    v: int
+}
+struct Cm :: [From<Meters>] {
+    v: int,
+    static fn from(m: Meters): Cm = Cm { v = m.v }
+}
+let x = Meters { v = 2 }.into()

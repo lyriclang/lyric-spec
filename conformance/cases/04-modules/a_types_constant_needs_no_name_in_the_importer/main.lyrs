@@ -1,0 +1,8 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 1
+// §5 rule 10: a type's constant reads the names of the module that declares it, so an importer that
+// names neither the type nor the module's members has nothing to bring.
+import tools.make
+println(make.read())

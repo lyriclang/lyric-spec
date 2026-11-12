@@ -1,0 +1,26 @@
+//! run
+//! since: 1.0.0
+//! stdout:
+//! | 3
+//! | 5
+//! | 2
+//! | [97, 98]
+//! | 3
+//! | [99, 100, 101]
+//! | cde
+//! | 0
+//! | 0
+// §12 rule 19: appended at the back, read from the front.
+import std.io { ByteBuffer }
+let b = ByteBuffer.new()
+println(b.write(b"abc"))
+b.writeString("de")
+println(b.length())
+let two = Bytes.zeroed(2)
+println(b.read(two))
+println(two)
+println(b.length())
+println(b.toBytes())
+println(b.readToString())
+println(b.read(two))
+println(b.length())

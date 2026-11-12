@@ -1,0 +1,14 @@
+//! run
+//! stdout:
+//! | null 3 [1]
+//! since: 1.0.0
+// §3 rule 12 (Lyric 5 §9.2): an initializer of a generic type at a position that names the instance
+// takes the fields' defaults, at the instance's arguments.
+class Holder<T> {
+    var v: ?T = null
+    n: int = 3
+    items: T[] = []
+}
+let h: Holder<int> = Holder { }
+h.items.push(1)
+println(f"{h.v} {h.n} {h.items}")

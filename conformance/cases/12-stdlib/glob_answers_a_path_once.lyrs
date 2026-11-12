@@ -1,0 +1,26 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! stdout:
+//! | **/q/**/b => [q/b q/q/b q/q/q/b]
+//! | **/q/**/q/**/b => [q/q/b q/q/q/b]
+//! since: 1.0.0
+
+// §12 rule 24: a path that a pattern reaches by two ways is answered once
+import std.fs { createDirAll, glob, writeText }
+
+fn show(pattern: string): void {
+    let found = glob(pattern)
+    var out = ""
+    for (p in found) {
+        out = out + (if (out.isEmpty()) "" else " ") + p.replace("\\", "/")
+    }
+    println(f"{pattern} => [{out}]")
+}
+
+createDirAll("q/q/q")
+writeText("q/q/b", "")
+writeText("q/q/q/b", "")
+writeText("q/b", "")
+show("**/q/**/b")
+show("**/q/**/q/**/b")

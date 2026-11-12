@@ -1,0 +1,49 @@
+//! run
+//! stdout:
+//! | add bare=false force=true ["x", "y"]
+//! | commit bare=true message=hi
+//! | expected a command: add, commit
+//! | unknown command 'push'
+//! | unknown option '--bare'
+//! | usage: git add [options] [paths...]
+//! | null
+//! since: 1.0.0
+
+// §12 rule 36: a command is the first argument where commands are declared; what follows it its own Cli reads,
+// named after both; the options before it are the outer one's; a Cli with commands needs one
+import std.cli { Cli, CliError }
+
+let git = Cli.new("git", "The stupid content tracker.")
+git.flag("bare")
+git.command("add", "Add files").flag("force", 'f').rest("paths", "what to add")
+git.command("commit", "Record changes").option("message", 'm')
+
+fn run(argv: string[]) {
+    try {
+        let a = git.tryParse(argv)
+        if (let (name, sub) = a.command()) {
+            let bare = a.flag("bare")
+            if (name == "add") {
+                let force = sub.flag("force")
+                println(f"add bare={bare} force={force} {sub.rest()}")
+            } else {
+                let message = sub.option("message") ?? "-"
+                println(f"commit bare={bare} message={message}")
+            }
+        }
+    } catch (e: CliError) {
+        println(e.message())
+    }
+}
+
+run(["add", "-f", "x", "y"])
+run(["--bare", "commit", "-m", "hi"])
+run([])
+run(["push"])
+run(["add", "--bare"])
+try {
+    git.tryParse(["add", "--bare"])
+} catch (e: CliError) {
+    println(e.usage)
+}
+println(Cli.new("plain").tryParse([]).command())

@@ -1,0 +1,24 @@
+//! run
+//! option: --allow=file
+//! in-temp-dir
+//! env: TMPDIR=no-such-place
+//! env: TEMP=no-such-place
+//! env: TMP=no-such-place
+//! stdout:
+//! | true true made
+//! | true true made
+//! since: 1.0.0
+
+// §12 rule 23: the system's directory for temporary files not there: `NotFound`
+import std.fs { tempDir, tempFile }
+
+fn kindOf(f: fn() -> string): string {
+    try {
+        return f()
+    } catch (e: IoError) {
+        return f"{e.kind == IoErrorKind.NotFound} {(e.path ?? "") != ""} {e.detail}"
+    }
+}
+
+println(kindOf(() => tempDir()))
+println(kindOf(() => tempFile()))

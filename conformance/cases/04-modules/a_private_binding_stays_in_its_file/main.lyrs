@@ -1,0 +1,12 @@
+//! check
+//! error: LYS-RES0009
+//! stderr-has: 'count' is private to the module 'lib'
+//! stderr-has: 'high' is private to the module 'lib'
+//! since: 1.0.0
+// §4 rule 5 (02 V): `private` keeps a module's binding to its file as it keeps a declaration —
+// imported, or read through its module; a pattern's names each.
+import lib { count }
+import lib as l
+
+println(count)
+println(l.high)

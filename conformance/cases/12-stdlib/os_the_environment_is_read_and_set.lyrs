@@ -1,0 +1,40 @@
+//! run
+//! option: --allow=os
+//! env: LYRIC_CASE_GIVEN=a=b
+//! stdout:
+//! | <none> after true
+//! | a=b
+//! | true
+//! | true
+//! | again
+//! since: 1.0.0
+
+// §12 rule 26: not set is null; set, it is read back and is in the whole environment; a value keeps its `=`; the names
+// in byte order; a snapshot
+import std.os
+
+let name = "LYRIC_CASE_ENV_ROUND"
+let before = os.env(name) ?? "<none>"
+os.setEnv(name, "after")
+let all = os.envs()
+var found = "<none>"
+var given = "none"
+var ordered = true
+var last = ""
+for ((k, v) in all) {
+    if (k == name) {
+        found = v
+    } else if (k == "LYRIC_CASE_GIVEN") {
+        given = v
+    }
+    if (k < last) {
+        ordered = false
+    }
+    last = k
+}
+println(f"{before} {os.env(name) ?? "<none>"} {found == "after"}")
+println(given)
+println(ordered)
+println(all.length() >= 2)
+os.setEnv(name, "again")
+println(os.env(name) ?? "none")

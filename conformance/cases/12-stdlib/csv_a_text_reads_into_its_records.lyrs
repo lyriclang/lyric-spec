@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | [["name", "city"], ["Ada", "London"], ["Grace", "New York"]]
+//! | [["x, y", "say \"hi\"", "two\nlines", ""]]
+//! | [["k", "v"], ["last", ""]]
+//! | [["a\rb", " c "]]
+//! | []
+//! | [["a", "b"], ["1", "2"]]
+//! | [["a", "b"], ["1", "2"]]
+//! since: 1.0.0
+
+// §12 rule 34: a record ends at CRLF or LF, the last break is free, an empty line is no record; a field in
+// quotes holds the separator, a line break and "" for a quote; a byte order mark is skipped, a lone CR and the
+// spaces around a field are its characters, and the separator is an option
+import std.csv { parse, CsvOptions }
+
+println(parse("name,city\r\nAda,London\n\n\nGrace,New York"))
+println(parse("\"x, y\",\"say \"\"hi\"\"\",\"two\nlines\",\"\"\r\n"))
+println(parse("\u{FEFF}k,v\nlast,"))
+println(parse("a\rb, c \n"))
+println(parse(""))
+println(parse("a;b\n1;2\n", CsvOptions { separator = ';' }))
+println(parse("a\tb\n1\t2\n", CsvOptions { separator = '\t' }))

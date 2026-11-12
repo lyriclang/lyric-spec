@@ -1,0 +1,24 @@
+//! run
+//! stdout:
+//! | Sum { total = 6 }
+//! | Sum { total = 3 }
+//! since: 1.0.0
+// §5 rule 15: a static member with a type parameter of its own, implemented with as many, called
+// through a type parameter — its copy binds them from the call's arguments.
+interface Build<T> {
+    static fn build<I :: [Iterator<Item = T>]>(it: I): Self
+}
+struct Sum :: Build<int> {
+    total: int,
+    static fn build<I :: [Iterator<Item = int>]>(it: I): Sum {
+        var t = 0
+        while (let x = it.next()) {
+            t += x
+        }
+        return Sum { total = t }
+    }
+}
+fn make<B :: [Build<int>]>(xs: int[]): B = B.build(xs.iter())
+let s: Sum = make([1, 2, 3])
+println(s)
+println(make<Sum>([3]))
