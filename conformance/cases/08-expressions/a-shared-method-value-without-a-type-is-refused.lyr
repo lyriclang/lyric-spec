@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0089
+//! since: 5.0.0
+// 08 §1.2 rule 3: nothing here says which of the two, and the first is not taken for it.
+struct V { fn o(a: int): int { return a; } fn o(a: int, b: int): int { return a + b; } }
+
+fn main(): void {
+    let v = V { };
+    let h = v.o;
+}

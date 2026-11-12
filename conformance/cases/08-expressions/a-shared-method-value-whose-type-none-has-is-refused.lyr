@@ -1,0 +1,10 @@
+//! check
+//! error: LYR-SEM0089
+//! since: 5.0.0
+// 08 §1.2 rule 3: the position names a function type neither of them is.
+struct V { fn o(a: int): int { return a; } fn o(a: int, b: int): int { return a + b; } }
+
+fn main(): void {
+    let v = V { };
+    let h: fn(string) -> int = v.o;
+}

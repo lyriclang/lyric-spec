@@ -1,0 +1,2 @@
+pub fn f(a: int): int { return a; }
+pub fn f(a: int, b: int): int { return a + b; }

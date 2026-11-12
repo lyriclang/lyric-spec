@@ -1,0 +1,9 @@
+//! check
+//! error: LYR-SEM0089
+//! since: 5.0.0
+// 08 §1.2 rule 3: through a type as through an object.
+struct V { static fn s(a: int): int { return a; } static fn s(a: int, b: int): int { return a + b; } }
+
+fn main(): void {
+    let h = V.s;
+}

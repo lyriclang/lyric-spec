@@ -39,7 +39,11 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
 5. **`result()`** answers **`?R`**: what the body returned, `null` until it has returned; a
    coroutine whose `R` is `void` has no `result()` (`LYR-SEM0012`). **`isDone()`** answers whether
    the body has ended, without pulling. Whether a value follows only the body knows, by running:
-   there is no `hasNext`.
+   there is no `hasNext`. Named without a call, `next`, `result`, `isDone` and `close`
+   ([rule 9](#1-coroutines-and-generators)) are each a value bound to the coroutine
+   ([03 §8.4](03-types.md#84-functions-and-methods-as-values) rule 2): naming one pulls nothing
+   and throws nothing; what a pull or a close throws ([rule 6](#1-coroutines-and-generators))
+   is in the value's type, and the mark stands at the value's call.
 6. A coroutine function's **`throws`** clause belongs to the coroutine's type —
    `Coroutine<Y, R> throws E` — and so to its pulls, not to the call that makes the coroutine,
    which throws nothing: a `next()` of a throwing coroutine is marked like a call of a throwing
