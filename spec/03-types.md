@@ -670,7 +670,8 @@ Functions as values, and the lambdas that make them
    method's without the receiver. It is called like any function value, and a call through it
    on a struct's copy changes the copy. Every instance method is one, whatever reaches it — a
    type's own, a block's, an interface's through its value or a type parameter, a generic type's
-   on an instance —, and a call through the value runs what a call on `obj` runs. A method that
+   on an instance, a coroutine's own ([10 §1](10-concurrency.md) rule 5) —, and a call through
+   the value runs what a call on `obj` runs. A method that
    only a call can bind is no value ([§9.4](#94-instantiated-functions-as-values) rule 3).
 3. `arrayOf(n, f)` of `std.core` builds an array of `n` elements, the element at `i` the value
    of `f(i)` — fresh elements each, where `[x] * n` copies one ([§5.1](#51-t)).
@@ -857,7 +858,8 @@ Type parameters, their inference, and what an instance is
    its own, the argument is written.
 3. The bare name of a generic function is no value (`LYR-SEM0052`): a function value is
    monomorphic. Nor is a generic method named through its object or its type, `c.convert`,
-   `Counter.make`, nor a block's member with a parameter only a call binds
+   `Counter.make` — through its object also with its arguments written, `c.convert<int>` —,
+   nor a block's member with a parameter only a call binds
    ([05 §13](05-interfaces.md) rule 9), `m.into` — also where the position names a function
    type: nothing but a call binds them. A lambda that calls it is the value,
    `() => m.into()`.

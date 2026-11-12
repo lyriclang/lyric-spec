@@ -1,0 +1,26 @@
+//! run
+//! stdout:
+//! | 1 2 false end true
+//! | false
+//! since: 5.0.0
+// 10 §1 rule 5, 03 §8.4 rule 2: a coroutine's members are built in and methods all the same. Named
+// without a call each is a closure over the coroutine, and pulls and asks what a call does.
+import std.io { println };
+
+fn gen(): Coroutine<int, string> { yield 1; yield 2; return "end"; }
+
+fn main(): void {
+    let c = gen();
+    let next = c.next;
+    let isDone = c.isDone;
+    let result = c.result;
+    let first = next() ?? 0;
+    let second = next() ?? 0;
+    let early = isDone();
+    c.next();
+    println(f"{first} {second} {early} {result() ?? ""} {isDone()}");
+    let d = gen();
+    let close = d.close;
+    println(d.isDone());
+    close();
+}

@@ -1,0 +1,30 @@
+//! run
+//! stdout:
+//! | 4 2 103 3 7 4 4
+//! since: 5.0.0
+// 08 §1.2 rule 3: a name several functions share is a value where the position says which by its
+// function type, through an object, a block, an instance and a type as for a bare name.
+import std.io { println };
+
+struct V {
+    n: int,
+    fn o(a: int): int { return this.n + a; }
+    fn o(a: int, b: int): int { return this.n + a + b; }
+    static fn s(a: int): int { return a; }
+    static fn s(a: int, b: int): int { return a + b; }
+}
+extend V { fn p(a: int): int { return a + 100; } fn p(a: int, b: int): int { return a + b + 100; } }
+struct Pack<T> { item: T, fn o(a: int): int { return a; } fn o(a: int, b: T): T { return b; } }
+
+fn apply(f: fn(int, int) -> int): int { return f(1, 2); }
+
+fn main(): void {
+    let v = V { n = 1 };
+    let two: fn(int, int) -> int = v.o;
+    let one: fn(int) -> int = v.o;
+    let block: fn(int, int) -> int = v.p;
+    let of: fn(int, int) -> int = V.s;
+    let instance: fn(int, int) -> int = Pack<int> { item = 0 }.o;
+    let maybe: ?fn(int, int) -> int = v.o;
+    println(f"{two(1, 2)} {one(1)} {block(1, 2)} {of(1, 2)} {instance(1, 7)} {apply(v.o)} {(maybe!)(1, 2)}");
+}

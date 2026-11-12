@@ -1,0 +1,21 @@
+//! run
+//! stdout:
+//! | 1 boom
+//! since: 5.0.0
+// 10 §1 rule 5: naming the value pulls nothing and needs no mark; its call throws what a pull throws.
+import std.io { println };
+
+struct Boom :: [Error] { fn message(): string { return "boom"; } }
+fn gen(): Coroutine<int> throws [Boom] { yield 1; throw Boom { }; }
+
+fn main(): void {
+    let c = gen();
+    let next = c.next;
+    try {
+        let n = next() ?? 0;
+        next();
+        println(n);
+    } catch (e: Boom) {
+        println(f"1 {e.message()}");
+    }
+}

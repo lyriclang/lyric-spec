@@ -1,0 +1,13 @@
+//! run
+//! stdout:
+//! | 3 1
+//! since: 5.0.0
+// 08 §1.2 rule 3: through a module as through an object.
+import std.io { println };
+import app.util;
+
+fn main(): void {
+    let two: fn(int, int) -> int = util.f;
+    let one: fn(int) -> int = util.f;
+    println(f"{two(1, 2)} {one(1)}");
+}

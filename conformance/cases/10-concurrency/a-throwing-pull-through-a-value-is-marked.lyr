@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0138
+//! since: 5.0.0
+// 10 §1 rule 5: what a pull throws is in the value's type, so the mark stands at the value's call.
+struct Boom :: [Error] { fn message(): string { return "boom"; } }
+fn gen(): Coroutine<int> throws [Boom] { yield 1; }
+
+fn main(): void throws [Boom] {
+    let c = gen();
+    let next = c.next;
+    let n = next();
+}

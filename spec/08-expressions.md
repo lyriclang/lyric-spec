@@ -64,8 +64,10 @@ A call names a function and gives it arguments
 2. Two declarations of one name whose counts overlap for any number — a default widens a
    count to a range — are a redeclaration (`LYR-SEM0085`), at the declaration and never at a
    call. An interface declares a member once (`LYR-SEM0088`).
-3. The bare name of a shared one is a value only where the position says which, by its
-   function type (`LYR-SEM0089`).
+3. The name of a shared one, bare or through an object, a type or a module — `of`, `v.of`,
+   `Point.of`, `util.of` — is a value only where the position says which, by its function type
+   (`LYR-SEM0089`). What can be reached decides first: through a type its statics, through an
+   object its methods.
 4. `Point(1, 2)` is `Point.new(1, 2)` (Y9): `new` is an ordinary static function, so `Point(4)`
    reaches a one-argument factory declared beside the two-argument one.
 
