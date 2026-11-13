@@ -2,8 +2,9 @@
 
 **Base.** None — this chapter is Lyric-Script's own.
 
-**Status.** Rights from imports written (S5e); scopes, fuel and deadline, suspension, the
-allocation budget, ownership and reload come with S8 — until then the design documents decide.
+**Status.** Rights from imports written (S5e); fuel and deadline, suspension and abort written
+(S8b), memory (S8c); scopes and ownership come with the rest of S8, reload with S9 —
+until then the design documents decide.
 
 ## Written (S5e, rights from imports)
 
@@ -23,6 +24,31 @@ allocation budget, ownership and reload come with S8 — until then the design d
    that imports another asks for nothing by that import (S7h3: `std.process` imports `std.os`)
    ([§12 rule 18](12-stdlib.md)) — a module below a row counts as the row (`std.fs.glob` asks for
    `file`).
+
+## Written (S8b, the budget)
+
+2. **Fuel and deadline** ([01 S5a, S5b](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); [07 N8](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md)). A host gives each call of an
+   instance ([§13 rule 1](13-embedding.md)) a budget: **fuel**, units a backward jump or a call
+   spends one of and a heavy native its work ([§12 rules 17, 37](12-stdlib.md)), the same every
+   time; a **deadline**, how long the call may take, which is not; either, both, or neither. The
+   first to end halts the whole instance — every task of it, wherever it stands: at a backward jump,
+   at a call, before a native, or in a wait, which does not outlast the deadline. A halted instance
+   takes only a `resume` with a new budget, which goes on where it halted, as if it had not — the
+   instruction it stood at runs then —, or an abort. What the fuel had left when it halted comes to
+   what the `resume` gives: a native dearer than one grant gets through after some. A deadline does
+   not change where the fuel halts.
+3. **Abort** ([01 S5b](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)). An abort ends an instance at once, halted or not: its tasks go,
+   parked ones too, and no `defer` runs; the files and directories its script left open are closed,
+   the child processes it started are killed, its subscriptions to signals end. The instance takes
+   nothing after it.
+4. **Memory** ([01 S6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); S8c). A call's budget may hold the **bytes it may allocate**, as the
+   runtime counts them on the thread the instance runs on. Its end halts the call as fuel and the
+   deadline do (rule 2), checked as often as the deadline is — at most a slice of fuel or one native
+   beyond it; while the call waits for input or output, what the runtime allocates for that wait may
+   count too. The host learns which of the three halted the call — **fuel**, **deadline** or
+   **memory** —, and a `resume` gives a new budget. Apart from it, the host may set a **limit for the
+   whole process**, the bytes the collector may hold for every instance together; beyond it an
+   allocation fails the process.
 
 ## Scope
 
