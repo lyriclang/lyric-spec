@@ -396,7 +396,9 @@ One of several variants, each with a payload or none
    position expects an enum where a value of one is required: an initializer with a written
    type, an assignment, an argument, a return, an arm under a context type, a field of an
    initializer, a default, and either side of `==` and `!=` when the other side has the enum
-   type. An expected `?E` names `E`: `let o: ?Signal = .Green` is a present optional.
+   type. An expected `?E` names `E`: `let o: ?Signal = .Green` is a present optional. An argument
+   expects its parameter's type; where that is a type parameter, the type argument written for it
+   — `show<Signal>(.Red)` —, and a type parameter the inference is still to bind expects none.
 2. Where the position expects no particular type, or a type that is not an enum, the form is
    refused (`LYR-SEM0113`), and the diagnostic says to name the enum. The qualified form
    `Signal.Red` stands everywhere, whatever the position expects.

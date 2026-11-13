@@ -351,6 +351,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0234 | W | [13-abi](13-abi.md) | an unsafe block that holds no memory operation | An `unsafe { … }` block calls none of `std.ffi`'s memory operations, or stands within another `unsafe` block, which covers what it holds already. |
 | LYR-SEM0235 | E | [04-modules](04-modules.md) | a member two seen modules add | A call names a member that two modules this one sees add to the type, each in an `extend` block, at a count both take. |
 | LYR-SEM0236 | E | [07-statements](07-statements.md) | a jump out of a 'defer' body | A `return` stands in a `defer` body, or a `break` or `continue` goes to a loop around the `defer`. |
+| LYR-SEM0237 | E | [05-interfaces](05-interfaces.md) | a default reached where the interface has none | `I.m(this)` stands in the type's own implementation of `m`, where it means the interface's default, and `I` declares `m` without one. |
 
 ## A.5 MAC — Macros
 

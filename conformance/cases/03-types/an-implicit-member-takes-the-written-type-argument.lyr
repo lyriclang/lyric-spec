@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | Signal.Red
+//! since: 5.0.0
+// 03 §4.2 rule 1: an argument expects its parameter's type, and where that is a type parameter,
+// the type argument written for it.
+import std.io { println };
+
+enum Signal { Red, Green }
+
+fn show<T :: [Debug]>(x: T): void { println(f"{x:?}"); }
+
+fn main(): void {
+    show<Signal>(.Red);
+}

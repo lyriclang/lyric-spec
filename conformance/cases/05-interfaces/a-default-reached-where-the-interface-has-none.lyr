@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0237
+//! since: 5.0.0
+// 05 §4 rule 1: 'I.m(this)' in the type's own implementation of 'm' is the default, and an
+// interface that declares 'm' without one has none to reach.
+interface Greeter {
+    fn greet(): string;
+}
+
+struct Loud :: [Greeter] {
+    fn greet(): string { return Greeter.greet(this) + "!"; }
+}
+
+fn main(): void {
+    let _ = Loud {}.greet();
+}
