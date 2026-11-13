@@ -563,6 +563,17 @@ format language and `std.fmt` (S7e), the number tower (S7f1), `std.math` (S7f2);
     after an optional one, arguments beside commands — panics (`LYS-RT0008`), as `Args` asked for a name not
     declared, or for a flag that is an option, does.
 
+## Written (S8, the budget)
+
+37. **What a native over text or a list costs** ([01 S5c](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); S8b4). Under a budget (chapter 13), a native whose work grows
+    with its operands pays for it before it starts, as `Bytes` does (rule 17): printing, joining,
+    comparing, searching, cutting, trimming, changing the case of, repeating or formatting text, a
+    builder's text and what is appended to it, a text made of characters — a unit for every 32 bytes
+    it reads or writes, and one for the call; sorting a list — a unit for every 32 of the n·⌈log₂ n⌉
+    comparisons it may make, and one for the call. A native that cannot pay does nothing, and the
+    call halts before it; what the budget had left stays for the call's `resume`. What the standard
+    library does in Script pays its fuel as any script does.
+
 ## Deviations (skeleton, written with later milestones)
 
 - An adapter is a class, as Script's iterators are (a pull changes it); the functions it takes
