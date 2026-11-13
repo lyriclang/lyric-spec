@@ -1,0 +1,23 @@
+//! run
+//! stdout:
+//! | 1
+//! | B
+//! since: 5.0.0
+// 10 §1 rule 6, 12 (Iterator): an adapter's pull is the coroutine's pull, and what the coroutine
+// throws comes out of the adapter.
+import std.io { println };
+
+struct B :: [Error] { fn message(): string { return "b"; } }
+
+fn one(): Coroutine<int> throws B { yield 1; throw B { }; }
+
+fn main(): void {
+    try {
+        for (x in one().take(5)) {
+            println(x);
+        }
+        println("after");
+    } catch (e: B) {
+        println("B");
+    }
+}

@@ -1,0 +1,29 @@
+//! run
+//! stdout:
+//! | 1
+//! | B
+//! since: 5.0.0
+// 10 §1 rule 6, 02 §3: a written coroutine type writes its set as a clause does, and a pull
+// through it throws each type of it.
+import std.io { println };
+
+struct A :: [Error] { fn message(): string { return "a"; } }
+struct B :: [Error] { fn message(): string { return "b"; } }
+
+struct Holder {
+    c: Coroutine<int> throws [A, B],
+}
+
+fn two(): Coroutine<int> throws [A, B] { yield 1; throw B { }; }
+
+fn main(): void {
+    let h = Holder { c = two() };
+    try {
+        println(h.c.next() ?? 0);
+        println(h.c.next() ?? 0);
+    } catch (e: A) {
+        println("A");
+    } catch (e: B) {
+        println("B");
+    }
+}
