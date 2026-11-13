@@ -50,7 +50,14 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
    function ([06 §3](06-errors.md#3-the-try-mark-and-coverage), `LYR-SEM0138`). An error the body
    does not catch ends the body and comes out of the `next()` that ran into it. The coroutine is
    done then: its `result()` stays `null`, and every later `next()` answers `null` and throws
-   nothing.
+   nothing. The clause is a **set**, as a function's is ([06 §2](06-errors.md#2-the-throws-set)):
+   a pull of a coroutine of `throws [A, B]` throws `A` or `B`, and a clause for each covers it. A
+   written type names one, `Coroutine<int> throws E`, or the root with the bare `throws`
+   ([02 §3](02-grammar.md#3-types)); a coroutine fits where one is expected whose set covers its own —
+   one that throws nothing among them —, never the other way (`LYR-SEM0001`), as a function value
+   does ([06 §8](06-errors.md#8-function-values-that-throw) rule 3). As an `Iterator` its
+   `Error` is one type: the one it throws, `never` where none, the root `Error` where several,
+   as an inferred `E` joins them ([06 §8](06-errors.md#8-function-values-that-throw) rule 6).
 7. A coroutine runs on a stack of its own, on the thread that first pulled it
    ([13 §1.6](13-abi.md#16-coroutines)). Pulling a coroutine that runs — from its own body, or
    from a coroutine it pulled — or one that runs on another thread panics with `LYR-RT0014`. A

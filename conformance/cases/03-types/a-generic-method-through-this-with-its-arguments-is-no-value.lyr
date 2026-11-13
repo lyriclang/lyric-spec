@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-SEM0052
+//! since: 5.0.0
+// 03 §9.4 rule 3: through 'this' as through any object, the arguments written make no value of a
+// generic method — and the '<' is no comparison.
+class C {
+    fn convert<U>(u: U): U { return u; }
+    fn use(): void {
+        let g = this.convert<int>;
+    }
+}
+
+fn main(): void {
+}

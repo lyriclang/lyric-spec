@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0055
+//! since: 5.0.0
+// 08 §1.2 rule 1: the count chooses the static, which a value does not reach.
+struct W {
+    fn m(a: int): int { return a; }
+    static fn m(a: int, b: int): int { return a + b; }
+}
+
+fn main(): void {
+    let w = W { };
+    let n = w.m(1, 2);
+}
