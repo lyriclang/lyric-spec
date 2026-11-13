@@ -1,0 +1,12 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §1 rule 6: never the other way — a slot that names one type does not take a set of two.
+struct A :: [Error] { fn message(): string { return "a"; } }
+struct B :: [Error] { fn message(): string { return "b"; } }
+
+fn two(): Coroutine<int> throws [A, B] { yield 1; }
+
+fn main(): void {
+    let c: Coroutine<int> throws A = two();
+}
