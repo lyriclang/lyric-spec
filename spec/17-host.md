@@ -3,7 +3,7 @@
 **Base.** None — this chapter is Lyric-Script's own.
 
 **Status.** Rights from imports written (S5e); fuel and deadline, suspension and abort written
-(S8b); scopes, the allocation budget and ownership come with the rest of S8, reload with S9 —
+(S8b), memory (S8c); scopes and ownership come with the rest of S8, reload with S9 —
 until then the design documents decide.
 
 ## Written (S5e, rights from imports)
@@ -41,6 +41,14 @@ until then the design documents decide.
    parked ones too, and no `defer` runs; the files and directories its script left open are closed,
    the child processes it started are killed, its subscriptions to signals end. The instance takes
    nothing after it.
+4. **Memory** ([01 S6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); S8c). A call's budget may hold the **bytes it may allocate**, as the
+   runtime counts them on the thread the instance runs on. Its end halts the call as fuel and the
+   deadline do (rule 2), checked as often as the deadline is — at most a slice of fuel or one native
+   beyond it; while the call waits for input or output, what the runtime allocates for that wait may
+   count too. The host learns which of the three halted the call — **fuel**, **deadline** or
+   **memory** —, and a `resume` gives a new budget. Apart from it, the host may set a **limit for the
+   whole process**, the bytes the collector may hold for every instance together; beyond it an
+   allocation fails the process.
 
 ## Scope
 
