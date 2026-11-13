@@ -1,0 +1,16 @@
+//! check
+//! error: LYR-SEM0238
+//! since: 5.0.0
+// 10 §2 rule 8: a task's E is one type, so its written type names one.
+import std.task { Task };
+
+struct A :: [Error] { fn message(): string { return "a"; } }
+struct B :: [Error] { fn message(): string { return "b"; } }
+
+fn idle(t: ?(Task<int> throws [A, B])): bool {
+    return t == null;
+}
+
+fn main(): void {
+    let _ = idle(null);
+}

@@ -139,7 +139,7 @@ AssociatedType  = 'type' Name [ '::' Bounds ] [ '=' Type ] ';' .
 ## 3. Types
 
 ```ebnf
-Type            = { '?' | '??' } TypeCore [ 'throws' [ Type ] ] .
+Type            = { '?' | '??' } TypeCore [ 'throws' [ Type | '[' Type { ',' Type } [ ',' ] ']' ] ] .
 ReturnType      = { '?' | '??' } TypeCore .
 TypeCore        = TypeAtom [ '.' '[' IDENTIFIER ']' ] { '[' [ INT_LITERAL ] ']' } .
 TypeAtom        = Path [ TypeArgs ]
@@ -163,7 +163,8 @@ TupleElement    = [ IDENTIFIER ':' ] Type .
 2. A function type reaches as far right as it can: `fn(int) -> void[]` returns `void[]`, and an
    array of functions is `(fn(int) -> void)[]`.
 3. `throws` after a type is the type's own only where a type stands for a value — a field, a
-   parameter, a binding, a type argument: `Coroutine<int> throws IoError`. After the return type
+   parameter, a binding, a type argument: `Coroutine<int> throws IoError`, several in brackets as
+   in a function's clause, `Coroutine<int> throws [IoError, ParseError]`. After the return type
    of a function, a lambda or a function type, the `throws` belongs to the function; that is why
    a return type is read as `ReturnType`. Where a function type is itself a return type, a
    `throws` behind it says neither whose it is, and parentheses must (`LYR-PAR0056`).

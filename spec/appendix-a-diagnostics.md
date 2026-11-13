@@ -352,6 +352,7 @@ The checker's: types, interfaces, errors, patterns, and the warnings.
 | LYR-SEM0235 | E | [04-modules](04-modules.md) | a member two seen modules add | A call names a member that two modules this one sees add to the type, each in an `extend` block, at a count both take. |
 | LYR-SEM0236 | E | [07-statements](07-statements.md) | a jump out of a 'defer' body | A `return` stands in a `defer` body, or a `break` or `continue` goes to a loop around the `defer`. |
 | LYR-SEM0237 | E | [05-interfaces](05-interfaces.md) | a default reached where the interface has none | `I.m(this)` stands in the type's own implementation of `m`, where it means the interface's default, and `I` declares `m` without one. |
+| LYR-SEM0238 | E | [10-concurrency](10-concurrency.md) | a task's type that names several thrown types | A task's type is written `Task<T> throws [A, B]`; a task names one thrown type, or the bare `throws` for the root. |
 
 ## A.5 MAC — Macros
 

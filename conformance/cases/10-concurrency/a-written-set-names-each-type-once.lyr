@@ -1,0 +1,13 @@
+//! check
+//! error: LYR-SEM0137
+//! since: 5.0.0
+// 10 §1 rule 6: a written set is held to a clause's rules — each type once.
+struct A :: [Error] { fn message(): string { return "a"; } }
+
+fn idle(c: ?(Coroutine<int> throws [A, A])): bool {
+    return c == null;
+}
+
+fn main(): void {
+    let _ = idle(null);
+}
