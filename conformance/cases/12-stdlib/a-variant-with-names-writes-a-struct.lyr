@@ -1,0 +1,37 @@
+//! run
+//! stdout:
+//! | "Dot" true
+//! | {"Circle":3} true
+//! | {"Pair":[4,6]} true
+//! | {"Rect":{"w":2,"h":5}} true
+//! | {"Ring":{"r":1}} true
+//! | refused
+//! since: 5.0.0
+// 12 §Codecs rule 7: a variant whose payload has names writes a struct of its fields, one field
+// as much as several; a positional payload its value, or a sequence where it has several.
+import std.io { println };
+import std.json;
+import std.codec { Codable };
+
+enum Shape :: [Codable, Equatable] {
+    Dot,
+    Circle(int),
+    Pair(int, int),
+    Rect { w: int, h: int },
+    Ring { r: int },
+}
+
+fn trip(s: Shape): void {
+    let text = try! json.encode(s);
+    println(f"{text} {try! json.decode<Shape>(text) == s}");
+}
+
+fn main(): void {
+    trip(Shape.Dot);
+    trip(Shape.Circle(3));
+    trip(Shape.Pair(4, 6));
+    trip(Shape.Rect { w = 2, h = 5 });
+    trip(Shape.Ring { r = 1 });
+    let positional = try? json.decode<Shape>("{\"Rect\": [2, 5]}");
+    println(if (positional == null) "refused" else "read");
+}

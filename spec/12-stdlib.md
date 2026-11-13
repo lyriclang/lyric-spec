@@ -1486,16 +1486,19 @@ conformances of the core types, and `Value`, the tree of the forms that any form
    or a class conforming without the members gets `encode` and `decode` over its fields in
    declaration order — every field, whatever its word —, each under its wire name; a field the
    data lacks reads as `decodeAbsent` gives it (`null` for an optional, `Missing` else); an
-   unknown field passes. An enum gets its variant: a unit one as the name, one payload field as
-   the value, several as a sequence in their order; reading, an unknown name is
-   `UnknownVariant`. The struct's name on the wire is `typeName`'s. An own `encode` or `decode`
+   unknown field passes. An enum gets its variant: a unit one as the name; a payload with names
+   as a struct of its fields under their names, one field as much as several — the variant's
+   name is the struct's —; a positional payload, `Circle(int)`, as its value where it has one
+   field and as a sequence in their order where it has several (design 10 E3, review
+   2026-11-10). Reading, an unknown name is `UnknownVariant`, and a payload in the other form
+   than the variant's is refused as any value of another form is. The struct's name on the wire is `typeName`'s. An own `encode` or `decode`
    replaces the synthesized one ([05 §14](05-interfaces.md)).
 8. **`@Codec` steers it** (E4): on a field, `name` writes it under that name and `skip` leaves it
    out — it reads as absent, so it is an optional or it is `Missing` —; on a struct or a class,
    `rename = .SnakeCase` or `.CamelCase` rewrites every field's name and `denyUnknown` refuses a
    field the data has and the type has not (`UnknownField`); on an enum, `tag = "kind"` writes a
-   variant as a struct of the tag and the payload's fields, named by position (`"0"`, `"1"`),
-   and reads it by the tag. `default` is not read in 5.0: a field marked so reads as absent.
+   variant as a struct of the tag and the payload's fields — under their names, a positional
+   payload's by position (`"0"`, `"1"`) —, and reads it by the tag. `default` is not read in 5.0: a field marked so reads as absent.
 
 
 ## JSON
