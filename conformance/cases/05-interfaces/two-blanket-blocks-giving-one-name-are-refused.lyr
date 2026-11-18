@@ -24,7 +24,7 @@ extend<T :: [Seen]> T {
     }
 }
 
-struct Cat :: [Named, Seen] {
+struct Cat :: Named & Seen {
     fn name(): string {
         return "cat";
     }

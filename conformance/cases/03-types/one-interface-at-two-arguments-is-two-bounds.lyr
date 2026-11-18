@@ -10,7 +10,7 @@ interface From<S> {
     static fn from(s: S): Self;
 }
 
-struct Count :: [From<int>, From<string>] {
+struct Count :: From<int> & From<string> {
     n: int,
 
     static fn from(s: int): Count {
@@ -22,7 +22,7 @@ struct Count :: [From<int>, From<string>] {
     }
 }
 
-fn both<T :: [From<int>, From<string>]>(x: T): T {
+fn both<T :: From<int> & From<string>>(x: T): T {
     return x;
 }
 

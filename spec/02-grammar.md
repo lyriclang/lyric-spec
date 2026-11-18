@@ -26,11 +26,17 @@ readings, and how the grammar is checked against the suite.
    be refused by a rule beside it — a name that resolves to nothing, a type that does not fit, a
    pattern where none may bind — and where the grammar leaves two readings of one text, §7 says
    which one the parser takes.
-5. **The list rule** (08 D5/D6): a list of one element may stand without its brackets — `struct
-   S :: I`, `throws E`, `catch (e in E)`, `<T :: Display>`, `@Test` —; a list of several stands in
-   brackets — `:: [I, J]`, `throws [A, B]`, `catch (e in [A, B])`, `@[A, B]`. **A list may end
-   in a comma** (08 Y9) wherever it stands between brackets, parentheses, braces or angle
-   brackets; a tuple keeps its two elements before it.
+5. **The list rule** (08 D5/D6): a list of one element may stand without its brackets —
+   `throws E`, `catch (e in E)`, `@Test` —; a list of several stands in brackets — `throws [A, B]`,
+   `catch (e in [A, B])`, `@[A, B]`. A list of types is a **set**: one of them (design 03 TM2,
+   TM7). **A list may end in a comma** (08 Y9) wherever it stands between brackets, parentheses,
+   braces or angle brackets; a tuple keeps its two elements before it.
+6. **After `::` stands no list** (design 03 TM7): what follows is what a type is — one interface,
+   `struct S :: I`, `<T :: Display>`, or several joined by `&`, `struct S :: I & J`,
+   `<T :: Display & Hash>`, each of which it is. One in brackets, `:: [I]`, is the set of one and
+   so that interface. Several as a list, `:: [I, J]` or `:: I, J`, are refused (`LYR-PAR0066`):
+   in brackets they would be one of them, not each. In a type parameter's constraint a `,` after
+   the last interface begins the next parameter.
 
 The token classes:
 
@@ -78,7 +84,7 @@ FunctionHead    = [ 'inline' ] [ 'mut' ] ( 'fn' | 'macro' ) Name [ GenericParams
                   '(' [ Params ] ')' [ ':' ReturnType ] [ ThrowsClause ] .
 Params          = Param { ',' Param } [ ',' ] .
 Param           = { Attribute } [ '&' ] Name ':' Type [ '...' ] [ '=' Expr ] .
-ThrowsClause    = 'throws' [ Type | '[' Type { ',' Type } [ ',' ] ']' ] .
+ThrowsClause    = 'throws' [ TypeSet ] .
 
 ExternDecl      = 'extern' STRING_LITERAL ExternFunction .
 ExternBlock     = 'extern' STRING_LITERAL '{' ExternMember { ExternMember } '}' .
@@ -92,7 +98,9 @@ TypeAlias       = 'type' Name [ GenericParams ] '=' Type ';' .
 
 GenericParams   = '<' GenericParam { ',' GenericParam } [ ',' ] '>' .
 GenericParam    = IDENTIFIER [ '::' Bounds ] [ '=' Type ] .
-Bounds          = Type | '[' Type { ',' Type } [ ',' ] ']' .
+Bounds          = Bound { '&' Bound } .
+Bound           = Type | '[' Type [ ',' ] ']' .
+TypeSet         = Type | '[' Type { ',' Type } [ ',' ] ']' .
 ```
 
 3. A function's `throws` is the function's own, written after its return type; `throws` alone
@@ -105,8 +113,8 @@ Bounds          = Type | '[' Type { ',' Type } [ ',' ] ']' .
 ```ebnf
 StructDecl      = 'struct' Name [ GenericParams ] [ '::' Conformances ] TypeBody .
 ClassDecl       = 'class' Name [ GenericParams ] [ '::' Conformances ] TypeBody .
-Conformances    = Conformance | '[' Conformance { ',' Conformance } [ ',' ] ']' .
-Conformance     = Type [ 'by' IDENTIFIER ] .
+Conformances    = Conformance { '&' Conformance } .
+Conformance     = ( Type [ 'by' IDENTIFIER ] | '[' Type [ 'by' IDENTIFIER ] [ ',' ] ']' ) .
 TypeBody        = '{' { TypeMember } [ { Attribute } FieldDecl ] '}' .
 TypeMember      = { Attribute } ( FieldDecl ',' | MemberBody [ ',' ] ) .
 FieldDecl       = [ Visibility ] [ 'var' ] Name ':' Type [ '=' Expr ] .
@@ -139,7 +147,7 @@ AssociatedType  = 'type' Name [ '::' Bounds ] [ '=' Type ] ';' .
 ## 3. Types
 
 ```ebnf
-Type            = { '?' | '??' } TypeCore [ 'throws' [ Type | '[' Type { ',' Type } [ ',' ] ']' ] ] .
+Type            = { '?' | '??' } TypeCore [ 'throws' [ TypeSet ] ] .
 ReturnType      = { '?' | '??' } TypeCore .
 TypeCore        = TypeAtom [ '.' '[' IDENTIFIER ']' ] { '[' [ INT_LITERAL ] ']' } .
 TypeAtom        = Path [ TypeArgs ]
@@ -203,7 +211,7 @@ WhileStmt       = 'while' '(' Condition ')' Block .
 DoStmt          = 'do' Block 'while' '(' Expr ')' ';' .
 ForStmt         = 'for' '(' ( IDENTIFIER | TuplePattern ) 'in' Expr ')' Block .
 CatchClause     = 'catch' '(' CatchBinding ')' Block .
-CatchBinding    = IDENTIFIER [ ':' Type | 'in' Bounds ] .
+CatchBinding    = IDENTIFIER [ ':' Type | 'in' TypeSet ] .
 
 ExprStmt        = Expr ';'
                 | BlockEnded [ ';' ] .
@@ -366,7 +374,7 @@ Splice          = '#' '{' Expr '}' .
 ```ebnf
 Pattern         = PatternTerm { '|' PatternTerm } .
 PatternTerm     = PatternLiteral [ ( '..' | '..=' ) PatternLiteral ]
-                | IDENTIFIER ( ':' Type | 'in' Bounds )
+                | IDENTIFIER ( ':' Type | 'in' TypeSet )
                 | Path [ Payload ]
                 | '.' IDENTIFIER [ Payload ]
                 | '(' Pattern { ',' Pattern } [ ',' ] ')'

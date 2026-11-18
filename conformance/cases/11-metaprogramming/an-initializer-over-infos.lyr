@@ -6,7 +6,7 @@
 import std.io { println };
 import std.meta { fields };
 
-struct P :: [Equatable, Copy] { x: int, name: string }
+struct P :: Equatable & Copy { x: int, name: string }
 
 interface Copy {
     fn copy(): Self {

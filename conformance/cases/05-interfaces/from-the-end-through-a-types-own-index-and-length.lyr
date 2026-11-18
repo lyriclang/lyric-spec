@@ -18,7 +18,7 @@ fn through(c: Counter, xs: List<int>): List<int> {
     return xs;
 }
 
-struct Pair :: [IndexSet<int>, Length] {
+struct Pair :: IndexSet<int> & Length {
     type Output = int;
     var a: int,
     var b: int,

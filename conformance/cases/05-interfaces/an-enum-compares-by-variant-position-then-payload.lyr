@@ -7,7 +7,7 @@
 // payloads; the variant's position first, then the payload lexicographically.
 import std.io { println };
 
-enum E :: [Equatable, Ordered] { A, B(int, string), C { w: int } }
+enum E :: Equatable & Ordered { A, B(int, string), C { w: int } }
 
 fn main(): void {
     let a = E.A;

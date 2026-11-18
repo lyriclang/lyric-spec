@@ -9,7 +9,7 @@
 import std.fmt { format };
 import std.io { println };
 
-struct Point :: [Display, Debug] {
+struct Point :: Display & Debug {
     x: int,
     y: int,
 

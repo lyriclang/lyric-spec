@@ -13,14 +13,14 @@ import std.io { println };
 import std.codec { Codable, Value, DecodeError };
 import std.collections { List };
 
-struct Plain :: [Codable, Equatable] {
+struct Plain :: Codable & Equatable {
     id: int,
     name: string,
     mail: ?string,
     tags: string[],
 }
 
-enum Shape :: [Codable, Equatable, Debug] {
+enum Shape :: Codable & Equatable & Debug {
     Dot,
     Circle(int),
     Rect(int, int),

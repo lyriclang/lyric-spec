@@ -6,7 +6,7 @@
 // clause that covers its pulls.
 class First :: [Error] { fn message(): string { return "first"; } }
 
-struct Bad :: [Iterator, Closeable] {
+struct Bad :: Iterator & Closeable {
     type Item = int;
     var n: int = 0,
 

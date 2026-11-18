@@ -41,7 +41,7 @@ struct User :: [Codable] {
     }
 }
 
-enum Shape :: [Codable, Equatable] {
+enum Shape :: Codable & Equatable {
     Dot,
     Circle(int);
 

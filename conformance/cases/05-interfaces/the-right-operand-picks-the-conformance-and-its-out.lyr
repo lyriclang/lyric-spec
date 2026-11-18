@@ -6,7 +6,7 @@
 import std.io { println };
 import std.core { Add, Sub, Mul, Neg };
 
-struct V :: [Add, Sub, Mul<int>, Neg, Equatable, Ordered, Display] {
+struct V :: Add & Sub & Mul<int> & Neg & Equatable & Ordered & Display {
     x: int,
     y: int,
     fn add(rhs: V): V { return V { x = this.x + rhs.x, y = this.y + rhs.y }; }

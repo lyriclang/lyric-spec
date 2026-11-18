@@ -1,0 +1,68 @@
+//! run
+//! stdout:
+//! | u/U
+//! | true
+//! | Walking dog
+//! | w
+//! since: 5.0.0
+// 02 §1 rule 6, 05 §1 rule 2, §5 rule 1: after '::' several interfaces are joined with '&' — of
+// a struct, an interface's parents, an extend block, a constraint, an associated type's bound —
+// one also in brackets, and each entry of a class may delegate.
+import std.io { println };
+
+interface Named {
+    fn name(): string;
+}
+
+interface Shown {
+    fn show(): string;
+}
+
+interface Labelled :: Named & Shown {
+    fn label(): string {
+        return this.name() + "/" + this.show();
+    }
+}
+
+struct User :: Labelled {
+    fn name(): string { return "u"; }
+    fn show(): string { return "U"; }
+}
+
+struct Id :: [Equatable] {
+    n: int,
+}
+
+extend Id :: Named & Shown {
+    fn name(): string { return f"#{this.n}"; }
+    fn show(): string { return f"Id {this.n}"; }
+}
+
+fn alike<T :: Named & Equatable>(a: T, b: T): bool {
+    return a == b && a.name() == b.name();
+}
+
+interface Walker {
+    fn walk(): string;
+}
+
+struct Legs :: Walker {
+    fn walk(): string { return "Walking"; }
+}
+
+struct Tag :: Named {
+    fn name(): string { return "w"; }
+}
+
+class Dog :: Walker by legs & Named by tag {
+    legs: Legs,
+    tag: Tag,
+}
+
+fn main(): void {
+    println(User { }.label());
+    println(alike(Id { n = 3 }, Id { n = 3 }));
+    let d = Dog { legs = Legs { }, tag = Tag { } };
+    println(d.walk() + " dog");
+    println(d.name());
+}

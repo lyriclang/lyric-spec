@@ -6,7 +6,7 @@
 import std.io { println };
 import std.core { Rem, BitAnd, BitOr, BitXor, BitNot, Shl, Shr };
 
-struct Bits :: [Rem, BitAnd, BitOr, BitXor, BitNot, Shl, Shr] {
+struct Bits :: Rem & BitAnd & BitOr & BitXor & BitNot & Shl & Shr {
     n: int,
     fn rem(rhs: Bits): Bits { return Bits { n = this.n % rhs.n }; }
     fn bitAnd(rhs: Bits): Bits { return Bits { n = this.n & rhs.n }; }

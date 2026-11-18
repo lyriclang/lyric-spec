@@ -6,7 +6,7 @@
 // on the type, through a constraint, through the blanket 'into'.
 import std.io { println };
 
-struct Label :: [From<int>, From<string>] {
+struct Label :: From<int> & From<string> {
     text: string,
 
     static fn from(v: int): Label {

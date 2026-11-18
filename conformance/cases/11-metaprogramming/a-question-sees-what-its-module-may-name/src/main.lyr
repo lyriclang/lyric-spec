@@ -16,7 +16,7 @@ interface HereKeys {
     }
 }
 
-struct P :: [LocalKeys, HereKeys] {
+struct P :: LocalKeys & HereKeys {
     pub a: int,
     b: int,
     private c: int,

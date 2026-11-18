@@ -34,7 +34,7 @@ extend int :: [Show2] {
     fn show2(): string { return f"{this}"; }
 }
 
-struct Counter :: [Show2, Reset] {
+struct Counter :: Show2 & Reset {
     var a: int,
     var b: int,
 }

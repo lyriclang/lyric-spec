@@ -7,7 +7,7 @@
 import std.io { println };
 import std.collections { Set };
 
-enum E :: [Equatable, Clone, Hashable] { A, B(int, string), C { w: int } }
+enum E :: Equatable & Clone & Hashable { A, B(int, string), C { w: int } }
 
 fn main(): void {
     let b1 = E.B(1, "x");

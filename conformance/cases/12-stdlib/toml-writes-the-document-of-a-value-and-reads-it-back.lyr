@@ -24,17 +24,17 @@ import std.io { println };
 import std.toml;
 import std.codec { Codable, EncodeError };
 
-struct Server :: [Codable, Equatable] {
+struct Server :: Codable & Equatable {
     host: string,
     port: int,
 }
 
-struct Owner :: [Codable, Equatable] {
+struct Owner :: Codable & Equatable {
     name: string,
     bio: ?string,
 }
 
-struct Config :: [Codable, Equatable] {
+struct Config :: Codable & Equatable {
     title: string,
     debug: bool,
     servers: Server[],

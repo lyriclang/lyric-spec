@@ -8,7 +8,7 @@
 import std.io { println };
 import std.string { StringBuilder };
 
-struct Tag :: [Display, Debug] {
+struct Tag :: Display & Debug {
     name: string,
 
     fn show(): string {

@@ -10,7 +10,7 @@ interface Titled {
     fn name(): string;
 }
 
-interface Labelled :: [Named, Titled] {
+interface Labelled :: Named & Titled {
 }
 
 fn main(): void {

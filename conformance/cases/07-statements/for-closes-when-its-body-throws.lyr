@@ -11,7 +11,7 @@ class Stop :: [Error] {
     fn message(): string { return "stop"; }
 }
 
-class Tap :: [Iterator, Closeable] {
+class Tap :: Iterator & Closeable {
     type Item = int;
     var n: int,
 

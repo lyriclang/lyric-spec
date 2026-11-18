@@ -12,7 +12,7 @@ fn hashOf<T :: [Hashable]>(x: T): uint64 {
     return h.finish();
 }
 
-struct W :: [Equatable, Hashable] { x: int, y: int,
+struct W :: Equatable & Hashable { x: int, y: int,
     fn equals(o: W): bool { return this.x == o.x; }
 }
 

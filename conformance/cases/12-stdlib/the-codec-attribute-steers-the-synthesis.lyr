@@ -23,7 +23,7 @@ struct User :: [Codable] {
 }
 
 @Codec { tag = "kind" }
-enum Event :: [Codable, Equatable, Debug] {
+enum Event :: Codable & Equatable & Debug {
     Started,
     Moved(int, int),
 }

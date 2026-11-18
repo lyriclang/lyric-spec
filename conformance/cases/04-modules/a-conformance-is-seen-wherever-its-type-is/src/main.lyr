@@ -16,7 +16,7 @@ fn clones<T :: [Clone]>(x: T): bool { return true; }
 fn orders<T :: [Ordered]>(x: T): bool { return true; }
 fn shows<T :: [Display]>(x: T): bool { return true; }
 
-pub struct Start :: [Fill, Default] { pub port: int = 8080 }
+pub struct Start :: Fill & Default { pub port: int = 8080 }
 
 fn main(): void {
     let k = CliErrorKind.NoCommand;

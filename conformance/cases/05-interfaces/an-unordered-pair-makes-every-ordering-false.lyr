@@ -5,7 +5,7 @@
 // 05 §12.6: 'compare' answering null — the partial order.
 import std.io { println };
 
-struct Partial :: [Equatable, Ordered] {
+struct Partial :: Equatable & Ordered {
     v: int,
     fn equals(o: Partial): bool { return this.v == o.v; }
     fn compare(o: Partial): ?Ordering { return null; }

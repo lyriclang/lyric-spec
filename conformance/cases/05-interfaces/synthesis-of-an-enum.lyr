@@ -15,7 +15,7 @@ fn hashOf<T :: [Hashable]>(x: T): uint64 {
     return h.finish();
 }
 
-enum E :: [Equatable, Clone, Hashable] { A, B(int), R { w: int } }
+enum E :: Equatable & Clone & Hashable { A, B(int), R { w: int } }
 enum Sh :: [Ordered] { Dot, Box(int), Rect { w: int, h: int } }
 
 fn main(): int {
