@@ -2,8 +2,8 @@
 
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
-**Status.** The instance, loading and the values at the boundary written (S8a); the budget's
-suspension, waiting, the host API, isolation and the C ABI come with the rest of S8 — until then
+**Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d); the
+host API, isolation and the C ABI come with the rest of S8 — until then
 the design documents decide.
 
 ## Written (S8a, the instance)
@@ -36,6 +36,13 @@ the design documents decide.
    code, message and frames; **suspended** by the budget; **aborted**; **stale**; or the script's
    **exit** with its code. Which functions a host may call, with their types, travels with the
    bytecode.
+4. **Waiting** ([07 Wait, N6](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/07-nebenlaeufigkeit-und-programmstruktur.md); S8d). A call waits for what its tasks wait for —
+   a timer, a native's end, a channel — until it ends: the host's thread is the instance's
+   meanwhile. A host that must not stall **starts** a call instead: what is ready runs, then the
+   host gets the call's end or *waiting* back, and **steps** it again later, each step running what
+   became ready and never waiting. An instance with a started call takes only steps and an abort.
+   A started call the budget halts steps on only with a new budget, as a `resume` gives one
+   ([§17 rule 2](17-host.md)).
 
 ## Scope
 
