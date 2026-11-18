@@ -1,0 +1,12 @@
+//! run
+//! option: --allow=file=data
+//! in-temp-dir
+//! stdout:
+//! | x
+//! since: 1.0.0
+// §17 rule 5: a scope gives the files at and below it.
+import std.fs { createDir, readText, writeText }
+
+createDir("data")
+writeText("data/a.txt", "x")
+println(readText("data/a.txt"))

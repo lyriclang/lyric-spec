@@ -3,7 +3,7 @@
 **Base.** None — this chapter is Lyric-Script's own.
 
 **Status.** Rights from imports written (S5e); fuel and deadline, suspension and abort written
-(S8b), memory (S8c); scopes and ownership come with the rest of S8, reload with S9 —
+(S8b), memory (S8c), scopes (S8e); ownership comes with the rest of S8, reload with S9 —
 until then the design documents decide.
 
 ## Written (S5e, rights from imports)
@@ -49,6 +49,21 @@ until then the design documents decide.
    **memory** —, and a `resume` gives a new budget. Apart from it, the host may set a **limit for the
    whole process**, the bytes the collector may hold for every instance together; beyond it an
    allocation fails the process.
+
+## Written (S8e, scopes)
+
+5. **Scopes** ([01 S1, S3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)). A grant of `file` or `net` may name a **scope** after `=`:
+   `--allow file=./data`, `net=example.com:443`, several of them between commas, each kept; a scope
+   on another class, or an empty one, is `LYS-CLI0007`. A class given whole beside its scopes is
+   given whole. Under scopes of `file` the script's file calls reach only what lies at or below one
+   of them: the path a call names is resolved when the call is made — absolute, links followed,
+   `..` gone; a file to be made counts where its directory is — and compared part by part, without
+   case where the platform's file systems are (Windows, macOS). What lies outside is refused as the
+   system refuses: an `IoError` of kind `PermissionDenied`, saying it lies outside the scopes this
+   run was given. A temporary file or directory lies outside every scope. Scopes are checked when a
+   call is made; the class is checked when the program is loaded (rule 1). Scopes bind the script's
+   own calls, not a program it starts (`process`). The scopes of `net` are kept, and checked from the
+   milestone that brings the network.
 
 ## Scope
 
