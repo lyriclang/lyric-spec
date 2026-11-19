@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0065
+//! since: 1.0.0
+// §11 rule 1: `@Requires` belongs to a module of the host (chapter 13).
+@Requires("saves")
+fn save() {
+}

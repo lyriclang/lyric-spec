@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0068
+//! since: 1.0.0
+// §11 rule 1: the same attribute twice on one declaration.
+@Requires("a") @Requires("b")
+fn f() {
+}

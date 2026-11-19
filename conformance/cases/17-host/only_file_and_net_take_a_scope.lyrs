@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-CLI0007
+//! exit: 2
+//! option: --allow=os=home
+//! since: 1.0.0
+// §17 rule 5: only `file` and `net` take a scope.
+println(1)

@@ -1,0 +1,6 @@
+//! check
+//! error: LYS-PAR0042
+//! since: 1.0.0
+// §11 rule 1: an attribute describes the declaration after it; a statement is none.
+@Requires("saves")
+println(1)

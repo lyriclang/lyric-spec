@@ -1,0 +1,11 @@
+//! run
+//! option: --allow=file=data,file
+//! in-temp-dir
+//! stdout:
+//! | written
+//! since: 1.0.0
+// §17 rule 5: a class given whole beside a scope gives every file.
+import std.fs { writeText }
+
+writeText("b.txt", "x")
+println("written")

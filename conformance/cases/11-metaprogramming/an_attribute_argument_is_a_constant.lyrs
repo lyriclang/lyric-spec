@@ -1,0 +1,9 @@
+//! check
+//! error: LYS-SEM0066
+//! since: 1.0.0
+// §11 rule 1: an attribute's argument is a compile-time value.
+let name = "saves"
+
+@Requires(name)
+fn f() {
+}
