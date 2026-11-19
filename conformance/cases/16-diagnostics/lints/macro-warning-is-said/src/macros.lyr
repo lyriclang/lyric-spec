@@ -1,0 +1,10 @@
+import std.syntax { Expr, warn };
+
+/// Doubles its argument by adding it to itself, which evaluates it twice.
+pub macro twice(n: Expr): Expr {
+    match (n) {
+        .Binary(_, _, _, _) => { warn(n.span(), "twice! evaluates its argument twice"); },
+        _ => { },
+    }
+    return quote { #{n} + #{n} };
+}

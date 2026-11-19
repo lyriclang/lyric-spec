@@ -1,0 +1,10 @@
+//! check
+//! warning: LYR-MAC0002
+//! since: 5.0.0
+// 16 §5, 11 §5 rule 5: a warning a macro reports — 'macro-warning' says it, and the expansion
+// stands.
+import app.macros { twice };
+
+fn main(): void {
+    let _ = twice!(1 + 2);
+}

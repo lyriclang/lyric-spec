@@ -1,0 +1,19 @@
+//! run
+//! stdout:
+//! | 8 4 4 1
+//! | 16 8
+//! since: 5.0.0
+// 11 §4 rule 1: sizeOf and alignOf answer as C lays a type out on the target — a struct with its
+// padding.
+import std.io { println };
+import std.meta { sizeOf, alignOf };
+
+struct Mixed {
+    a: uint8,
+    b: int,
+}
+
+fn main(): void {
+    println(f"{sizeOf<int>()} {sizeOf<int32>()} {alignOf<int32>()} {sizeOf<uint8>()}");
+    println(f"{sizeOf<Mixed>()} {alignOf<Mixed>()}");
+}

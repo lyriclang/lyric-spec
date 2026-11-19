@@ -158,7 +158,8 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`); rule 5 by `tools/check_coverag
 8. **Warnings as errors** is a switch: a profile's `denyWarnings` ([15 §4](15-project.md) rule 4) and
    `--deny-warnings` are `-D warnings` for the package built, in front of the command line's own levels —
    each warning is an error, and its note names the profile. A build script's warnings are the lint
-   `build-script-warning` and denied the same way.
+   `build-script-warning`, a macro's the lint `macro-warning` ([11 §5](11-metaprogramming.md)), and
+   both are denied the same way.
 9. **Every lint is held by two cases** of the suite: a red one, whose program the lint reads (`warning:`
    its code), and a green one, the same program put right, which compiles in silence (`clean:` its name).
    Two lints are held otherwise: `reserved-device-name` by its green case alone, as its red program is a
