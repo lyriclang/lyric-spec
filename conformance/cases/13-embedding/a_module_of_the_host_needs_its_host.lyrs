@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-RES0003
+//! since: 1.0.0
+//! stderr-has: the host registered none of that name
+// §13 rule 5: `host.<name>` is a module the host registers; the command line registers none.
+import host.game { save }
+
+save(1)

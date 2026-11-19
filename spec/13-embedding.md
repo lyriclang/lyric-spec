@@ -2,9 +2,9 @@
 
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
-**Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d); the
-host API, isolation and the C ABI come with the rest of S8 — until then
-the design documents decide.
+**Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
+host's modules (S8f2); handles, callbacks, isolation and the C ABI come with the rest of S8 — until
+then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -43,6 +43,19 @@ the design documents decide.
    became ready and never waiting. An instance with a started call takes only steps and an abort.
    A started call the budget halts steps on only with a new budget, as a `resume` gives one
    ([§17 rule 2](17-host.md)).
+5. **Modules of the host** ([01 S2](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); [11 Hst](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md); S8f2). A host registers a **module of its own**
+   under a name: Lyric-Script source that declares functions **without a body** — no type
+   parameters, no `throws`, their parameters and result values of the boundary (rule 3) — and
+   nothing else (`LYS-SEM0907`); it is checked when it is registered, its errors the host's. A
+   script imports it as **`import host.<name>`**, and calls its functions as its own; a module the
+   host did not register is no module (`LYS-RES0003`) — the command line registers none. A function
+   asks for a **right** with `@Requires("name")` (`LYS-SEM0908` for a name that is none: lowercase
+   letters, digits and `-`, a letter first); an import asks for the rights of what it names, a whole
+   module's import for all of its functions', checked as rule 1 of chapter 17 checks a module of the
+   standard library's — a right named as a class of it is that class. The host gives each function
+   its **implementation** by name; a script that imports a module whose functions lack one does not
+   load. What an implementation cannot do, or a value of another type than its function declares,
+   is a panic of the script (`LYS-RT0900`); the instance takes calls after it as after any panic.
 
 ## Scope
 
