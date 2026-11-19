@@ -361,6 +361,8 @@ A macro's own refusal, at its site.
 | Code | S | Chapter | Title | When |
 |---|---|---|---|---|
 | LYR-MAC0001 | E | [11-metaprogramming](11-metaprogramming.md) | an error a macro reports | A macro called `error(at, message)` of `std.syntax` while it expanded: the macro refuses its arguments. The diagnostic stands at the node the macro named, with a note at the site's `!`. |
+| LYR-MAC0002 | W | [11-metaprogramming](11-metaprogramming.md) | a warning a macro reports | A macro called `warn(at, message)` of `std.syntax` while it expanded: it took its arguments and says what about them deserves a look. The warning stands at the node the macro named, with a note at the site's `!`. |
+| LYR-MAC0003 | H | [11-metaprogramming](11-metaprogramming.md) | a note a macro writes | A macro called `note(at, message)` of `std.syntax` while it expanded: what it made of its arguments, at the node it names, with a note at the site's `!`. |
 
 ## A.6 MIG — The migration
 
@@ -575,6 +577,7 @@ Every warning is a lint (16 §5): its name, its code, its group and its level un
 | `iterator-reused` | LYR-SEM0162 | correctness | warn | a second loop over the same iterator |
 | `large-value-copy` | LYR-SEM0221 | perf | allow | a large struct passed by value |
 | `loop-instead-of-while-true` | LYR-SEM0219 | style | allow | 'while (true)' where 'loop' is meant |
+| `macro-warning` | LYR-MAC0002 | correctness | warn | a warning a macro reports |
 | `missing-docs` | LYR-SEM0223 | docs | allow | a pub declaration without documentation |
 | `missing-module-docs` | LYR-SEM0225 | docs | allow | a module without module documentation |
 | `module-shadowing` | LYR-SEM0207 | correctness | allow | a local that hides a module the file imports |
