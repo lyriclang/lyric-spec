@@ -11,7 +11,7 @@ interface Greeter {
     fn greeting(): string;
 }
 
-struct Cat :: [Named, Greeter] {
+struct Cat :: Named & Greeter {
     fn name(): string {
         return "cat";
     }

@@ -7,7 +7,7 @@
 // a static of such a block answers in the instance.
 import std.io { println };
 
-struct Pair<T> :: [Equatable, Debug] { a: T, b: T }
+struct Pair<T> :: Equatable & Debug { a: T, b: T }
 struct Box<T> :: [Default] { v: T }
 
 fn main(): int {

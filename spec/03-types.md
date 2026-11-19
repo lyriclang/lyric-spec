@@ -734,7 +734,7 @@ Type parameters, their inference, and what an instance is
 1. A function, a struct, a class, an enum, an interface and a type alias ([§10](#10-aliases))
    may declare **type parameters**,
    `fn ident<T>(x: T): T`, `struct Pair<A, B> { … }`; a parameter may carry **constraints**,
-   `<T :: [Show, Eq<T>]>`, the interfaces an argument must satisfy ([05](05-interfaces.md)) — one also
+   `<T :: Show & Eq<T>>`, the interfaces an argument must satisfy ([05](05-interfaces.md)) — one also
    without the brackets, `<T :: Show>`, where a `,` after it begins the next parameter. Only an
    interface bounds a parameter, and each bound is written once — `From<int>` and `From<string>`
    are two (`LYR-SEM0078`, as in a conformance list).

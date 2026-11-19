@@ -11,7 +11,7 @@
 import std.io { println, };
 
 interface Sized {
-    type Unit :: [Equatable, Hashable,];
+    type Unit :: Equatable & Hashable;
     fn size(): int;
 }
 

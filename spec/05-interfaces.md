@@ -23,10 +23,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 1. `interface I { … }` declares **instance methods**: abstract, `fn area(): int;`, or with a
    **default** body. A member carries no `pub` (`LYR-SEM0118`): an interface's members are
    public always (D14).
-2. A struct, a class or an enum **conforms** in its interface list, `struct S :: [I, J] { … }`,
-   or through an extend block, `extend T :: [I] { … }` — one interface also without the brackets,
-   `struct S :: I`, `extend T :: I`, the list rule ([02](02-grammar.md)); several without them are refused
-   (`LYR-PAR0066`) —; every entry names an interface
+2. A struct, a class or an enum **conforms** to what follows its `::`, `struct S :: I { … }`,
+   several joined by `&`, `struct S :: I & J { … }`, or through an extend block,
+   `extend T :: I { … }` — one interface also in brackets, `:: [I]`; several as a list are
+   refused (`LYR-PAR0066`), [02 §1](02-grammar.md) rule 6 —; every entry names an interface
    (`LYR-SEM0078`). A conformance implements every abstract member of the interface's chain with
    an exact signature — arity, parameter types, return type, `mut` (`LYR-SEM0020`,
    `LYR-SEM0042`); a default may be left as it is, and an own member of the name overrides it.
@@ -115,16 +115,16 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    reached — a static member through the type parameter its interface bounds, `T.make(s)`. One block that
    holds a name at two counts holds an overload set ([08 §1.2](08-expressions.md)), not two
    scopes; blocks that give instances of one generic interface hold one set as well (rule 5).
-5. A type may conform to **several instances** of one generic interface, `struct Label ::
-   [From<int>, From<string>]` — in its list, or each in a block of its own. Members of one name
-   and count stand side by side where each answers its own instance, `from(v: int)` beside
+5. A type may conform to **several instances** of one generic interface,
+   `struct Label :: From<int> & From<string>` — after its `::`, or each in a block of its own.
+   Members of one name and count stand side by side where each answers its own instance, `from(v: int)` beside
    `from(v: string)` (D4 holds per conformance; `LYR-SEM0085` where they answer one). A call
    chooses by its arguments' types: the member whose parameters take them, and of several the
    one whose parameters are the arguments' own types — `Label.from(3)` is the `From<int>` one
    beside `From<float>`, a literal being its default type. None or several left is refused
    (`LYR-SEM0086`); the argument is written with `as`, `Label.from(3 as int16)`. Through a
    constraint, `U :: [From<T>]`, the instance the constraint names chooses; through two bounds of
-   one interface, `T :: [From<int>, From<string>]`, the arguments choose among them as on a type —
+   one interface, `T :: From<int> & From<string>`, the arguments choose among them as on a type —
    `T.from("abc")` is the `From<string>` one —, none or several left refused alike; through a value of
    an interface instance, its table does. There is no qualified form for a static member (§4
    rule 2).
@@ -149,7 +149,8 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 ## 5. Delegation
 
 1. A struct or a class may conform **by delegating** to one of its fields: `class Dog ::
-   [Walker by legs] { var legs: Legs, … }` (D1). The field exists and conforms to the
+   Walker by legs { var legs: Legs, … }` (D1), each of several on its own,
+   `class Dog :: Walker by legs & Named`. The field exists and conforms to the
    interface, or holds a value of it or of a child of it (`LYR-SEM0123` otherwise) — a child's
    value is one of the parent ([§11](#11-the-child-interface-value-as-a-parent-value)). Every
    abstract member of the interface's chain that the type does not write itself is **forwarded**
@@ -369,7 +370,7 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
    and the scalars compare natively. Without the conformance `==` is refused (`LYR-SEM0059`).
 6. **Ordering.** `<`, `<=`, `>` and `>=` read `a.compare(b)` through
    `Ordered :: [Equatable] { fn compare(o: Self): ?Ordering; }` with
-   `enum Ordering :: [Equatable, Hashable, Debug] { Less, Equal, Greater }` (the review's
+   `enum Ordering :: Equatable & Hashable & Debug { Less, Equal, Greater }` (the review's
    M8a-10: an answer can be compared, keyed and printed): `<` is `.Less`, `>` is `.Greater`, `<=` is not
    `.Greater`, `>=` is not `.Less`; **`null`** — the two are not ordered, as `float` with NaN —
    makes all four **false**. `TotalOrder :: [Ordered] { fn totalCompare(o: Self): Ordering; }`
@@ -516,9 +517,10 @@ their blanket under [§13](#13-generic-extends) rule 9. What is not written here
 ## 14. Conformance synthesis
 
 1. A conformance to one of the **family** — `Equatable`, `Hashable`, `Ordered`, `TotalOrder`,
-   `Clone`, `Default`, `Display`, `Debug` — written in a struct's, class's or enum's own list
-   **without the member** is **synthesized** from the fields (04 D7): `struct P :: [Equatable,
-   Hashable] { x: int, y: string }` compares and hashes field by field, in declaration order.
+   `Clone`, `Default`, `Display`, `Debug` — written after a struct's, class's or enum's own `::`
+   **without the member** is **synthesized** from the fields (04 D7):
+   `struct P :: Equatable & Hashable { x: int, y: string }` compares and hashes field by field, in
+   declaration order.
    There is no `derive` word. A member the type writes itself replaces the synthesis for that
    member; the others are still synthesized. The list is fixed in 5.0; a synthesis of the
    program's own interfaces is [11](11-metaprogramming.md)'s question. `Equatable`, `Hashable`,

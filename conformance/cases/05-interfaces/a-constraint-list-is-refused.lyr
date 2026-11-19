@@ -1,0 +1,14 @@
+//! check
+//! error: LYR-PAR0066
+//! since: 5.0.0
+// 02 §1 rule 6: a type parameter's constraints are joined with '&' as a conformance's are.
+interface Named {
+    fn name(): string;
+}
+
+fn both<T :: [Named, Equatable]>(a: T, b: T): bool {
+    return a == b && a.name() == b.name();
+}
+
+fn main(): void {
+}

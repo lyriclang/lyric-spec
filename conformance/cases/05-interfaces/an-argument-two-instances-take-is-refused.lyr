@@ -2,7 +2,7 @@
 //! error: LYR-SEM0086
 //! since: 5.0.0
 // 05 §3 rule 5: '3' fits 'int8' and 'int16', and neither is its own type.
-struct Label :: [From<int8>, From<int16>] {
+struct Label :: From<int8> & From<int16> {
     text: string,
 
     static fn from(v: int8): Label {

@@ -14,7 +14,7 @@ interface Scale<T> {
     fn scale(by: T): string;
 }
 
-struct Vec :: [Scale<int>, Scale<float>] {
+struct Vec :: Scale<int> & Scale<float> {
     x: int,
 
     fn scale(by: int): string {

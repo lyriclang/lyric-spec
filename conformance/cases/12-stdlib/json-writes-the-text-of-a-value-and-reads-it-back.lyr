@@ -21,7 +21,7 @@ import std.codec { Codable, Codec };
 import std.collections { Map };
 
 @Codec { rename = .SnakeCase }
-struct User :: [Codable, Equatable] {
+struct User :: Codable & Equatable {
     userId: int,
     name: string,
     mail: ?string,

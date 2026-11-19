@@ -13,7 +13,7 @@ interface Doubling :: [Add<Out = Self>] {
 interface Negating :: [Neg<Out = Self>] {
 }
 
-extend int :: [Doubling, Negating] {
+extend int :: Doubling & Negating {
 }
 
 extend float :: [Doubling] {

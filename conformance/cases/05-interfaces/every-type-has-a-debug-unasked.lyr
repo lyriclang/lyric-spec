@@ -8,7 +8,7 @@
 // request is the debug form, 'default' fills the shapes.
 import std.io { println };
 
-struct P :: [Display, Default] { x: int, o: ?int, xs: int[], t: (int, string), m: int[2] }
+struct P :: Display & Default { x: int, o: ?int, xs: int[], t: (int, string), m: int[2] }
 enum E { A, B(int) }
 
 fn main(): int {

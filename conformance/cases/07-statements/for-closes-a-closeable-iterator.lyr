@@ -16,7 +16,7 @@
 // continue stays inside.
 import std.io { println };
 
-class Tap :: [Iterator, Closeable] {
+class Tap :: Iterator & Closeable {
     type Item = int;
     var n: int,
 

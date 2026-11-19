@@ -13,7 +13,7 @@ fn hashOf<T :: [Hashable]>(x: T): uint64 {
     return h.finish();
 }
 
-enum Color :: [Ordered, Hashable] { Red, Green, Blue }
+enum Color :: Ordered & Hashable { Red, Green, Blue }
 struct TO :: [TotalOrder] { a: int, b: int }
 
 fn main(): int {

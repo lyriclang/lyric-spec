@@ -1,7 +1,8 @@
 //! check
 //! error: LYR-PAR0066
 //! since: 5.0.0
-// 05 §1 rule 2: several interfaces after '::' stand in brackets; without them the list is refused.
+// 02 §1 rule 6: several interfaces after '::' are joined with '&'; in brackets they would be a
+// set, one of them, and a list of several is refused.
 interface Named {
     fn name(): string;
 }
@@ -10,7 +11,7 @@ interface Shown {
     fn show(): string;
 }
 
-struct User :: Named, Shown {
+struct User :: [Named, Shown] {
     fn name(): string { return "u"; }
     fn show(): string { return "U"; }
 }

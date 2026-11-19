@@ -7,7 +7,7 @@
 import std.io { println };
 import std.meta { variants };
 
-enum Shape :: [Equatable, Copy] { Dot, Circle(int, string), Rect { w: int, h: int } }
+enum Shape :: Equatable & Copy { Dot, Circle(int, string), Rect { w: int, h: int } }
 
 interface Copy {
     fn copy(): Self {

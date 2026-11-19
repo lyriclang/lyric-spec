@@ -15,7 +15,7 @@ fn hashOf<T :: [Hashable]>(x: T): uint64 {
     return h.finish();
 }
 
-struct P :: [Equatable, Hashable, Ordered, Clone, Default, Display] { x: int, y: int }
+struct P :: Equatable & Hashable & Ordered & Clone & Default & Display { x: int, y: int }
 class C :: [Clone] { items: int[], o: ?int, t: (int, string) }
 
 fn main(): int {

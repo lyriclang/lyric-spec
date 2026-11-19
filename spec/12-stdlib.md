@@ -1005,7 +1005,7 @@ package's transport brings it), no HTTP/2, no cookies.
    POST, go on as a GET without the body; a 307 or 308 keep the method, and with a body are
    refused (it cannot be sent again). `timeout` spans the whole exchange — the connection, the
    request, the head — and ends it with `TimedOut`, the connection closed. `transport` is a
-   `fn(host, port) -> Stream` (`Stream :: [Reader, Writer, Closeable]`; a `TcpStream` is one)
+   `fn(host, port) -> Stream` (`Stream :: Reader & Writer & Closeable`; a `TcpStream` is one)
    that makes the connection; `http` connects over TCP where it is `null`, `https` needs one.
    What is refused: a scheme that is neither (`HttpError { kind = .Unsupported }`), a URI
    without a host, a status line or header line that is not HTTP/1.1's (`.Protocol`: a version
@@ -1437,9 +1437,9 @@ pair, the model a format implements, the layer a conformance writes with, the er
 conformances of the core types, and `Value`, the tree of the forms that any format could write.
 
 1. **The pair.** `Encode { fn encode<E :: [Encoder]>(&e: E): void throws EncodeError; }`,
-   `Decode { static fn decode<D :: [Decoder]>(&d: D): Self throws DecodeError; }`, `Codable ::
-   [Encode, Decode]`. A conformance is generic over the format's type, and the format is passed by
-   reference, as a hasher is ([§Hashing](#hashing)): the format keeps its state, and a `mut`
+   `Decode { static fn decode<D :: [Decoder]>(&d: D): Self throws DecodeError; }`,
+   `Codable :: Encode & Decode`. A conformance is generic over the format's type, and the format is
+   passed by reference, as a hasher is ([§Hashing](#hashing)): the format keeps its state, and a `mut`
    method of the layer hands `&this` on.
 2. **The model has ten forms**, and a format implements them as primitives: `encodeNull`,
    `encodeBool`, `encodeInt`, `encodeUint`, `encodeFloat`, `encodeString`, `encodeBytes`, and

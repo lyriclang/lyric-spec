@@ -1,5 +1,5 @@
 // A type whose private field no other module names - and which its synthesized Equatable compares.
-pub struct Secret :: [Equatable, Hashable] {
+pub struct Secret :: Equatable & Hashable {
     pub shown: int,
     private hidden: int,
 }

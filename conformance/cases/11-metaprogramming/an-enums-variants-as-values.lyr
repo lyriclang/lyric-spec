@@ -8,7 +8,7 @@
 // variants, reached through the enum's name and through a constraint.
 import std.io { println };
 
-enum Color :: [Variants, Equatable] { Red, Green, Blue }
+enum Color :: Variants & Equatable { Red, Green, Blue }
 
 fn show(c: ?Color): string {
     return match (c) { null => "none", .Red => "r", .Green => "g", .Blue => "b" };
