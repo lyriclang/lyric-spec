@@ -1,0 +1,10 @@
+//! check
+//! clean: macro-warning
+//! since: 5.0.0
+// 16 §5: 'macro-warning' says nothing where the macro finds nothing to warn about.
+import app.macros { twice };
+
+fn main(): void {
+    let three = 1 + 2;
+    let _ = twice!(three);
+}

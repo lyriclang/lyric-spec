@@ -1,0 +1,15 @@
+//! run
+//! stdout:
+//! | true true
+//! since: 5.0.0
+// 11 §3 rule 1: 'target.endian' is the target's byte order, every target the toolchain ships
+// little-endian; 'profile.name' is the profile's own, 'debug' exactly where 'profile.debug' holds
+// for a built-in profile.
+import std.io { println };
+import std.os { Endian };
+
+fn main(): void {
+    let little = target.endian == Endian.Little;
+    let named = profile.debug == (profile.name == "debug");
+    println(f"{little} {named}");
+}

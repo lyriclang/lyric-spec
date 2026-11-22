@@ -168,9 +168,12 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
 
 1. **`target`** and **`profile`** — `std.core`, in the prelude — are constants of the build (B4):
    `target.os` (`Platform`: `Linux`, `MacOS`, `Windows`, `Other`), `target.arch` (`Arch`: `X86_64`,
-   `Aarch64`, `Other`) and `target.pointerWidth` (in bits) are the target's — a cross-build's, not
-   the host's —, and `profile.debug` holds where the profile is the built-in `debug` or inherits
-   from it ([15 §4](15-project.md)). A program that reads neither carries neither.
+   `Aarch64`, `Other`), `target.pointerWidth` (in bits) and `target.endian` (`Endian`: `Little`,
+   `Big`; `std.os` names the type) are the target's — a cross-build's, not the host's —;
+   `profile.debug` holds where the profile is the built-in `debug` or inherits from it, and
+   `profile.name` is the profile's own name, as `--profile` or the manifest gives it
+   ([15 §4](15-project.md)). A program that reads neither carries neither. *(Informative: every
+   target the toolchain ships is little-endian.)*
 2. **`comptime if (target.os == .Windows)`** chooses by them while compiling (§2 rule 7): every
    branch is checked, the chosen one is built.
 3. **`@When(cond)`** — in the prelude — on what stands at a module's top level, or on the module
@@ -212,7 +215,10 @@ own tests (`tests/Lyric5.Tests`, `TargetTests`).
    `Function`, `Parameter` (a type parameter), `Other` (W9).
    Each answer is a constant of the type at the instance it is asked at — in a generic function or a
    default, of each instance (R3). Nothing is reflected at run time (R6): a program reads a type
-   through such constants alone.
+   through such constants alone. **`sizeOf<T>()`** and **`alignOf<T>()`** are the size and the
+   alignment of `T` in bytes as C lays it out on the target — a struct with its padding, a class
+   or an array as the reference it is (design 10 B13 M1, review 2026-11-10). They are functions
+   the C compiler answers, constant in the binary; a `comptime` site cannot ask them.
 2. **What a question sees** (R7) is what the code that asks may name: the module of the function
    it stands in, the interface's for a default. Another package's field is listed where it is
    `pub`, one of the package where it is not `private`, one of the module always; members alike.
@@ -343,7 +349,10 @@ attribute macros (S4), the diagnostics of expanded code (S5); `lyric expand` is
 5. **The macro runs under the interpreter's rules** ([§2](#2-comptime); 09 Q9): pure, with the
    budget, a panic `LYR-CT0001` at the site with the chain of calls. `error(at, msg)` of
    `std.syntax` is the macro's own error, `LYR-MAC0001`: the main span at the node the macro
-   names (`e.span()`, an argument's as written), a note at the site's `!`.
+   names (`e.span()`, an argument's as written), a note at the site's `!`. **`warn(at, msg)`**
+   and **`note(at, msg)`** say something at the same places and let the expansion go on: a warning,
+   the lint `macro-warning` (`LYR-MAC0002`, [16 §5](16-diagnostics.md)), and a hint
+   (`LYR-MAC0003`). What a macro said before it failed is said too.
 6. **`quote { … }` is a tree as a value.** Its content is syntax, checked nowhere: statements —
    a last expression without `;` is the tail, and a quote of a lone tail is an `Expr` — or
    declarations when the block opens with one. The quote's type is its content's kind, `Expr`,
