@@ -290,7 +290,7 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 | `fmt` | `[<file.lyr>…]` | `-C <dir>`, `--check`, `--diff` | — | — |
 | `doc` | — | `-C <dir>`, `--offline`, `--out <dir>`, `--std` | — | — |
 | `api` | — | `-C <dir>`, `--json`, `--diff <rev>`, `--std` | — | — |
-| `lsp` | — | `--stdio` | — | — |
+| `lsp` | — | `--stdio`, `--version` | — | — |
 | `dap` | — | — | — | — |
 | `env` | — | `-C <dir>`, `--profile <name>`, `--target <triple>`, `--opt <0-3>`, `--gc <immix|boehm>`, `--[no-]lto`, `--[no-]debug-info`, `--[no-]deny-warnings`, `--[no-]overflow-checks`, `--[no-]fast-math`, `--offline`, `--json` | yes | — |
 | `new` | `<name>` | `--lib`, `--[no-]git`, `-C <dir>` | — | — |
@@ -439,6 +439,9 @@ in `tests/Lyric.Tests.Formatting`).
 1. **`lyric lsp`** is the language server: it speaks the Language Server Protocol with an editor
    over its standard input and output until the editor says `exit`, and ends with exit 0 after a
    `shutdown`, 1 without one. **`--stdio`** names the one way there is; editors pass it.
+   **`lyric lsp --version`** writes `lyric lsp ` and the toolchain's version — the one its
+   `initialize` answer gives as `serverInfo` — and ends with 0, starting no server: what an editor
+   checks before it starts one ([11 T6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)).
 2. A file is analysed **as a module of its package** where it lies under the `src/` or `tests/` of
    the nearest `lyric.toml` above it: with every other module of the package, in the one
    compilation `lyric test` makes of them ([§3](#3-test)), and the packages of its graph. Any other
