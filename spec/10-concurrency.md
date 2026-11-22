@@ -57,8 +57,9 @@ Coroutines and generators, tasks and `TaskScope`, parking, threads with one sche
    the root; a coroutine fits where one is expected whose set covers its own —
    one that throws nothing among them —, never the other way (`LYR-SEM0001`), as a function value
    does ([06 §8](06-errors.md#8-function-values-that-throw) rule 3). As an `Iterator` its
-   `Error` is one type: the one it throws, `never` where none, the root `Error` where several,
-   as an inferred `E` joins them ([06 §8](06-errors.md#8-function-values-that-throw) rule 6).
+   `Error` is the one type it throws, `never` where none, the set where several, as an inferred
+   `E` binds them ([06 §8](06-errors.md#8-function-values-that-throw) rule 6): an adapter over it
+   and a generic walk of it throw each type of the set.
 7. A coroutine runs on a stack of its own, on the thread that first pulled it
    ([13 §1.6](13-abi.md#16-coroutines)). Pulling a coroutine that runs — from its own body, or
    from a coroutine it pulled — or one that runs on another thread panics with `LYR-RT0014`. A
@@ -146,12 +147,13 @@ scheduler runs another task meanwhile. The functions this section names are `std
 8. **`spawn(body)`** makes `body` a task of the running thread, ready behind the tasks ready
    before it, and gives its **handle**, a `Task<T> throws E` (06 T1): `T` is what the body
    returns — `void` too ([03 §9.1](03-types.md) rule 7) — and `E` what it throws. The handle's
-   type carries the error as a coroutine's carries what its pulls throw (05 E10); `Task<T>`
-   throws nothing, and fits where a `Task<T> throws E` is expected, but not the reverse
-   (`LYR-SEM0001`). A task's `E` is one type, inferred as every `E` is
-   ([06 §8](06-errors.md#8-function-values-that-throw) rule 6): a body that throws several makes
-   a `Task<T> throws Error`, and a written task type of several, `Task<T> throws [A, B]`, is
-   refused (`LYR-SEM0238`). `throws` after any other type than a coroutine or a task is refused
+   type carries the error as a coroutine's carries what its pulls throw (05 E10). A task's `E`
+   is inferred as every `E` is ([06 §8](06-errors.md#8-function-values-that-throw) rule 6): a
+   body that throws several makes a `Task<T> throws [A, B]`, which `await()` throws type by type,
+   and a written task type writes the set as a clause does (`LYR-SEM0030`, `LYR-SEM0137`).
+   `Task<T>` throws nothing; a task fits where one is expected whose set covers its own —
+   `Task<T>` where a `Task<T> throws E` is, `throws A` where `throws [A, B]` is —, never the
+   reverse (`LYR-SEM0001`). `throws` after any other type than a coroutine or a task is refused
    (`LYR-SEM0084`). After a **return type** that is a task or a coroutine — with a `?` before
    it or without — a `throws` could be the type's or the function's, and without parentheses
    it is refused (`LYR-SEM0165`): a function that returns a throwing task writes

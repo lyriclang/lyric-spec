@@ -235,8 +235,9 @@ The protocol `for` walks (design 10 B6) is `std.core`'s; the prelude passes `Ite
   review's M8a-4), so a loop that leaves `gen().map(f)` early closes the generator; `zip` and
   `chain` close both of theirs, the first error winning.
   Their `Error` is the **join** of their sources' (design 05 E2 K7), `Join<A, B>` of `std.core`:
-  one type where both are one, the other where one is `never`, the root `Error` where they
-  differ — reduced once both are known; open, it covers each of its parts.
+  one type where both are one, the other where one is `never`, the set of both where they
+  differ, `[A, B]` ([03 §9.1](03-types.md#91-type-parameters-and-instances) rule 9) — reduced
+  once both are known; open, it covers each of its parts.
 - A **function an adapter or a terminator takes may throw** (design 05 K4; 13 M8c P2): `map`,
   `filter`, `takeWhile`, `skipWhile` and `inspect` take a `fn(…) -> … throws E` and give an
   iterator whose `Error` is `Join<I.Error, E>`; `fold`, `reduce`, `any`, `all`, `none`, `find`,
@@ -358,8 +359,9 @@ A failure kept as a value, and a value made from another (design 05 E1, 10 B3, B
   ([09](09-patterns.md)). `throws` stays the mechanism: two bridges lead to it and back, and no
   operator is a result's own (05 E1). **`Result.of(f)`** calls `f`, a `fn() -> T throws E`, and
   is `Ok` with what it returns or `Err` with what it throws — `Result.of { try half(n) }`, `E`
-  inferred from what the lambda throws (05 K4), the root `Error` where that is two types.
-  **`r.get()`** is an `Ok`'s value and throws an `Err`'s error: `try r.get()`. `E` is an `Error`,
+  inferred from what the lambda throws (05 K4), the set where that is two types — the `Err`
+  then holds an `Error` ([03 §9.1](03-types.md#91-type-parameters-and-instances) rule 9).
+  **`r.get()`** is an `Ok`'s value and throws an `Err`'s error, each type of a set: `try r.get()`. `E` is an `Error`,
   since `get()` throws it. The library returns no `Result` (10 B3); the caller makes one. It is
   `@MustUse` ([11 §1](11-metaprogramming.md) rule 11): a statement that drops one warns.
 - **`From<T> { static fn from(v: T): Self; }`** is a conversion into a type, which the type
@@ -506,8 +508,8 @@ own below.
    text — or `null` at the end. A last line without an end is a line; the end of the last line
    starts none. `lines()` iterates the same; `chars()` iterates the codepoints; `readToEnd():
    string` is the rest. All throw `[IoError, Cancelled]`, and the two iterators' `Error` is
-   `Join<IoError, Cancelled>`, the root `Error` once reduced (§Iteration): a loop over them is
-   told `Error`. A codepoint split between two reads of `r`
+   `Join<IoError, Cancelled>`, `[IoError, Cancelled]` once reduced (§Iteration): a loop over
+   them is told each. A codepoint split between two reads of `r`
    waits for its rest. Bytes that are no UTF-8 throw `InvalidData`, a `Utf8Error` as the cause
    whose offset counts from the reader's start; a line that throws is consumed. A byte order mark
    is text, `U+FEFF`, unless `skipBom: true` drops it from the front.

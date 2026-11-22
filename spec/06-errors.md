@@ -251,9 +251,10 @@ written here yet is decided in the design documents, not here.
    covers nothing of it: the lambda runs later.
 6. A **type parameter** may stand as the set, `throws E` with `E :: [Error]`
    ([§1](#1-what-is-thrown) rule 2, `LYR-SEM0030`), and is **inferred** at a call from the
-   argument's set (05 E2 K4): a set of none binds `never`, one type binds it, several bind `Error`
-   (the K7 join) — `fn map<T, U, E :: [Error]>(xs: T[], f: fn(T) -> U throws E): U[] throws E`
-   throws what `f` throws. Where several arguments could bind it, one binding stands, as for any
+   argument's set (05 E2 K4): a set of none binds `never`, one type binds it, several bind the set
+   of them, `[A, B]` ([03 §9.1](03-types.md#91-type-parameters-and-instances) rule 9) —
+   `fn map<T, U, E :: [Error]>(xs: T[], f: fn(T) -> U throws E): U[] throws E` throws what `f`
+   throws, each of its types. Where several arguments could bind it, one binding stands, as for any
    type parameter ([03 §9.2](03-types.md#92-inference-at-a-call)), and an argument that throws
    beyond it is refused there. An `E` bound to `never` names nothing: a call
    whose set comes out empty throws nothing, needs no `try`, and a `try` over it is warned about

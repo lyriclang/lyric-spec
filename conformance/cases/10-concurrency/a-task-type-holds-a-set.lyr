@@ -1,0 +1,36 @@
+//! run
+//! stdout:
+//! | b
+//! | 3
+//! | a
+//! since: 5.0.0
+// 10 §2 rule 8: a body that throws several makes a task that throws their set — awaited, it
+// throws each, and a clause for each covers it; a task's type writes the set as a clause does.
+import std.io { println };
+import std.task { Cancelled, Task, spawn };
+
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn work(n: int): int throws [A, B] {
+    if (n == 1) { throw A { }; }
+    if (n == 2) { throw B { }; }
+    return n;
+}
+
+fn run(n: int): int throws [A, B, Cancelled] {
+    let t: Task<int> throws [A, B] = spawn(() => try work(n));
+    return try t.await();
+}
+
+fn main(): void throws Cancelled {
+    for (n in [2, 3, 1]) {
+        try {
+            println(run(n));
+        } catch (e: A) {
+            println(e.message());
+        } catch (e: B) {
+            println(e.message());
+        }
+    }
+}
