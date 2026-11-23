@@ -100,8 +100,7 @@ isolation (S8g1), maps at the boundary (S8g2) and threads (S8g3); the C ABI come
     call runs, is the host's mistake. An instance goes to another thread only while it
     **rests**: no entry runs, and no native and no subscription to signals of its script waits.
     A VM's first load or compile seals it: it takes no module and no implementation after, and
-    threads load
-    them from it at the same time.
+    threads load from it at the same time.
 
 ## Scope
 
