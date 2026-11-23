@@ -4,7 +4,7 @@
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
 host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b), callbacks (S8f3c) and
-isolation (S8g1) and maps at the boundary (S8g2); threads and the C ABI come with the rest of S8 — until then the design documents decide.
+isolation (S8g1), maps at the boundary (S8g2) and threads (S8g3); the C ABI comes with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -93,6 +93,15 @@ isolation (S8g1) and maps at the boundary (S8g2); threads and the C ABI come wit
    own instance calls; a change in one instance is never seen in another. A host may give an
    instance a **seed** when it loads it: its hashes are then the same in every run on the same
    platform; without one they are the process's own.
+10. **Threads** (S8g3; [11 Thr](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). Instances of one VM run on threads of their own at
+    the same time. An instance takes **one entry of the host's at a time** — `init`, a call, a
+    started call's step, `resume`, a callback's call, its release, `abort` —, from whatever
+    thread: a second while one runs, from another thread or from a function of the host the
+    call runs, is the host's mistake. An instance goes to another thread only while it
+    **rests**: no entry runs, and no native and no subscription to signals of its script waits.
+    A VM's first load or compile seals it: it takes no module and no implementation after, and
+    threads load
+    them from it at the same time.
 
 ## Scope
 
