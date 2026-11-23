@@ -3,8 +3,8 @@
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
-host's modules (S8f2) and their handles (S8f3a); the host's structs and errors, callbacks, isolation
-and the C ABI come with the rest of S8 — until then the design documents decide.
+host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b); callbacks, isolation and the
+C ABI come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -65,6 +65,16 @@ and the C ABI come with the rest of S8 — until then the design documents decid
    class that is neither `Identity` nor `Equatable` (`LYS-SEM0059`): what makes two the same is the
    host's to say. `@Requires` may stand on a method; an import that names the class asks for the
    rights of its methods.
+7. **Structs and errors of the host** (S8f3b; [11 Hst](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). A module of the host may declare a
+   **struct** whose fields are values of the boundary, without defaults, type parameters or
+   constants (`LYS-SEM0907` otherwise); a script builds and reads it as its own, and it crosses the
+   boundary as a copy, its fields in the order it declares them. Its one conformance may be
+   `Error`: then it is an **error of the host**, its methods — `message()` among them — the host's
+   to implement like a handle's. A function of the host declares what it throws by naming such
+   errors in its `throws` (`LYS-SEM0907` for any other set, the bare form among them): that set is
+   all it throws. An error the host gives that its function declares is thrown in the script at the
+   call, and is caught and reported as any other; one it does not declare, and any other failure,
+   is a panic (`LYS-RT0900`).
 
 ## Scope
 
