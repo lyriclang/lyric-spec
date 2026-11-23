@@ -4,7 +4,7 @@
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
 host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b), callbacks (S8f3c) and
-isolation (S8g1); maps at the boundary, threads and the C ABI come with the rest of S8 — until then the design documents decide.
+isolation (S8g1) and maps at the boundary (S8g2); threads and the C ABI come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -28,8 +28,10 @@ isolation (S8g1); maps at the boundary, threads and the C ABI come with the rest
    toolchain does not load.
 3. **Values at the boundary** ([01 S11](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md); [11 Emb](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). A host calls the **public functions of the
    script's top level** that are not generic, by name — not a `private` or `internal` one, not a
-   method, not the top level itself. What crosses is `int`, `float`, `bool`, `char`, `string` and
-   lists of them, as the host's values: a copy, never a reference into the instance. A function
+   method, not the top level itself. What crosses is `int`, `float`, `bool`, `char`, `string`,
+   lists of them, and maps by `int`, `char`, `bool` or `string` whose values cross (S8g2), as
+   the host's values: a copy, never a reference into the instance. A map crosses with its entries in its
+   order; a map the host gives the script holds a key once. A function
    whose parameter or result is of another type, an argument of another type, or another count
    of arguments, is the host's mistake. A call ends as one of: its **value**; an **error** that
    left every frame, with its type's name, message, causes and frames; a **panic**, with its
