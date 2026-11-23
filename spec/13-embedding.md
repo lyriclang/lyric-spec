@@ -3,8 +3,8 @@
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
-host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b) and callbacks (S8f3c);
-isolation and the C ABI come with the rest of S8 — until then the design documents decide.
+host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b), callbacks (S8f3c) and
+isolation (S8g1); maps at the boundary, threads and the C ABI come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -85,6 +85,12 @@ isolation and the C ABI come with the rest of S8 — until then the design docum
    budget after the host's function, which does not run again. A callback the host keeps it calls
    later through the instance as a call of its own, which may wait and which its own budget halts,
    until the host lets it go. While a call of an instance runs, the instance takes no other call.
+9. **Isolation and determinism** (S8g1; [01 S8, S9](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/01-host-sicherheit.md)). Every object belongs to the one
+   instance that made it. What goes between instances, and between an instance and its host, is a
+   value of the boundary — a copy —, a handle — the host's number —, or a callback, which only its
+   own instance calls; a change in one instance is never seen in another. A host may give an
+   instance a **seed** when it loads it: its hashes are then the same in every run on the same
+   platform; without one they are the process's own.
 
 ## Scope
 
