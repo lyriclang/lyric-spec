@@ -3,8 +3,8 @@
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
-host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b); callbacks, isolation and the
-C ABI come with the rest of S8 — until then the design documents decide.
+host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b) and callbacks (S8f3c);
+isolation and the C ABI come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -75,6 +75,16 @@ C ABI come with the rest of S8 — until then the design documents decide.
    all it throws. An error the host gives that its function declares is thrown in the script at the
    call, and is caught and reported as any other; one it does not declare, and any other failure,
    is a panic (`LYS-RT0900`).
+8. **Callbacks** (S8f3c; [11 Hst, Co](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). A parameter of a function of the host
+   may be of a function type whose parameters and result are values of the boundary; nowhere else
+   does a function type cross (`LYS-SEM0907`). The host's function gets the script's function value
+   as a **callback**, lent for as long as it runs. While it runs, the host calls the callback to its
+   end, within the budget of the call it stands in, and nothing else of the instance runs: a
+   callback that would wait, in which that budget ends, or that calls `exit`, ends in a panic
+   (`LYS-RT0901`) the host gets as its result; the instance goes on, and the call halts for its
+   budget after the host's function, which does not run again. A callback the host keeps it calls
+   later through the instance as a call of its own, which may wait and which its own budget halts,
+   until the host lets it go. While a call of an instance runs, the instance takes no other call.
 
 ## Scope
 
