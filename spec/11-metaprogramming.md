@@ -8,9 +8,9 @@ reflection come with S10, the list's other members with S11 — until then the d
 ## Written (S8f1, attributes)
 
 1. **Attributes** ([09 At](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/09-syntax-und-reflexion.md)). `@Name` or `@Name(args)` stands before a function, a
-   type, an enum or an interface, on its own line or before the declaration on the same, as many as
-   it has; before anything else — a statement, an `import`, an `extend` — or at the end of a file it
-   is `LYS-PAR0042`. The compiler knows a closed list; a name not on it is `LYS-SEM0011`. An
+   type, an enum or an interface, and in a body before a method (S8f3a), on its own line or before
+   the declaration on the same, as many as it has; before anything else — a statement, an `import`,
+   an `extend`, a field — or at the end of a file it is `LYS-PAR0042`. The compiler knows a closed list; a name not on it is `LYS-SEM0011`. An
    argument is a compile-time value — a literal, a string without holes, a variant without a
    payload — or `LYS-SEM0066`; the same attribute twice on one declaration is `LYS-SEM0068`. The
    list's first member is `@Requires`, which belongs to a module of the host (chapter 13) and

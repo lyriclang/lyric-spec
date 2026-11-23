@@ -3,8 +3,8 @@
 **Base.** None — this chapter replaces Lyric 5's chapter 13.
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
-host's modules (S8f2); handles, callbacks, isolation and the C ABI come with the rest of S8 — until
-then the design documents decide.
+host's modules (S8f2) and their handles (S8f3a); the host's structs and errors, callbacks, isolation
+and the C ABI come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -56,6 +56,15 @@ then the design documents decide.
    its **implementation** by name; a script that imports a module whose functions lack one does not
    load. What an implementation cannot do, or a value of another type than its function declares,
    is a panic of the script (`LYS-RT0900`); the instance takes calls after it as after any panic.
+6. **Handles** (S8f3a; [11 Hst, V3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). A module of the host may declare a **class without
+   fields**, type parameters, conformances or constants, whose methods — `static` ones too — have no
+   body (`LYS-SEM0907` otherwise): a **handle**. Its value is a number the host gave, under the
+   class's name; what it stands for the host holds, and the host's implementation of a method takes
+   the receiver as its first argument. A handle is a value of the boundary (rule 3) in either
+   direction. A script never builds one (`LYS-SEM0909`), and `==` on handles is refused as on any
+   class that is neither `Identity` nor `Equatable` (`LYS-SEM0059`): what makes two the same is the
+   host's to say. `@Requires` may stand on a method; an import that names the class asks for the
+   rights of its methods.
 
 ## Scope
 

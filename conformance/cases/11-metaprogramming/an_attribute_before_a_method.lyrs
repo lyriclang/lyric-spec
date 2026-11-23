@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-SEM0011
+//! since: 1.0.0
+// §11 rule 1: a method is a declaration too; its attributes are checked against the closed list.
+class Counter {
+    @Frobnicate
+    fn one(): int = 1
+}
