@@ -4,7 +4,7 @@
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
 host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b), callbacks (S8f3c) and
-isolation (S8g1), maps at the boundary (S8g2) and threads (S8g3); the C ABI comes with the rest of S8 — until then the design documents decide.
+isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI's core (S8h1); functions of the host in C come with the rest of S8 — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -101,6 +101,16 @@ isolation (S8g1), maps at the boundary (S8g2) and threads (S8g3); the C ABI come
     **rests**: no entry runs, and no native and no subscription to signals of its script waits.
     A VM's first load or compile seals it: it takes no module and no implementation after, and
     threads load from it at the same time.
+11. **The C ABI** (S8h1; [11 Emb](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). `liblyric_script` and its header `lyric_script.h` give a
+    host of C's what rules 1–4 give one of Lyric 5's: a VM, loading with rights and a seed, an
+    instance's `init`, calls, started calls and their steps, `resume`, `abort`, whether it rests,
+    and values to call with and read. What C holds is a **number**, never an address: a VM, an
+    instance, a value or a call's result, until `lyrs_release` lets it go; 0 is never one. Every
+    export answers a status: `LYR_OK`, or `LYR_ERROR` — a mistake of the host's, a load that gave
+    no instance — with the error's type and message for `lyr_take_error`; a number of another
+    kind, one released or one never given is such a mistake, never a crash. Text goes in as
+    UTF-8 bytes with their count — a NUL among them is a character — and comes out copied into
+    the host's buffer, the whole length answered. The runtime starts with `lyr_init` first.
 
 ## Scope
 
