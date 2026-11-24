@@ -1,0 +1,18 @@
+//! check
+//! error: LYR-PAR0066
+//! since: 5.0.0
+// 16 §2 rules 1, 2: ':: [Equatable, Debug]' is read as 'Equatable & Debug'. The declaration is
+// whole: its 'debug' is synthesized, and the type that prints it finds it.
+import std.io { println };
+
+struct V :: [Equatable, Debug] {
+    x: int,
+}
+
+struct W :: Equatable & Debug {
+    v: V,
+}
+
+fn main(): void {
+    println(W { v = V { x = 1 } }.debug());
+}
