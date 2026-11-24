@@ -58,6 +58,10 @@ isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI (S8h
    its **implementation** by name; a script that imports a module whose functions lack one does not
    load. What an implementation cannot do, or a value of another type than its function declares,
    is a panic of the script (`LYS-RT0900`); the instance takes calls after it as after any panic.
+   A host of Lyric 5's may write such a module as the static methods of a struct marked
+   `@ScriptApi("<name>")` (S8i): their declarations — with `@Requires` where a method carries it —
+   are the module, and each method is its function's implementation; an error it throws is the
+   function's failure. Its types are those of rule 3 but structs and handles.
 6. **Handles** (S8f3a; [11 Hst, V3](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). A module of the host may declare a **class without
    fields**, type parameters, conformances or constants, whose methods — `static` ones too — have no
    body (`LYS-SEM0907` otherwise): a **handle**. Its value is a number the host gave, under the
