@@ -46,7 +46,10 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
 
 1. A declaration the parser cannot read whole reports its lexical and syntax errors (`LYR-LEX…`,
    `LYR-PAR…`) and nothing that follows from them: no finding whose place lies inside it. The other
-   declarations of the file report as they would.
+   declarations of the file report as they would. A syntax error with a safe fix (§6 rule 1) leaves
+   its declaration whole, for the parser reads the text as the fix writes it (rule 2): the
+   declaration reports its other findings, and what it gets synthesized ([05 §14](05-interfaces.md))
+   it gets.
 2. **A mistake is said once.** What follows from it is not said again: an instance whose type
    arguments an annotation got wrong, refused there and not again where an initializer takes them;
    the names an or-pattern's alternative does not bind, in one finding; the parser's recovery, which
@@ -55,7 +58,9 @@ toolchain's own tests (`tests/Lyric.Tests.Core`, `TextRendererTests`).
    of `,`, said once at the `;` and read as the `,` it stands for — `T { a = 1; }` after the name of
    a type is the initializer, not a call with a trailing block (`LYR-PAR0064`, with `,` as its fix) —,
    and a `continue`, `break` or `return` where a value stands, a match arm or a branch of an `if`,
-   read as the block it belongs in (`LYR-PAR0065`, with `{ continue; }` as its fix); a literal's
+   read as the block it belongs in (`LYR-PAR0065`, with `{ continue; }` as its fix), and several
+   interfaces after `::` written as a list, `[I, J]` or `I, J`, read as their chain
+   (`LYR-PAR0066`, with `I & J` as its fix); a literal's
    suffix the lexer refused, which the parser does
    not refuse again; a conformance written twice (`LYR-SEM0133`), whose second block the calls do not
    see; a compile-time-only call, said where the program makes it and not again inside the standard
