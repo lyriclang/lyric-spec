@@ -4,7 +4,7 @@
 
 **Status.** The instance, loading and the values at the boundary written (S8a), waiting (S8d), the
 host's modules (S8f2), their handles (S8f3a), structs and errors (S8f3b), callbacks (S8f3c) and
-isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI's core (S8h1); functions of the host in C come with the rest of S8 — until then the design documents decide.
+isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI (S8h) — until then the design documents decide.
 
 ## Written (S8a, the instance)
 
@@ -111,6 +111,13 @@ isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI's co
     kind, one released or one never given is such a mistake, never a crash. Text goes in as
     UTF-8 bytes with their count — a NUL among them is a character — and comes out copied into
     the host's buffer, the whole length answered. The runtime starts with `lyr_init` first.
+    A **function of the host's in C** (S8h2; rule 5) is a function pointer with the host's
+    `userdata`: it is given the number of its call and the numbers of its arguments, which go
+    with the call, and answers the number of its value, which the VM takes, or 0 where it failed
+    — a panic of the script's with the reason the host gave, or, where it threw an error its
+    declaration names, that error. Through its call it calls the callbacks it was given and keeps
+    them, a kept one under a number of the host's own. Bytecode the host compiled loads as rule 2
+    says, from its bytes.
 
 ## Scope
 
