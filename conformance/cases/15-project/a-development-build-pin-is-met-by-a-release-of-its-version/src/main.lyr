@@ -1,0 +1,7 @@
+//! check
+//! since: 5.0.0
+// 15 §1 rule 6: 'toolchain = "5.0.0-dev.20261119"' is met by the development build of that day
+// or a later one and by every release of 5.0.0 or after. The suite runs a toolchain of 5.0.0, a
+// release or a development build of that day or later.
+fn main(): void {
+}

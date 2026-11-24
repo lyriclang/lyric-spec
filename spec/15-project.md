@@ -48,7 +48,11 @@ in `ProgramTests`.
 6. **`toolchain = "5.1"`** — or `">=5.1"` — in `[package]` is the least toolchain that builds the
    package ([11 P12](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)): a toolchain below what any package of the program asks
    for refuses the program (`LYR-PKG0009`, exit 2, [14 §1.3](14-cli.md)), a development build of
-   a version counting as that version. Another form is refused (`LYR-PKG0002`). The root package's
+   a version counting as that version. **`toolchain = "5.0.0-dev.20261119"`**, a version of three
+   numbers with `-dev.` and a day of eight digits, is the least development build: the development
+   build of that version from that day or a later one meets it, and so does every release of that
+   version or after it; the part after `+` is not compared. Another form is refused
+   (`LYR-PKG0002`). The root package's
    pin also chooses the toolchain: a command in the package is handed to an installed toolchain
    that meets it, where the one started does not ([14 §13](14-cli.md) rule 11).
 7. **`comptimeBudget = 100_000_000`** in `[package]` is the steps one `comptime` site may take

@@ -1,0 +1,8 @@
+//! check
+//! exit: 2
+//! error: LYR-PKG0009
+//! since: 5.0.0
+// 15 §1 rule 6: a pin of a development build, by its day, is a least toolchain like a version;
+// this toolchain is older and refuses the package.
+fn main(): void {
+}
