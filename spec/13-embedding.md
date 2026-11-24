@@ -96,7 +96,10 @@ isolation (S8g1), maps at the boundary (S8g2), threads (S8g3) and the C ABI (S8h
    value of the boundary — a copy —, a handle — the host's number —, or a callback, which only its
    own instance calls; a change in one instance is never seen in another. A host may give an
    instance a **seed** when it loads it: its hashes are then the same in every run on the same
-   platform; without one they are the process's own.
+   platform; without one they are the process's own. An instance without rights is deterministic
+   in its values and, with a seed, its hashes; how its tasks interleave around a `sleep`, and a
+   deadline, follow the wall clock. The instances of one VM share the code it compiled or
+   decoded, never their state.
 10. **Threads** (S8g3; [11 Thr](https://github.com/lyriclang/lyric-script/blob/main/design/v1/spec/11-laufzeit-und-vm.md)). Instances of one VM run on threads of their own at
     the same time. An instance takes **one entry of the host's at a time** — `init`, a call, a
     started call's step, `resume`, a callback's call, its release, `abort` —, from whatever
