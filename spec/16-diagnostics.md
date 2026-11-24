@@ -141,7 +141,9 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`); rule 5 by `tools/check_coverag
 1. **Every warning is a lint**: a name — lowercase words joined by `-`, as `unused-variable` —, a group, and a
    level of its own; [Appendix A](appendix-a-diagnostics.md) lists them, `lyric explain NAME` prints one. The
    groups are `unused`, `correctness`, `resources`, `concurrency`, `deprecation`, `style`, `perf` and `docs`;
-   `warnings` names every lint. A warning that is no lint does not exist.
+   `warnings` names every lint that warns where it is read: one whose level, decided by rule 5 without any
+   `warnings`, is `warn`. A lint at `allow` is not named by it, and one at `deny` is denied already. A
+   warning that is no lint does not exist.
 2. A lint's **level** is `allow` — it is not said —, `warn` — it is said as a warning —, or `deny` — it is said as
    an error, with a note that names who denied it, and the build fails (exit 1, [14 §1.1](14-cli.md)).
 3. A **selector** names a lint, by its name or its code, a group, or `warnings`. One that names nothing is
@@ -162,7 +164,7 @@ own tests (`tests/Lyric5.Tests`, `CatalogTests`); rule 5 by `tools/check_coverag
    decides each — warns: `useless-allow` (`LYR-SEM0180`). The `@Allow` itself never decides that warning.
 8. **Warnings as errors** is a switch: a profile's `denyWarnings` ([15 §4](15-project.md) rule 4) and
    `--deny-warnings` are `-D warnings` for the package built, in front of the command line's own levels —
-   each warning is an error, and its note names the profile. A build script's warnings are the lint
+   each warning is an error, and its note names the profile; a lint at `allow` stays silent (rule 1). A build script's warnings are the lint
    `build-script-warning`, a macro's the lint `macro-warning` ([11 §5](11-metaprogramming.md)), and
    both are denied the same way.
 9. **Every lint is held by two cases** of the suite: a red one, whose program the lint reads (`warning:`
