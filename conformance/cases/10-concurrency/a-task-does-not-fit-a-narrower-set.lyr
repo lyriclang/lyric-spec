@@ -1,0 +1,20 @@
+//! check
+//! error: LYR-SEM0001
+//! since: 5.0.0
+// 10 §2 rule 8: a task fits where a set that covers its own is expected, never where one names
+// less — a body of two types makes no task that throws one.
+import std.task { Task, spawn };
+
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn work(n: int): int throws [A, B] {
+    if (n == 1) { throw A { }; }
+    if (n == 2) { throw B { }; }
+    return n;
+}
+
+fn main(): void {
+    let t: Task<int> throws A = spawn(() => try work(3));
+    t.cancel();
+}

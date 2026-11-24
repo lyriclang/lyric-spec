@@ -1,0 +1,32 @@
+//! run
+//! stdout:
+//! | a
+//! | A
+//! since: 5.0.0
+// 03 §9.1 rule 9: a set bound to a type parameter is thrown as a set and held as its root — the
+// 'Err' of a 'Result<int, [A, B]>' is an 'Error', and its 'get()' throws each member.
+import std.io { println };
+
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn work(n: int): int throws [A, B] {
+    if (n == 1) { throw A { }; }
+    if (n == 2) { throw B { }; }
+    return n;
+}
+
+fn main(): void {
+    let r = Result.of(() => try work(1));
+    match (r) {
+        .Ok(v) => println(v),
+        .Err(e) => println(e.message()),
+    }
+    try {
+        println(r.get());
+    } catch (_: A) {
+        println("A");
+    } catch (_: B) {
+        println("B");
+    }
+}

@@ -785,6 +785,19 @@ Type parameters, their inference, and what an instance is
    — is warned about (`LYR-SEM0200`): no call can infer it. A **type's** is not (T18): a type
    may carry a parameter only its name uses, a **phantom** — `struct Id<T> { raw: int }` makes
    `Id<User>` and `Id<Order>` two types.
+9. A type parameter may stand for a **set of thrown types** — what `throws E` binds where an
+   argument throws several ([06 §8](06-errors.md#8-function-values-that-throw) rule 6), what a task
+   throws ([10 §2](10-concurrency.md) rule 8), what a join of two differing types is
+   ([12 §Iteration](12-stdlib.md)). The set is an argument as a type is and makes the instance,
+   `Task<int> throws [A, B]`, `Result<int, [A, B]>` — in no order: `[A, B]` and `[B, A]` make one.
+   Where the parameter stands in a set, its members stand there, and a type named twice is named
+   once: `throws [E, TimedOut]` at `E = [A, B]` throws `A`, `B` and `TimedOut`, at `E = TimedOut`
+   only `TimedOut` ([03 TM9](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/03-typsystem.md)).
+   A set is thrown, not held: where the parameter is a value's type — a variable, a field, a
+   payload, an element — the set stands as the root `Error`, and it satisfies a constraint as the
+   root does. The `Err` of a `Result<int, [A, B]>` is an `Error`, and the instance is no `Debug`
+   because `A` and `B` are. A set is written where a thrown type is
+   ([02 §3](02-grammar.md#3-types), `TypeSet`), not as a type argument of its own.
 
 ### 9.2 Inference at a call
 

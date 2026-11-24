@@ -1,0 +1,47 @@
+//! run
+//! stdout:
+//! | 2
+//! | B
+//! | 1
+//! | b
+//! since: 5.0.0
+// 10 §1 rule 6, 12 §Iteration: a coroutine that throws several is an Iterator whose 'Error' is
+// their set, so an adapter over it and a generic walk of it throw each, and a clause for each
+// covers them.
+import std.io { println };
+
+class A :: [Error] { fn message(): string { return "a"; } }
+class B :: [Error] { fn message(): string { return "b"; } }
+
+fn two(): Coroutine<int> throws [A, B] {
+    yield 1;
+    throw B { };
+}
+
+fn total<I :: Iterator<Item = int>>(it: I): int throws I.Error {
+    var sum = 0;
+    for (x in try it) {
+        println(x);
+        sum = sum + x;
+    }
+    return sum;
+}
+
+fn main(): void {
+    try {
+        for (x in try two().map((v) => v * 2)) {
+            println(x);
+        }
+    } catch (_: A) {
+        println("A");
+    } catch (_: B) {
+        println("B");
+    }
+    try {
+        println(total(two()));
+    } catch (e: A) {
+        println(e.message());
+    } catch (e: B) {
+        println(e.message());
+    }
+}

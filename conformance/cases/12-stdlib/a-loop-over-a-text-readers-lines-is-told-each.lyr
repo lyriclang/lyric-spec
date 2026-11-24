@@ -1,9 +1,10 @@
-//! check
-//! error: LYR-SEM0034
+//! run
+//! stdout:
+//! | 2
 //! since: 5.0.0
 // 12 §Input and output, rule 7: a TextReader's lines join IoError and Cancelled, which reduces to
-// the root Error — a loop over them in a function that covers the two by name is refused.
-import std.io { ByteReader, IoError, TextReader };
+// the set of both — a loop over them in a function that covers the two by name is accepted.
+import std.io { ByteReader, IoError, TextReader, println };
 import std.task { Cancelled };
 
 fn count(bytes: Slice<uint8>): int throws [IoError, Cancelled] {
@@ -15,6 +16,6 @@ fn count(bytes: Slice<uint8>): int throws [IoError, Cancelled] {
 }
 
 fn main(): void throws Error {
-    let bytes: uint8[] = [97u8];
-    let _ = try count(bytes[..]);
+    let bytes: uint8[] = [97u8, 10u8, 98u8];
+    println(try count(bytes[..]));
 }
