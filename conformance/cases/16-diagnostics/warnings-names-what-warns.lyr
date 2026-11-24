@@ -1,0 +1,14 @@
+//! check
+//! option: -D
+//! option: warnings
+//! error: LYR-SEM0071
+//! since: 5.0.0
+// 16 §5 rules 1, 8: '-D warnings' denies what warns — the unused binding — and leaves 'missing-docs',
+// a lint at 'allow', silent: 'Holder' is public and has no documentation, and nothing says so.
+pub struct Holder {
+    pub n: int,
+}
+
+fn main(): void {
+    let unused = Holder { n = 1 };
+}
