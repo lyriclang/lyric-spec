@@ -1,0 +1,20 @@
+//! run
+//! option: --allow=file=data
+//! in-temp-dir
+//! stdout:
+//! | refused
+//! | refused
+//! since: 1.0.0
+// §17 rule 5: a path is resolved before it is compared — `..` does not leave a scope, and a name
+// that only begins as the scope does is not in it.
+import std.fs { createDir, writeText }
+
+createDir("data")
+for (p in ["data/../c.txt", "data2.txt"]) {
+    try {
+        writeText(p, "x")
+        println("written")
+    } catch (e: IoError) {
+        println("refused")
+    }
+}

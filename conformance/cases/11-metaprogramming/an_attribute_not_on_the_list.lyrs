@@ -1,0 +1,7 @@
+//! check
+//! error: LYS-SEM0011
+//! since: 1.0.0
+// §11 rule 1: the compiler knows a closed list of attributes.
+@Frobnicate
+fn f() {
+}

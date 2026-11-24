@@ -1,0 +1,18 @@
+//! run
+//! option: --allow=file=data
+//! in-temp-dir
+//! stdout:
+//! | true
+//! | true
+//! | false
+//! since: 1.0.0
+// §17 rule 5: what lies outside a scope is refused as the system refuses, in the scope's words.
+import std.fs { exists, writeText }
+
+try {
+    writeText("b.txt", "x")
+} catch (e: IoError) {
+    println(e.kind == IoErrorKind.PermissionDenied)
+    println(e.message().contains("outside the scopes this run was given"))
+}
+println(exists("data/../b.txt"))

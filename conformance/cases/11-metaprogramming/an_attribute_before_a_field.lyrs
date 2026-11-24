@@ -1,0 +1,8 @@
+//! check
+//! error: LYS-PAR0042
+//! since: 1.0.0
+// §11 rule 1: in a body an attribute stands before a method; a field carries none.
+struct Point {
+    @Frobnicate
+    x: int
+}
