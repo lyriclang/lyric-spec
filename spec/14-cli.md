@@ -79,13 +79,15 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `Driver
 11. **Status lines.** `build`, `run`, `check`, `expand`, `test` and `bench` say each step that does
     work on the standard error as it starts, one line each — a word right-aligned in twelve
     columns, then what it works on —, whether or not the standard error is a terminal:
-    `Fetching` and `Updating` a package or a source tree read from git, `Running` a build script,
+    a **`Toolchain`** header naming the Lyric version, the C compiler where one is used, the target
+    triple, and the reason where a toolchain was chosen explicitly or switched to; `Fetching` and
+    `Updating` a package or a source tree read from git, `Running` a build script,
     `Binding` a module made from a header, `Compiling` a program's front end (`app v0.1.0
     (src/main.lyr)`), the runtime, and the C units — `3 of 14 C units of app`, the ones whose
     object is not cached —, `Checking` a program (`check`), the front end's phases `Parsing`,
     `Expanding`, `Analyzing`, `Evaluating` and `Lowering`, `Emitting` its C, `Linking` a binary or
     a shared library, `Archiving` a static one. What is up to date says nothing. A `build`, `run`
-    or `check` that succeeds says **`Finished`**, the profile, its level and debug information, and
+    or `check` that succeeds says **`Finished`**, the profile, its level and active flags, and
     the time the command took (`Finished debug [opt 0, debug info] in 0.42s`), a `build` or `run`
     **`Produced`**, the file it made with its size, and **`Summary`** where there are warnings or C
     units from the cache; one that fails ends with its findings. `run` then says the binary it
@@ -93,8 +95,11 @@ are the conformance of this section (`tests/Lyric5.Tests`, `BuildTests`, `Driver
     units, a link and an archive each stay one line, drawn over itself: the C units compiled so far
     are counted on it (`Compiling [3/14] app`), and its end adds its time (`Linking app 0.05s`);
     elsewhere, or under `-v`, each says a whole line as it starts, and a last line **`Timings`**
-    gives their times. **`-v`** also says each package (`Package std v5.0.0`), each C unit with its
-    time (`Compiled …`) and each command. The word is coloured
+    gives their times. **`-v`** splits the header into **`Toolchain`**, **`Compiler`** (with its
+    path and origin), **`Target`** (`host` or `cross`) and **`Profile`** lines, and also says each
+    package (`Package std v5.0.0`), the runtime's origin (`Runtime prebuilt|cached …`), cached
+    front-end and link steps (`Cached …`), each C unit with its time (`Compiled …`) and each
+    command. The word is coloured
     as the diagnostics are ([16 §1](16-diagnostics.md)). **`-q`** (`--quiet`) says no status line,
     and `--json` none ([11 C6](https://github.com/lyriclang/lyric/blob/main/design/v5/spec/11-werkzeuge-interop.md)):
     the findings stay. The lines are text for a reader, not a format: their words and their
@@ -273,10 +278,11 @@ The package's benchmarks ([12 §Benchmarks](12-stdlib.md), [10 X4](https://githu
 2. **`lyric help`** lists the verbs and the options every verb takes; **`lyric help <verb>`** and
    **`lyric <verb> --help`** (`-h`) list the verb's own. A `--help` after `run`'s `--` is the
    program's.
-3. The options every verb takes, before or after the verb: `--color <auto|always|never>`,
-   `--absolute-paths`, `--max-errors <n>` ([16 §1](16-diagnostics.md)); where the table marks the
-   verb, `--json` ([16 §4](16-diagnostics.md)) and the lint options `-A`, `-W`, `-D <lint>` and
-   `--warn-deps` ([16 §5](16-diagnostics.md)). A field of the profile is `--x` and `--no-x`.
+3. The options every verb takes, before or after the verb: `--toolchain <version|local>` (§13 rule
+   11), `--color <auto|always|never>`, `--absolute-paths`, `--max-errors <n>`
+   ([16 §1](16-diagnostics.md)); where the table marks the verb, `--json`
+   ([16 §4](16-diagnostics.md)) and the lint options `-A`, `-W`, `-D <lint>` and `--warn-deps`
+   ([16 §5](16-diagnostics.md)). A field of the profile is `--x` and `--no-x`.
 
 | verb | words | options | lints | `--json` |
 |---|---|---|---|---|
@@ -570,13 +576,14 @@ a mirror served on the machine): a conformance case fetches nothing.
     toolchains refuse (`LYR-CLI0025`).
 
 11. **Which toolchain runs a command.** Before a verb runs, the toolchain it should run with is
-    decided: **`LYRIC_TOOLCHAIN`** — `local` for the toolchain that was started, or an installed
-    version, written with its build part or without (one not installed is refused,
-    `LYR-CLI0025`) — over the `toolchain` the package the command runs in asks for
-    ([15 §1](15-project.md) rule 6), a least version. The toolchain that was started runs the
-    command where it is what is asked for; else the default, where it is; else the newest
-    installed that is. Another toolchain is **handed the command** as it was given — on Unix in
-    place of the process, on Windows as a child whose exit is the command's — with
+    decided: **`--toolchain <version|local>`** on the command line (before `--`) over
+    **`LYRIC_TOOLCHAIN`** — `local` for the toolchain that was started, or an installed version,
+    written with its build part or without (one not installed is refused, `LYR-CLI0025`) — over the
+    `toolchain` the package the command runs in asks for ([15 §1](15-project.md) rule 6), a least
+    version. The toolchain that was started runs the command where it is what is asked for; else
+    the default, where it is; else the newest installed that is. Another toolchain is **handed the
+    command** as it was given, with `--toolchain` taken out so an older toolchain does not refuse
+    it — on Unix in place of the process, on Windows as a child whose exit is the command's — with
     **`LYRIC_TOOLCHAIN_FROM`** set, and a command that carries it is never handed on again. Where
     no installed toolchain is what the package asks for, a terminal is offered the least stable
     version that is, installed on a yes; elsewhere the verb runs and refuses the package
