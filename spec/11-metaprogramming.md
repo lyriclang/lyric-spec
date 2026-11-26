@@ -348,8 +348,9 @@ attribute macros (S4), the diagnostics of expanded code (S5); `lyric expand` is
    site again and again — is `LYR-CT0007`. A program without a site pays nothing.
 5. **The macro runs under the interpreter's rules** ([§2](#2-comptime); 09 Q9): pure, with the
    budget, a panic `LYR-CT0001` at the site with the chain of calls. `error(at, msg)` of
-   `std.syntax` is the macro's own error, `LYR-MAC0001`: the main span at the node the macro
-   names (`e.span()`, an argument's as written), a note at the site's `!`. **`warn(at, msg)`**
+   `std.syntax` is the macro's own error, `LYR-MAC0001`: the main span covers the node the macro
+   names (`e.span()`, an argument's full extent as written, or one character when `endLine` and
+   `endColumn` are `0`), with a note at the site's `!`. **`warn(at, msg)`**
    and **`note(at, msg)`** say something at the same places and let the expansion go on: a warning,
    the lint `macro-warning` (`LYR-MAC0002`, [16 §5](16-diagnostics.md)), and a hint
    (`LYR-MAC0003`). What a macro said before it failed is said too.
@@ -394,9 +395,10 @@ attribute macros (S4), the diagnostics of expanded code (S5); `lyric expand` is
    check finds in it is reported at the site — `name!(…)`, or the `@Name` — with the message
    prefixed `in the expansion of 'name!'`, a note `synthesized as:` with the line of the
    expansion it stood on, and, where the result came from a `quote`, a note at the quote in the
-   macro's module. What the caller wrote keeps its place: an argument's node stands where it was
-   written, through the macro and back, so an error in it is the caller's, at its line, and a
-   warning in it stays; a warning in the macro's own code is nobody's and falls. A site that an
+   macro's module. What the caller wrote keeps its place and extent: an argument's node carries
+   its start and exclusive end through the macro and back, so an error or warning in it underlines
+   the whole node and any suggestion edits the whole node; a warning in the macro's own code is
+   nobody's and falls. A site that an
    expansion holds chains: the notes of the inner expansion first, then the outer's, and the
    message names both. One mistake is said once, though a macro spliced the argument twice.
    `error(at, msg)` stays rule 5's; a panic in the macro stays [§2](#2-comptime)'s.

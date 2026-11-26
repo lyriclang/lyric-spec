@@ -1606,9 +1606,11 @@ write, as enums and structs a `comptime` function reads, builds and writes back.
    a declaration's body is a struct — `FnDecl`, `StructDecl`, `ClassDecl`, `EnumDecl`, `InterfaceDecl`, `ExtendDecl`, `LetDecl`,
    `FieldDecl`, `AssocType`, `AliasDecl`, `ImportDecl` — as are `Param`, `GenericParam`,
    `Attribute`, `Arg`, `FieldInit`, `WithField`, `Arm`, `Catch`, `LambdaParam` and `Variant`;
-   `Body` is an expression or a block, `Node` any of the five kinds, for a walk. A `Span` is a
-   file as the diagnostics name it, a line and a column from 1 — `""` and `0` for a node that was
-   built, not read (`Span.none()`). The enums are `@NonExhaustive` (10 B13 M3): a `match` over
+   `Body` is an expression or a block, `Node` any of the five kinds, for a walk. A `Span` holds
+   `file` as the diagnostics name it, its start (`line`, `column`) and its exclusive end
+   (`endLine`, `endColumn`, each defaulting to `0`), all 1-based — a node read from source carries
+   its full extent; a node built, not read, carries none (`""` and `0`, `Span.none()`); a `Span`
+   with `endLine` or `endColumn` set to `0` names a point of one character. The enums are `@NonExhaustive` (10 B13 M3): a `match` over
    them outside the standard library writes a `_`, and a form the compiler has that the module
    has not — the rounds of a `comptime for` over fields ([§4](11-metaprogramming.md#4-type-information)), a local
    function, a node the parser could not read — is refused where it is read (`LYR-CT0005`). Every
